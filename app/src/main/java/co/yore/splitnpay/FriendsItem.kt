@@ -14,16 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 
 data class ProfileImageConfiguration(
     val imageBorderColor: Color = Color(0xffEDF5FF),
-    val imageUrl: String = "https://i.pravatar.cc/300",
+    val imageUrl: String = "https://xsgames.co/randomusers/avatar.php?g=male",
     val imageContainerSize: Float = 49f,
     val imageSize: Float = 47f,
     val strokeWidth: Float = 3f
@@ -51,9 +54,12 @@ fun ProfileImage(
         contentAlignment = Alignment.Center
     ){
         AsyncImage(
-            transition = CrossfadeTransition.Factory,
             placeholder = painterResource(id = R.drawable.person),
-            model = config.imageUrl,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(config.imageUrl)
+                .placeholder(R.drawable.person)
+                .crossfade(durationMillis = 300)
+                .build(),
             contentDescription = null,
             modifier = Modifier
                 .size(config.imageSize.dep())
