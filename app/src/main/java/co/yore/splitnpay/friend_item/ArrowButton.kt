@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.dep
-import co.yore.splitnpay.friend_item.configs.ArrowButtonConfiguration
+import co.yore.splitnpay.friend_item.models.ArrowButtonConfiguration
 
 @Composable
 fun ArrowButton(

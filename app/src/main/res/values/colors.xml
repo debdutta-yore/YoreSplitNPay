@@ -56,4 +56,5 @@
     <color name='grey_border'>#9EB1C8</color>
     <color name='dark_grey'>#81ABDB</color>
     <color name='card_grey'>#F9F9F9</color>
+    <color name='grey_shadow'>#80C6CFD8</color>
 </resources>

@@ -16,7 +16,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
-import co.yore.splitnpay.friend_item.configs.FriendItemConfiguration
+import co.yore.splitnpay.friend_item.models.Friend
+import co.yore.splitnpay.friend_item.models.FriendItemConfiguration
 
 @Composable
 fun FriendItem(
@@ -89,7 +90,7 @@ fun FriendItem(
                     color = colorResource(
                         R.color.lightblue2,
                     ),
-                    fontFamily = fonts
+                    fontFamily = robotoFonts
                 )
                 Text(
                     text = friend.mobile,
@@ -97,7 +98,7 @@ fun FriendItem(
                     color = colorResource(
                         R.color.lightblue5,
                     ),
-                    fontFamily = fonts
+                    fontFamily = robotoFonts
                 )
             }
             Spacer(Modifier.weight(1f))

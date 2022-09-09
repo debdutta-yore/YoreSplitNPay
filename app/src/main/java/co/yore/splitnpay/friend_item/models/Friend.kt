@@ -1,4 +1,4 @@
-package co.yore.splitnpay.friend_item
+package co.yore.splitnpay.friend_item.models
 
 data class Friend(
     val uid: Int = 0,

@@ -8,6 +8,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../YorePractices/app/src/main/java/co/yore/yorepractices/localFullWidth.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/build.gradle">
           <value>
             <set />
@@ -73,6 +78,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/friend_item/FriendItem.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/friend_item/FriendsItem.kt">
           <value>
             <set />
@@ -98,6 +108,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/localCurrency.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/localFont.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/localFullWidth.kt">
           <value>
             <set />
@@ -108,7 +128,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/you_will_get_card/YouWillGetCard.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/values/colors.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/values/themes.xml">
           <value>
             <set />
           </value>
@@ -118,7 +153,47 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/common/Constant.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/common/ScreenDimension.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/data/Friends.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/navigation/SplitNavigationComponent.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/ui/split/GetSplitCard.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/ui/split/PaySplitCard.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/ui/split/SplitScreen.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ru_split-pay/app/src/main/java/com/rudra/yoresplitbill/ui/split/component/CollapsibleBottomBar.kt">
           <value>
             <set />
           </value>

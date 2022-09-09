@@ -21,16 +21,16 @@ fun ep(
 
 @Composable
 fun dep(
-    dimension: Float,//100
-    fullWidth: Float = 360f,//2000
+    dimension: Float,
+    fullWidth: Float,
 ): Dp {
     return ep(dimension,fullWidth).dp
 }
 
 @Composable
 fun sep(
-    dimension: Float,//100
-    fullWidth: Float = 360f,//2000
+    dimension: Float,
+    fullWidth: Float,
 ): TextUnit {
 
     return with(LocalDensity.current) {
@@ -46,32 +46,4 @@ fun Number.dep(fullWidth: Number = localFullWidth.current): Dp{
 @Composable
 fun Number.sep(fullWidth: Number = localFullWidth.current): TextUnit{
     return sep(dimension = toFloat(), fullWidth = fullWidth.toFloat())
-}
-
-
-fun screenDimension(
-    screenWidth: Float,
-    fullWidth: Float = 360f,
-    itemWidth: Float = 0f,
-): Float {
-    val finalWidth = (itemWidth / fullWidth) * screenWidth
-    return finalWidth
-}
-
-
-@Composable
-fun getDimension(
-    fullWidth: Float = 360f,
-    itemWidth: Float = 0f,
-    itemHeight: Float = 0f
-): Float {
-    val context = LocalContext.current
-    val density = context.resources.displayMetrics.density
-    val widthDp = context.resources.displayMetrics.run { widthPixels / density }
-    // val heightDp = context.resources.displayMetrics.run { heightPixels / density }
-
-    val finalWidth = (itemWidth / fullWidth) * widthDp
-    val finalHeight = (itemHeight / fullWidth) * widthDp
-
-    return if (finalWidth == 0f) finalHeight else finalWidth
 }

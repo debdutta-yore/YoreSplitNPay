@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">YoreSplitNPay</string>
+    <string name="you_will_pay">You’ll pay</string>
+    <string name="you_will_get">You’ll get</string>
 </resources>

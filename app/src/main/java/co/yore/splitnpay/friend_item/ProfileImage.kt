@@ -15,7 +15,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.R
 import co.yore.splitnpay.dep
-import co.yore.splitnpay.friend_item.configs.ProfileImageConfiguration
+import co.yore.splitnpay.friend_item.models.ProfileImageConfiguration
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
