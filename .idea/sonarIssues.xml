@@ -8,6 +8,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../ComposeMotion1/app/src/main/java/com/parez/composemotion/CollapsableToolbar.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../YorePractices/app/src/main/java/co/yore/yorepractices/localFullWidth.kt">
           <value>
             <set />
@@ -49,6 +54,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/ScreenDimension.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/SplitPage.kt">
           <value>
             <set />
           </value>
