@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -37,20 +38,22 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.MotionLayout
+import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.friend_item.FriendItem
 import co.yore.splitnpay.friend_item.models.Friend
 import co.yore.splitnpay.you_will_get_card.YouWillGetCard
 import co.yore.splitnpay.you_will_get_card.YouWillPayCard
+import kotlinx.coroutines.delay
+import java.util.*
 
 enum class SwipingStates {
     EXPANDED,
     COLLAPSED
 }
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SplitPage(){
+fun SplitPage() {
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -112,32 +115,125 @@ fun SplitPage(){
                     if (swipingState.progress.to == SwipingStates.COLLAPSED)
                         swipingState.progress.fraction
                     else
-                        1f - swipingState.progress.fraction
+                        1f - swipingState.progress.fraction,
+                    {
+                        swipingState.performDrag(-0.01f)
+                    }
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalMotionApi::class)
 @Composable
-fun MotionLayoutHeader(progress: Float) {
+fun MotionLayoutHeader(
+    progress: Float,
+    swipe: ()->Unit
+) {
     val d = 234.dep().value
+    val dd = 234.dep()
+    val bm = 34.dep()
     MotionLayout(
-        start = JsonConstraintSetStart(),
-        end = JsonConstraintSetEnd(d),
+        //debug = EnumSet.of(MotionLayoutDebugFlags.SHOW_ALL),
+        start = JsonConstraintSetStart()
+        /*ConstraintSet{
+            val poster = createRefFor("poster")
+            constrain(poster) {
+                this.width = Dimension.matchParent
+                this.start.linkTo(parent.start,0.dp)
+                this.end.linkTo(parent.end,0.dp)
+                this.top.linkTo(parent.top,0.dp)
+            }
+            val tabs = createRefFor("tabs")
+            constrain(tabs) {
+                this.width = Dimension.matchParent
+                this.start.linkTo(parent.start,0.dp)
+                this.end.linkTo(parent.end,0.dp)
+                this.top.linkTo(poster.bottom,0.dp)
+            }
+            val content = createRefFor("content")
+            constrain(content) {
+                this.width = Dimension.matchParent
+                this.start.linkTo(parent.start,0.dp)
+                this.end.linkTo(parent.end,0.dp)
+                this.top.linkTo(tabs.bottom,0.dp)
+            }
+            //////////////////////////////
+            val row = createRefFor("row")
+            val container = createRefFor("container")
+            val cutout = createRefFor("cutout")
+
+            constrain(row) {
+                this.width = Dimension.wrapContent
+                this.centerHorizontallyTo(container)
+            }
+
+            constrain(cutout) {
+                this.top.linkTo(container.bottom)
+            }
+
+        }*/,
+        end = JsonConstraintSetEnd(d)
+        /*ConstraintSet{
+            val poster = createRefFor("poster")
+            constrain(poster) {
+                //this.width = Dimension.matchParent
+                this.height = Dimension.value(dd)
+                this.start.linkTo(parent.start,0.dp)
+                this.end.linkTo(parent.end,0.dp)
+                this.top.linkTo(parent.top,0.dp)
+            }
+            val tabs = createRefFor("tabs")
+            constrain(tabs) {
+                this.width = Dimension.matchParent
+                this.start.linkTo(parent.start,0.dp)
+                this.end.linkTo(parent.end,0.dp)
+                this.top.linkTo(poster.bottom,0.dp)
+            }
+            val content = createRefFor("content")
+            constrain(content) {
+                this.width = Dimension.matchParent
+                this.start.linkTo(parent.start,0.dp)
+                this.end.linkTo(parent.end,0.dp)
+                this.top.linkTo(tabs.bottom,0.dp)
+            }
+            /////////////////////////////////////////
+            val row = createRefFor("row")
+            val container = createRefFor("container")
+            val cutout = createRefFor("cutout")
+
+            constrain(row) {
+                this.width = Dimension.matchParent
+                this.centerHorizontallyTo(container)
+                this.bottom.linkTo(container.bottom,bm)
+            }
+
+            constrain(cutout) {
+                this.top.linkTo(container.bottom)
+            }
+        }*/,
         progress = progress,
         modifier = Modifier
             .fillMaxWidth()
     ) {
         var curveHeight by remember { mutableStateOf(0f) }
 
-        val maxHeight = with(LocalDensity.current){
-            411.dep().value*this.density
+        val maxHeight = with(LocalDensity.current) {
+            411.dep().value * this.density
         }
-        val minHeight = with(LocalDensity.current){
-            234.dep().value*this.density
+        val minHeight = with(LocalDensity.current) {
+            234.dep().value * this.density
         }
         var f by remember { mutableStateOf(1f) }
+        LaunchedEffect(key1 = f){
+            Log.d("fdfdfdffdfd","$f")
+            if(f==1f){
+                //delay(5000)
+                swipe()
+            }
+
+        }
         Box(
             modifier = Modifier
                 .layoutId("poster")
@@ -149,192 +245,262 @@ fun MotionLayoutHeader(progress: Float) {
                     f = diff / dif
                     curveHeight = 159 + 60 * f
                 }
-        ){
-            Column(){
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(curveHeight.dep())
-                        .clip(
-                            RoundedCornerShape(
-                                0.dp, 0.dp, 0.dp, 47.dep()
-                            )
-                        )
-                        .background(Color(0xff839BB9))
-                ){
-                    Box(
-                        modifier = Modifier
-                            .padding(
-                                top = 13.dep(),
-                                start = 9.dep()
-                            )
-                    ){
-                        Row(){
-                            BackButton()
-                            Spacer(modifier = Modifier.width(4.dep()))
-                            RobotoText(
-                                "Split",
-                                fontSize = 14.sep(),
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                        .align(Alignment.TopCenter)
-                        .padding(top = 83.dep())
-                            .background(Color.Red),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        Spacer(modifier = Modifier.width(38.dep()).background(Color.Green))
-                        Column(
+        ) {
+            val bm = 34.dep()
+            Column() {
+                Box(){
+                    MotionLayout(
+                        //debug = EnumSet.of(MotionLayoutDebugFlags.SHOW_ALL),
+                        start = ConstraintSet {
+                            val row = createRefFor("row")
+                            val container = createRefFor("container")
+                            //val cutout = createRefFor("cutout")
+
+                            constrain(row) {
+                                this.width = Dimension.wrapContent
+                                this.centerHorizontallyTo(container)
+                            }
+
+                            /*constrain(cutout) {
+                                this.top.linkTo(container.bottom)
+                            }*/
+                        },
+                        end = ConstraintSet {
+                            val row = createRefFor("row")
+                            val container = createRefFor("container")
+                            //val cutout = createRefFor("cutout")
+
+                            constrain(row) {
+                                this.width = Dimension.matchParent
+                                this.centerHorizontallyTo(container)
+                                this.bottom.linkTo(container.bottom,bm)
+                            }
+
+                            /*constrain(cutout) {
+                                this.top.linkTo(container.bottom)
+                            }*/
+                        },
+                        progress = (1f - f),
+                        //modifier = Modifier.background(Color.Red)
+                    ) {
+                        Box(
                             modifier = Modifier
-                        ){
-                            RobotoText(
-                                "Split Balance",
-                                fontSize = 12.sep(),
-                                color = Color.White,
-
+                                .layoutId("container")
+                                .fillMaxWidth()
+                                .height(curveHeight.dep())
+                                .clip(
+                                    RoundedCornerShape(
+                                        0.dp, 0.dp, 0.dp, 47.dep()
+                                    )
                                 )
-                            Row(
-                                verticalAlignment = Alignment.Bottom
+                                .background(Color(0xff839BB9))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(
+                                        top = 13.dep(),
+                                        start = 9.dep()
+                                    )
                             ) {
-                                RobotoText(
-                                    localCurrency.current,
-                                    fontSize = 21.sep(),
-                                    color = Color.White
-                                )
-                                Spacer(modifier = Modifier.width(4.dep()))
-                                RobotoText(
-                                    "00",
-                                    fontSize = 30.sep(),
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .alignByBaseline()
-                                )
-                                RobotoText(
-                                    ".00",
-                                    fontSize = 14.sep(),
-                                    color = Color.White,
-                                    modifier = Modifier
-                                        .alignByBaseline()
-                                )
+                                Row() {
+                                    BackButton()
+                                    Spacer(modifier = Modifier.width(4.dep()))
+                                    RobotoText(
+                                        "Split",
+                                        fontSize = 14.sep(),
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
                             }
+
                         }
-                        Column(
-                            modifier = Modifier.padding(end = 16.dep())
-                        ){
+                        /*Box(
+                            modifier = Modifier
+                                .layoutId("cutout")
+                                .fillMaxWidth()
+                                .height(60.dp)
+                                .background(Color(0xff839BB9))
+                        ) {
                             Box(
                                 modifier = Modifier
-                                    .width(139.dep())
-                                    .height(32.dep())
-                                    .clip(RoundedCornerShape(50.dep()))
-                                    .background(Color.White),
-                                contentAlignment = Alignment.Center
-                            ){
-                                val wholeText = "00"
-                                val decimalText = "00"
-
-                                val currencyScript = SpanStyle(
-                                    baselineShift = BaselineShift.None,
-                                    fontSize = 12.sep()
-                                )
-
-                                val decimalScript = SpanStyle(
-                                    baselineShift = BaselineShift.None,
-                                    fontSize = 12.sep(),
-                                    fontWeight = FontWeight.Normal
-                                )
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ){
-                                    Text(
-                                        "You will get",
-                                        fontSize = 11.sep(),
-                                        color = Color(0xff839BB9)
+                                    .fillMaxWidth()
+                                    .height(60.dp)
+                                    .clip(
+                                        RoundedCornerShape(
+                                            0.dp, 47.dep(), 0.dp, 0.dp
+                                        )
                                     )
-                                    Spacer(modifier = Modifier.width(12.dep()))
-                                    Text(
-                                        text = buildAnnotatedString {
-                                            withStyle(currencyScript) {
-                                                append(localCurrency.current)
-                                                append(" ")
-                                            }
-                                            append(wholeText)
-                                            withStyle(decimalScript) {
-                                                append(".")
-                                                append(decimalText)
-                                            }
-                                        },
-                                        fontSize = 20.sep(),
-                                        color = Color(0xff37D8CF),
-                                        fontFamily = robotoFonts,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    .background(Color.White)
+                            ) {}
+                        }*/
+                        Row(
+                            modifier = Modifier
+                                .layoutId("row")
+                                .padding(top = 83.dep()),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row() {
+                                Spacer(modifier = Modifier.width((38 * (1 - f)).dep()))
+                                Column(
+                                    modifier = Modifier
+                                        .padding(top = 4.dep())
+                                ) {
+                                    RobotoText(
+                                        "Split Balance",
+                                        fontSize = 12.sep(),
+                                        color = Color.White,
+
+                                        )
+                                    Row(
+                                        verticalAlignment = Alignment.Bottom
+                                    ) {
+                                        RobotoText(
+                                            localCurrency.current,
+                                            fontSize = 21.sep(),
+                                            color = Color.White
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dep()))
+                                        RobotoText(
+                                            "00",
+                                            fontSize = 30.sep(),
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier
+                                                .alignByBaseline()
+                                        )
+                                        RobotoText(
+                                            ".00",
+                                            fontSize = 14.sep(),
+                                            color = Color.White,
+                                            modifier = Modifier
+                                                .alignByBaseline()
+                                        )
+                                    }
                                 }
                             }
-                            Box(
+
+                            /*Spacer(modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f))*/
+                            Column(
                                 modifier = Modifier
-                                    .width(139.dep())
-                                    .height(32.dep())
-                                    .clip(RoundedCornerShape(50.dep()))
-                                    .background(Color.White),
-                                contentAlignment = Alignment.Center
-                            ){
-                                val wholeText = "00"
-                                val decimalText = "00"
+                                    .padding(end = (16 * (1f - f)).dep())
+                                    .alpha(1f - f),
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .height((32 * (1f - f)).dep())
+                                        .clip(RoundedCornerShape((50 * (1f - f)).dep()))
+                                        .background(Color.White),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    val wholeText = "4000"
+                                    val decimalText = "50"
 
-                                val currencyScript = SpanStyle(
-                                    baselineShift = BaselineShift.None,
-                                    fontSize = 12.sep()
-                                )
+                                    val currencyScript = SpanStyle(
+                                        baselineShift = BaselineShift.None,
+                                        fontSize = (12 * (1f - f)).sep()
+                                    )
 
-                                val decimalScript = SpanStyle(
-                                    baselineShift = BaselineShift.None,
-                                    fontSize = 12.sep(),
-                                    fontWeight = FontWeight.Normal
-                                )
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ){
-                                    Text(
-                                        "You will pay",
-                                        fontSize = 11.sep(),
-                                        color = Color(0xff839BB9)
+                                    val decimalScript = SpanStyle(
+                                        baselineShift = BaselineShift.None,
+                                        fontSize = (12 * (1f - f)).sep(),
+                                        fontWeight = FontWeight.Normal
                                     )
-                                    Spacer(modifier = Modifier.width(12.dep()))
-                                    Text(
-                                        text = buildAnnotatedString {
-                                            withStyle(currencyScript) {
-                                                append(localCurrency.current)
-                                                append(" ")
-                                            }
-                                            append(wholeText)
-                                            withStyle(decimalScript) {
-                                                append(".")
-                                                append(decimalText)
-                                            }
-                                        },
-                                        fontSize = 20.sep(),
-                                        color = Color(0xffFF4077),
-                                        fontFamily = robotoFonts,
-                                        fontWeight = FontWeight.Bold
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = (12 * (1f - f)).dep()),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            "You will get",
+                                            fontSize = (11 * (1f - f)).sep(),
+                                            color = Color(0xff839BB9)
+                                        )
+                                        Spacer(modifier = Modifier.width((12 * (1f - f)).dep()))
+                                        Text(
+                                            text = buildAnnotatedString {
+                                                withStyle(currencyScript) {
+                                                    append(localCurrency.current)
+                                                    append(" ")
+                                                }
+                                                append(wholeText)
+                                                withStyle(decimalScript) {
+                                                    append(".")
+                                                    append(decimalText)
+                                                }
+                                            },
+                                            fontSize = (20 * (1f - f)).sep(),
+                                            color = Color(0xff37D8CF),
+                                            fontFamily = robotoFonts,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height((8 * (1f - f)).dep()))
+                                Box(
+                                    modifier = Modifier
+                                        .height((32 * (1f - f)).dep())
+                                        .clip(RoundedCornerShape((50 * (1f - f)).dep()))
+                                        .background(Color.White),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    val wholeText = "00"
+                                    val decimalText = "00"
+
+                                    val currencyScript = SpanStyle(
+                                        baselineShift = BaselineShift.None,
+                                        fontSize = (12 * (1f - f)).sep()
                                     )
+
+                                    val decimalScript = SpanStyle(
+                                        baselineShift = BaselineShift.None,
+                                        fontSize = (12 * (1f - f)).sep(),
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                    Row(
+                                        verticalAlignment = Alignment
+                                            .CenterVertically,
+                                        modifier = Modifier.padding(horizontal = (12 * (1f - f)).dep())
+                                    ) {
+                                        Text(
+                                            "You will pay",
+                                            fontSize = (11 * (1f - f)).sep(),
+                                            color = Color(0xff839BB9)
+                                        )
+                                        Spacer(modifier = Modifier.width((12 * (1f - f)).dep()))
+                                        Text(
+                                            text = buildAnnotatedString {
+                                                withStyle(currencyScript) {
+                                                    append(localCurrency.current)
+                                                    append(" ")
+                                                }
+                                                append(wholeText)
+                                                withStyle(decimalScript) {
+                                                    append(".")
+                                                    append(decimalText)
+                                                }
+                                            },
+                                            fontSize = (20 * (1f - f)).sep(),
+                                            color = Color(0xffFF4077),
+                                            fontFamily = robotoFonts,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
+
                         }
                     }
-
                 }
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp)
                         .background(Color(0xff839BB9))
-                ){
+                ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -345,9 +511,7 @@ fun MotionLayoutHeader(progress: Float) {
                                 )
                             )
                             .background(Color.White)
-                    ){
-
-                    }
+                    ) {}
                 }
             }
             Row(
@@ -355,7 +519,7 @@ fun MotionLayoutHeader(progress: Float) {
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 78.dep())
                     .alpha(f)
-            ){
+            ) {
                 YouWillGetCard(whole = "00", decimal = "00")
                 Spacer(modifier = Modifier.width(22.dep()))
                 YouWillPayCard(whole = "00", decimal = "00")
@@ -366,11 +530,12 @@ fun MotionLayoutHeader(progress: Float) {
                     .padding(
                         horizontal = 16.dep()
                     )
-            ){
+            ) {
                 ContactSearchBar()
             }
         }
-        val tabsList = listOf(MainActivity.ContactTabs.Groups.name, MainActivity.ContactTabs.Friends.name)
+        val tabsList =
+            listOf(MainActivity.ContactTabs.Groups.name, MainActivity.ContactTabs.Friends.name)
         var selectedIndex by remember { mutableStateOf(0) }
         Box(
             modifier = Modifier
@@ -378,7 +543,7 @@ fun MotionLayoutHeader(progress: Float) {
                 .height(73.dep())
                 .background(Color.White),
             contentAlignment = Alignment.Center
-        ){
+        ) {
 
             TabRow(
                 selectedTabIndex = selectedIndex,
@@ -426,20 +591,19 @@ fun MotionLayoutHeader(progress: Float) {
                 .fillMaxHeight()
                 .background(Color.White)
         ) {
-            if(selectedIndex==0){
+            if (selectedIndex == 0) {
 
-            }
-            else{
+            } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 17.dep()),
-                ){
+                ) {
                     items(
                         100,
                         key = {
                             it
                         }
-                    ){
+                    ) {
                         FriendItem(
                             selected = false,
                             friend = Friend(
@@ -464,10 +628,9 @@ private fun BackButton() {
         modifier = Modifier
             .size(24.dep())
             .clip(CircleShape)
-            .clickable { }
-        ,
+            .clickable { },
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Icon(
             modifier = Modifier.size(12.dep()),
             painter = painterResource(id = R.drawable.ic_back_arrow),
@@ -478,7 +641,7 @@ private fun BackButton() {
 }
 
 @Composable
-private fun JsonConstraintSetStart() = ConstraintSet (
+private fun JsonConstraintSetStart() = ConstraintSet(
     """ 
 {
 	poster: { 
@@ -506,7 +669,8 @@ private fun JsonConstraintSetStart() = ConstraintSet (
 @Composable
 private fun JsonConstraintSetEnd(
     dim: Float
-) = ConstraintSet (""" {
+) = ConstraintSet(
+    """ {
 	poster: { 
 		width: "spread",
 		height: $dim,
@@ -527,7 +691,8 @@ private fun JsonConstraintSetEnd(
 		top: ['tabs', 'bottom', 0],
 	}
                   
-} """)
+} """
+)
 
 @Composable
 internal fun ScrollableContent() {
@@ -548,10 +713,11 @@ internal fun ScrollableContent() {
 
 @Composable
 private fun ScrollableContentItem(id: String) {
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .height(100.dp)
-        .padding(16.dp),
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .padding(16.dp),
         backgroundColor = MaterialTheme.colors.surface,
         elevation = 4.dp
     ) {
