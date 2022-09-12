@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -66,7 +70,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         //SplitPageDemo()
                         Box(
-                            contentAlignment = Alignment.Center
                         ){
                             DatePickerUI()
                         }
@@ -76,174 +79,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalSnapperApi::class)
-    @Composable
-    private fun DatePickerUI() {
-        var scrolled by remember{ mutableStateOf(0f)}
-        val connection = remember {
-            object : NestedScrollConnection {
 
-                override fun onPreScroll(
-                    available: Offset,
-                    source: NestedScrollSource
-                ): Offset {
-                    scrolled += available.x
-                    Log.d("fdlkfldfd","${available.x.toString()},$scrolled")
-                    return Offset.Zero
-                }
-            }
-        }
-        /*
-        val lazyListState = rememberLazyListState()
-        LazyRow(
-            modifier = Modifier
-                //.nestedScroll(connection)
-                .fillMaxWidth()
-                .height(100.dp),
-            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-        ){
-            items(31){
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(60.dp)
-                        .border(
-                            BorderStroke(
-                                2.dp,
-                                Color.Red
-                            )
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    Text(it.toString())
-                    Text(it.toString())
-                }
-            }
-        }*/
-
-        val lazyListState: LazyListState = rememberLazyListState()
-
-        BoxWithConstraints {
-            /*val halfRowWidth = constraints.maxWidth / 2
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Green)
-                    .nestedScroll(connection),
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-                contentPadding = PaddingValues(horizontal = 180.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                items(31){i->
-                    val opacity by remember {
-                        derivedStateOf {
-                            val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
-                                .firstOrNull {
-                                    it.index == i
-                                }
-                                ?: return@derivedStateOf 0.5f
-                            val itemHalfSize = currentItemInfo.size / 2
-                            (1f - minOf(1f, abs(currentItemInfo.offset + itemHalfSize - halfRowWidth).toFloat() / halfRowWidth) * 0.5f)
-                        }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .height(60.dp)
-                            .alpha(opacity)
-                            .width((60*opacity).dp)
-                            .border(
-                                BorderStroke(
-                                    2.dp,
-                                    Color.Red
-                                )
-                            ),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        Text(i.toString())
-                        Text(i.toString())
-                    }
-                }
-            }*/
-            Row(){
-
-            }
-            MonthDayPicker()
-        }
-    }
-
-    @OptIn(ExperimentalSnapperApi::class)
-    @Composable
-    fun MonthDayPicker() {
-        val items = remember {
-            (1..31).map { it.toString() }
-        }
-        val listState = rememberLazyListState()
-        BoxWithConstraints {
-            val full = localFullWidth.current
-            val box = 64
-            val pad = (full - box)/2f
-            val halfRowWidth = constraints.maxWidth / 2 /*+ with(LocalDensity.current){pad.dep().toPx()}*/
-            Box(
-                modifier = Modifier
-                    .width(box.dp)
-                    .height(89.dp)
-                    .clip(RoundedCornerShape(13.dep()))
-                    .background(Color(0xff1A79E5))
-                    .align(Alignment.Center)
-            ){
-
-            }
-            LazyRow(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = pad.dep()),
-                flingBehavior = rememberSnapperFlingBehavior(listState),
-            ) {
-                itemsIndexed(items) { i, item ->
-                    val opacity by remember {
-                        derivedStateOf {
-                            val currentItemInfo = listState.layoutInfo.visibleItemsInfo
-                                .firstOrNull { it.index == i }
-                                ?: return@derivedStateOf 0.5f
-                            val itemHalfSize = currentItemInfo.size / 2
-                            (1f - minOf(1f, abs(currentItemInfo.offset).toFloat() / halfRowWidth) * 0.5f)
-                        }
-                    }
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            //.scale(opacity)
-                            .alpha(opacity)
-                            .width((opacity * box).dep())
-                            .height(89.dep())
-                        //.scale(opacity)
-                        //.background(Color.Blue)
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ){
-                            RobotoText(
-                                "Week",
-                                fontSize = (opacity*11).sep(),
-                                fontWeight = FontWeight.Bold,
-                                color = if(opacity in 0.9f..1f) Color.White else   Color(0xff243257)
-                            )
-                            Spacer(modifier = Modifier.height(12.dep()))
-                            RobotoText(
-                                i.toString(),
-                                fontSize = (opacity*11).sep(),
-                                fontWeight = FontWeight.Bold,
-                                color = if(opacity in 0.9f..1f) Color.White else   Color(0xff1A79E5)
-                            )
-                        }
-                    }
-                }
-            }
-
-        }
-    }
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
