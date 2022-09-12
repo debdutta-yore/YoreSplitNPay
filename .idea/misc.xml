@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/YoreSplitNPay/app/src/main/res/drawable-v24/ic_add_group.xml" value="0.225" />
         <entry key="..\:/AndroidStudioProjects/YoreSplitNPay/app/src/main/res/drawable-v24/ic_debited_arrow.xml" value="0.125" />
         <entry key="..\:/AndroidStudioProjects/YoreSplitNPay/app/src/main/res/drawable-v24/ic_search.xml" value="0.251" />
+        <entry key="..\:/AndroidStudioProjects/YoreSplitNPay/app/src/main/res/drawable/ic_add_group.xml" value="0.225" />
         <entry key="..\:/AndroidStudioProjects/YoreSplitNPay/app/src/main/res/drawable/ic_nextarrow.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/YoreSplitNPay/app/src/main/res/drawable/ic_search.xml" value="0.251" />
         <entry key="..\:/AndroidStudioProjects/YoreSplitNPay/app/src/main/res/drawable/ic_split_white.xml" value="0.1705" />

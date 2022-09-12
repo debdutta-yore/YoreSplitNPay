@@ -102,7 +102,7 @@ fun FriendItem(
                 )
             }
             Spacer(Modifier.weight(1f))
-            ArrowButton(
+            ArrowButton_ohezqf(
                 contentDescription = "arrow_button",
                 pressed = (isPressed || innerPressed || selected),
                 onClicked = {},

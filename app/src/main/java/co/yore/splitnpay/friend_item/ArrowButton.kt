@@ -19,7 +19,7 @@ import co.yore.splitnpay.dep
 import co.yore.splitnpay.friend_item.models.ArrowButtonConfiguration
 
 @Composable
-fun ArrowButton(
+fun ArrowButton_ohezqf(
     contentDescription: String,
     config: ArrowButtonConfiguration = ArrowButtonConfiguration(),
     pressed: Boolean,

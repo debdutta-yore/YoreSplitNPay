@@ -84,4 +84,6 @@ dependencies {
 
 
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha03"
+
+    implementation "dev.chrisbanes.snapper:snapper:0.3.0"
 }

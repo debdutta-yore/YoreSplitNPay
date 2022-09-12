@@ -115,11 +115,10 @@ fun SplitPage() {
                     if (swipingState.progress.to == SwipingStates.COLLAPSED)
                         swipingState.progress.fraction
                     else
-                        1f - swipingState.progress.fraction,
-                    {
-                        swipingState.performDrag(-0.01f)
-                    }
-                )
+                        1f - swipingState.progress.fraction
+                ) {
+                    swipingState.performDrag(-0.01f)
+                }
             }
         }
     }
@@ -136,86 +135,11 @@ fun MotionLayoutHeader(
     val bm = 34.dep()
     MotionLayout(
         //debug = EnumSet.of(MotionLayoutDebugFlags.SHOW_ALL),
-        start = JsonConstraintSetStart()
-        /*ConstraintSet{
-            val poster = createRefFor("poster")
-            constrain(poster) {
-                this.width = Dimension.matchParent
-                this.start.linkTo(parent.start,0.dp)
-                this.end.linkTo(parent.end,0.dp)
-                this.top.linkTo(parent.top,0.dp)
-            }
-            val tabs = createRefFor("tabs")
-            constrain(tabs) {
-                this.width = Dimension.matchParent
-                this.start.linkTo(parent.start,0.dp)
-                this.end.linkTo(parent.end,0.dp)
-                this.top.linkTo(poster.bottom,0.dp)
-            }
-            val content = createRefFor("content")
-            constrain(content) {
-                this.width = Dimension.matchParent
-                this.start.linkTo(parent.start,0.dp)
-                this.end.linkTo(parent.end,0.dp)
-                this.top.linkTo(tabs.bottom,0.dp)
-            }
-            //////////////////////////////
-            val row = createRefFor("row")
-            val container = createRefFor("container")
-            val cutout = createRefFor("cutout")
-
-            constrain(row) {
-                this.width = Dimension.wrapContent
-                this.centerHorizontallyTo(container)
-            }
-
-            constrain(cutout) {
-                this.top.linkTo(container.bottom)
-            }
-
-        }*/,
-        end = JsonConstraintSetEnd(d)
-        /*ConstraintSet{
-            val poster = createRefFor("poster")
-            constrain(poster) {
-                //this.width = Dimension.matchParent
-                this.height = Dimension.value(dd)
-                this.start.linkTo(parent.start,0.dp)
-                this.end.linkTo(parent.end,0.dp)
-                this.top.linkTo(parent.top,0.dp)
-            }
-            val tabs = createRefFor("tabs")
-            constrain(tabs) {
-                this.width = Dimension.matchParent
-                this.start.linkTo(parent.start,0.dp)
-                this.end.linkTo(parent.end,0.dp)
-                this.top.linkTo(poster.bottom,0.dp)
-            }
-            val content = createRefFor("content")
-            constrain(content) {
-                this.width = Dimension.matchParent
-                this.start.linkTo(parent.start,0.dp)
-                this.end.linkTo(parent.end,0.dp)
-                this.top.linkTo(tabs.bottom,0.dp)
-            }
-            /////////////////////////////////////////
-            val row = createRefFor("row")
-            val container = createRefFor("container")
-            val cutout = createRefFor("cutout")
-
-            constrain(row) {
-                this.width = Dimension.matchParent
-                this.centerHorizontallyTo(container)
-                this.bottom.linkTo(container.bottom,bm)
-            }
-
-            constrain(cutout) {
-                this.top.linkTo(container.bottom)
-            }
-        }*/,
+        start = JsonConstraintSetStart(),
+        end = JsonConstraintSetEnd(d),
         progress = progress,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
     ) {
         var curveHeight by remember { mutableStateOf(0f) }
 
@@ -535,7 +459,7 @@ fun MotionLayoutHeader(
             }
         }
         val tabsList =
-            listOf(MainActivity.ContactTabs.Groups.name, MainActivity.ContactTabs.Friends.name)
+            listOf(ContactTabs.Groups.name, ContactTabs.Friends.name)
         var selectedIndex by remember { mutableStateOf(0) }
         Box(
             modifier = Modifier
@@ -588,11 +512,52 @@ fun MotionLayoutHeader(
         Box(
             Modifier
                 .layoutId("content")
-                .fillMaxHeight()
-                .background(Color.White)
+                .background(Color.White),
+            contentAlignment = Alignment.TopCenter
         ) {
             if (selectedIndex == 0) {
+                Column(
+                    modifier = Modifier
+                        //.fillMaxWidth()
+                        //.align(Alignment.Center)
+                            ,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
+                    Spacer(modifier = Modifier.height(58.dep()))
+                    RobotoText(
+                        text = "No group has been created yet",
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        color = colorResource(id = R.color.splitGreyCard),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sep()
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(
+                            13f.dep()
+                        )
+                    )
+
+                    Button(modifier = Modifier
+                        .width(90f.dep())
+                        .height(35f.dep()),
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = colorResource(
+                                id = R.color.splitGreyCard
+                            )
+                        ),
+                        onClick = {  }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_add_group),
+                            contentDescription = "add group",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(18.dep())
+                        )
+                    }
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -658,9 +623,11 @@ private fun JsonConstraintSetStart() = ConstraintSet(
 	},
 	content: {
 		width: "spread",
+        height: "spread",
 		start: ['parent', 'start', 0],
 		end: ['parent', 'end', 0],
 		top: ['tabs', 'bottom', ],
+		bottom: ['parent', 'bottom', 0],
 	}
 } 
 """
@@ -686,9 +653,11 @@ private fun JsonConstraintSetEnd(
 	},
 	content: {
 		width: "spread",
+        height: "spread",
 		start: ['parent', 'start', 0],
 		end: ['parent', 'end', 0],
 		top: ['tabs', 'bottom', 0],
+		bottom: ['parent', 'bottom', 0],
 	}
                   
 } """
