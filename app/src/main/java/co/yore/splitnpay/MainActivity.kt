@@ -70,8 +70,20 @@ class MainActivity : ComponentActivity() {
                     ) {
                         //SplitPageDemo()
                         Box(
+                            contentAlignment = Alignment.Center
                         ){
-                            DatePickerUI()
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ){
+                                Divider()
+                                DatePickerUI(
+                                    Kal.Date(17,5,2022),
+                                    Kal.Date(17,5,1950),
+                                    Kal.Date(17,5,2072),
+                                )
+                                Divider()
+                            }
                         }
                     }
                 }
