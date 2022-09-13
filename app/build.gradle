@@ -6,13 +6,13 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('E:\\AndroidStudioProjects\\YoreSplitNPay\\yore_split_n_pay.jks')
+            storeFile file('../yore_split_n_pay.jks')
             storePassword '12345678'
             keyAlias 'yore'
             keyPassword '12345678'
         }
         release {
-            storeFile file('E:\\AndroidStudioProjects\\YoreSplitNPay\\yore_split_n_pay.jks')
+            storeFile file('../yore_split_n_pay.jks')
             storePassword '12345678'
             keyAlias 'yore'
             keyPassword '12345678'

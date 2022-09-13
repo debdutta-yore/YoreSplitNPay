@@ -77,12 +77,44 @@ class MainActivity : ComponentActivity() {
                                     .fillMaxWidth()
                             ){
                                 Divider()
+                                var selectedDay by remember {
+                                    mutableStateOf<Int?>(17)
+                                }
+                                var selectedMonth by remember {
+                                    mutableStateOf<Kal.Month?>(Kal.Month.Apr)
+                                }
+                                var selectedYear by remember {
+                                    mutableStateOf(2022)
+                                }
                                 DatePickerUI(
-                                    Kal.Date(17,5,2022),
-                                    Kal.Date(17,5,1950),
-                                    Kal.Date(17,5,2072),
+                                    selectedDay,
+                                    selectedMonth,
+                                    selectedYear,
+                                    Kal.Date.create(22,3,2022),
+                                    Kal.Date.create(23,8,2026),
+                                    {
+                                        Log.d("fdkfdf",it.toString())
+                                        selectedYear = it
+                                        selectedMonth = null
+                                        selectedDay = null
+                                    },
+                                    {
+                                        Log.d("fdkfdf",it.toString())
+                                        selectedMonth = it
+                                        selectedDay = null
+                                    },
+                                    {
+                                        Log.d("fdkfdf",it.toString())
+                                        selectedDay = it
+                                    }
                                 )
                                 Divider()
+                                val myDate by remember {
+                                    derivedStateOf {
+                                        "$selectedDay/${(selectedMonth?.ordinal?:-1)+1}/$selectedYear"
+                                    }
+                                }
+                                Text(myDate)
                             }
                         }
                     }
