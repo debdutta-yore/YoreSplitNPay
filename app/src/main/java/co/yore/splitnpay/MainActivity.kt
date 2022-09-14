@@ -5,55 +5,17 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import co.yore.splitnpay.friend_item.FriendItem
-import co.yore.splitnpay.friend_item.models.Friend
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
-import co.yore.splitnpay.you_will_get_card.YouWillGetCard
-import co.yore.splitnpay.you_will_get_card.YouWillPayCard
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
-import kotlin.math.abs
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -86,12 +48,14 @@ class MainActivity : ComponentActivity() {
                                 var selectedYear by remember {
                                     mutableStateOf(2022)
                                 }
-                                DatePickerUI(
-                                    selectedDay,
-                                    selectedMonth,
-                                    selectedYear,
-                                    Kal.Date.create(22,3,2022),
-                                    Kal.Date.create(23,8,2026),
+                                YoreDatePicker(
+                                    YoreDatePickerData(
+                                        selectedDay,
+                                        selectedMonth,
+                                        selectedYear,
+                                        Kal.Date.create(22,3,2022),
+                                        Kal.Date.create(23,8,2026),
+                                    ),
                                     {
                                         Log.d("fdkfdf",it.toString())
                                         selectedYear = it
@@ -122,8 +86,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable

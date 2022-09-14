@@ -3,9 +3,8 @@ package co.yore.splitnpay
 import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -26,10 +25,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Velocity
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberLazyListSnapperLayoutInfo
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -37,6 +43,7 @@ import kotlinx.coroutines.selects.select
 import java.util.*
 import kotlin.IllegalStateException
 import kotlin.math.abs
+import kotlin.math.min
 
 object Kal{
     data class DateDifference(
@@ -242,13 +249,17 @@ object Kal{
     }
 }
 
+data class YoreDatePickerData(
+    val selectedDay: Int? = Calendar.getInstance().get(Calendar.DATE),
+    val selectedMonth: Kal.Month? = enumValues<Kal.Month>()[Calendar.getInstance().get(Calendar.MONTH)-1],
+    val selectedYear: Int = Calendar.getInstance().get(Calendar.YEAR),
+    val minDate: Kal.Date? = null,
+    val maxDate: Kal.Date? = null
+)
+
 @Composable
-fun DatePickerUI(
-    selectedDay: Int?,
-    selectedMonth: Kal.Month?,
-    selectedYear: Int,
-    minDate: Kal.Date?,
-    maxDate: Kal.Date?,
+fun YoreDatePicker(
+    yoreDatePickerData: YoreDatePickerData = YoreDatePickerData(),
     onYearClick: (Int)->Unit,
     onMonthClick: (Kal.Month)->Unit,
     onDayClick: (Int)->Unit
@@ -262,9 +273,9 @@ fun DatePickerUI(
             modifier = Modifier.fillMaxWidth()
         ){
             YearSwitcher(
-                selectedYear,
-                minDate = minDate,
-                maxDate = maxDate,
+                yoreDatePickerData.selectedYear,
+                minDate = yoreDatePickerData.minDate,
+                maxDate = yoreDatePickerData.maxDate,
                 onMode = {
                     yearPicking = it
                 },
@@ -288,91 +299,95 @@ fun DatePickerUI(
             }
         }*/
         var minDay by remember {
-            Log.d("fjldfjdklf","1")
             mutableStateOf(1)
         }
         var maxDay by remember {
             mutableStateOf(31)
         }
-        LaunchedEffect(key1 = minDate){
-            minMonth = if(selectedYear==minDate?.year){
-                enumValues<Kal.Month>()[minDate.month-1]
+        LaunchedEffect(key1 = yoreDatePickerData.minDate){
+            minMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.minDate?.year){
+                enumValues<Kal.Month>()[yoreDatePickerData.minDate.month-1]
             }
             else{
                 Kal.Month.Jan
             }
 
             Log.d("fjldfjdklf","2")
-            if(minDate!=null&&selectedMonth!=null&&minDate.year==selectedYear&&minDate.month==selectedMonth.ordinal+1){
-                minDay = minDate.day
+            if(yoreDatePickerData.minDate!=null&&yoreDatePickerData.selectedMonth!=null&&yoreDatePickerData.minDate.year==yoreDatePickerData.selectedYear&&yoreDatePickerData.minDate.month==yoreDatePickerData.selectedMonth.ordinal+1){
+                minDay = yoreDatePickerData.minDate.day
             }
             else{
                 minDay = 1
             }
             Log.d("fjldfjdklf","$minDay,$maxDay")
         }
-        LaunchedEffect(key1 = maxDate){
-            maxMonth = if(selectedYear==maxDate?.year){
-                enumValues<Kal.Month>()[maxDate.month-1]
+        LaunchedEffect(key1 = yoreDatePickerData.maxDate){
+            maxMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.maxDate?.year){
+                enumValues<Kal.Month>()[yoreDatePickerData.maxDate.month-1]
             }
             else{
                 Kal.Month.Dec
             }
 
             Log.d("fjldfjdklf","3")
-            if(maxDate!=null&&selectedMonth!=null&&maxDate.year==selectedYear&&maxDate.month==selectedMonth.ordinal+1){
-                maxDay = maxDate.day
+            if(yoreDatePickerData.maxDate!=null&&yoreDatePickerData.selectedMonth!=null&&yoreDatePickerData.maxDate.year==yoreDatePickerData.selectedYear&&yoreDatePickerData.maxDate.month==yoreDatePickerData.selectedMonth.ordinal+1){
+                maxDay = yoreDatePickerData.maxDate.day
             }
             else{
                 maxDay = 31
             }
             Log.d("fjldfjdklf","$minDay,$maxDay")
         }
-        LaunchedEffect(key1 = selectedYear){
+        LaunchedEffect(key1 = yoreDatePickerData.selectedYear){
             Log.d("fjldfjdklf","4")
-            if(minDate!=null&&selectedMonth!=null&&minDate.year==selectedYear&&minDate.month==selectedMonth.ordinal+1){
-                minDay = minDate.day
+            if(yoreDatePickerData.minDate!=null&&yoreDatePickerData.selectedMonth!=null&&yoreDatePickerData.minDate.year==yoreDatePickerData.selectedYear&&yoreDatePickerData.minDate.month==yoreDatePickerData.selectedMonth.ordinal+1){
+                minDay = yoreDatePickerData.minDate.day
             }
             else{
                 minDay = 1
             }
-            if(maxDate!=null&&selectedMonth!=null&&maxDate.year==selectedYear&&maxDate.month==selectedMonth.ordinal+1){
-                maxDay = maxDate.day
+            if(yoreDatePickerData.maxDate!=null&&yoreDatePickerData.selectedMonth!=null&&yoreDatePickerData.maxDate.year==yoreDatePickerData.selectedYear&&yoreDatePickerData.maxDate.month==yoreDatePickerData.selectedMonth.ordinal+1){
+                maxDay = yoreDatePickerData.maxDate.day
             }
             else{
                 maxDay = 31
             }
             Log.d("fjldfjdklf","$minDay,$maxDay")
-            minMonth = if(selectedYear==minDate?.year){
-                enumValues<Kal.Month>()[minDate.month-1]
+            minMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.minDate?.year){
+                enumValues<Kal.Month>()[yoreDatePickerData.minDate.month-1]
             }
             else{
                 Kal.Month.Jan
             }
-            maxMonth = if(selectedYear==maxDate?.year){
-                enumValues<Kal.Month>()[maxDate.month-1]
+            maxMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.maxDate?.year){
+                enumValues<Kal.Month>()[yoreDatePickerData.maxDate.month-1]
             }
             else{
                 Kal.Month.Dec
             }
         }
-        LaunchedEffect(key1 = selectedMonth) {
+        LaunchedEffect(key1 = yoreDatePickerData.selectedMonth) {
             Log.d("fjldfjdklf","5")
-            if (minDate != null && selectedMonth != null && minDate.year == selectedYear && minDate.month == selectedMonth.ordinal + 1) {
-                minDay = minDate.day
+            if (yoreDatePickerData.minDate != null && yoreDatePickerData.selectedMonth != null && yoreDatePickerData.minDate.year == yoreDatePickerData.selectedYear && yoreDatePickerData.minDate.month == yoreDatePickerData.selectedMonth.ordinal + 1) {
+                minDay = yoreDatePickerData.minDate.day
             }
             else{
                 minDay = 1
             }
-            if (maxDate != null && selectedMonth != null && maxDate.year == selectedYear && maxDate.month == selectedMonth.ordinal + 1) {
-                maxDay = maxDate.day
+            if (yoreDatePickerData.maxDate != null && yoreDatePickerData.selectedMonth != null && yoreDatePickerData.maxDate.year == yoreDatePickerData.selectedYear && yoreDatePickerData.maxDate.month == yoreDatePickerData.selectedMonth.ordinal + 1) {
+                maxDay = yoreDatePickerData.maxDate.day
             }
             else{
                 maxDay = 31
             }
             Log.d("fjldfjdklf","$minDay,$maxDay")
         }
-
+        LaunchedEffect(key1 = minDay){
+            Log.d("fjldfjld","min=$minDay")
+        }
+        LaunchedEffect(key1 = maxDay){
+            Log.d("fjldfjld","max=$maxDay")
+        }
         Spacer(modifier = Modifier.height(24.dep()))
         AnimatedVisibility(
             !yearPicking
@@ -383,9 +398,9 @@ fun DatePickerUI(
                 modifier = Modifier.padding(top = 42.dep())
             ){
                 MonthPicker(
-                    selectedYear,
-                    selectedMonth,
-                    selectedDay,
+                    yoreDatePickerData.selectedYear,
+                    yoreDatePickerData.selectedMonth,
+                    yoreDatePickerData.selectedDay,
                     minMonth,
                     maxMonth,
                     minDay,
@@ -872,7 +887,7 @@ fun YearSwitcher(
 
 }
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun MonthDayPicker(
     days: List<Kal.Day>,
@@ -881,6 +896,18 @@ fun MonthDayPicker(
     maxDay: Int,
     onDaySelected: (Int) -> Unit
 ) {
+    var _minDay by remember {
+        mutableStateOf(minDay)
+    }
+    var _maxDay by remember {
+        mutableStateOf(maxDay)
+    }
+    LaunchedEffect(key1 = minDay){
+        _minDay = minDay
+    }
+    LaunchedEffect(key1 = maxDay){
+        _maxDay = maxDay
+    }
     val listState = rememberLazyListState()
     val layoutInfo = rememberLazyListSnapperLayoutInfo(listState)
     LaunchedEffect(key1 = selectedDay){
@@ -893,22 +920,55 @@ fun MonthDayPicker(
             onDaySelected(1)
         }
     }
+    var currentItem by remember {
+        mutableStateOf(0)
+    }
+
+    var initiateClick by remember {
+        mutableStateOf(-1)
+    }
+    var apparentCurrentItem by remember {
+        mutableStateOf(-1)
+    }
+    LaunchedEffect(key1 = apparentCurrentItem){
+        Log.d("fldfjldf",apparentCurrentItem.toString())
+        if(apparentCurrentItem<_minDay-1){
+            Log.d("fldfjldf","initiating to ${_minDay-1}")
+            listState.animateScrollToItem(_minDay-1)
+            return@LaunchedEffect
+        }
+        if(apparentCurrentItem>_maxDay-1){
+            Log.d("fldfjldf","initiating to ${_maxDay-1}")
+            listState.animateScrollToItem(_maxDay-1)
+            return@LaunchedEffect
+        }
+    }
     LaunchedEffect(key1 = listState.isScrollInProgress){
         if(!listState.isScrollInProgress){
             val d = layoutInfo.currentItem
             d?.let {
-                Log.d("fldkf","def")
-                onDaySelected(d.index+1)
+                Log.d("fjldfjdlfd","current=$currentItem")
+                currentItem = (d.index)
+                if(currentItem<_minDay-1){
+                    Log.d("fldfjldf","initiating to ${_minDay-1},$currentItem,$_minDay")
+                    listState.animateScrollToItem(_minDay-1)
+                    return@LaunchedEffect
+                }
+                if(currentItem>_maxDay-1){
+                    Log.d("fldfjldf","initiating to ${_maxDay-1},$currentItem,$_maxDay")
+                    listState.animateScrollToItem(_maxDay-1)
+                    return@LaunchedEffect
+                }
+                onDaySelected(currentItem+1)
             }
         }
     }
-    var initiateClick by remember {
-        mutableStateOf(-1)
-    }
     LaunchedEffect(key1 = initiateClick){
+        Log.d("fldfjldf","try to going to $initiateClick")
         if(initiateClick<0){
             return@LaunchedEffect
         }
+        Log.d("fldfjldf","going to $initiateClick")
         listState.animateScrollToItem(initiateClick)
     }
     BoxWithConstraints(
@@ -931,64 +991,87 @@ fun MonthDayPicker(
         ){
 
         }
-        LazyRow(
-            state = listState,
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = pad.dep()),
-            flingBehavior = rememberSnapperFlingBehavior(listState),
+        val itemPos by remember {
+            mutableStateOf(mutableMapOf<Int,Float>())
+        }
+        CompositionLocalProvider(
+            LocalOverscrollConfiguration provides null
         ) {
-            itemsIndexed(days) { i, item ->
-                val opacity by remember {
-                    derivedStateOf {
-                        val currentItemInfo = listState.layoutInfo.visibleItemsInfo
-                            .firstOrNull { it.index == i }
-                            ?: return@derivedStateOf 0.5f
-                        val itemHalfSize = currentItemInfo.size / 2
-                        (1f - minOf(1f, abs(currentItemInfo.offset).toFloat() / halfRowWidth) * 0.5f)
+            LazyRow(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                ,
+                contentPadding = PaddingValues(horizontal = pad.dep()),
+                flingBehavior = rememberSnapperFlingBehavior(listState),
+            ) {
+                itemsIndexed(
+                    days,
+                    key = {i,item->
+                        item.dayOfMonth
                     }
-                }
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        //.scale(opacity)
-                        .alpha(opacity)
-                        .width((/*opacity **/ box).dep())
-                        .fillMaxHeight()
-                        .clickable {
-                            initiateClick = item.dayOfMonth - 1
+                ) { i, item ->
+                    val opacity by remember {
+                        derivedStateOf {
+                            val currentItemInfo = listState.layoutInfo.visibleItemsInfo
+                                .firstOrNull { it.index == i }
+                                ?: return@derivedStateOf 0.5f
+                            val itemHalfSize = currentItemInfo.size / 2
+                            (1f - minOf(1f, abs(currentItemInfo.offset).toFloat() / halfRowWidth) * 0.5f)
                         }
-                    //.scale(opacity)
-                    //.background(Color.Blue)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        RobotoText(
-                            item.weekDay.toString(),
-                            fontSize = (opacity*11).sep(),
-                            fontWeight = FontWeight.Bold,
-                            color =
-                            if(item.dayOfMonth !in minDay..maxDay)
-                                Color.LightGray
-                            else if(opacity in 0.9f..1f) Color.White
-                            else   Color(0xff243257)
-                        )
-                        Spacer(modifier = Modifier.height(12.dep()))
-                        RobotoText(
-                            item.dayOfMonth.toString(),
-                            fontSize = (/*opacity**/11).sep(),
-                            fontWeight = FontWeight.Bold,
-                            color =
-                            if(item.dayOfMonth !in minDay..maxDay)
-                                Color.LightGray
-                            else if(opacity in 0.9f..1f) Color.White
-                            else   Color(0xff1A79E5)
-                        )
+                    }
+                    LaunchedEffect(key1 = opacity){
+                        if(opacity in 0.98f..1f){
+                            apparentCurrentItem = i
+                        }
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            //.scale(opacity)
+                            .alpha(opacity)
+                            .width((/*opacity **/ box).dep())
+                            .fillMaxHeight()
+                            .clickable {
+                                initiateClick = item.dayOfMonth - 1
+                                Log.d("fdlkfjd", "$itemPos")
+                            }
+                            .onGloballyPositioned {
+                                val p = it.positionInParent()
+                                it.size
+                                itemPos[i] = p.x
+                            }
+                        //.scale(opacity)
+                        //.background(Color.Blue)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            RobotoText(
+                                item.weekDay.toString(),
+                                fontSize = (opacity*11).sep(),
+                                fontWeight = FontWeight.Bold,
+                                color =
+                                if(item.dayOfMonth !in minDay..maxDay)
+                                    Color.LightGray
+                                else if(opacity in 0.9f..1f) Color.White
+                                else   Color(0xff243257)
+                            )
+                            Spacer(modifier = Modifier.height(12.dep()))
+                            RobotoText(
+                                item.dayOfMonth.toString(),
+                                fontSize = (/*opacity**/11).sep(),
+                                fontWeight = FontWeight.Bold,
+                                color =
+                                if(item.dayOfMonth !in minDay..maxDay)
+                                    Color.LightGray
+                                else if(opacity in 0.9f..1f) Color.White
+                                else   Color(0xff1A79E5)
+                            )
+                        }
                     }
                 }
             }
         }
-
     }
 }
