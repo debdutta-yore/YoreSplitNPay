@@ -6,6 +6,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -170,7 +171,26 @@ object Kal{
         Jan,        Feb,        Mar,
         Apr,        May,        Jun,
         Jul,        Aug,        Sep,
-        Oct,        Nov,        Dec
+        Oct,        Nov,        Dec;
+        companion object{
+            fun name(month: Int): String{
+                return when(month){
+                    1->"Jan"
+                    2->"Feb"
+                    3->"Mar"
+                    4->"Apr"
+                    5->"May"
+                    6->"Jun"
+                    7->"Jul"
+                    8->"Aug"
+                    9->"Sep"
+                    10->"Oct"
+                    11->"Nov"
+                    12->"Dec"
+                    else->""
+                }
+            }
+        }
     }
     enum class WeekDay{
         SUN,
@@ -240,7 +260,7 @@ object Kal{
 
 data class YoreDatePickerData(
     val selectedDay: Int? = Calendar.getInstance().get(Calendar.DATE),
-    val selectedMonth: Kal.Month? = enumValues<Kal.Month>()[Calendar.getInstance().get(Calendar.MONTH)-1],
+    val selectedMonth: Int? = Calendar.getInstance().get(Calendar.MONTH)+1,
     val selectedYear: Int = Calendar.getInstance().get(Calendar.YEAR),
     val minDate: Kal.Date? = null,
     val maxDate: Kal.Date? = null
@@ -250,7 +270,7 @@ data class YoreDatePickerData(
 fun YoreDatePicker(
     yoreDatePickerData: YoreDatePickerData = YoreDatePickerData(),
     onYearClick: (Int)->Unit,
-    onMonthClick: (Kal.Month)->Unit,
+    onMonthClick: (Int)->Unit,
     onDaySelect: (Int)->Unit
 ) {
     Box {
@@ -262,9 +282,11 @@ fun YoreDatePicker(
             modifier = Modifier.fillMaxWidth()
         ){
             YearSwitcher(
-                yoreDatePickerData.selectedYear,
-                minDate = yoreDatePickerData.minDate,
-                maxDate = yoreDatePickerData.maxDate,
+                YearSwitcherData(
+                    yoreDatePickerData.selectedYear,
+                    minDate = yoreDatePickerData.minDate,
+                    maxDate = yoreDatePickerData.maxDate,
+                ),
                 onMode = {
                     yearPicking = it
                 },
@@ -274,10 +296,10 @@ fun YoreDatePicker(
             )
         }
         var minMonth by remember {
-            mutableStateOf(Kal.Month.Jan)
+            mutableStateOf(1)
         }
         var maxMonth by remember {
-            mutableStateOf(Kal.Month.Dec)
+            mutableStateOf(12)
         }
         var minDay by remember {
             mutableStateOf(1)
@@ -287,16 +309,16 @@ fun YoreDatePicker(
         }
         LaunchedEffect(key1 = yoreDatePickerData){
             minMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.minDate?.year){
-                enumValues<Kal.Month>()[yoreDatePickerData.minDate.month-1]
+                yoreDatePickerData.minDate.month
             }
             else{
-                Kal.Month.Jan
+                1
             }
             minDay = if(
                 yoreDatePickerData.minDate!=null
                 &&yoreDatePickerData.selectedMonth!=null
                 &&yoreDatePickerData.minDate.year==yoreDatePickerData.selectedYear
-                &&yoreDatePickerData.minDate.month==yoreDatePickerData.selectedMonth.ordinal+1
+                &&yoreDatePickerData.minDate.month==yoreDatePickerData.selectedMonth
             ){
                 yoreDatePickerData.minDate.day
             } else{
@@ -304,12 +326,16 @@ fun YoreDatePicker(
             }
 
             maxMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.maxDate?.year){
-                enumValues<Kal.Month>()[yoreDatePickerData.maxDate.month-1]
+                yoreDatePickerData.maxDate.month
             }
             else{
-                Kal.Month.Dec
+                12
             }
-            maxDay = if(yoreDatePickerData.maxDate!=null&&yoreDatePickerData.selectedMonth!=null&&yoreDatePickerData.maxDate.year==yoreDatePickerData.selectedYear&&yoreDatePickerData.maxDate.month==yoreDatePickerData.selectedMonth.ordinal+1){
+            maxDay = if(
+                yoreDatePickerData.maxDate!=null
+                &&yoreDatePickerData.selectedMonth!=null
+                &&yoreDatePickerData.maxDate.year==yoreDatePickerData.selectedYear
+                &&yoreDatePickerData.maxDate.month==yoreDatePickerData.selectedMonth){
                 yoreDatePickerData.maxDate.day
             } else{
                 31
@@ -347,10 +373,10 @@ fun YoreDatePicker(
 
 data class MonthPickerData(
     val year: Int,
-    val selectedMonth: Kal.Month?,
+    val selectedMonth: Int?,
     val selectedDay: Int?,
-    val minMonth: Kal.Month,
-    val maxMonth: Kal.Month,
+    val minMonth: Int,
+    val maxMonth: Int,
     val minDay: Int,
     val maxDay: Int,
 )
@@ -358,7 +384,7 @@ data class MonthPickerData(
 @Composable
 fun MonthPicker(
     monthPickerData: MonthPickerData,
-    onMonthClick: (Kal.Month) -> Unit,
+    onMonthClick: (Int) -> Unit,
     onDayClick: (Int)->Unit
 ) {
     val time by remember { mutableStateOf(500) }
@@ -383,7 +409,7 @@ fun MonthPicker(
         ){
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Jan,
+                    1,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -393,7 +419,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Feb,
+                    2,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -403,7 +429,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Mar,
+                    3,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -413,15 +439,15 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Kal.Month &&
-                    monthPickerData.selectedMonth in Kal.Month.Jan..Kal.Month.Mar,
+            monthPickerData.selectedMonth is Int &&
+                    monthPickerData.selectedMonth in 1..3,
             enter = enter,
             exit = exit,
         ){
             monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth.ordinal+1),
+                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
                         monthPickerData.selectedDay,
                         monthPickerData.minDay,
                         monthPickerData.maxDay
@@ -432,8 +458,8 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Kal.Month &&
-                    monthPickerData.selectedMonth !in Kal.Month.Jan..Kal.Month.Mar,
+            monthPickerData.selectedMonth is Int &&
+                    monthPickerData.selectedMonth !in 1..3,
             enter = enter,
             exit = exit,
         ){
@@ -448,7 +474,7 @@ fun MonthPicker(
         ){
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Apr,
+                    4,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -458,7 +484,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.May,
+                    5,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -468,7 +494,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Jun,
+                    6,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -478,15 +504,15 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Kal.Month &&
-                    monthPickerData.selectedMonth in Kal.Month.Apr..Kal.Month.Jun,
+            monthPickerData.selectedMonth is Int &&
+                    monthPickerData.selectedMonth in 4..6,
             enter = enter,
             exit = exit,
         ){
             monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth.ordinal+1),
+                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
                         monthPickerData.selectedDay,
                         monthPickerData.minDay,
                         monthPickerData.maxDay
@@ -497,8 +523,8 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Kal.Month &&
-                    monthPickerData.selectedMonth !in Kal.Month.Apr..Kal.Month.Jun,
+            monthPickerData.selectedMonth is Int &&
+                    monthPickerData.selectedMonth !in 4..6,
             enter = enter,
             exit = exit,
         ){
@@ -513,7 +539,7 @@ fun MonthPicker(
         ){
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Jul,
+                    7,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -523,7 +549,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Aug,
+                    8,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -533,7 +559,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Sep,
+                    9,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -543,15 +569,15 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Kal.Month &&
-                    monthPickerData.selectedMonth in Kal.Month.Jul..Kal.Month.Sep,
+            monthPickerData.selectedMonth is Int &&
+                    monthPickerData.selectedMonth in 7..9,
             enter = enter,
             exit = exit,
         ){
             monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth.ordinal+1),
+                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
                         monthPickerData.selectedDay,
                         monthPickerData.minDay,
                         monthPickerData.maxDay
@@ -562,8 +588,8 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Kal.Month &&
-                    monthPickerData.selectedMonth !in Kal.Month.Jul..Kal.Month.Sep,
+            monthPickerData.selectedMonth is Int &&
+                    monthPickerData.selectedMonth !in 7..9,
             enter = enter,
             exit = exit,
         ){
@@ -578,7 +604,7 @@ fun MonthPicker(
         ){
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Oct,
+                    10,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -588,7 +614,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Nov,
+                    11,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -598,7 +624,7 @@ fun MonthPicker(
             }
             MonthUI(
                 MonthUIData(
-                    Kal.Month.Dec,
+                    12,
                     monthPickerData.selectedMonth,
                     monthPickerData.minMonth,
                     monthPickerData.maxMonth
@@ -608,15 +634,15 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Kal.Month &&
-                    monthPickerData.selectedMonth in Kal.Month.Oct..Kal.Month.Dec,
+            monthPickerData.selectedMonth is Int &&
+                    monthPickerData.selectedMonth in 10..12,
             enter = enter,
             exit = exit,
         ){
             monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth.ordinal+1),
+                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
                         monthPickerData.selectedDay,
                         monthPickerData.minDay,
                         monthPickerData.maxDay
@@ -630,24 +656,56 @@ fun MonthPicker(
 }
 
 data class MonthUIData(
-    val month: Kal.Month,
-    val selected: Kal.Month?,
-    val minMonth: Kal.Month,
-    val maxMonth: Kal.Month,
+    val month: Int,
+    val selected: Int?,
+    val minMonth: Int,
+    val maxMonth: Int,
+)
+
+data class MonthUIConfiguration(
+    val width: Float = 74f,
+    val height: Float = 42f,
+    val borderRadius: Float = 21f,
+    val selectedBackgroundColor: Color = Color(0xffEDF5FF),
+    val fontSize: Float = 14f,
+    val disabledColor: Color = Color.Gray,
+    val activeColor: Color = Color(0xff1B79E6),
+    val color: Color = Color(0xff243257)
 )
 
 @Composable
 fun MonthUI(
     monthUIData: MonthUIData,
-    onClick: (Kal.Month)->Unit
+    config: MonthUIConfiguration = MonthUIConfiguration(),
+    onClick: (Int)->Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+    val computedBackgroundColor by remember {
+        derivedStateOf {
+            if (
+                monthUIData.month in monthUIData.minMonth..monthUIData.maxMonth
+                && monthUIData.selected == monthUIData.month || isPressed
+            )
+                config.selectedBackgroundColor
+            else Color.Transparent
+        }
+    }
+    val computedColor by remember {
+        derivedStateOf {
+            if(monthUIData.month !in monthUIData.minMonth..monthUIData.maxMonth)
+                config.disabledColor
+            else if(monthUIData.selected==monthUIData.month)
+                config.activeColor
+            else
+                config.color
+        }
+    }
     Box(
         modifier = Modifier
-            .width(74.dep())
-            .height(42.dep())
-            .clip(RoundedCornerShape(21.dep()))
+            .width(config.width.dep())
+            .height(config.height.dep())
+            .clip(RoundedCornerShape(config.borderRadius.dep()))
             .then(
                 if (monthUIData.month in monthUIData.minMonth..monthUIData.maxMonth) {
                     Modifier.clickable(
@@ -660,64 +718,65 @@ fun MonthUI(
                     Modifier
                 }
             )
-            .background(
-                if (
-                    monthUIData.month in monthUIData.minMonth..monthUIData.maxMonth
-                    && monthUIData.selected == monthUIData.month || isPressed
-                )
-                    Color(0xffEDF5FF)
-                else Color.Transparent
-            ),
+            .background(computedBackgroundColor),
         contentAlignment = Alignment.Center
     ){
         RobotoText(
-            monthUIData.month.toString(),
-            fontSize = 14.sep(),
+            Kal.Month.name(monthUIData.month),
+            fontSize = config.fontSize.sep(),
             color =
-            if(monthUIData.month !in monthUIData.minMonth..monthUIData.maxMonth)
-                Color.Gray
-            else if(monthUIData.selected==monthUIData.month)
-                Color(0xff1B79E6)
-            else Color(0xff243257),
+            computedColor,
             fontWeight = FontWeight.Bold
         )
     }
-
 }
+
+data class YearSwitcherData(
+    val selectedYear: Int,
+    val minDate: Kal.Date?,
+    val maxDate: Kal.Date?,
+)
+
+data class YearSwitcherConfiguration(
+    val navYearSpace: Float = 40f,
+    val fontSize: Float = 16f,
+    val color: Color = Color(0xff243257),
+    val horizontalPadding: Float = 4f
+)
 
 @Composable
 fun YearSwitcher(
-    selectedYear: Int,
-    minDate: Kal.Date?,
-    maxDate: Kal.Date?,
+    yearSwitcherData: YearSwitcherData,
+    config: YearSwitcherConfiguration = YearSwitcherConfiguration(),
     onMode: (Boolean)->Unit,
     onYearPicked: (Int)->Unit
 ) {
-    val currentYear by remember {
-        mutableStateOf(Calendar.getInstance().get(Calendar.YEAR))
-    }
     LaunchedEffect(key1 = Unit){
-        if(minDate!=null&& maxDate!=null){
-            if(minDate > maxDate || selectedYear < minDate.year || selectedYear > maxDate.year){
+        if(yearSwitcherData.minDate!=null&& yearSwitcherData.maxDate!=null){
+            if(
+                yearSwitcherData.minDate > yearSwitcherData.maxDate
+                || yearSwitcherData.selectedYear < yearSwitcherData.minDate.year
+                || yearSwitcherData.selectedYear > yearSwitcherData.maxDate.year
+            ){
                 throw IllegalStateException()
             }
         }
     }
     val minYear by remember {
-        mutableStateOf(minDate?.year?:1)
+        mutableStateOf(yearSwitcherData.minDate?.year?:1)
     }
     val maxYear by remember {
-        mutableStateOf(maxDate?.year?:9999)
+        mutableStateOf(yearSwitcherData.maxDate?.year?:9999)
     }
     var hasPrev by remember {
-        mutableStateOf(minYear<selectedYear)
+        mutableStateOf(minYear<yearSwitcherData.selectedYear)
     }
     var hasNext by remember {
-        mutableStateOf(maxYear>selectedYear)
+        mutableStateOf(maxYear>yearSwitcherData.selectedYear)
     }
-    LaunchedEffect(key1 = selectedYear){
-        hasPrev = minYear<selectedYear
-        hasNext = maxYear>selectedYear
+    LaunchedEffect(key1 = yearSwitcherData.selectedYear){
+        hasPrev = minYear<yearSwitcherData.selectedYear
+        hasNext = maxYear>yearSwitcherData.selectedYear
     }
     var selectionMode by remember {
         mutableStateOf(false)
@@ -731,125 +790,238 @@ fun YearSwitcher(
     ){
         Row(
         ){
-            Icon(
-                painter = painterResource(id = R.drawable.ic_left_chevron),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(18.dep())
-                    .clip(CircleShape)
-                    .then(
-                        if (hasPrev) {
-                            Modifier.clickable {
-                                onYearPicked(selectedYear - 1)
-                            }
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .background(if (!hasPrev) Color.Gray else Color(0xff1A79E5))
-                    .padding(4.dep()),
-                tint = Color.White
-            )
-            Spacer(modifier = Modifier.width(40.dep()))
+            NavIconButton(
+                hasPrev,
+                NavIconConfiguration.Prev
+            ){
+                onYearPicked(yearSwitcherData.selectedYear - 1)
+            }
+            Spacer(modifier = Modifier.width(config.navYearSpace.dep()))
             Text(
-                selectedYear.toString(),
-                fontSize = 16.sep(),
+                yearSwitcherData.selectedYear.toString(),
+                fontSize = config.fontSize.sep(),
                 fontWeight = FontWeight.Bold,
-                color = Color(0xff243257),
+                color = config.color,
                 modifier = Modifier
                     .clip(CircleShape)
                     .clickable {
                         selectionMode = !selectionMode
                     }
-                    .padding(horizontal = 4.dep())
+                    .padding(horizontal = config.horizontalPadding.dep())
             )
-            Spacer(modifier = Modifier.width(40.dep()))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_right_chevron),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(18.dep())
-                    .clip(CircleShape)
-                    .then(
-                        if (hasNext) {
-                            Modifier.clickable {
-                                onYearPicked(selectedYear + 1)
-                            }
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .background(if (!hasNext) Color.Gray else Color(0xff1A79E5))
-                    .padding(4.dep()),
-                tint = Color.White
-            )
+            Spacer(modifier = Modifier.width(config.navYearSpace.dep()))
+            NavIconButton(
+                hasNext,
+                NavIconConfiguration.Next
+            ){
+                onYearPicked(yearSwitcherData.selectedYear + 1)
+            }
         }
+
         AnimatedVisibility(
             selectionMode,
-        enter = fadeIn(animationSpec = tween(700))/*+ expandIn(animationSpec = tween(700))*/,
-        exit = fadeOut(animationSpec = tween(700))/*+ shrinkOut(animationSpec = tween(700))*/
+        enter = fadeIn(animationSpec = tween(700)),
+        exit = fadeOut(animationSpec = tween(700))
         ) {
-            val state = rememberLazyGridState()
-            LaunchedEffect(key1 = selectedYear){
-                state.scrollToItem(selectedYear-minYear)
-            }
-            LazyVerticalGrid(
-                state = state,
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.spacedBy(21.dep()),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .padding(horizontal = 58.dep())
-                    .fillMaxWidth()
-                    .height(251.dep())
-                    .drawWithContent {
-                        val colors = listOf(Color.White, Color.Transparent)
-                        val colors1 = listOf(Color.Transparent, Color.White)
-                        drawContent()
-                        drawRect(
-                            brush = Brush.verticalGradient(colors, endY = 60f),
-                        )
-                        drawRect(
-                            brush = Brush.verticalGradient(
-                                colors1,
-                                startY = size.height - 60f,
-                                endY = size.height
-                            ),
-                        )
-                    },
-                contentPadding = PaddingValues(vertical = 20.dep())
-            ) {
-                items((minYear..maxYear).toList()){
-                    val interactionSource = remember { MutableInteractionSource() }
-                    val isPressed by interactionSource.collectIsPressedAsState()
-
-                    Box(
-                        modifier = Modifier
-                            .width(74.dep())
-                            .height(42.dep())
-                            .clip(RoundedCornerShape(21.dep()))
-                            .clickable(
-                                interactionSource = interactionSource,
-                                indication = null//LocalIndication.current
-                            ) {
-                                onYearPicked(it)
-                                selectionMode = false
-                            }
-                            .background(if (selectedYear == it || isPressed) Color(0xffEDF5FF) else Color.Transparent),
-                        contentAlignment = Alignment.Center
-                    ){
-                        RobotoText(
-                            it.toString(),
-                            fontSize = 14.sep(),
-                            color = if(selectedYear==it) Color(0xff1B79E6) else Color(0xff243257),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+            YearsList(
+                YearsListData(
+                    yearSwitcherData.selectedYear,
+                    minYear,
+                    maxYear
+                )
+            ){
+                onYearPicked(it)
+                selectionMode = false
             }
         }
     }
 
+}
+
+data class YearsListConfiguration(
+    val columnCount: Int = 3,
+    val horizontalPadding: Float = 58f,
+    val height: Float = 251f,
+    val fadeColor: Color = Color.White,
+    val fadeY: Float = 60f,
+    val verticalContentPadding: Float = 20f,
+    val verticalItemSpacing: Float = 21f
+)
+
+data class YearsListData(
+    val selectedYear: Int,
+    val minYear: Int,
+    val maxYear: Int,
+)
+
+@Composable
+fun YearsList(
+    yearsListData: YearsListData,
+    config: YearsListConfiguration = YearsListConfiguration(),
+    onYearPicked: (Int)->Unit
+) {
+    val yearsList by remember {
+        derivedStateOf {
+            return@derivedStateOf (yearsListData.minYear..yearsListData.maxYear).toList()
+        }
+    }
+    val state = rememberLazyGridState()
+    LaunchedEffect(key1 = yearsListData.selectedYear){
+        state.scrollToItem(yearsListData.selectedYear-yearsListData.minYear)
+    }
+    LazyVerticalGrid(
+        state = state,
+        columns = GridCells.Fixed(config.columnCount),
+        verticalArrangement = Arrangement.spacedBy(config.verticalItemSpacing.dep()),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .padding(horizontal = config.horizontalPadding.dep())
+            .fillMaxWidth()
+            .height(config.height.dep())
+            .drawWithContent {
+                val colors = listOf(config.fadeColor, Color.Transparent)
+                val colors1 = listOf(Color.Transparent, config.fadeColor)
+                drawContent()
+                drawRect(
+                    brush = Brush.verticalGradient(colors, endY = config.fadeY),
+                )
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors1,
+                        startY = size.height - config.fadeY,
+                        endY = size.height
+                    ),
+                )
+            },
+        contentPadding = PaddingValues(vertical = config.verticalContentPadding.dep())
+    ) {
+        items(yearsList){ it ->
+            YearItem(
+                it,
+                yearsListData.selectedYear==it
+            ){
+                onYearPicked(it)
+            }
+        }
+    }
+}
+
+data class YearItemConfiguration(
+    val width: Float = 72f,
+    val height: Float = 42f,
+    val borderRadius: Float = 21f,
+    val selectedBackgroundColor: Color = Color(0xffEDF5FF),
+    val unselectedBackgroundColor: Color = Color.Transparent,
+    val fontSize: Float = 14f,
+    val selectedColor: Color = Color(0xff1B79E6),
+    val unselectedColor: Color = Color(0xff243257)
+)
+
+@Composable
+fun YearItem(
+    year: Int,
+    selected: Boolean,
+    config: YearItemConfiguration = YearItemConfiguration(),
+    onYearPicked: (Int) -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val yearString by remember {
+        mutableStateOf(year.toString())
+    }
+    val virtuallySelected by remember {
+        derivedStateOf {
+            return@derivedStateOf selected || isPressed
+        }
+    }
+    val backgroundColor by remember {
+        derivedStateOf {
+            return@derivedStateOf if
+                    (virtuallySelected) config.selectedBackgroundColor
+            else
+                config.unselectedBackgroundColor
+        }
+    }
+    val color by remember {
+        derivedStateOf {
+            return@derivedStateOf if
+                    (selected) config.selectedColor
+            else
+                config.unselectedColor
+        }
+    }
+    Box(
+        modifier = Modifier
+            .width(config.width.dep())
+            .height(config.height.dep())
+            .clip(RoundedCornerShape(config.borderRadius.dep()))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null//LocalIndication.current
+            ) {
+                onYearPicked(year)
+            }
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center
+    ){
+        RobotoText(
+            yearString,
+            fontSize = config.fontSize.sep(),
+            color = color,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+data class NavIconConfiguration(
+    val size: Float = 18f,
+    val disabledBackgroundColor: Color = Color.Gray,
+    val enabledBackgroundColor: Color = Color(0xff1A79E5),
+    val drawableId: Int,
+    val padding: Float = 4f,
+    val iconTint: Color = Color.White
+){
+    companion object{
+        val Prev = NavIconConfiguration(
+            drawableId = R.drawable.ic_left_chevron
+        )
+        val Next = NavIconConfiguration(
+            drawableId = R.drawable.ic_right_chevron
+        )
+    }
+}
+
+@Composable
+fun NavIconButton(
+    enabled: Boolean,
+    config: NavIconConfiguration,
+    onClicked: ()->Unit
+) {
+    var backgroundColor by remember {
+        mutableStateOf(config.disabledBackgroundColor)
+    }
+    LaunchedEffect(key1 = enabled){
+        backgroundColor = if (!enabled) config.disabledBackgroundColor else config.enabledBackgroundColor
+    }
+    Icon(
+        painter = painterResource(id = config.drawableId),
+        contentDescription = null,
+        modifier = Modifier
+            .size(config.size.dep())
+            .clip(CircleShape)
+            .then(
+                if (enabled) {
+                    Modifier.clickable {
+                        onClicked()
+                    }
+                } else {
+                    Modifier
+                }
+            )
+            .background(backgroundColor)
+            .padding(config.padding.dep()),
+        tint = config.iconTint
+    )
 }
 
 data class MonthDayPickerData(
@@ -859,21 +1031,44 @@ data class MonthDayPickerData(
     val maxDay: Int,
 )
 
+data class MonthDayPickerConfiguration(
+    val verticalPadding: Float = 9f,
+    val height: Float = 89f,
+    val backgroundColor: Color = Color(0xffEDF5FF),
+    val boxSize: Float = 54f,
+    val highlightWidth: Float = 64f,
+    val highlightBorderRadius: Float = 13f,
+    val highlightBackgroundColor: Color = Color(0xff1A79E5),
+    val apparentCurrentThreshold: Float = 0.1f
+)
+
+suspend fun LazyListState.safeAnimateScrollToItem(index: Int){
+    try {
+        animateScrollToItem(index)
+    } catch (e: Exception) {
+    }
+}
+suspend fun LazyListState.safeScrollToItem(index: Int){
+    try {
+        scrollToItem(index)
+    } catch (e: Exception) {
+    }
+}
 @OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun MonthDayPicker(
     monthDayPickerData: MonthDayPickerData,
+    config: MonthDayPickerConfiguration = MonthDayPickerConfiguration(),
     onDaySelected: (Int) -> Unit
 ) {
-
     val listState = rememberLazyListState()
     val layoutInfo = rememberLazyListSnapperLayoutInfo(listState)
     LaunchedEffect(key1 = monthDayPickerData.selectedDay){
         if(monthDayPickerData.selectedDay!=null){
-            listState.scrollToItem(monthDayPickerData.selectedDay-1)
+            listState.safeScrollToItem(monthDayPickerData.selectedDay-1)
         }
         else{
-            listState.scrollToItem(0)
+            listState.safeScrollToItem(0)
             onDaySelected(1)
         }
     }
@@ -889,11 +1084,11 @@ fun MonthDayPicker(
     }
     LaunchedEffect(key1 = apparentCurrentItem){
         if(apparentCurrentItem<monthDayPickerData.minDay-1){
-            listState.animateScrollToItem(monthDayPickerData.minDay-1)
+            listState.safeAnimateScrollToItem(monthDayPickerData.minDay-1)
             return@LaunchedEffect
         }
         if(apparentCurrentItem>monthDayPickerData.maxDay-1){
-            listState.animateScrollToItem(monthDayPickerData.maxDay-1)
+            listState.safeAnimateScrollToItem(monthDayPickerData.maxDay-1)
             return@LaunchedEffect
         }
     }
@@ -903,11 +1098,11 @@ fun MonthDayPicker(
             d?.let {
                 currentItem = (d.index)
                 if(currentItem<monthDayPickerData.minDay-1){
-                    listState.animateScrollToItem(monthDayPickerData.minDay-1)
+                    listState.safeAnimateScrollToItem(monthDayPickerData.minDay-1)
                     return@LaunchedEffect
                 }
                 if(currentItem>monthDayPickerData.maxDay-1){
-                    listState.animateScrollToItem(monthDayPickerData.maxDay-1)
+                    listState.safeAnimateScrollToItem(monthDayPickerData.maxDay-1)
                     return@LaunchedEffect
                 }
                 onDaySelected(currentItem+1)
@@ -918,24 +1113,24 @@ fun MonthDayPicker(
         if(initiateClick<0){
             return@LaunchedEffect
         }
-        listState.animateScrollToItem(initiateClick)
+        listState.safeAnimateScrollToItem(initiateClick)
     }
     BoxWithConstraints(
         modifier = Modifier
-            .padding(vertical = 9.dep())
-            .height(89.dep())
-            .background(Color(0xffEDF5FF))
+            .padding(vertical = config.verticalPadding.dep())
+            .height(config.height.dep())
+            .background(config.backgroundColor)
     ) {
         val full = localFullWidth.current
-        val box = 54f
+        val box = config.boxSize
         val pad = (full - box)/2f
         val halfRowWidth = constraints.maxWidth / 2
         Box(
             modifier = Modifier
-                .width(64.dep())
+                .width(config.highlightWidth.dep())
                 .fillMaxHeight()
-                .clip(RoundedCornerShape(13.dep()))
-                .background(Color(0xff1A79E5))
+                .clip(RoundedCornerShape(config.highlightBorderRadius.dep()))
+                .background(config.highlightBackgroundColor)
                 .align(Alignment.Center)
         ){
 
@@ -953,7 +1148,7 @@ fun MonthDayPicker(
             ) {
                 itemsIndexed(
                     monthDayPickerData.days,
-                    key = {i,item->
+                    key = { _, item->
                         item.dayOfMonth
                     }
                 ) { i, item ->
@@ -966,7 +1161,7 @@ fun MonthDayPicker(
                         }
                     }
                     LaunchedEffect(key1 = opacity){
-                        if(opacity in 0.98f..1f){
+                        if(1f-opacity<=config.apparentCurrentThreshold){
                             apparentCurrentItem = i
                         }
                     }
@@ -995,9 +1190,23 @@ data class WeekDayUIData(
     val maxDay: Int,
 )
 
+data class WeekDayUIConfiguration(
+    val weekDayFontSize: Float = 11f,
+    val activeThreshold: Float = 0.1f,
+    val weekDayDisabledColor: Color = Color.LightGray,
+    val weekDayActiveColor: Color = Color.White,
+    val weekDayEnabledColor: Color = Color(0xff243257),
+    val weekDayDateSpace: Float = 12f,
+    val dateFontSize: Float = 11f,
+    val dateDisabledColor: Color = Color.LightGray,
+    val dateActiveColor: Color = Color.White,
+    val dateEnabledColor: Color = Color(0xff1A79E5),
+)
+
 @Composable
 fun WeekDayUI(
     weekDayUIData: WeekDayUIData,
+    config: WeekDayUIConfiguration = WeekDayUIConfiguration(),
     onClick: ()->Unit
 ) {
     Box(
@@ -1015,24 +1224,28 @@ fun WeekDayUI(
         ){
             RobotoText(
                 weekDayUIData.day.weekDay.toString(),
-                fontSize = (weekDayUIData.opacity*11).sep(),
+                fontSize = (weekDayUIData.opacity*config.weekDayFontSize).sep(),
                 fontWeight = FontWeight.Bold,
                 color =
                 if(weekDayUIData.day.dayOfMonth !in weekDayUIData.minDay..weekDayUIData.maxDay)
-                    Color.LightGray
-                else if(weekDayUIData.opacity in 0.9f..1f) Color.White
-                else   Color(0xff243257)
+                    config.weekDayDisabledColor
+                else if(1f-weekDayUIData.opacity<=config.activeThreshold)
+                    config.weekDayActiveColor
+                else
+                    config.weekDayEnabledColor
             )
-            Spacer(modifier = Modifier.height(12.dep()))
+            Spacer(modifier = Modifier.height(config.weekDayDateSpace.dep()))
             RobotoText(
                 weekDayUIData.day.dayOfMonth.toString(),
-                fontSize = (11).sep(),
+                fontSize = config.dateFontSize.sep(),
                 fontWeight = FontWeight.Bold,
                 color =
                 if(weekDayUIData.day.dayOfMonth !in weekDayUIData.minDay..weekDayUIData.maxDay)
-                    Color.LightGray
-                else if(weekDayUIData.opacity in 0.9f..1f) Color.White
-                else   Color(0xff1A79E5)
+                    config.dateDisabledColor
+                else if(1f-weekDayUIData.opacity<=config.activeThreshold)
+                    config.dateActiveColor
+                else
+                    config.dateEnabledColor
             )
         }
     }

@@ -16,12 +16,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("fdlfjdfjd", Calendar.getInstance().get(Calendar.MONTH).toString())
         setContent {
             YoreSplitNPayTheme {
                 // A surface container using the 'background' color from the theme
@@ -43,39 +45,41 @@ class MainActivity : ComponentActivity() {
                                     mutableStateOf<Int?>(17)
                                 }
                                 var selectedMonth by remember {
-                                    mutableStateOf<Kal.Month?>(Kal.Month.Apr)
+                                    mutableStateOf<Int?>(4)
                                 }
                                 var selectedYear by remember {
                                     mutableStateOf(2022)
                                 }
+                                val yoreDatePickerData by remember {
+                                    derivedStateOf {
+                                        return@derivedStateOf YoreDatePickerData(
+                                            selectedDay,
+                                            selectedMonth,
+                                            selectedYear,
+                                            Kal.Date.create(22,3,2022),
+                                            Kal.Date.create(23,8,2026),
+                                        )
+                                    }
+                                }
                                 YoreDatePicker(
-                                    YoreDatePickerData(
-                                        selectedDay,
-                                        selectedMonth,
-                                        selectedYear,
-                                        Kal.Date.create(22,3,2022),
-                                        Kal.Date.create(23,8,2026),
-                                    ),
+                                    yoreDatePickerData,
                                     {
-                                        Log.d("fdkfdf",it.toString())
                                         selectedYear = it
                                         selectedMonth = null
                                         selectedDay = null
                                     },
                                     {
-                                        Log.d("fdkfdf",it.toString())
                                         selectedMonth = it
                                         selectedDay = null
                                     },
                                     {
-                                        Log.d("fdkfdf",it.toString())
                                         selectedDay = it
                                     }
                                 )
                                 Divider()
                                 val myDate by remember {
                                     derivedStateOf {
-                                        "$selectedDay/${(selectedMonth?.ordinal?:-1)+1}/$selectedYear"
+                                        "$selectedDay/${selectedMonth}/$selectedYear"
                                     }
                                 }
                                 Text(myDate)
