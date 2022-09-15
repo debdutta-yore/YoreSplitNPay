@@ -1,10 +1,9 @@
 package co.yore.splitnpay
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -19,10 +18,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import coil.compose.AsyncImage
+import java.text.DecimalFormat
 
 @Composable
 fun ExpenseDemo() {
-    val data = remember {
+    val pieChartData = remember {
         mutableStateOf(listOf(
             PieData(
                 Color(0xffFF4077),
@@ -34,7 +35,26 @@ fun ExpenseDemo() {
             )
         ))
     }
-
+    val categoryExpenseData = remember {
+        mutableStateOf(listOf(
+            CategoryExpense(
+                icon = R.drawable.ic_trip_icon,
+                category = "Trip",
+                description = "Business Trip",
+                count = 1,
+                amount = 500.00f,
+                tint = Color(0xffFF4077)
+            ),
+            CategoryExpense(
+                icon = R.drawable.ic_food,
+                category = "Food",
+                description = "BFFs",
+                count = 5,
+                amount = 2500.00f,
+                tint = Color(0xff1A79E5)
+            )
+        ))
+    }
     Box(
         modifier = Modifier
             .padding(
@@ -113,7 +133,7 @@ fun ExpenseDemo() {
                         .fillMaxSize()
                 ){
                     var start = -90f
-                    data.value.forEach {
+                    pieChartData.value.forEach {
                         val used = 360f*it.portion
                         drawArc(
                             color = it.color,
@@ -200,6 +220,73 @@ fun ExpenseDemo() {
                 }
             }
             Spacer(modifier = Modifier.height(16.dep()))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ){
+                items(categoryExpenseData.value){
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 16.dep())
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(8.dep())
+                            )
+                            .background(it.tint.copy(alpha = 0.03f))
+                            .border(
+                                BorderStroke(
+                                    width = 1.dep(),
+                                    color = it.tint
+                                ),
+                                shape = RoundedCornerShape(8.dep())
+                            )
+                            .padding(
+                                horizontal = 19.dep(),
+                                vertical = 13.dep()
+                            ),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ){
+                        Column(){
+                            Row(
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                AsyncImage(
+                                    model = it.icon,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(15.28.dep())
+                                )
+                                Spacer(modifier = Modifier.width(8.4.dep()))
+                                RobotoText(
+                                    it.category,
+                                    fontSize = 14.sep(),
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xff243257)
+                                )
+                                Spacer(modifier = Modifier.width(6.dep()))
+                                RobotoText(
+                                    "(${it.description})",
+                                    fontSize = 11.sep(),
+                                    color = Color(0xff5A87BB)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(19.dep()))
+                            Row(){
+                                RobotoText(
+                                    "Number of expenses: ",
+                                    color = Color(0xff677C91),
+                                    fontSize = 11.sep()
+                                )
+                                RobotoText(
+                                    String.format("%02d", it.count),
+                                    color = Color(0xff243257),
+                                    fontSize = 11.sep()
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -215,4 +302,5 @@ data class CategoryExpense(
     val description: String,
     val count: Int,
     val amount: Float,
+    val tint: Color
 )
