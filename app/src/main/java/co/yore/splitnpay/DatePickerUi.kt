@@ -32,7 +32,6 @@ import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberLazyListSnapperLayoutInfo
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import java.util.*
-import kotlin.IllegalStateException
 import kotlin.math.abs
 
 object Kal{
@@ -273,6 +272,12 @@ fun YoreDatePicker(
     onMonthClick: (Int)->Unit,
     onDaySelect: (Int)->Unit
 ) {
+    var _yoreDatePickerData by remember {
+        mutableStateOf(yoreDatePickerData)
+    }
+    LaunchedEffect(key1 = yoreDatePickerData){
+        _yoreDatePickerData = yoreDatePickerData
+    }
     Box {
         var yearPicking by remember {
             mutableStateOf(false)
@@ -281,12 +286,17 @@ fun YoreDatePicker(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth()
         ){
+            val yearSwitcherData by remember {
+                derivedStateOf {
+                    YearSwitcherData(
+                        _yoreDatePickerData.selectedYear,
+                        minDate = _yoreDatePickerData.minDate,
+                        maxDate = _yoreDatePickerData.maxDate,
+                    )
+                }
+            }
             YearSwitcher(
-                YearSwitcherData(
-                    yoreDatePickerData.selectedYear,
-                    minDate = yoreDatePickerData.minDate,
-                    maxDate = yoreDatePickerData.maxDate,
-                ),
+                yearSwitcherData,
                 onMode = {
                     yearPicking = it
                 },
@@ -307,38 +317,53 @@ fun YoreDatePicker(
         var maxDay by remember {
             mutableStateOf(31)
         }
-        LaunchedEffect(key1 = yoreDatePickerData){
-            minMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.minDate?.year){
-                yoreDatePickerData.minDate.month
+        LaunchedEffect(key1 = _yoreDatePickerData){
+            minMonth = if(
+                _yoreDatePickerData.selectedYear==_yoreDatePickerData.minDate?.year
+            ){
+                _yoreDatePickerData.minDate?.month?:1
             }
             else{
                 1
             }
             minDay = if(
-                yoreDatePickerData.minDate!=null
-                &&yoreDatePickerData.selectedMonth!=null
-                &&yoreDatePickerData.minDate.year==yoreDatePickerData.selectedYear
-                &&yoreDatePickerData.minDate.month==yoreDatePickerData.selectedMonth
+                _yoreDatePickerData.minDate!=null
+                &&_yoreDatePickerData.selectedMonth!=null
+                &&_yoreDatePickerData.minDate?.year==_yoreDatePickerData.selectedYear
+                &&_yoreDatePickerData.minDate?.month==_yoreDatePickerData.selectedMonth
             ){
-                yoreDatePickerData.minDate.day
+                _yoreDatePickerData.minDate?.day?:1
             } else{
                 1
             }
 
-            maxMonth = if(yoreDatePickerData.selectedYear==yoreDatePickerData.maxDate?.year){
-                yoreDatePickerData.maxDate.month
+            maxMonth = if(_yoreDatePickerData.selectedYear==_yoreDatePickerData.maxDate?.year){
+                _yoreDatePickerData.maxDate?.month?:12
             }
             else{
                 12
             }
             maxDay = if(
-                yoreDatePickerData.maxDate!=null
-                &&yoreDatePickerData.selectedMonth!=null
-                &&yoreDatePickerData.maxDate.year==yoreDatePickerData.selectedYear
-                &&yoreDatePickerData.maxDate.month==yoreDatePickerData.selectedMonth){
-                yoreDatePickerData.maxDate.day
+                _yoreDatePickerData.maxDate!=null
+                &&_yoreDatePickerData.selectedMonth!=null
+                &&_yoreDatePickerData.maxDate?.year==_yoreDatePickerData.selectedYear
+                &&_yoreDatePickerData.maxDate?.month==_yoreDatePickerData.selectedMonth){
+                _yoreDatePickerData.maxDate?.day?:31
             } else{
                 31
+            }
+        }
+        val monthPickerData by remember {
+            derivedStateOf {
+                MonthPickerData(
+                    _yoreDatePickerData.selectedYear,
+                    _yoreDatePickerData.selectedMonth,
+                    _yoreDatePickerData.selectedDay,
+                    minMonth,
+                    maxMonth,
+                    minDay,
+                    maxDay,
+                )
             }
         }
         Spacer(modifier = Modifier.height(24.dep()))
@@ -351,15 +376,7 @@ fun YoreDatePicker(
                 modifier = Modifier.padding(top = 42.dep())
             ){
                 MonthPicker(
-                    MonthPickerData(
-                        yoreDatePickerData.selectedYear,
-                        yoreDatePickerData.selectedMonth,
-                        yoreDatePickerData.selectedDay,
-                        minMonth,
-                        maxMonth,
-                        minDay,
-                        maxDay,
-                    ),
+                    monthPickerData,
                     {
                         onMonthClick(it)
                     }
@@ -387,6 +404,12 @@ fun MonthPicker(
     onMonthClick: (Int) -> Unit,
     onDayClick: (Int)->Unit
 ) {
+    var _monthPickerData by remember {
+        mutableStateOf(monthPickerData)
+    }
+    LaunchedEffect(key1 = monthPickerData){
+        _monthPickerData = monthPickerData
+    }
     val time by remember { mutableStateOf(500) }
     val enter by remember {
         mutableStateOf(
@@ -400,6 +423,16 @@ fun MonthPicker(
                     fadeOut(animationSpec = tween(durationMillis = time/2))
         )
     }
+    val monthUIData by remember {
+        derivedStateOf {
+            MonthUIData(
+                0,
+                _monthPickerData.selectedMonth,
+                _monthPickerData.minMonth,
+                _monthPickerData.maxMonth
+            )
+        }
+    }
     Column(){
         Row(
             modifier = Modifier
@@ -407,50 +440,39 @@ fun MonthPicker(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ){
+
             MonthUI(
-                MonthUIData(
-                    1,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 1),
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    2,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 2)
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    3,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 3)
             ){
                 onMonthClick(it)
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Int &&
-                    monthPickerData.selectedMonth in 1..3,
+            _monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth in 1..3,
             enter = enter,
             exit = exit,
         ){
-            monthPickerData.selectedMonth?.let {
+            _monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
-                        monthPickerData.selectedDay,
-                        monthPickerData.minDay,
-                        monthPickerData.maxDay
+                        Kal.daysInYearMonth(
+                            _monthPickerData.year,
+                            it
+                        ),
+                        _monthPickerData.selectedDay,
+                        _monthPickerData.minDay,
+                        _monthPickerData.maxDay
                     )
                 ){
                     onDayClick(it)
@@ -458,8 +480,8 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Int &&
-                    monthPickerData.selectedMonth !in 1..3,
+            _monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth !in 1..3,
             enter = enter,
             exit = exit,
         ){
@@ -473,49 +495,37 @@ fun MonthPicker(
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             MonthUI(
-                MonthUIData(
-                    4,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 4)
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    5,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 5)
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    6,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 6)
             ){
                 onMonthClick(it)
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Int &&
-                    monthPickerData.selectedMonth in 4..6,
+            _monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth in 4..6,
             enter = enter,
             exit = exit,
         ){
-            monthPickerData.selectedMonth?.let {
+            _monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
-                        monthPickerData.selectedDay,
-                        monthPickerData.minDay,
-                        monthPickerData.maxDay
+                        Kal.daysInYearMonth(
+                            _monthPickerData.year,
+                            it
+                        ),
+                        _monthPickerData.selectedDay,
+                        _monthPickerData.minDay,
+                        _monthPickerData.maxDay
                     )
                 ){
                     onDayClick(it)
@@ -523,8 +533,8 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Int &&
-                    monthPickerData.selectedMonth !in 4..6,
+            _monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth !in 4..6,
             enter = enter,
             exit = exit,
         ){
@@ -538,49 +548,37 @@ fun MonthPicker(
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             MonthUI(
-                MonthUIData(
-                    7,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 7)
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    8,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 8)
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    9,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 9)
             ){
                 onMonthClick(it)
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Int &&
-                    monthPickerData.selectedMonth in 7..9,
+            _monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth in 7..9,
             enter = enter,
             exit = exit,
         ){
-            monthPickerData.selectedMonth?.let {
+            _monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
-                        monthPickerData.selectedDay,
-                        monthPickerData.minDay,
-                        monthPickerData.maxDay
+                        Kal.daysInYearMonth(
+                            _monthPickerData.year,
+                            it
+                        ),
+                        _monthPickerData.selectedDay,
+                        _monthPickerData.minDay,
+                        _monthPickerData.maxDay
                     )
                 ){
                     onDayClick(it)
@@ -588,8 +586,8 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Int &&
-                    monthPickerData.selectedMonth !in 7..9,
+            _monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth !in 7..9,
             enter = enter,
             exit = exit,
         ){
@@ -603,49 +601,37 @@ fun MonthPicker(
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             MonthUI(
-                MonthUIData(
-                    10,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 10)
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    11,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 11)
             ){
                 onMonthClick(it)
             }
             MonthUI(
-                MonthUIData(
-                    12,
-                    monthPickerData.selectedMonth,
-                    monthPickerData.minMonth,
-                    monthPickerData.maxMonth
-                )
+                monthUIData.copy(month = 12)
             ){
                 onMonthClick(it)
             }
         }
         AnimatedVisibility(
-            monthPickerData.selectedMonth is Int &&
-                    monthPickerData.selectedMonth in 10..12,
+            _monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth in 10..12,
             enter = enter,
             exit = exit,
         ){
-            monthPickerData.selectedMonth?.let {
+            _monthPickerData.selectedMonth?.let {
                 MonthDayPicker(
                     MonthDayPickerData(
-                        Kal.daysInYearMonth(monthPickerData.year,monthPickerData.selectedMonth),
-                        monthPickerData.selectedDay,
-                        monthPickerData.minDay,
-                        monthPickerData.maxDay
+                        Kal.daysInYearMonth(
+                            _monthPickerData.year,
+                            it
+                        ),
+                        _monthPickerData.selectedDay,
+                        _monthPickerData.minDay,
+                        _monthPickerData.maxDay
                     )
                 ){
                     onDayClick(it)
@@ -679,13 +665,19 @@ fun MonthUI(
     config: MonthUIConfiguration = MonthUIConfiguration(),
     onClick: (Int)->Unit
 ) {
+    var _monthUiData by remember {
+        mutableStateOf(monthUIData)
+    }
+    LaunchedEffect(key1 = monthUIData){
+        _monthUiData = monthUIData
+    }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val computedBackgroundColor by remember {
         derivedStateOf {
             if (
-                monthUIData.month in monthUIData.minMonth..monthUIData.maxMonth
-                && monthUIData.selected == monthUIData.month || isPressed
+                _monthUiData.month in _monthUiData.minMonth.._monthUiData.maxMonth
+                && _monthUiData.selected == _monthUiData.month || isPressed
             )
                 config.selectedBackgroundColor
             else Color.Transparent
@@ -693,9 +685,9 @@ fun MonthUI(
     }
     val computedColor by remember {
         derivedStateOf {
-            if(monthUIData.month !in monthUIData.minMonth..monthUIData.maxMonth)
+            if(_monthUiData.month !in _monthUiData.minMonth.._monthUiData.maxMonth)
                 config.disabledColor
-            else if(monthUIData.selected==monthUIData.month)
+            else if(_monthUiData.selected==_monthUiData.month)
                 config.activeColor
             else
                 config.color
@@ -707,12 +699,12 @@ fun MonthUI(
             .height(config.height.dep())
             .clip(RoundedCornerShape(config.borderRadius.dep()))
             .then(
-                if (monthUIData.month in monthUIData.minMonth..monthUIData.maxMonth) {
+                if (_monthUiData.month in _monthUiData.minMonth.._monthUiData.maxMonth) {
                     Modifier.clickable(
                         interactionSource = interactionSource,
                         indication = LocalIndication.current
                     ) {
-                        onClick(monthUIData.month)
+                        onClick(_monthUiData.month)
                     }
                 } else {
                     Modifier
@@ -722,7 +714,7 @@ fun MonthUI(
         contentAlignment = Alignment.Center
     ){
         RobotoText(
-            Kal.Month.name(monthUIData.month),
+            Kal.Month.name(_monthUiData.month),
             fontSize = config.fontSize.sep(),
             color =
             computedColor,
