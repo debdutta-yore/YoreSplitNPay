@@ -308,7 +308,7 @@ fun MotionLayoutHeader(
                                         .background(Color.White),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    val wholeText = "4000"
+                                    val wholeText = "00"
                                     val decimalText = "50"
 
                                     val currencyScript = SpanStyle(

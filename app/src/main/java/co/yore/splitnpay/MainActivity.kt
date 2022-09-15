@@ -19,7 +19,6 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("fdlfjdfjd", Calendar.getInstance().get(Calendar.MONTH).toString())
         setContent {
             YoreSplitNPayTheme {
                 // A surface container using the 'background' color from the theme
@@ -28,8 +27,8 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        //ExpenseDemo()
-                        DatePickerDemo()
+                        ExpenseDemo()
+                        //DatePickerDemo()
                     }
                 }
             }

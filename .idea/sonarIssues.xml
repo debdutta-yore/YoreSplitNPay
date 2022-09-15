@@ -38,7 +38,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/DatePickerDemo.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/DatePickerUi.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/co/yore/splitnpay/ExpenseDemo.kt">
           <value>
             <set />
           </value>
