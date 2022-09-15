@@ -131,10 +131,7 @@ fun MotionLayoutHeader(
     swipe: ()->Unit
 ) {
     val d = 234.dep().value
-    val dd = 234.dep()
-    val bm = 34.dep()
     MotionLayout(
-        //debug = EnumSet.of(MotionLayoutDebugFlags.SHOW_ALL),
         start = JsonConstraintSetStart(),
         end = JsonConstraintSetEnd(d),
         progress = progress,
@@ -151,9 +148,7 @@ fun MotionLayoutHeader(
         }
         var f by remember { mutableStateOf(1f) }
         LaunchedEffect(key1 = f){
-            Log.d("fdfdfdffdfd","$f")
             if(f==1f){
-                //delay(5000)
                 swipe()
             }
 
@@ -174,25 +169,18 @@ fun MotionLayoutHeader(
             Column() {
                 Box(){
                     MotionLayout(
-                        //debug = EnumSet.of(MotionLayoutDebugFlags.SHOW_ALL),
                         start = ConstraintSet {
                             val row = createRefFor("row")
                             val container = createRefFor("container")
-                            //val cutout = createRefFor("cutout")
 
                             constrain(row) {
                                 this.width = Dimension.wrapContent
                                 this.centerHorizontallyTo(container)
                             }
-
-                            /*constrain(cutout) {
-                                this.top.linkTo(container.bottom)
-                            }*/
                         },
                         end = ConstraintSet {
                             val row = createRefFor("row")
                             val container = createRefFor("container")
-                            //val cutout = createRefFor("cutout")
 
                             constrain(row) {
                                 this.width = Dimension.matchParent
