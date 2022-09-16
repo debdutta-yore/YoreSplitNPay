@@ -30,6 +30,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import co.yore.splitnpay.you_will_get_card.splitted
 import coil.compose.AsyncImage
@@ -88,12 +89,13 @@ fun ExpenseDemo() {
     }
     Box(
         modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
             .padding(
                 top = 19.dep(),
                 start = 21.dep(),
                 end = 21.dep()
             )
-            .fillMaxSize()
     ){
         Column(
             modifier = Modifier
@@ -517,12 +519,298 @@ fun ExpenseDemo() {
                         "Overtime",
                         fontSize = 18.sep(),
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xff243257)
+                        color = Color(0xff243257),
+                        modifier = Modifier.padding(start = 20.dep())
                     )
+                    Spacer(modifier = Modifier.height(27.dep()))
+                    Box(
+                        modifier = Modifier
+                            .coloredShadow(
+                                color = Color(0xffC6CFD8).copy(alpha = 0.3f),
+                                blurRadius = 33.dep(),
+                                offsetX = 7.dep(),
+                                offsetY = 7.dep()
+                            )
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(11.dep()))
+                            .background(Color.White)
+                            .padding(20.dep())
+                    ){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(4.dep()))
+                                .background(Color(0xffF3FCFF))
+                                .border(
+                                    BorderStroke(
+                                        width = 1.dep(),
+                                        color = Color(0xff35BAE9)
+                                    ),
+                                    shape = RoundedCornerShape(4.dep())
+                                )
+                                .padding(
+                                    horizontal = 24.dep(),
+                                    vertical = 13.dep()
+                                )
+                        ){
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ){
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ){
+                                    RobotoText(
+                                        "Total Paid",
+                                        fontSize = 12.sep(),
+                                        color = Color(0xff0A688A),
+
+                                        )
+                                    Spacer(
+                                        modifier = Modifier.height(9.dep())
+                                    )
+                                    Row(){
+                                        RobotoText(
+                                            "₹ ",
+                                            fontSize = 9.sep(),
+                                            color = Color(0xff243257),
+                                            modifier = Modifier.alignByBaseline()
+                                        )
+                                        RobotoText(
+                                            "500",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sep(),
+                                            color = Color(0xff243257),
+                                            modifier = Modifier.alignByBaseline()
+                                        )
+                                        RobotoText(
+                                            ".00",
+                                            fontSize = 6.sep(),
+                                            color = Color(0xff243257),
+                                            modifier = Modifier.alignByBaseline()
+                                        )
+                                    }
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ){
+                                    myText(
+                                        "Month",
+                                        12,
+                                        0xff0a688a
+                                    )
+                                    10.sy()
+                                    myText(
+                                        "June",
+                                        12,
+                                        0xff243257
+                                    )
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ){
+                                    myText(
+                                        "No. of Transaction",
+                                        12,
+                                        0xff0a688a,
+                                    )
+                                    10.sy()
+                                    myText(
+                                        "1",
+                                        12,
+                                        0xff243257
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(28.dep()))
+                    Row(
+                        modifier = Modifier
+                            .padding(
+                                start = 16.dep(),
+                                end = 7.dep()
+                            )
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ){
+                        RobotoText(
+                            "Categories",
+                            color = Color(0xff243257),
+                            fontSize = 18.sep(),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Row {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(19.dep()),
+                                tint = Color(0xff1B79E6)
+                            )
+                            Spacer(modifier = Modifier.width(20.dep()))
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_filter),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(21.dep()),
+                                tint = Color(0xff1B79E6)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dep()))
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ){
+                        items(categoryExpenseData.value){
+                            Row(
+                                modifier = Modifier
+                                    .padding(bottom = 16.dep())
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .clip(
+                                        RoundedCornerShape(8.dep())
+                                    )
+                                    .background(it.tint.copy(alpha = 0.03f))
+                                    .clickable { }
+                                    .border(
+                                        BorderStroke(
+                                            width = 1.dep(),
+                                            color = it.tint
+                                        ),
+                                        shape = RoundedCornerShape(8.dep())
+                                    )
+                                    .padding(
+                                        horizontal = 19.dep(),
+                                        vertical = 13.dep()
+                                    ),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ){
+                                Column(){
+                                    Row(
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        AsyncImage(
+                                            model = it.icon,
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .size(15.28.dep())
+                                        )
+                                        Spacer(modifier = Modifier.width(2.dep()))
+                                        RobotoText(
+                                            it.category,
+                                            fontSize = 14.sep(),
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xff243257),
+                                            modifier = Modifier
+                                                //.alignBy(FirstBaseline)
+                                                .offset(y = -4.dep())
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dep()))
+                                        RobotoText(
+                                            "(${it.description})",
+                                            fontSize = 11.sep(),
+                                            color = Color(0xff5A87BB),
+                                            modifier = Modifier
+                                                //.alignBy(FirstBaseline)
+                                                .offset(y = -2.dep())
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(19.dep()))
+                                    Row(){
+                                        RobotoText(
+                                            "Number of expenses: ",
+                                            color = Color(0xff677C91),
+                                            fontSize = 11.sep()
+                                        )
+                                        RobotoText(
+                                            String.format("%02d", it.count),
+                                            color = Color(0xff243257),
+                                            fontSize = 11.sep()
+                                        )
+                                    }
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(50.dep())
+                                        .background(Color.Red)
+                                ){
+
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Row(){
+                                        RobotoText(
+                                            "₹ ",
+                                            color = Color(0xff243257),
+                                            fontSize = 9.sep(),
+                                            modifier = Modifier.alignByBaseline()
+                                        )
+                                        RobotoText(
+                                            numberFormatter.value.format(it.amount.splitted().whole),
+                                            fontSize = 12.sep(),
+                                            color = Color(0xff243257),
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.alignByBaseline()
+                                        )
+                                        RobotoText(
+                                            ".${it.amount.splitted().decString}",
+                                            color = Color(0xff243257),
+                                            fontSize = 6.sep(),
+                                            modifier = Modifier.alignByBaseline()
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(16.dep()))
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_right_chevron),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(20.dep())
+                                            .clip(CircleShape)
+                                            .background(Color(0xff1A79E5))
+                                            .clickable {
+
+                                            }
+                                            .padding(6.dep()),
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+fun Number.sx(){
+    Spacer(modifier = Modifier.width(this.dep()))
+}
+
+@Composable
+fun Number.sy(){
+    Spacer(modifier = Modifier.height(this.dep()))
+}
+
+@Composable
+fun myText(
+    text: String,
+    size: Number,
+    color: Any = Color.Unspecified,
+    bold: Boolean = false
+){
+    RobotoText(
+        text = text,
+        color = color.ensureColor,
+        fontSize = size.sep(),
+        fontWeight = if(bold) FontWeight.Bold else FontWeight.Normal
+    )
 }
 
 data class LabelData(
@@ -688,6 +976,15 @@ fun BarGraph(
     }
 }
 
+private val Any.ensureColor: Color
+    get() {
+        return when(this){
+            is Color->this
+            is Int->Color(this)
+            is Long->Color(this)
+            else->Color.Unspecified
+        }
+    }
 val Color.native: Int
 get(){
     return -0x1000000 or
@@ -721,3 +1018,9 @@ data class CategoryExpense(
     val amount: Float,
     val tint: Color
 )
+
+@Preview
+@Composable
+fun ComposablePreview() {
+    ExpenseDemo()
+}

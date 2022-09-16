@@ -59,6 +59,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    namespace 'co.yore.splitnpay'
 }
 
 dependencies {
@@ -87,4 +88,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha03"
 
     implementation "dev.chrisbanes.snapper:snapper:0.3.0"
+
+    debugImplementation "androidx.compose.ui:ui-tooling:1.2.1"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.2.1"
 }
