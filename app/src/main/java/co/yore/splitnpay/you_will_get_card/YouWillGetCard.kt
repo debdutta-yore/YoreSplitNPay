@@ -23,12 +23,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
-import java.math.RoundingMode
-import java.text.DecimalFormat
 
 data class FloatSplitted(
-    val whole: String,
-    val dec: String
+    val wholeString: String,
+    val decString: String,
+    val whole: Int,
 )
 
 fun Float.splitted(): FloatSplitted{
@@ -48,7 +47,8 @@ fun Float.splitted(): FloatSplitted{
     }
     return FloatSplitted(
         wholeText,
-        decText
+        decText,
+        whole,
     )
 }
 
