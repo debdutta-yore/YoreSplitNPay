@@ -1024,3 +1024,18 @@ data class CategoryExpense(
 fun ComposablePreview() {
     ExpenseDemo()
 }
+
+////////////////////////
+sealed interface ClickableItem
+
+sealed class Device(val name: String) {
+    object Camera : Device("Camera"), ClickableItem
+    object Lamp : Device("Lamp")
+    // ... etc, more devices
+}
+
+fun onDeviceItemClicked(item: ClickableItem) {
+    when (item) {
+        Device.Camera -> { /* do something */ }
+    }
+}
