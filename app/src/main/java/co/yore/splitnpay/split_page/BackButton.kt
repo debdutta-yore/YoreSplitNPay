@@ -11,16 +11,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.R
 import co.yore.splitnpay.dep
 
+data class SplitBackButtonConfiguration(
+    val boxSize: Number = 24,
+    val iconSize: Number = 12,
+    val iconId: Int = R.drawable.ic_left_chevron,
+    val tint: Color = Color.White,
+)
+
 @Composable
 fun BackButton(
+    config: SplitBackButtonConfiguration = SplitBackButtonConfiguration(),
+    contentDescription: String,
     onClick: ()->Unit
 ) {
     Box(
         modifier = Modifier
-            .size(24.dep())
+            .semantics {
+                this.contentDescription = contentDescription
+            }
+            .size(config.boxSize.dep())
             .clip(CircleShape)
             .clickable {
                        onClick()
@@ -28,10 +42,10 @@ fun BackButton(
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            modifier = Modifier.size(12.dep()),
-            painter = painterResource(id = R.drawable.ic_back_arrow),
+            modifier = Modifier.size(config.iconSize.dep()),
+            painter = painterResource(id = config.iconId),
             contentDescription = "",
-            tint = Color.White
+            tint = config.tint
         )
     }
 }

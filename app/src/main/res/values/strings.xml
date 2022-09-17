@@ -3,4 +3,6 @@
     <string name="you_will_pay">You’ll pay</string>
     <string name="you_will_get">You’ll get</string>
     <string name="split">Split</string>
+    <string name="split_balance">Split Balance</string>
+    <string name="no_group_has_been_created_yet">No group has been created yet</string>
 </resources>
