@@ -117,8 +117,11 @@ data class SplitPageMotionLayoutConfiguration(
     val tabsStartPadding: Float=9f,
     val space: Float=4f,
     val tabsHeight: Float=73f,
-    val tabsColor: Color=Color.White,
-    val curveRadius: Float=47f
+    val tabsColor: Color=Color(0xffCFD8E4),
+    val curveRadius: Float=47f,
+    val splitBalanceTextId: Int = R.string.split_balance,
+    val splitBalanceFontSize: Float = 12f,
+    val splitBalanceTextColor: Color = Color.White,
 )
 
 @OptIn(ExperimentalMotionApi::class)
@@ -180,6 +183,9 @@ fun SplitPageMotionLayout(
             config.space,
             config.height,
             config.color,
+            config.splitBalanceTextId,
+            config.splitBalanceFontSize,
+            config.splitBalanceTextColor,
         ){
             f = it
             Log.d("fdlfdfd", "$f")
@@ -300,14 +306,14 @@ fun NoGroupHasBeenCreatedYet() {
 fun TabsSection(
     selectedIndex: Int,
     tabsList: List<String>,
-    height: Float,//73f
-    backgroundColor: Color,//Color.White
-    startPadding:Float,//16f,
-    fontSize:Float,//21f,
-    color:Color,//Color(0xffCFD8E4),
-    selectedColor:Color,//Color(0xff243257),
-    dividerColor: Color,//Color(0xfffafcff)
-    dividerThickness: Float,//1f
+    height: Float,
+    backgroundColor: Color,
+    startPadding:Float,
+    fontSize:Float,
+    color:Color,
+    selectedColor:Color,
+    dividerColor: Color,
+    dividerThickness: Float,
     onSelectionChanged: (Int) -> Unit
 ) {
     Box(
@@ -341,15 +347,21 @@ fun TabsSection(
 fun Tabs(
     selectedIndex: Int,
     tabsList: List<String>,
-    backgroundColor: Color,//Color.White
-    startPadding: Float,//16f
-    fontSize: Float,//21f
-    color: Color,//Color(0xffCFD8E4)
-    selectedColor: Color,//Color(0xff243257)
+    backgroundColor: Color,
+    startPadding: Float,
+    fontSize: Float,
+    color: Color,
+    selectedColor: Color,
     onSelectionChanged: (Int)->Unit
 ) {
+    var _selectedIndex by remember {
+        mutableStateOf(selectedIndex)
+    }
+    LaunchedEffect(key1 =selectedIndex){
+        _selectedIndex = selectedIndex
+    }
     TabRow(
-        selectedTabIndex = selectedIndex,
+        selectedTabIndex = _selectedIndex,
         backgroundColor = backgroundColor,
         modifier = Modifier
             .fillMaxWidth()
@@ -360,10 +372,9 @@ fun Tabs(
         divider = { TabRowDefaults.Divider(color = Color.Transparent) },
     ) {
         tabsList.forEachIndexed { index, text ->
-            val selected = selectedIndex == index
             val computedColor by remember {
                 derivedStateOf {
-                    if (selected)
+                    if (_selectedIndex == index)
                         selectedColor
                     else
                         color
@@ -400,18 +411,21 @@ fun HeaderAndSearchBar(
     decPay: String,
     whole: String,
     decimal: String,
-    headerSpace: Float,//4f
-    headerRightSpace: Float,//38f
-    headerTopPadding: Float,//83
-    cardSpace: Float,//8f
-    cardEndPadding: Float,//16f
-    splitFontSize: Float,//14,
-    tint: Color,//Color.White,
-    topPadding: Float,//13,
-    startPadding: Float,//9,
-    space: Float,//4f
-    height: Float,//411
-    color: Color,//white
+    headerSpace: Float,
+    headerRightSpace: Float,
+    headerTopPadding: Float,
+    cardSpace: Float,
+    cardEndPadding: Float,
+    splitFontSize: Float,
+    tint: Color,
+    topPadding: Float,
+    startPadding: Float,
+    space: Float,
+    height: Float,
+    color: Color,
+    splitBalanceTextId: Int,
+    splitBalanceFontSize: Float,
+    splitBalanceColor: Color,
     onFactorChanged: (Float)->Unit
 ) {
     Box(
@@ -446,6 +460,9 @@ fun HeaderAndSearchBar(
             topPadding,
             startPadding,
             space,
+            splitBalanceTextId,
+            splitBalanceFontSize,
+            splitBalanceColor
         )
         ExpandedCards(progress)
         SearchBar()
@@ -516,6 +533,9 @@ fun HeaderCutout(
     topPadding: Float,//13,
     startPadding: Float,//9,
     space: Float,//4f
+    splitBalanceTextId: Int,
+    splitBalanceFontSize: Float,
+    splitBalanceColor: Color
 ) {
     Column() {
         HeaderUpperCutout(
@@ -538,6 +558,9 @@ fun HeaderCutout(
             topPadding,
             startPadding,
             space,
+            splitBalanceTextId,
+            splitBalanceFontSize,
+            splitBalanceColor
         )
         HeaderBottomCutout()
     }
@@ -561,11 +584,14 @@ fun HeaderUpperCutout(
     cardSpace: Float,//8f
     cardEndPadding: Float,//16f
 
-    splitFontSize: Float,//14,
-    tint: Color,//Color.White,
-    topPadding: Float,//13,
-    startPadding: Float,//9,
-    space: Float,//4f
+    splitFontSize: Float,
+    tint: Color,
+    topPadding: Float,
+    startPadding: Float,
+    space: Float,
+    splitBalanceTextId: Int,
+    splitBalanceFontSize: Float,
+    splitBalanceColor: Color
 ) {
     val bm = 34.dep()
     MotionLayout(
@@ -597,11 +623,11 @@ fun HeaderUpperCutout(
         ){
             HeaderBackAndSplit(
                 splitTextId = R.string.split,
-                splitFontSize = 14,
-                tint = Color.White,
-                topPadding = 13,
-                startPadding = 9,
-                space = 4f
+                splitFontSize = splitFontSize,
+                tint = tint,
+                topPadding = topPadding,
+                startPadding = startPadding,
+                space = space
             ){}
         }
 
@@ -618,6 +644,9 @@ fun HeaderUpperCutout(
             headerTopPadding,
             cardSpace,
             cardEndPadding,
+            splitBalanceTextId,
+            splitBalanceFontSize,
+            splitBalanceColor
         )
     }
 }
@@ -658,6 +687,9 @@ fun HeaderContentAndCards(
     headerTopPadding: Number,//83
     cardSpace: Float,//8f
     cardEndPadding: Float,//16f
+    splitTextId:Int,
+    splitFontSize: Float,
+    splitColor: Color
 ) {
     Row(
         modifier = Modifier
@@ -671,6 +703,9 @@ fun HeaderContentAndCards(
             decimal,
             headerSpace,
             headerRightSpace,
+            splitTextId,
+            splitFontSize,
+            splitColor
         )
         CollapsedCards(
             progress,
@@ -691,8 +726,8 @@ fun CollapsedCards(
     decGet: String,
     wholePay: String,
     decPay: String,
-    space: Float,//8f
-    endPadding: Float,//16
+    space: Float,
+    endPadding: Float,
 ) {
     Column(
         modifier = Modifier
@@ -809,13 +844,19 @@ fun HeaderContentWithSpace(
     decimal: String,
     headerSpace: Number,
     headerRightSpace: Float,
+    splitTextId: Int,
+    splitFontSize: Float,
+    splitColor: Color
 ) {
     Row {
         (headerRightSpace * (1 - progress)).sx()
         HeaderContent(
             whole,
             decimal,
-            headerSpace
+            headerSpace,
+            splitTextId,
+            splitFontSize,
+            splitColor
         )
     }
 }
@@ -824,13 +865,20 @@ fun HeaderContentWithSpace(
 fun HeaderContent(
     whole: String,
     decimal: String,
-    space: Number
+    space: Number,
+    splitTextId: Int,
+    splitFontSize: Float,
+    splitColor: Color
 ) {
     Column(
         modifier = Modifier
             .padding(top = space.dep())
     ) {
-        SplitBalanceText()
+        SplitBalanceText(
+            splitTextId,
+            splitFontSize,
+            splitColor
+        )
         HeaderAmount(
             whole,
             decimal
@@ -888,8 +936,8 @@ fun RowScope.HeaderAmountDecimalPart(
 @Composable
 fun RowScope.HeaderAmountWholePart(
     whole: String,
-    fontSize: Float,//30f
-    color: Color,//Color.White
+    fontSize: Float,
+    color: Color,
 ) {
     RobotoText(
         whole,
@@ -911,11 +959,15 @@ fun HeaderAmountCurrency() {
 }
 
 @Composable
-fun SplitBalanceText() {
+fun SplitBalanceText(
+    splitTextId: Int,
+    fontSize: Float,
+    color: Color
+) {
     RobotoText(
-        stringResource(R.string.split_balance),
-        fontSize = 12.sep(),
-        color = Color.White,
+        stringResource(splitTextId),
+        fontSize = fontSize.sep(),
+        color = color,
     )
 }
 
@@ -946,9 +998,9 @@ fun HeaderBackAndSplit(
     splitTextId: Int,
     splitFontSize: Number,
     tint: Color,
-    topPadding: Number,//13
-    startPadding: Number,//9,
-    space: Float,//4f
+    topPadding: Number,
+    startPadding: Number,
+    space: Float,
     onBackClick: ()->Unit
 ) {
     Row(
