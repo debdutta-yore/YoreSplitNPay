@@ -32,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import co.yore.splitnpay.you_will_get_card.splitted
 import coil.compose.AsyncImage
 import java.text.DecimalFormat
 
@@ -812,6 +811,15 @@ fun myText(
         fontWeight = if(bold) FontWeight.Bold else FontWeight.Normal
     )
 }
+val Any.ensureColor: Color
+    get() {
+        return when(this){
+            is Color->this
+            is Int->Color(this)
+            is Long->Color(this)
+            else->Color.Unspecified
+        }
+    }
 
 data class LabelData(
     val index: Int,
@@ -976,15 +984,7 @@ fun BarGraph(
     }
 }
 
-private val Any.ensureColor: Color
-    get() {
-        return when(this){
-            is Color->this
-            is Int->Color(this)
-            is Long->Color(this)
-            else->Color.Unspecified
-        }
-    }
+
 val Color.native: Int
 get(){
     return -0x1000000 or

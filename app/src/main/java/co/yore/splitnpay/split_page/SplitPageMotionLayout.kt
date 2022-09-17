@@ -1,14 +1,10 @@
-package co.yore.splitnpay
+package co.yore.splitnpay.split_page
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -17,116 +13,88 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
+import co.yore.splitnpay.*
+import co.yore.splitnpay.R
 import co.yore.splitnpay.friend_item.FriendItem
 import co.yore.splitnpay.friend_item.models.Friend
-import co.yore.splitnpay.you_will_get_card.YouWillGetCard
-import co.yore.splitnpay.you_will_get_card.YouWillPayCard
-import kotlinx.coroutines.delay
-import java.util.*
+import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCard
+import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCardConfig
 
-enum class SwipingStates {
-    EXPANDED,
-    COLLAPSED
-}
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SplitPage() {
-    val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
+private fun JsonConstraintSetStart() = ConstraintSet(
+    """ 
+{
+	poster: { 
+		width: "spread",
+		start: ['parent', 'start', 0],
+		end: ['parent', 'end', 0],
+		top: ['parent', 'top', 0],
+	},
+	tabs: { 
+		width: "spread",
+		start: ['parent', 'start', 0],
+		end: ['parent', 'end', 0],
+		top: ['poster', 'bottom', 0],
+	},
+	content: {
+		width: "spread",
+        height: "spread",
+		start: ['parent', 'start', 0],
+		end: ['parent', 'end', 0],
+		top: ['tabs', 'bottom', ],
+		bottom: ['parent', 'bottom', 0],
+	}
+} 
+"""
+)
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-
-        val heightInPx = with(LocalDensity.current) { maxHeight.toPx() } // Get height of screen
-        val connection = remember {
-            object : NestedScrollConnection {
-
-                override fun onPreScroll(
-                    available: Offset,
-                    source: NestedScrollSource
-                ): Offset {
-                    val delta = available.y
-                    return if (delta < 0) {
-                        swipingState.performDrag(delta).toOffset()
-                    } else {
-                        Offset.Zero
-                    }
-                }
-
-                override fun onPostScroll(
-                    consumed: Offset,
-                    available: Offset,
-                    source: NestedScrollSource
-                ): Offset {
-                    val delta = available.y
-                    return swipingState.performDrag(delta).toOffset()
-                }
-
-                override suspend fun onPostFling(
-                    consumed: Velocity,
-                    available: Velocity
-                ): Velocity {
-                    swipingState.performFling(velocity = available.y)
-                    return super.onPostFling(consumed, available)
-                }
-
-                private fun Float.toOffset() = Offset(0f, this)
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .swipeable(
-                    state = swipingState,
-                    thresholds = { _, _ -> FractionalThreshold(0.05f) },
-                    orientation = Orientation.Vertical,
-                    anchors = mapOf(
-                        // Maps anchor points (in px) to states
-                        0f to SwipingStates.COLLAPSED,
-                        heightInPx to SwipingStates.EXPANDED,
-                    )
-                )
-                .nestedScroll(connection)
-        ) {
-            Column() {
-                MotionLayoutHeader(
-                    progress =
-                    if (swipingState.progress.to == SwipingStates.COLLAPSED)
-                        swipingState.progress.fraction
-                    else
-                        1f - swipingState.progress.fraction
-                ) {
-                    swipingState.performDrag(-0.01f)
-                }
-            }
-        }
-    }
-}
+@Composable
+private fun JsonConstraintSetEnd(
+    dim: Float
+) = ConstraintSet(
+    """ {
+	poster: { 
+		width: "spread",
+		height: $dim,
+		start: ['parent', 'start', 0],
+		end: ['parent', 'end', 0],
+		top: ['parent', 'top', 0],
+	},
+    tabs: { 
+		width: "spread",
+		start: ['parent', 'start', 0],
+		end: ['parent', 'end', 0],
+		top: ['poster', 'bottom', 0],
+	},
+	content: {
+		width: "spread",
+        height: "spread",
+		start: ['parent', 'start', 0],
+		end: ['parent', 'end', 0],
+		top: ['tabs', 'bottom', 0],
+		bottom: ['parent', 'bottom', 0],
+	}
+                  
+} """
+)
 
 @OptIn(ExperimentalMotionApi::class)
 @Composable
-fun MotionLayoutHeader(
+fun SplitPageMotionLayout(
     progress: Float,
     swipe: ()->Unit
 ) {
@@ -187,13 +155,8 @@ fun MotionLayoutHeader(
                                 this.centerHorizontallyTo(container)
                                 this.bottom.linkTo(container.bottom,bm)
                             }
-
-                            /*constrain(cutout) {
-                                this.top.linkTo(container.bottom)
-                            }*/
                         },
                         progress = (1f - f),
-                        //modifier = Modifier.background(Color.Red)
                     ) {
                         Box(
                             modifier = Modifier
@@ -207,45 +170,9 @@ fun MotionLayoutHeader(
                                 )
                                 .background(Color(0xff839BB9))
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(
-                                        top = 13.dep(),
-                                        start = 9.dep()
-                                    )
-                            ) {
-                                Row() {
-                                    BackButton()
-                                    Spacer(modifier = Modifier.width(4.dep()))
-                                    RobotoText(
-                                        "Split",
-                                        fontSize = 14.sep(),
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                }
-                            }
-
+                            HeaderBackAndSplit()
                         }
-                        /*Box(
-                            modifier = Modifier
-                                .layoutId("cutout")
-                                .fillMaxWidth()
-                                .height(60.dp)
-                                .background(Color(0xff839BB9))
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(60.dp)
-                                    .clip(
-                                        RoundedCornerShape(
-                                            0.dp, 47.dep(), 0.dp, 0.dp
-                                        )
-                                    )
-                                    .background(Color.White)
-                            ) {}
-                        }*/
+
                         Row(
                             modifier = Modifier
                                 .layoutId("row")
@@ -325,7 +252,7 @@ fun MotionLayoutHeader(
                                         modifier = Modifier.padding(horizontal = (12 * (1f - f)).dep()),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(
+                                        RobotoText(
                                             "You will get",
                                             fontSize = (11 * (1f - f)).sep(),
                                             color = Color(0xff839BB9)
@@ -432,9 +359,27 @@ fun MotionLayoutHeader(
                     .padding(bottom = 78.dep())
                     .alpha(f)
             ) {
-                YouWillGetCard(whole = "00", decimal = "00")
+                YouWillGetPayCard(
+                    config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.GET),
+                    whole = "00",
+                    decimal = "00",
+                    {
+
+                    }
+                ){
+
+                }
                 Spacer(modifier = Modifier.width(22.dep()))
-                YouWillPayCard(whole = "00", decimal = "00")
+                YouWillGetPayCard(
+                    config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.PAY),
+                    whole = "00",
+                    decimal = "00",
+                    {
+
+                    }
+                ){
+
+                }
             }
             Box(
                 modifier = Modifier
@@ -576,115 +521,26 @@ fun MotionLayoutHeader(
 }
 
 @Composable
-private fun BackButton() {
-    Box(
+fun HeaderBackAndSplit() {
+    Row(
         modifier = Modifier
-            .size(24.dep())
-            .clip(CircleShape)
-            .clickable { },
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            modifier = Modifier.size(12.dep()),
-            painter = painterResource(id = R.drawable.ic_back_arrow),
-            contentDescription = "",
-            tint = Color.White
-        )
-    }
-}
-
-@Composable
-private fun JsonConstraintSetStart() = ConstraintSet(
-    """ 
-{
-	poster: { 
-		width: "spread",
-		start: ['parent', 'start', 0],
-		end: ['parent', 'end', 0],
-		top: ['parent', 'top', 0],
-	},
-	tabs: { 
-		width: "spread",
-		start: ['parent', 'start', 0],
-		end: ['parent', 'end', 0],
-		top: ['poster', 'bottom', 0],
-	},
-	content: {
-		width: "spread",
-        height: "spread",
-		start: ['parent', 'start', 0],
-		end: ['parent', 'end', 0],
-		top: ['tabs', 'bottom', ],
-		bottom: ['parent', 'bottom', 0],
-	}
-} 
-"""
-)
-
-@Composable
-private fun JsonConstraintSetEnd(
-    dim: Float
-) = ConstraintSet(
-    """ {
-	poster: { 
-		width: "spread",
-		height: $dim,
-		start: ['parent', 'start', 0],
-		end: ['parent', 'end', 0],
-		top: ['parent', 'top', 0],
-	},
-    tabs: { 
-		width: "spread",
-		start: ['parent', 'start', 0],
-		end: ['parent', 'end', 0],
-		top: ['poster', 'bottom', 0],
-	},
-	content: {
-		width: "spread",
-        height: "spread",
-		start: ['parent', 'start', 0],
-		end: ['parent', 'end', 0],
-		top: ['tabs', 'bottom', 0],
-		bottom: ['parent', 'bottom', 0],
-	}
-                  
-} """
-)
-
-@Composable
-internal fun ScrollableContent() {
-    val list = listOf(1..200).flatten()
-    LazyColumn(
-        Modifier.padding(
-            bottom = 56.dp // We need to reduce content height by the height of collapsed content
-        )
-    ) {
-        items(
-            items = list,
-            itemContent = { id ->
-                ScrollableContentItem(id = id.toString())
-            },
-        )
-    }
-}
-
-@Composable
-private fun ScrollableContentItem(id: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(16.dp),
-        backgroundColor = MaterialTheme.colors.surface,
-        elevation = 4.dp
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = "Item $id",
-                color = MaterialTheme.colors.onSurface,
-                style = MaterialTheme.typography.h5
+            .padding(
+                top = 13.dep(),
+                start = 9.dep()
             )
-        }
-
+    ) {
+        BackButton{}
+        Spacer(modifier = Modifier.width(4.dep()))
+        SplitText()
     }
+}
+
+@Composable
+fun SplitText() {
+    RobotoText(
+        stringResource(R.string.split),
+        fontSize = 14.sep(),
+        fontWeight = FontWeight.Bold,
+        color = Color.White
+    )
 }

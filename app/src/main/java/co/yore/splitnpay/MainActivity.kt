@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import co.yore.splitnpay.split_page.SplitPage
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,8 +26,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        ExpenseDemo()
-                        //DatePickerDemo()
+                        SplitPage()
                     }
                 }
             }

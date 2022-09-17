@@ -262,7 +262,9 @@ data class YoreDatePickerData(
     val selectedMonth: Int? = Calendar.getInstance().get(Calendar.MONTH)+1,
     val selectedYear: Int = Calendar.getInstance().get(Calendar.YEAR),
     val minDate: Kal.Date? = null,
-    val maxDate: Kal.Date? = null
+    val maxDate: Kal.Date? = null,
+    val dateSelectable: Boolean = true,
+    val yearSwitchable: Boolean = true
 )
 
 @Composable
@@ -270,7 +272,8 @@ fun YoreDatePicker(
     yoreDatePickerData: YoreDatePickerData = YoreDatePickerData(),
     onYearClick: (Int)->Unit,
     onMonthClick: (Int)->Unit,
-    onDaySelect: (Int)->Unit
+    onDaySelect: (Int)->Unit,
+    content: @Composable () -> Unit
 ) {
     var _yoreDatePickerData by remember {
         mutableStateOf(yoreDatePickerData)
@@ -292,6 +295,7 @@ fun YoreDatePicker(
                         _yoreDatePickerData.selectedYear,
                         minDate = _yoreDatePickerData.minDate,
                         maxDate = _yoreDatePickerData.maxDate,
+                        switchable = _yoreDatePickerData.yearSwitchable
                     )
                 }
             }
@@ -302,7 +306,8 @@ fun YoreDatePicker(
                 },
                 onYearPicked = {
                     onYearClick(it)
-                }
+                },
+                content = content
             )
         }
         var minMonth by remember {
@@ -363,6 +368,7 @@ fun YoreDatePicker(
                     maxMonth,
                     minDay,
                     maxDay,
+                    _yoreDatePickerData.dateSelectable
                 )
             }
         }
@@ -396,6 +402,7 @@ data class MonthPickerData(
     val maxMonth: Int,
     val minDay: Int,
     val maxDay: Int,
+    val dateSelectable: Boolean
 )
 
 @Composable
@@ -458,7 +465,8 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            _monthPickerData.selectedMonth is Int &&
+            _monthPickerData.dateSelectable
+                    &&_monthPickerData.selectedMonth is Int &&
                     _monthPickerData.selectedMonth in 1..3,
             enter = enter,
             exit = exit,
@@ -480,8 +488,9 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            _monthPickerData.selectedMonth is Int &&
-                    _monthPickerData.selectedMonth !in 1..3,
+            !_monthPickerData.dateSelectable
+                    ||(_monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth !in 1..3),
             enter = enter,
             exit = exit,
         ){
@@ -511,7 +520,9 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            _monthPickerData.selectedMonth is Int &&
+
+            _monthPickerData.dateSelectable
+                    &&_monthPickerData.selectedMonth is Int &&
                     _monthPickerData.selectedMonth in 4..6,
             enter = enter,
             exit = exit,
@@ -533,8 +544,9 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            _monthPickerData.selectedMonth is Int &&
-                    _monthPickerData.selectedMonth !in 4..6,
+            !_monthPickerData.dateSelectable
+                    ||(_monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth !in 4..6),
             enter = enter,
             exit = exit,
         ){
@@ -564,7 +576,9 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            _monthPickerData.selectedMonth is Int &&
+
+            _monthPickerData.dateSelectable
+                    &&_monthPickerData.selectedMonth is Int &&
                     _monthPickerData.selectedMonth in 7..9,
             enter = enter,
             exit = exit,
@@ -586,8 +600,9 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            _monthPickerData.selectedMonth is Int &&
-                    _monthPickerData.selectedMonth !in 7..9,
+            !_monthPickerData.dateSelectable
+                    ||(_monthPickerData.selectedMonth is Int &&
+                    _monthPickerData.selectedMonth !in 7..9),
             enter = enter,
             exit = exit,
         ){
@@ -617,7 +632,9 @@ fun MonthPicker(
             }
         }
         AnimatedVisibility(
-            _monthPickerData.selectedMonth is Int &&
+
+            _monthPickerData.dateSelectable
+                    &&_monthPickerData.selectedMonth is Int &&
                     _monthPickerData.selectedMonth in 10..12,
             enter = enter,
             exit = exit,
@@ -727,6 +744,7 @@ data class YearSwitcherData(
     val selectedYear: Int,
     val minDate: Kal.Date?,
     val maxDate: Kal.Date?,
+    val switchable: Boolean = true
 )
 
 data class YearSwitcherConfiguration(
@@ -741,7 +759,8 @@ fun YearSwitcher(
     yearSwitcherData: YearSwitcherData,
     config: YearSwitcherConfiguration = YearSwitcherConfiguration(),
     onMode: (Boolean)->Unit,
-    onYearPicked: (Int)->Unit
+    onYearPicked: (Int)->Unit,
+    content: @Composable () -> Unit
 ) {
     LaunchedEffect(key1 = Unit){
         if(yearSwitcherData.minDate!=null&& yearSwitcherData.maxDate!=null){
@@ -782,34 +801,52 @@ fun YearSwitcher(
     ){
         Row(
         ){
-            NavIconButton(
-                hasPrev,
-                NavIconConfiguration.Prev
-            ){
-                onYearPicked(yearSwitcherData.selectedYear - 1)
+            if(yearSwitcherData.switchable){
+                NavIconButton(
+                    hasPrev,
+                    NavIconConfiguration.Prev
+                ){
+                    onYearPicked(yearSwitcherData.selectedYear - 1)
+                }
+                Spacer(modifier = Modifier.width(config.navYearSpace.dep()))
             }
-            Spacer(modifier = Modifier.width(config.navYearSpace.dep()))
-            Text(
-                yearSwitcherData.selectedYear.toString(),
-                fontSize = config.fontSize.sep(),
-                fontWeight = FontWeight.Bold,
-                color = config.color,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable {
-                        selectionMode = !selectionMode
-                    }
-                    .padding(horizontal = config.horizontalPadding.dep())
-            )
-            Spacer(modifier = Modifier.width(config.navYearSpace.dep()))
-            NavIconButton(
-                hasNext,
-                NavIconConfiguration.Next
-            ){
-                onYearPicked(yearSwitcherData.selectedYear + 1)
+            if(yearSwitcherData.switchable){
+                Text(
+                    yearSwitcherData.selectedYear.toString(),
+                    fontSize = config.fontSize.sep(),
+                    fontWeight = FontWeight.Bold,
+                    color = config.color,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable {
+                            selectionMode = !selectionMode
+                        }
+                        .padding(horizontal = config.horizontalPadding.dep())
+                )
+            }
+            else{
+                Text(
+                    yearSwitcherData.selectedYear.toString(),
+                    fontSize = config.fontSize.sep(),
+                    fontWeight = FontWeight.Bold,
+                    color = config.color,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .padding(horizontal = config.horizontalPadding.dep())
+                )
+            }
+
+            if(yearSwitcherData.switchable){
+                Spacer(modifier = Modifier.width(config.navYearSpace.dep()))
+                NavIconButton(
+                    hasNext,
+                    NavIconConfiguration.Next
+                ){
+                    onYearPicked(yearSwitcherData.selectedYear + 1)
+                }
             }
         }
-
+        content()
         AnimatedVisibility(
             selectionMode,
         enter = fadeIn(animationSpec = tween(700)),
