@@ -1,5 +1,6 @@
 package co.yore.splitnpay.split_page
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -92,10 +93,45 @@ private fun JsonConstraintSetEnd(
 } """
 )
 
+data class SplitPageMotionLayoutConfiguration(
+    val maxHeight: Float=411f,
+    val minHeight: Float=234f,
+    val curveHeightConstantPart: Float=159f,
+    val curveHeightVariablePart: Float=60f,
+    val height: Float=411f,
+    val backgroundColor: Color=Color.White,
+    val startPadding: Float=16f,
+    val fontSize: Float=21f,
+    val color: Color=Color.White,
+    val selectedColor: Color=Color(0xff243257),
+    val dividerColor: Color=Color(0xfffafcff),
+    val dividerThickness: Float=1f,
+    val headerSpace: Float=4f,
+    val headerRightSpace: Float=38f,
+    val headerTopPadding: Float=83f,
+    val cardSpace: Float=8f,
+    val cardEndPadding: Float=16f,
+    val splitFontSize: Float=14f,
+    val tint: Color=Color.White,
+    val topPadding: Float=13f,
+    val tabsStartPadding: Float=9f,
+    val space: Float=4f,
+    val tabsHeight: Float=73f,
+    val tabsColor: Color=Color.White,
+    val curveRadius: Float=47f
+)
+
 @OptIn(ExperimentalMotionApi::class)
 @Composable
 fun SplitPageMotionLayout(
     progress: Float,
+    wholeGet: String,
+    decGet: String,
+    wholePay: String,
+    decPay: String,
+    whole: String,
+    decimal: String,
+    config: SplitPageMotionLayoutConfiguration = SplitPageMotionLayoutConfiguration(),
     swipe: ()->Unit
 ) {
     val d = 234.dep().value
@@ -108,11 +144,11 @@ fun SplitPageMotionLayout(
     ) {
         var curveHeight by remember { mutableStateOf(0f) }
 
-        val maxHeight = with(LocalDensity.current) {
-            411.dep().value * this.density
+        val _maxHeight = with(LocalDensity.current) {
+            config.maxHeight.dep().value * this.density
         }
-        val minHeight = with(LocalDensity.current) {
-            234.dep().value * this.density
+        val _minHeight = with(LocalDensity.current) {
+            config.minHeight.dep().value * this.density
         }
         var f by remember { mutableStateOf(1f) }
         LaunchedEffect(key1 = f){
@@ -120,16 +156,49 @@ fun SplitPageMotionLayout(
                 swipe()
             }
         }
-        HeaderAndSearchBar(minHeight,maxHeight,curveHeight,f,){
+        HeaderAndSearchBar(
+            _minHeight,
+            _maxHeight,
+            curveHeight,
+            f,
+            config.curveRadius,
+            wholeGet,
+            decGet,
+            wholePay,
+            decPay,
+            whole,
+            decimal,
+            config.headerSpace,
+            config.headerRightSpace,
+            config.headerTopPadding,
+            config.cardSpace,
+            config.cardEndPadding,
+            config.splitFontSize,
+            config.tint,
+            config.topPadding,
+            config.startPadding,
+            config.space,
+            config.height,
+            config.color,
+        ){
             f = it
-            curveHeight = 159 + 60 * f
+            Log.d("fdlfdfd", "$f")
+            curveHeight = config.curveHeightConstantPart + config.curveHeightVariablePart * f
         }
         val tabsList =
             listOf(ContactTabs.Groups.name, ContactTabs.Friends.name)
         var selectedIndex by remember { mutableStateOf(0) }
         TabsSection(
             selectedIndex,
-            tabsList
+            tabsList,
+            config.tabsHeight,
+            config.backgroundColor,
+            config.tabsStartPadding,
+            config.fontSize,
+            config.tabsColor,
+            config.selectedColor,
+            config.dividerColor,
+            config.dividerThickness,
         ){ selectedIndex = it }
         Contents(selectedIndex)
     }
@@ -231,25 +300,38 @@ fun NoGroupHasBeenCreatedYet() {
 fun TabsSection(
     selectedIndex: Int,
     tabsList: List<String>,
+    height: Float,//73f
+    backgroundColor: Color,//Color.White
+    startPadding:Float,//16f,
+    fontSize:Float,//21f,
+    color:Color,//Color(0xffCFD8E4),
+    selectedColor:Color,//Color(0xff243257),
+    dividerColor: Color,//Color(0xfffafcff)
+    dividerThickness: Float,//1f
     onSelectionChanged: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier
             .layoutId("tabs")
-            .height(73.dep())
-            .background(Color.White),
+            .height(height.dep())
+            .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
 
         Tabs(
             selectedIndex,
-            tabsList
+            tabsList,
+            backgroundColor,
+            startPadding,
+            fontSize,
+            color,
+            selectedColor
         ){
             onSelectionChanged(it)
         }
         Divider(
-            color = Color(0xfffafcff),
-            thickness = 1.dp,
+            color = dividerColor,
+            thickness = dividerThickness.dep(),
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
@@ -259,22 +341,34 @@ fun TabsSection(
 fun Tabs(
     selectedIndex: Int,
     tabsList: List<String>,
+    backgroundColor: Color,//Color.White
+    startPadding: Float,//16f
+    fontSize: Float,//21f
+    color: Color,//Color(0xffCFD8E4)
+    selectedColor: Color,//Color(0xff243257)
     onSelectionChanged: (Int)->Unit
 ) {
     TabRow(
         selectedTabIndex = selectedIndex,
-        backgroundColor = Color.White,
+        backgroundColor = backgroundColor,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dep()),
-        indicator = { tabPositions: List<TabPosition> ->
+            .padding(start = startPadding.dep()),
+        indicator = {
             Box {}
         },
         divider = { TabRowDefaults.Divider(color = Color.Transparent) },
     ) {
         tabsList.forEachIndexed { index, text ->
             val selected = selectedIndex == index
-
+            val computedColor by remember {
+                derivedStateOf {
+                    if (selected)
+                        selectedColor
+                    else
+                        color
+                }
+            }
             Text(
                 modifier = Modifier
                     .clickable(
@@ -282,14 +376,10 @@ fun Tabs(
                         indication = null
                     ) {
                         onSelectionChanged(index)
-                    }
-                    .padding(0.dep()),
+                    },
                 text = text,
-                fontSize = 21f.sep(),
-                color = if (selected) colorResource(id = R.color.lightblue2)
-                else colorResource(
-                    id = R.color.lightgrey5
-                ),
+                fontSize = fontSize.sep(),
+                color = computedColor,
                 fontWeight = FontWeight.Bold,
                 fontFamily = robotoFonts
             )
@@ -316,7 +406,7 @@ fun HeaderAndSearchBar(
     cardSpace: Float,//8f
     cardEndPadding: Float,//16f
     splitFontSize: Float,//14,
-    tint: Float,//Color.White,
+    tint: Color,//Color.White,
     topPadding: Float,//13,
     startPadding: Float,//9,
     space: Float,//4f
@@ -422,7 +512,7 @@ fun HeaderCutout(
     cardSpace: Float,//8f
     cardEndPadding: Float,//16f
     splitFontSize: Float,//14,
-    tint: Float,//Color.White,
+    tint: Color,//Color.White,
     topPadding: Float,//13,
     startPadding: Float,//9,
     space: Float,//4f
@@ -459,7 +549,6 @@ fun HeaderUpperCutout(
     progress: Float,
     curveHeight: Number,//219
     curveRadius: Number,//47
-
     wholeGet: String,
     decGet: String,
     wholePay: String,
@@ -473,7 +562,7 @@ fun HeaderUpperCutout(
     cardEndPadding: Float,//16f
 
     splitFontSize: Float,//14,
-    tint: Float,//Color.White,
+    tint: Color,//Color.White,
     topPadding: Float,//13,
     startPadding: Float,//9,
     space: Float,//4f

@@ -9,6 +9,8 @@ import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -25,7 +27,14 @@ enum class SwipingStates {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SplitPage() {
+fun SplitPage(
+    wholeGet: String,
+    decGet: String,
+    wholePay: String,
+    decPay: String,
+    whole: String,
+    decimal: String,
+) {
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val heightInPx = with(LocalDensity.current) { maxHeight.toPx() } // Get height of screen
@@ -77,12 +86,22 @@ fun SplitPage() {
                 )
                 .nestedScroll(connection)
         ) {
-                SplitPageMotionLayout(
-                    progress =
+            val computedProgress by remember {
+                derivedStateOf {
                     if (swipingState.progress.to == SwipingStates.COLLAPSED)
                         swipingState.progress.fraction
                     else
                         1f - swipingState.progress.fraction
+                }
+            }
+                SplitPageMotionLayout(
+                    progress = computedProgress,
+                    wholeGet,
+                    decGet,
+                    wholePay,
+                    decPay,
+                    whole,
+                    decimal,
                 ) {
                     swipingState.performDrag(-0.01f)
                 }

@@ -26,7 +26,14 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        SplitPage()
+                        SplitPage(
+                            wholeGet="00",
+                            decGet="00",
+                            wholePay="00",
+                            decPay="00",
+                            whole="00",
+                            decimal="00",
+                        )
                     }
                 }
             }

@@ -48,6 +48,13 @@ import co.yore.splitnpay.split_page.SplitPage
                 }
             }
         ) {
-            SplitPage()
+            SplitPage(
+                wholeGet="00",
+                decGet="00",
+                wholePay="00",
+                decPay="00",
+                whole="00",
+                decimal="00",
+            )
         }
     }
