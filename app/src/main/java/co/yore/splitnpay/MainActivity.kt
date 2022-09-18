@@ -2,6 +2,7 @@ package co.yore.splitnpay
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import co.yore.splitnpay.split_page.SplitPage
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+
+
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -26,14 +29,18 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        SplitPage(
-                            wholeGet="00",
-                            decGet="00",
-                            wholePay="00",
-                            decPay="00",
-                            whole="00",
-                            decimal="00",
-                        )
+                        CompositionLocalProvider(yoreNotificationService provides NotificationService{ id, arg->
+                            Log.d("fldjfldkf","$id=$arg")
+                        }) {
+                            SplitPage(
+                                wholeGet="00",
+                                decGet="00",
+                                wholePay="00",
+                                decPay="00",
+                                whole="00",
+                                decimal="00",
+                            )
+                        }
                     }
                 }
             }

@@ -31,6 +31,7 @@ data class ContactSearchBarConfiguration(
     val cursorColor: Color = Color.DarkGray,
     val iconLeftSpace: Float = 20.5f,
     val searchIconId: Int = R.drawable.ic_search,
+    val searchIconTint: Color = Color(0xff989898),
     val iconRightSpace: Float = 12.5f,
     val dividerColor: Color = Color(0xffBCBCBC),
     val dividerHeight: Float = 13f,
@@ -84,7 +85,7 @@ fun ContactSearchBar(
                     Icon(
                         painter = painterResource(id = config.searchIconId),
                         contentDescription = "search",
-                        tint = Color.Unspecified
+                        tint = config.searchIconTint
                     )
                     config.iconRightSpace.sx()
                     Divider(

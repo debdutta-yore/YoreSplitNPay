@@ -1,6 +1,7 @@
 package co.yore.splitnpay.split_page
 
-import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -94,38 +94,7 @@ private fun JsonConstraintSetEnd(
                   
 } """
 )
-
-data class SplitPageMotionLayoutConfiguration(
-    val maxHeight: Float=411f,
-    val minHeight: Float=234f,
-    val curveHeightConstantPart: Float=159f,
-    val curveHeightVariablePart: Float=60f,
-    val height: Float=411f,
-    val backgroundColor: Color=Color.White,
-    val startPadding: Float=16f,
-    val fontSize: Float=21f,
-    val color: Color=Color.White,
-    val selectedColor: Color=Color(0xff243257),
-    val dividerColor: Color=Color(0xfffafcff),
-    val dividerThickness: Float=1f,
-    val headerSpace: Float=4f,
-    val headerRightSpace: Float=38f,
-    val headerTopPadding: Float=83f,
-    val cardSpace: Float=8f,
-    val cardEndPadding: Float=16f,
-    val splitFontSize: Float=14f,
-    val tint: Color=Color.White,
-    val topPadding: Float=13f,
-    val tabsStartPadding: Float=9f,
-    val space: Float=4f,
-    val tabsHeight: Float=73f,
-    val tabsColor: Color=Color(0xffCFD8E4),
-    val curveRadius: Float=47f,
-    val splitBalanceTextId: Int = R.string.split_balance,
-    val splitBalanceFontSize: Float = 12f,
-    val splitBalanceTextColor: Color = Color.White,
-)
-
+val headerMinHeight = 234f
 @OptIn(ExperimentalMotionApi::class)
 @Composable
 fun SplitPageMotionLayout(
@@ -136,10 +105,9 @@ fun SplitPageMotionLayout(
     decPay: String,
     whole: String,
     decimal: String,
-    config: SplitPageMotionLayoutConfiguration = SplitPageMotionLayoutConfiguration(),
     swipe: ()->Unit
 ) {
-    val d = 234.dep().value
+    val d = headerMinHeight.dep().value
     MotionLayout(
         start = JsonConstraintSetStart(),
         end = JsonConstraintSetEnd(d),
@@ -147,14 +115,7 @@ fun SplitPageMotionLayout(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        var curveHeight by remember { mutableStateOf(0f) }
 
-        val _maxHeight = with(LocalDensity.current) {
-            config.maxHeight.dep().value * this.density
-        }
-        val _minHeight = with(LocalDensity.current) {
-            config.minHeight.dep().value * this.density
-        }
         var f by remember { mutableStateOf(1f) }
         LaunchedEffect(key1 = f){
             if(f==1f){
@@ -162,39 +123,26 @@ fun SplitPageMotionLayout(
             }
         }
         HeaderAndSearchBar(
-            _minHeight,
-            _maxHeight,
-            curveHeight,
             f,
-            config.curveRadius,
             wholeGet,
             decGet,
             wholePay,
             decPay,
             whole,
             decimal,
-            config.height,
-            config.color,
         ){
             f = it
-            Log.d("fdlfdfd", "$f")
-            curveHeight = config.curveHeightConstantPart + config.curveHeightVariablePart * f
         }
         val tabsList =
             listOf(ContactTabs.Groups.name, ContactTabs.Friends.name)
         var selectedIndex by remember { mutableStateOf(0) }
-        TabsSection(
+
+        Tabs(
             selectedIndex,
             tabsList,
-            config.tabsHeight,
-            config.backgroundColor,
-            config.tabsStartPadding,
-            config.fontSize,
-            config.tabsColor,
-            config.selectedColor,
-            config.dividerColor,
-            config.dividerThickness,
-        ){ selectedIndex = it }
+        ){
+            selectedIndex = it
+        }
         Contents(selectedIndex)
     }
 }
@@ -258,168 +206,169 @@ fun NoGroupsContent() {
     }
 }
 
+data class GroupCreationButtonConfiguration(
+    val width: Float = 90f,
+    val height: Float = 35f,
+    val backgroundColor: Color = Color(0xff839BB9),
+    val iconId: Int = R.drawable.ic_add_group,
+    val size: Float = 18f
+)
+
 @Composable
-fun GroupCreationButton() {
+fun GroupCreationButton(
+    config: GroupCreationButtonConfiguration = GroupCreationButtonConfiguration()
+) {
     Button(modifier = Modifier
-        .width(90f.dep())
-        .height(35f.dep()),
+        .width(config.width.dep())
+        .height(config.height.dep()),
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = colorResource(
-                id = R.color.splitGreyCard
-            )
+            backgroundColor = config.backgroundColor
         ),
         onClick = {  }) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_add_group),
+            painter = painterResource(id = config.iconId),
             contentDescription = "add group",
             tint = Color.Unspecified,
-            modifier = Modifier.size(18.dep())
+            modifier = Modifier.size(config.size.dep())
         )
     }
 }
 
+data class NoGroupHasBeenCreatedYetConfiguration(
+    val stringId: Int = R.string.no_group_has_been_created_yet,
+    val color: Color = Color(0xff839BB9),
+    val fontSize: Float = 13f
+)
+
 @Composable
-fun NoGroupHasBeenCreatedYet() {
+fun NoGroupHasBeenCreatedYet(
+    config: NoGroupHasBeenCreatedYetConfiguration = NoGroupHasBeenCreatedYetConfiguration()
+) {
     RobotoText(
-        text = stringResource(R.string.no_group_has_been_created_yet),
+        text = stringResource(config.stringId),
         modifier = Modifier,
         textAlign = TextAlign.Center,
-        color = colorResource(id = R.color.splitGreyCard),
+        color = config.color,
         fontWeight = FontWeight.Bold,
-        fontSize = 13.sep()
+        fontSize = config.fontSize.sep()
     )
 }
 
-@Composable
-fun TabsSection(
-    selectedIndex: Int,
-    tabsList: List<String>,
-    height: Float,
-    backgroundColor: Color,
-    startPadding:Float,
-    fontSize:Float,
-    color:Color,
-    selectedColor:Color,
-    dividerColor: Color,
-    dividerThickness: Float,
-    onSelectionChanged: (Int) -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .layoutId("tabs")
-            .height(height.dep())
-            .background(backgroundColor),
-        contentAlignment = Alignment.Center
-    ) {
-
-        Tabs(
-            selectedIndex,
-            tabsList,
-            backgroundColor,
-            startPadding,
-            fontSize,
-            color,
-            selectedColor
-        ){
-            onSelectionChanged(it)
-        }
-        Divider(
-            color = dividerColor,
-            thickness = dividerThickness.dep(),
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-    }
-}
+data class TabsConfiguration(
+    val backgroundColor: Color = Color.White,
+    val startPadding: Float = 15f,
+    val fontSize: Float = 21f,
+    val color: Color = Color(0xffCFD8E4),
+    val selectedColor: Color = Color(0xff243257),
+    val height: Float = 73f,
+    val dividerThickness: Float=1f,
+    val dividerColor: Color=Color(0xfffafcff),
+)
 
 @Composable
 fun Tabs(
     selectedIndex: Int,
     tabsList: List<String>,
-    backgroundColor: Color,
-    startPadding: Float,
-    fontSize: Float,
-    color: Color,
-    selectedColor: Color,
+    config: TabsConfiguration = TabsConfiguration(),
     onSelectionChanged: (Int)->Unit
 ) {
-    var _selectedIndex by remember {
-        mutableStateOf(selectedIndex)
-    }
-    LaunchedEffect(key1 =selectedIndex){
-        _selectedIndex = selectedIndex
-    }
-    TabRow(
-        selectedTabIndex = _selectedIndex,
-        backgroundColor = backgroundColor,
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = startPadding.dep()),
-        indicator = {
-            Box {}
-        },
-        divider = { TabRowDefaults.Divider(color = Color.Transparent) },
+            .layoutId("tabs")
+            .height(config.height.dep())
+            .background(config.backgroundColor),
+        contentAlignment = Alignment.Center
     ) {
-        tabsList.forEachIndexed { index, text ->
-            val computedColor by remember {
-                derivedStateOf {
-                    if (_selectedIndex == index)
-                        selectedColor
-                    else
-                        color
+        TabRow(
+            selectedTabIndex = selectedIndex,
+            backgroundColor = config.backgroundColor,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = config.startPadding.dep()),
+            indicator = {
+                Box {}
+            },
+            divider = { TabRowDefaults.Divider(color = Color.Transparent) },
+        ) {
+            tabsList.forEachIndexed { index, text ->
+                val computedColor by remember(selectedIndex) {
+                    derivedStateOf {
+                        if (selectedIndex == index)
+                            config.selectedColor
+                        else
+                            config.color
+                    }
                 }
+                val tabColor by animateColorAsState(
+                    targetValue = computedColor,
+                    animationSpec = tween(500)
+                )
+                Text(
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) {
+                            onSelectionChanged(index)
+                        },
+                    text = text,
+                    fontSize = config.fontSize.sep(),
+                    color = tabColor,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = robotoFonts
+                )
             }
-            Text(
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = MutableInteractionSource(),
-                        indication = null
-                    ) {
-                        onSelectionChanged(index)
-                    },
-                text = text,
-                fontSize = fontSize.sep(),
-                color = computedColor,
-                fontWeight = FontWeight.Bold,
-                fontFamily = robotoFonts
-            )
         }
+        Divider(
+            color = config.dividerColor,
+            thickness = config.dividerThickness.dep(),
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
+/**/
+
+data class HeadersAndSearchBarConfiguration(
+    val height: Float=411f,
+    val maxHeight: Float=411f,
+    val minHeight: Float=headerMinHeight,
+    val color: Color=Color.White,
+)
+
 @Composable
 fun HeaderAndSearchBar(
-    minHeight: Float,
-    maxHeight: Float,
-    curveHeight: Number,
     progress: Float,
-    curveRadius: Number,
     wholeGet: String,
     decGet: String,
     wholePay: String,
     decPay: String,
     whole: String,
     decimal: String,
-    height: Float,
-    color: Color,
+    config: HeadersAndSearchBarConfiguration = HeadersAndSearchBarConfiguration(),
     onFactorChanged: (Float)->Unit
 ) {
+    val _maxHeight = with(LocalDensity.current) {
+        config.maxHeight.dep().value * this.density
+    }
+    val _minHeight = with(LocalDensity.current) {
+        config.minHeight.dep().value * this.density
+    }
     Box(
         modifier = Modifier
             .layoutId("poster")
-            .height(height.dep())
-            .background(color)
+            .height(config.height.dep())
+            .background(config.color)
             .onGloballyPositioned {
-                val dif = maxHeight - minHeight
-                val diff = it.size.height - minHeight
+                val dif = _maxHeight - _minHeight
+                val diff = it.size.height - _minHeight
                 val p = diff / dif
                 onFactorChanged(p)
             }
     ) {
         HeaderCutout(
             progress,
-            curveHeight,
-            curveRadius,
             wholeGet,
             decGet,
             wholePay,
@@ -432,13 +381,19 @@ fun HeaderAndSearchBar(
     }
 }
 
+data class SearchBarConfiguration(
+    val horizontalPadding: Float = 16f
+)
+
 @Composable
-fun BoxScope.SearchBar() {
+fun BoxScope.SearchBar(
+    config: SearchBarConfiguration = SearchBarConfiguration()
+) {
     Box(
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(
-                horizontal = 16.dep()
+                horizontal = config.horizontalPadding.dep()
             )
     ) {
         ContactSearchBar(
@@ -478,8 +433,6 @@ fun BoxScope.ExpandedCards(
 @Composable
 fun HeaderCutout(
     progress: Float,
-    curveHeight: Number,
-    curveRadius: Number,
     wholeGet: String,
     decGet: String,
     wholePay: String,
@@ -490,8 +443,6 @@ fun HeaderCutout(
     Column() {
         HeaderUpperCutout(
             progress,
-            curveHeight,
-            curveRadius,
             wholeGet,
             decGet,
             wholePay,
@@ -524,8 +475,6 @@ fun <T>rememberArgument(arg: T): T{
 @Composable
 fun HeaderUpperCutout(
     progress: Float,
-    curveHeight: Number,//219
-    curveRadius: Number,//47
     wholeGet: String,
     decGet: String,
     wholePay: String,
@@ -574,11 +523,11 @@ fun HeaderUpperCutout(
         }
 
         HeaderContentAndCards(
+            progress,
             wholeGet,
             decGet,
             wholePay,
             decPay,
-            progress,
             whole,
             decimal,
         )
@@ -613,11 +562,11 @@ data class HeaderContentAndCardsConfiguration(
 
 @Composable
 fun HeaderContentAndCards(
+    progress: Float,
     wholeGet: String,
     decGet: String,
     wholePay: String,
     decPay: String,
-    progress: Float,
     whole: String,
     decimal: String,
     config: HeaderContentAndCardsConfiguration = HeaderContentAndCardsConfiguration()
@@ -875,9 +824,13 @@ fun HeaderBackAndSplit(
                 start = config.startPadding.dep()
             )
     ) {
+        val ns = yoreNotificationService.current
         BackButton(
             contentDescription = "split_back_button"
-        ){onBackClick()}
+        ){
+            ns.notify(0,null)
+            onBackClick()
+        }
         config.space.sx()
         RobotoText(
             stringResource(config.splitTextId),
