@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -171,21 +173,8 @@ fun SplitPageMotionLayout(
             decPay,
             whole,
             decimal,
-            config.headerSpace,
-            config.headerRightSpace,
-            config.headerTopPadding,
-            config.cardSpace,
-            config.cardEndPadding,
-            config.splitFontSize,
-            config.tint,
-            config.topPadding,
-            config.startPadding,
-            config.space,
             config.height,
             config.color,
-            config.splitBalanceTextId,
-            config.splitBalanceFontSize,
-            config.splitBalanceTextColor,
         ){
             f = it
             Log.d("fdlfdfd", "$f")
@@ -411,21 +400,8 @@ fun HeaderAndSearchBar(
     decPay: String,
     whole: String,
     decimal: String,
-    headerSpace: Float,
-    headerRightSpace: Float,
-    headerTopPadding: Float,
-    cardSpace: Float,
-    cardEndPadding: Float,
-    splitFontSize: Float,
-    tint: Color,
-    topPadding: Float,
-    startPadding: Float,
-    space: Float,
     height: Float,
     color: Color,
-    splitBalanceTextId: Int,
-    splitBalanceFontSize: Float,
-    splitBalanceColor: Color,
     onFactorChanged: (Float)->Unit
 ) {
     Box(
@@ -450,19 +426,6 @@ fun HeaderAndSearchBar(
             decPay,
             whole,
             decimal,
-            headerSpace,
-            headerRightSpace,
-            headerTopPadding,
-            cardSpace,
-            cardEndPadding,
-            splitFontSize,
-            tint,
-            topPadding,
-            startPadding,
-            space,
-            splitBalanceTextId,
-            splitBalanceFontSize,
-            splitBalanceColor
         )
         ExpandedCards(progress)
         SearchBar()
@@ -523,19 +486,6 @@ fun HeaderCutout(
     decPay: String,
     whole: String,
     decimal: String,
-    headerSpace: Float,//4f
-    headerRightSpace: Float,//38f
-    headerTopPadding: Float,//83
-    cardSpace: Float,//8f
-    cardEndPadding: Float,//16f
-    splitFontSize: Float,//14,
-    tint: Color,//Color.White,
-    topPadding: Float,//13,
-    startPadding: Float,//9,
-    space: Float,//4f
-    splitBalanceTextId: Int,
-    splitBalanceFontSize: Float,
-    splitBalanceColor: Color
 ) {
     Column() {
         HeaderUpperCutout(
@@ -548,22 +498,26 @@ fun HeaderCutout(
             decPay,
             whole,
             decimal,
-            headerSpace,
-            headerRightSpace,
-            headerTopPadding,
-            cardSpace,
-            cardEndPadding,
-            splitFontSize,
-            tint,
-            topPadding,
-            startPadding,
-            space,
-            splitBalanceTextId,
-            splitBalanceFontSize,
-            splitBalanceColor
         )
         HeaderBottomCutout()
     }
+}
+
+data class HeaderUpperCutoutConfiguration(
+    val curveHeightConstant: Float = 159f,
+    val curveHeightVariable: Float = 60f,
+    val curveRadius: Number = 47,
+)
+
+@Composable
+fun <T>rememberArgument(arg: T): T{
+    var rArg by remember {
+        mutableStateOf(arg)
+    }
+    LaunchedEffect(key1 = arg){
+        rArg = arg
+    }
+    return rArg
 }
 
 @OptIn(ExperimentalMotionApi::class)
@@ -578,20 +532,7 @@ fun HeaderUpperCutout(
     decPay: String,
     whole: String,
     decimal: String,
-    headerSpace: Float,//4f
-    headerRightSpace: Float,//38f
-    headerTopPadding: Float,//83
-    cardSpace: Float,//8f
-    cardEndPadding: Float,//16f
-
-    splitFontSize: Float,
-    tint: Color,
-    topPadding: Float,
-    startPadding: Float,
-    space: Float,
-    splitBalanceTextId: Int,
-    splitBalanceFontSize: Float,
-    splitBalanceColor: Color
+    config: HeaderUpperCutoutConfiguration = HeaderUpperCutoutConfiguration()
 ) {
     val bm = 34.dep()
     MotionLayout(
@@ -616,19 +557,20 @@ fun HeaderUpperCutout(
         },
         progress = (1f - progress),
     ) {
-
+        val computedCurveHeight by remember(key1 = progress) {
+            derivedStateOf {
+                config.curveHeightConstant+config.curveHeightVariable*progress
+            }
+        }
         HeaderUpperCutShape(
-            curveHeight,
-            curveRadius
+            computedCurveHeight,
+            config.curveRadius
         ){
             HeaderBackAndSplit(
-                splitTextId = R.string.split,
-                splitFontSize = splitFontSize,
-                tint = tint,
-                topPadding = topPadding,
-                startPadding = startPadding,
-                space = space
-            ){}
+                contentDescription = "header_back_and_split"
+            ){
+
+            }
         }
 
         HeaderContentAndCards(
@@ -639,14 +581,6 @@ fun HeaderUpperCutout(
             progress,
             whole,
             decimal,
-            headerSpace,
-            headerRightSpace,
-            headerTopPadding,
-            cardSpace,
-            cardEndPadding,
-            splitBalanceTextId,
-            splitBalanceFontSize,
-            splitBalanceColor
         )
     }
 }
@@ -673,6 +607,10 @@ fun HeaderBottomCutout() {
     }
 }
 
+data class HeaderContentAndCardsConfiguration(
+    val headerTopPadding: Float = 83f
+)
+
 @Composable
 fun HeaderContentAndCards(
     wholeGet: String,
@@ -682,30 +620,18 @@ fun HeaderContentAndCards(
     progress: Float,
     whole: String,
     decimal: String,
-    headerSpace: Number,//4f
-    headerRightSpace: Float,//38f
-    headerTopPadding: Number,//83
-    cardSpace: Float,//8f
-    cardEndPadding: Float,//16f
-    splitTextId:Int,
-    splitFontSize: Float,
-    splitColor: Color
+    config: HeaderContentAndCardsConfiguration = HeaderContentAndCardsConfiguration()
 ) {
     Row(
         modifier = Modifier
             .layoutId("row")
-            .padding(top = headerTopPadding.dep()),
+            .padding(top = config.headerTopPadding.dep()),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         HeaderContentWithSpace(
             progress,
             whole,
             decimal,
-            headerSpace,
-            headerRightSpace,
-            splitTextId,
-            splitFontSize,
-            splitColor
         )
         CollapsedCards(
             progress,
@@ -713,11 +639,14 @@ fun HeaderContentAndCards(
             decGet,
             wholePay,
             decPay,
-            cardSpace,
-            cardEndPadding
         )
     }
 }
+
+data class CollapsedCardsSectionConfiguration(
+    val space: Float = 8f,
+    val endPadding: Float = 16f,
+)
 
 @Composable
 fun CollapsedCards(
@@ -726,12 +655,11 @@ fun CollapsedCards(
     decGet: String,
     wholePay: String,
     decPay: String,
-    space: Float,
-    endPadding: Float,
+    config: CollapsedCardsSectionConfiguration = CollapsedCardsSectionConfiguration()
 ) {
     Column(
         modifier = Modifier
-            .padding(end = (endPadding * (1f - progress)).dep())
+            .padding(end = (config.endPadding * (1f - progress)).dep())
             .alpha(1f - progress),
         horizontalAlignment = Alignment.End
     ) {
@@ -741,7 +669,7 @@ fun CollapsedCards(
             decimal=decGet,
             config = YouWillGetPayCollapsedCardConfiguration.get
         )
-        (space * (1f - progress)).sy()
+        (config.space * (1f - progress)).sy()
         YouWillGetPayCollapsedCard(
             progress,
             whole=wholePay,
@@ -836,126 +764,55 @@ fun YouWillGetPayCollapsedCard(
     }
 }
 
+data class HeaderContentRightSpace(
+    val rightSpace: Float = 38f
+)
 
 @Composable
 fun HeaderContentWithSpace(
     progress: Float,
     whole: String,
     decimal: String,
-    headerSpace: Number,
-    headerRightSpace: Float,
-    splitTextId: Int,
-    splitFontSize: Float,
-    splitColor: Color
+    config: HeaderContentRightSpace = HeaderContentRightSpace(),
 ) {
     Row {
-        (headerRightSpace * (1 - progress)).sx()
+        (config.rightSpace * (1f - progress)).sx()
         HeaderContent(
             whole,
             decimal,
-            headerSpace,
-            splitTextId,
-            splitFontSize,
-            splitColor
         )
     }
 }
+
+data class HeaderContentConfiguration(
+    val topPadding: Number = 4,
+    val splitBalanceTextId: Int = R.string.split_balance,
+    val splitBalanceFontSize: Float = 12f,
+    val splitBalanceColor: Color = Color.White
+)
 
 @Composable
 fun HeaderContent(
     whole: String,
     decimal: String,
-    space: Number,
-    splitTextId: Int,
-    splitFontSize: Float,
-    splitColor: Color
+    config: HeaderContentConfiguration = HeaderContentConfiguration()
 ) {
     Column(
         modifier = Modifier
-            .padding(top = space.dep())
+            .padding(top = config.topPadding.dep())
     ) {
         SplitBalanceText(
-            splitTextId,
-            splitFontSize,
-            splitColor
+            config.splitBalanceTextId,
+            config.splitBalanceFontSize,
+            config.splitBalanceColor
         )
-        HeaderAmount(
-            whole,
-            decimal
-        )
-    }
-}
 
-data class HeaderAmountConfiguration(
-    val currencySpace: Number=4,
-    val wholeFontSize: Float=30f,
-    val decimalFontSize: Float=14f,
-    val wholeColor: Color=Color.White,
-    val decimalColor: Color=Color.White
-)
-
-@Composable
-fun HeaderAmount(
-    whole: String,
-    decimal: String,
-    config: HeaderAmountConfiguration = HeaderAmountConfiguration()
-) {
-    Row(
-        verticalAlignment = Alignment.Bottom
-    ) {
-        HeaderAmountCurrency()
-        config.currencySpace.sx()
-        HeaderAmountWholePart(
-            whole,
-            fontSize = config.wholeFontSize,
-            color = config.wholeColor
-        )
-        HeaderAmountDecimalPart(
-            decimal,
-            fontSize = config.decimalFontSize,
-            color = config.decimalColor
+        YoreAmount(
+            config = YoreAmountConfiguration.splitPageHeadContent,
+            whole = whole,
+            decimal = decimal,
         )
     }
-}
-
-@Composable
-fun RowScope.HeaderAmountDecimalPart(
-    decimal: String,
-    fontSize: Float,
-    color: Color
-) {
-    RobotoText(
-        ".$decimal",
-        fontSize = fontSize.sep(),
-        color = color,
-        modifier = Modifier
-            .alignByBaseline()
-    )
-}
-
-@Composable
-fun RowScope.HeaderAmountWholePart(
-    whole: String,
-    fontSize: Float,
-    color: Color,
-) {
-    RobotoText(
-        whole,
-        fontSize = fontSize.sep(),
-        color = color,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier
-            .alignByBaseline()
-    )
-}
-
-@Composable
-fun HeaderAmountCurrency() {
-    RobotoText(
-        localCurrency.current,
-        fontSize = 21.sep(),
-        color = Color.White
-    )
 }
 
 @Composable
@@ -993,41 +850,40 @@ fun HeaderUpperCutShape(
     }
 }
 
+data class HeaderBackAndSplitConfiguration(
+    val splitTextId: Int = R.string.split,
+    val splitFontSize: Number = 14,
+    val tint: Color = Color.White,
+    val topPadding: Number = 17,
+    val startPadding: Number = 9,
+    val space: Number = 4,
+)
+
 @Composable
 fun HeaderBackAndSplit(
-    splitTextId: Int,
-    splitFontSize: Number,
-    tint: Color,
-    topPadding: Number,
-    startPadding: Number,
-    space: Float,
+    contentDescription: String,
+    config: HeaderBackAndSplitConfiguration = HeaderBackAndSplitConfiguration(),
     onBackClick: ()->Unit
 ) {
     Row(
         modifier = Modifier
+            .semantics {
+                this.contentDescription = contentDescription
+            }
             .padding(
-                top = topPadding.dep(),
-                start = startPadding.dep()
+                top = config.topPadding.dep(),
+                start = config.startPadding.dep()
             )
     ) {
         BackButton(
             contentDescription = "split_back_button"
         ){onBackClick()}
-        space.sx()
-        SplitText(splitTextId,splitFontSize, tint)
+        config.space.sx()
+        RobotoText(
+            stringResource(config.splitTextId),
+            fontSize = config.splitFontSize.sep(),
+            fontWeight = FontWeight.Bold,
+            color = config.tint
+        )
     }
-}
-
-@Composable
-fun SplitText(
-    texId: Int,
-    fontSize: Number,
-    color: Color,
-) {
-    RobotoText(
-        stringResource(texId),
-        fontSize = fontSize.sep(),
-        fontWeight = FontWeight.Bold,
-        color = color
-    )
 }
