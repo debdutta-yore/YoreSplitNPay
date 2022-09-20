@@ -1,7 +1,7 @@
 package co.yore.splitnpay.friend_item.models
 
 data class PeopleData(
-    val uid: Int = 0,
+    val uid: Long,
     val name: String,
     val mobile: String,
     val imageUrl: String,

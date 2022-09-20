@@ -3,15 +3,14 @@ package co.yore.splitnpay
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -25,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -79,7 +79,7 @@ fun GroupCard_0msq1z(
             verticalAlignment = CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(modifier = Modifier.fillMaxHeight()) {
+            /*Row(modifier = Modifier.fillMaxHeight()) {*/
 
                 Box(modifier = Modifier.align(CenterVertically)) {
                     GroupProfileImage_l5sx9n(
@@ -107,14 +107,15 @@ fun GroupCard_0msq1z(
                         data.memberImages
                     )
                 }
-            }
+            /*}*/
 
-            Row(
+            /*Row(
                 verticalAlignment = CenterVertically
-            ) {
+            ) {*/
+                Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
                 Column(
                     modifier = Modifier
-                        .padding(config.groupBalanceTopPadding.dep())
+                        .padding(vertical = config.groupBalanceTopPadding.dep())
                         .fillMaxHeight(),
                 ) {
                     RobotoText(
@@ -164,7 +165,7 @@ fun GroupCard_0msq1z(
                     onClicked = { },
                     onPressed = {}
                 )
-            }
+            /*}*/
         }
     }
 }
@@ -279,7 +280,7 @@ fun SingleGroupMemberProfilePic(
     )
 }
 
-@Composable
+/*@Composable
 fun ArrowButton_ohezqf(
     contentDescription: String,
     config: ArrowButtonConfiguration = ArrowButtonConfiguration(),
@@ -323,7 +324,7 @@ fun ArrowButton_ohezqf(
             tint = config.iconTint
         )
     }
-}
+}*/
 
 data class Member(
     val extraMembers: Int = 3,
@@ -399,9 +400,9 @@ data class ArrowButtonConfiguration(
     val iconPressedColor: Color = Bluish,
     val iconTint: Color = Color.White,
     val iconButtonRadius: Float = 9f,
-    val iconButtonSize: Float = 28f,
+    val iconButtonSize: Float = 29f,
     val iconSize: Float = 11f,
-    val iconResource: Int = R.drawable.ic_category_right_arrow,
+    val iconResource: Int = R.drawable.ic_nextarrow,
 )
 
 data class GroupCardConfiguration(
@@ -411,7 +412,7 @@ data class GroupCardConfiguration(
     val shadowOffsetX: Float = 7f,
     val shadowOffsetY: Float = 7f,
     val shadowSpread: Float = 0f,
-    val startPadding: Float = 17f,
+    val startPadding: Float = 18f,
     val endPadding: Float = 17f,
     val height: Float = 95f,
     val cornerRadius: Float = 22f,
@@ -419,7 +420,7 @@ data class GroupCardConfiguration(
     val horizontalPadding: Float = 18f,
     val profileImageRightPadding: Float = 24f,
     val groupNameProfileImagesGap: Float = 6f,
-    val arrowButtonLeftPadding: Float = 32f,
+    val arrowButtonLeftPadding: Float = 25f,
     val groupNameFontSize: Float = 12f,
     val groupBalanceTopPadding: Float = 21f,
     val groupBalanceFontSize: Float = 10f,

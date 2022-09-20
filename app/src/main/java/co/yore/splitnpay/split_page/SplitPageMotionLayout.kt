@@ -142,8 +142,7 @@ fun SplitPageMotionLayout(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun Contents(
-    selectedIndex: Int,
-    groups: List<GroupCardData> = listState(SplitDataIds.groups)
+    selectedIndex: Int
 ) {
     Box(
         Modifier
@@ -151,13 +150,25 @@ fun Contents(
             .background(Color.White),
         contentAlignment = Alignment.TopCenter
     ) {
-        AnimatedVisibility(
-            visible = selectedIndex == 0,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            //NoGroupsContent()
+        GroupsChildPage(selectedIndex==0)
+        PeoplesChildPage(selectedIndex==1)
+    }
+}
 
+@Composable
+fun GroupsChildPage(
+    visible: Boolean,
+    groups: List<GroupCardData> = listState(SplitDataIds.groups)
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        if(groups.isEmpty()){
+            NoGroupsContent()
+        }
+        else{
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -207,74 +218,75 @@ fun Contents(
                     )
                 ) {
                     items(groups, key = { it.id }) {
-                        Box(
-                            modifier = Modifier
-                                .animateEnterExit()
-                        ){
-                            GroupCard_0msq1z(
-                                contentDescription = "",
-                                data = it
-                            )
-                        }
-
+                        GroupCard_0msq1z(
+                            contentDescription = "",
+                            data = it
+                        )
                     }
                 }
-            }
-
-        }
-        AnimatedVisibility(
-            visible = selectedIndex == 1,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(
-                            start = 18.dep(),
-                            bottom = 21.dep()
-                        ),
-                    horizontalArrangement = Arrangement.spacedBy(11.dep())
-                ) {
-                    var selectedTab by remember {
-                        mutableStateOf(SplitPageTabs.All)
-                    }
-                    SplitTabItem_89keto(
-                        text = "All",
-                        selected = selectedTab,
-                        currentTab = SplitPageTabs.All,
-                        contentDescription = "all"
-                    ) {
-                        selectedTab = SplitPageTabs.All
-                    }
-                    SplitTabItem_89keto(
-                        text = "You owe",
-                        selected = selectedTab,
-                        currentTab = SplitPageTabs.YouOwe,
-                        contentDescription = "you_owe"
-                    ) {
-                        selectedTab = SplitPageTabs.YouOwe
-                    }
-                    SplitTabItem_89keto(
-                        text = "You owe",
-                        selected = selectedTab,
-                        currentTab = SplitPageTabs.YouAreOwed,
-                        contentDescription = "you_are_owed"
-                    ) {
-                        selectedTab = SplitPageTabs.YouAreOwed
-                    }
-                }
-                FriendsContent()
             }
         }
     }
 }
 
 @Composable
-fun FriendsContent() {
+fun PeoplesChildPage(
+    visible: Boolean
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(
+                        start = 18.dep(),
+                        bottom = 21.dep()
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(11.dep())
+            ) {
+                var selectedTab by remember {
+                    mutableStateOf(SplitPageTabs.All)
+                }
+                SplitTabItem_89keto(
+                    text = "All",
+                    selected = selectedTab,
+                    currentTab = SplitPageTabs.All,
+                    contentDescription = "all"
+                ) {
+                    selectedTab = SplitPageTabs.All
+                }
+                SplitTabItem_89keto(
+                    text = "You owe",
+                    selected = selectedTab,
+                    currentTab = SplitPageTabs.YouOwe,
+                    contentDescription = "you_owe"
+                ) {
+                    selectedTab = SplitPageTabs.YouOwe
+                }
+                SplitTabItem_89keto(
+                    text = "You owe",
+                    selected = selectedTab,
+                    currentTab = SplitPageTabs.YouAreOwed,
+                    contentDescription = "you_are_owed"
+                ) {
+                    selectedTab = SplitPageTabs.YouAreOwed
+                }
+            }
+            FriendsContent()
+        }
+    }
+}
+
+@Composable
+fun FriendsContent(
+    peoples: List<PeopleData> = listState(SplitDataIds.peoples)
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -282,20 +294,14 @@ fun FriendsContent() {
         contentPadding = PaddingValues(horizontal = 17.dep()),
     ) {
         items(
-            100,
+            peoples,
             key = {
-                it
+                it.uid
             }
         ) {
             FriendItem(
                 selected = false,
-                peopleData = PeopleData(
-                    name = "Debdutta Panda $it",
-                    mobile = "8967114927",
-                    imageUrl = "",
-                    willGet = 1000f,
-                    willPay = 500f
-                ),
+                it,
                 contentDescription = "friend_item",
             ) {
 

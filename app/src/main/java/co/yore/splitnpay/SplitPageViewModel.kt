@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.friend_item.models.PeopleData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -16,6 +17,7 @@ object SplitDataIds{
     const val decimalPay = 5
     const val ultimateState = 6
     const val groups = 7
+    const val peoples = 8
 }
 
 enum class SplitPageState{
@@ -39,6 +41,7 @@ class SplitPageViewModel: ViewModel() {
     private val _decimalPay = mutableStateOf("00")
     private val _ultimateState = mutableStateOf(SplitPageState.NONE)
     private val _groups = mutableStateListOf<GroupCardData>()
+    private val _peoples = mutableStateListOf<PeopleData>()
     init {
         _resolver.set(SplitDataIds.whole,_whole)
         _resolver.set(SplitDataIds.decimal,_decimal)
@@ -48,6 +51,7 @@ class SplitPageViewModel: ViewModel() {
         _resolver.set(SplitDataIds.decimalPay,_decimalPay)
         _resolver.set(SplitDataIds.ultimateState,_ultimateState)
         _resolver.set(SplitDataIds.groups,_groups)
+        _resolver.set(SplitDataIds.peoples,_peoples)
         viewModelScope.launch {
             while (true){
                 delay(2000)
@@ -65,6 +69,16 @@ class SplitPageViewModel: ViewModel() {
                     willGet = 4500f,
                     willPay = 500f
                 ))
+                _peoples.add(
+                    PeopleData(
+                        uid = System.currentTimeMillis(),
+                        name = "Debdutta Panda",
+                        mobile = "8967114927",
+                        imageUrl = "",
+                        willGet = 1000f,
+                        willPay = 500f
+                    )
+                )
             }
         }
     }
