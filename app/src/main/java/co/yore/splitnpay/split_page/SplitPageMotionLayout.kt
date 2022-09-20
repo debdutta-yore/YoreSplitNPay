@@ -1,12 +1,14 @@
 package co.yore.splitnpay.split_page
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -33,7 +35,7 @@ import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.friend_item.FriendItem
-import co.yore.splitnpay.friend_item.models.Friend
+import co.yore.splitnpay.friend_item.models.PeopleData
 import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCard
 import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCardConfig
 
@@ -94,18 +96,14 @@ private fun JsonConstraintSetEnd(
                   
 } """
 )
+
 val headerMinHeight = 234f
+
 @OptIn(ExperimentalMotionApi::class)
 @Composable
 fun SplitPageMotionLayout(
     progress: Float,
-    wholeGet: String,
-    decGet: String,
-    wholePay: String,
-    decPay: String,
-    whole: String,
-    decimal: String,
-    swipe: ()->Unit
+    swipe: () -> Unit
 ) {
     val d = headerMinHeight.dep().value
     MotionLayout(
@@ -117,20 +115,14 @@ fun SplitPageMotionLayout(
     ) {
 
         var f by remember { mutableStateOf(1f) }
-        LaunchedEffect(key1 = f){
-            if(f==1f){
+        LaunchedEffect(key1 = f) {
+            if (f == 1f) {
                 swipe()
             }
         }
         HeaderAndSearchBar(
             f,
-            wholeGet,
-            decGet,
-            wholePay,
-            decPay,
-            whole,
-            decimal,
-        ){
+        ) {
             f = it
         }
         val tabsList =
@@ -140,16 +132,18 @@ fun SplitPageMotionLayout(
         Tabs(
             selectedIndex,
             tabsList,
-        ){
+        ) {
             selectedIndex = it
         }
         Contents(selectedIndex)
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun Contents(
-    selectedIndex: Int
+    selectedIndex: Int,
+    groups: List<GroupCardData> = listState(SplitDataIds.groups)
 ) {
     Box(
         Modifier
@@ -157,10 +151,124 @@ fun Contents(
             .background(Color.White),
         contentAlignment = Alignment.TopCenter
     ) {
-        if (selectedIndex == 0) {
-            NoGroupsContent()
-        } else {
-            FriendsContent()
+        AnimatedVisibility(
+            visible = selectedIndex == 0,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            //NoGroupsContent()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            start = 18.dep(),
+                            bottom = 21.dep()
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(11.dep())
+                ) {
+                    var selectedTab by remember {
+                        mutableStateOf(SplitPageTabs.All)
+                    }
+                    SplitTabItem_89keto(
+                        text = "All",
+                        selected = selectedTab,
+                        currentTab = SplitPageTabs.All,
+                        contentDescription = "all"
+                    ) {
+                        selectedTab = SplitPageTabs.All
+                    }
+                    SplitTabItem_89keto(
+                        text = "You owe",
+                        selected = selectedTab,
+                        currentTab = SplitPageTabs.YouOwe,
+                        contentDescription = "you_owe"
+                    ) {
+                        selectedTab = SplitPageTabs.YouOwe
+                    }
+                    SplitTabItem_89keto(
+                        text = "You owe",
+                        selected = selectedTab,
+                        currentTab = SplitPageTabs.YouAreOwed,
+                        contentDescription = "you_are_owed"
+                    ) {
+                        selectedTab = SplitPageTabs.YouAreOwed
+                    }
+                }
+                LazyColumn(
+                    modifier = Modifier.fadingEdge(),
+                    contentPadding = PaddingValues(
+                        start = 17.dep(),
+                        end = 17.dep(),
+                        bottom = 110.dep()
+                    )
+                ) {
+                    items(groups, key = { it.id }) {
+                        Box(
+                            modifier = Modifier
+                                .animateEnterExit()
+                        ){
+                            GroupCard_0msq1z(
+                                contentDescription = "",
+                                data = it
+                            )
+                        }
+
+                    }
+                }
+            }
+
+        }
+        AnimatedVisibility(
+            visible = selectedIndex == 1,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            start = 18.dep(),
+                            bottom = 21.dep()
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(11.dep())
+                ) {
+                    var selectedTab by remember {
+                        mutableStateOf(SplitPageTabs.All)
+                    }
+                    SplitTabItem_89keto(
+                        text = "All",
+                        selected = selectedTab,
+                        currentTab = SplitPageTabs.All,
+                        contentDescription = "all"
+                    ) {
+                        selectedTab = SplitPageTabs.All
+                    }
+                    SplitTabItem_89keto(
+                        text = "You owe",
+                        selected = selectedTab,
+                        currentTab = SplitPageTabs.YouOwe,
+                        contentDescription = "you_owe"
+                    ) {
+                        selectedTab = SplitPageTabs.YouOwe
+                    }
+                    SplitTabItem_89keto(
+                        text = "You owe",
+                        selected = selectedTab,
+                        currentTab = SplitPageTabs.YouAreOwed,
+                        contentDescription = "you_are_owed"
+                    ) {
+                        selectedTab = SplitPageTabs.YouAreOwed
+                    }
+                }
+                FriendsContent()
+            }
         }
     }
 }
@@ -168,7 +276,9 @@ fun Contents(
 @Composable
 fun FriendsContent() {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .fadingEdge(),
         contentPadding = PaddingValues(horizontal = 17.dep()),
     ) {
         items(
@@ -179,15 +289,17 @@ fun FriendsContent() {
         ) {
             FriendItem(
                 selected = false,
-                friend = Friend(
+                peopleData = PeopleData(
                     name = "Debdutta Panda $it",
                     mobile = "8967114927",
-                    imageUrl = ""
+                    imageUrl = "",
+                    willGet = 1000f,
+                    willPay = 500f
                 ),
                 contentDescription = "friend_item",
-                onClicked = {},
-                onPressed = {}
-            )
+            ) {
+
+            }
         }
     }
 }
@@ -225,7 +337,7 @@ fun GroupCreationButton(
         colors = ButtonDefaults.buttonColors(
             backgroundColor = config.backgroundColor
         ),
-        onClick = {  }) {
+        onClick = { }) {
         Icon(
             painter = painterResource(id = config.iconId),
             contentDescription = "add group",
@@ -262,8 +374,8 @@ data class TabsConfiguration(
     val color: Color = Color(0xffCFD8E4),
     val selectedColor: Color = Color(0xff243257),
     val height: Float = 73f,
-    val dividerThickness: Float=1f,
-    val dividerColor: Color=Color(0xfffafcff),
+    val dividerThickness: Float = 1f,
+    val dividerColor: Color = Color(0xfffafcff),
 )
 
 @Composable
@@ -271,7 +383,7 @@ fun Tabs(
     selectedIndex: Int,
     tabsList: List<String>,
     config: TabsConfiguration = TabsConfiguration(),
-    onSelectionChanged: (Int)->Unit
+    onSelectionChanged: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -320,34 +432,28 @@ fun Tabs(
                 )
             }
         }
-        Divider(
+        /*Divider(
             color = config.dividerColor,
             thickness = config.dividerThickness.dep(),
             modifier = Modifier.align(Alignment.BottomCenter)
-        )
+        )*/
     }
 }
 
 /**/
 
 data class HeadersAndSearchBarConfiguration(
-    val height: Float=411f,
-    val maxHeight: Float=411f,
-    val minHeight: Float=headerMinHeight,
-    val color: Color=Color.White,
+    val height: Float = 411f,
+    val maxHeight: Float = 411f,
+    val minHeight: Float = headerMinHeight,
+    val color: Color = Color.White,
 )
 
 @Composable
 fun HeaderAndSearchBar(
     progress: Float,
-    wholeGet: String,
-    decGet: String,
-    wholePay: String,
-    decPay: String,
-    whole: String,
-    decimal: String,
     config: HeadersAndSearchBarConfiguration = HeadersAndSearchBarConfiguration(),
-    onFactorChanged: (Float)->Unit
+    onFactorChanged: (Float) -> Unit
 ) {
     val _maxHeight = with(LocalDensity.current) {
         config.maxHeight.dep().value * this.density
@@ -369,12 +475,6 @@ fun HeaderAndSearchBar(
     ) {
         HeaderCutout(
             progress,
-            wholeGet,
-            decGet,
-            wholePay,
-            decPay,
-            whole,
-            decimal,
         )
         ExpandedCards(progress)
         SearchBar()
@@ -398,59 +498,55 @@ fun BoxScope.SearchBar(
     ) {
         ContactSearchBar(
             contentDescription = "split_search"
-        ){
+        ) {
 
         }
     }
 }
 
+data class ExpandedCardsConfiguration(
+    val bottomPadding: Float = 78f,
+    val space: Float = 22f,
+)
+
 @Composable
 fun BoxScope.ExpandedCards(
-    progress: Float
+    progress: Float,
+    config: ExpandedCardsConfiguration = ExpandedCardsConfiguration()
 ) {
-    Row(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .padding(bottom = 78.dep())
-            .alpha(progress)
-    ) {
-        YouWillGetPayCard(
-            config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.GET),
-            whole = "00",
-            decimal = "00",
-            {}
-        ){}
-        22.sx()
-        YouWillGetPayCard(
-            config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.PAY),
-            whole = "00",
-            decimal = "00",
-            {}
-        ){}
+    if (progress > 0f) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = config.bottomPadding.dep())
+                .alpha(progress)
+        ) {
+            YouWillGetPayCard(
+                config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.GET),
+                whole = stringState(SplitDataIds.wholeGet).value,
+                decimal = stringState(SplitDataIds.decimalGet).value,
+            )
+            config.space.sx()
+            YouWillGetPayCard(
+                config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.PAY),
+                whole = stringState(SplitDataIds.wholePay).value,
+                decimal = stringState(SplitDataIds.decimalPay).value,
+            )
+        }
     }
 }
 
 @Composable
 fun HeaderCutout(
     progress: Float,
-    wholeGet: String,
-    decGet: String,
-    wholePay: String,
-    decPay: String,
-    whole: String,
-    decimal: String,
+    splitPageState: SplitPageState = tState<SplitPageState>(SplitDataIds.ultimateState).value
 ) {
     Column() {
         HeaderUpperCutout(
             progress,
-            wholeGet,
-            decGet,
-            wholePay,
-            decPay,
-            whole,
-            decimal,
+            splitPageState
         )
-        HeaderBottomCutout()
+        HeaderBottomCutout(splitPageState)
     }
 }
 
@@ -461,11 +557,11 @@ data class HeaderUpperCutoutConfiguration(
 )
 
 @Composable
-fun <T>rememberArgument(arg: T): T{
+fun <T> rememberArgument(arg: T): T {
     var rArg by remember {
         mutableStateOf(arg)
     }
-    LaunchedEffect(key1 = arg){
+    LaunchedEffect(key1 = arg) {
         rArg = arg
     }
     return rArg
@@ -475,12 +571,7 @@ fun <T>rememberArgument(arg: T): T{
 @Composable
 fun HeaderUpperCutout(
     progress: Float,
-    wholeGet: String,
-    decGet: String,
-    wholePay: String,
-    decPay: String,
-    whole: String,
-    decimal: String,
+    state: SplitPageState,
     config: HeaderUpperCutoutConfiguration = HeaderUpperCutoutConfiguration()
 ) {
     val bm = 34.dep()
@@ -501,47 +592,65 @@ fun HeaderUpperCutout(
             constrain(row) {
                 this.width = Dimension.matchParent
                 this.centerHorizontallyTo(container)
-                this.bottom.linkTo(container.bottom,bm)
+                this.bottom.linkTo(container.bottom, bm)
             }
         },
         progress = (1f - progress),
     ) {
         val computedCurveHeight by remember(key1 = progress) {
             derivedStateOf {
-                config.curveHeightConstant+config.curveHeightVariable*progress
+                config.curveHeightConstant + config.curveHeightVariable * progress
             }
         }
         HeaderUpperCutShape(
+            state,
             computedCurveHeight,
             config.curveRadius
-        ){
+        ) {
             HeaderBackAndSplit(
                 contentDescription = "header_back_and_split"
-            ){
+            ) {
 
             }
         }
 
         HeaderContentAndCards(
             progress,
-            wholeGet,
-            decGet,
-            wholePay,
-            decPay,
-            whole,
-            decimal,
         )
     }
 }
 
+data class HeaderBottomCutoutConfiguration(
+    val noneColor: Color = Color(0xff839BB9),
+    val getColor: Color = Color(0xff37D8CF),
+    val payColor: Color = Color(0xffFF4077)
+)
+
 @Composable
-fun HeaderBottomCutout() {
+fun HeaderBottomCutout(
+    state: SplitPageState,
+    config: HeaderBottomCutoutConfiguration = HeaderBottomCutoutConfiguration()
+) {
+    val computedBackgroundColor by remember {
+        derivedStateOf {
+            when (state) {
+                SplitPageState.GET -> config.getColor
+                SplitPageState.PAY -> config.payColor
+                SplitPageState.NONE -> config.noneColor
+            }
+        }
+    }
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = computedBackgroundColor,
+        animationSpec = tween(700)
+    )
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .background(Color(0xff839BB9))
+            .background(animatedBackgroundColor)
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -563,12 +672,6 @@ data class HeaderContentAndCardsConfiguration(
 @Composable
 fun HeaderContentAndCards(
     progress: Float,
-    wholeGet: String,
-    decGet: String,
-    wholePay: String,
-    decPay: String,
-    whole: String,
-    decimal: String,
     config: HeaderContentAndCardsConfiguration = HeaderContentAndCardsConfiguration()
 ) {
     Row(
@@ -579,15 +682,9 @@ fun HeaderContentAndCards(
     ) {
         HeaderContentWithSpace(
             progress,
-            whole,
-            decimal,
         )
         CollapsedCards(
             progress,
-            wholeGet,
-            decGet,
-            wholePay,
-            decPay,
         )
     }
 }
@@ -600,10 +697,6 @@ data class CollapsedCardsSectionConfiguration(
 @Composable
 fun CollapsedCards(
     progress: Float,
-    wholeGet: String,
-    decGet: String,
-    wholePay: String,
-    decPay: String,
     config: CollapsedCardsSectionConfiguration = CollapsedCardsSectionConfiguration()
 ) {
     Column(
@@ -614,15 +707,15 @@ fun CollapsedCards(
     ) {
         YouWillGetPayCollapsedCard(
             progress,
-            whole=wholeGet,
-            decimal=decGet,
+            whole = stringState(SplitDataIds.wholeGet).value,
+            decimal = stringState(SplitDataIds.decimalGet).value,
             config = YouWillGetPayCollapsedCardConfiguration.get
         )
         (config.space * (1f - progress)).sy()
         YouWillGetPayCollapsedCard(
             progress,
-            whole=wholePay,
-            decimal=decPay,
+            whole = stringState(SplitDataIds.wholePay).value,
+            decimal = stringState(SplitDataIds.decimalPay).value,
             config = YouWillGetPayCollapsedCardConfiguration.pay
         )
     }
@@ -630,29 +723,29 @@ fun CollapsedCards(
 
 data class YouWillGetPayCollapsedCardConfiguration(
     val textId: Int,
-    val amountColor: Color=Color(0xffFF4077),
-    val height: Float=32f,
-    val borderRadius: Float=50f,
-    val backgroundColor: Color=Color.White,
-    val currencyFontSize: Float=12f,
-    val wholeFontSize: Float=20f,
-    val decimalFontSize: Float=12f,
-    val fontSize: Float=11f,
-    val horizontalPadding: Float=12f,
-    val textColor: Color=Color(0xff839BB9),
-    val space: Float=12f,
-){
-    companion object{
+    val amountColor: Color = Color(0xffFF4077),
+    val height: Float = 32f,
+    val borderRadius: Float = 50f,
+    val backgroundColor: Color = Color.White,
+    val currencyFontSize: Float = 12f,
+    val wholeFontSize: Float = 20f,
+    val decimalFontSize: Float = 12f,
+    val fontSize: Float = 11f,
+    val horizontalPadding: Float = 12f,
+    val textColor: Color = Color(0xff839BB9),
+    val space: Float = 12f,
+) {
+    companion object {
         val pay
-        get()=YouWillGetPayCollapsedCardConfiguration(
-            textId = R.string.you_will_pay,
-            amountColor = Color(0xffFF4077)
-        )
+            get() = YouWillGetPayCollapsedCardConfiguration(
+                textId = R.string.you_will_pay,
+                amountColor = Color(0xffFF4077)
+            )
         val get
-        get()=YouWillGetPayCollapsedCardConfiguration(
-            textId = R.string.you_will_get,
-            amountColor = Color(0xff37D8CF)
-        )
+            get() = YouWillGetPayCollapsedCardConfiguration(
+                textId = R.string.you_will_get,
+                amountColor = Color(0xff37D8CF)
+            )
     }
 }
 
@@ -720,16 +813,11 @@ data class HeaderContentRightSpace(
 @Composable
 fun HeaderContentWithSpace(
     progress: Float,
-    whole: String,
-    decimal: String,
     config: HeaderContentRightSpace = HeaderContentRightSpace(),
 ) {
     Row {
         (config.rightSpace * (1f - progress)).sx()
-        HeaderContent(
-            whole,
-            decimal,
-        )
+        HeaderContent()
     }
 }
 
@@ -742,8 +830,6 @@ data class HeaderContentConfiguration(
 
 @Composable
 fun HeaderContent(
-    whole: String,
-    decimal: String,
     config: HeaderContentConfiguration = HeaderContentConfiguration()
 ) {
     Column(
@@ -758,8 +844,8 @@ fun HeaderContent(
 
         YoreAmount(
             config = YoreAmountConfiguration.splitPageHeadContent,
-            whole = whole,
-            decimal = decimal,
+            whole = stringState(SplitDataIds.whole).value,
+            decimal = stringState(SplitDataIds.decimal).value,
         )
     }
 }
@@ -777,12 +863,33 @@ fun SplitBalanceText(
     )
 }
 
+data class HeaderUpperCutShapeConfiguration(
+    val noneColor: Color = Color(0xff839BB9),
+    val getColor: Color = Color(0xff37D8CF),
+    val payColor: Color = Color(0xffFF4077)
+)
+
 @Composable
 fun HeaderUpperCutShape(
+    state: SplitPageState,
     curveHeight: Number,
     curveRadius: Number,
+    config: HeaderUpperCutShapeConfiguration = HeaderUpperCutShapeConfiguration(),
     content: @Composable BoxScope.() -> Unit
 ) {
+    val computedBackgroundColor by remember {
+        derivedStateOf {
+            when (state) {
+                SplitPageState.GET -> config.getColor
+                SplitPageState.PAY -> config.payColor
+                SplitPageState.NONE -> config.noneColor
+            }
+        }
+    }
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = computedBackgroundColor,
+        animationSpec = tween(700)
+    )
     Box(
         modifier = Modifier
             .layoutId("container")
@@ -793,7 +900,7 @@ fun HeaderUpperCutShape(
                     0.dp, 0.dp, 0.dp, curveRadius.dep()
                 )
             )
-            .background(Color(0xff839BB9))
+            .background(animatedBackgroundColor)
     ) {
         content()
     }
@@ -812,7 +919,7 @@ data class HeaderBackAndSplitConfiguration(
 fun HeaderBackAndSplit(
     contentDescription: String,
     config: HeaderBackAndSplitConfiguration = HeaderBackAndSplitConfiguration(),
-    onBackClick: ()->Unit
+    onBackClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -824,11 +931,11 @@ fun HeaderBackAndSplit(
                 start = config.startPadding.dep()
             )
     ) {
-        val ns = yoreNotificationService.current
+        val ns = LocalNotificationService.current
         BackButton(
             contentDescription = "split_back_button"
-        ){
-            ns.notify(0,null)
+        ) {
+            ns.notify(0, null)
             onBackClick()
         }
         config.space.sx()

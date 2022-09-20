@@ -23,8 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -883,6 +881,8 @@ data class YearsListData(
     val maxYear: Int,
 )
 
+
+
 @Composable
 fun YearsList(
     yearsListData: YearsListData,
@@ -907,7 +907,7 @@ fun YearsList(
             .padding(horizontal = config.horizontalPadding.dep())
             .fillMaxWidth()
             .height(config.height.dep())
-            .drawWithContent {
+            /*.drawWithContent {
                 val colors = listOf(config.fadeColor, Color.Transparent)
                 val colors1 = listOf(Color.Transparent, config.fadeColor)
                 drawContent()
@@ -921,7 +921,8 @@ fun YearsList(
                         endY = size.height
                     ),
                 )
-            },
+            }*/
+            .fadingEdge(),
         contentPadding = PaddingValues(vertical = config.verticalContentPadding.dep())
     ) {
         items(yearsList){ it ->

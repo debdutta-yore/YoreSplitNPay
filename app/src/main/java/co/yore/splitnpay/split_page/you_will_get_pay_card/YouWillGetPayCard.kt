@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
 
@@ -35,7 +36,10 @@ data class YouWillGetPayCardConfig(
     val currencyTextSize: Float = 12f,
     val arrowButtonRightPadding: Float = 10f,
     val arrowButtonBottomPadding: Float = 8f,
-    val type: Type
+    val type: Type,
+    val amountColor: Color = Color(0xff839BB9),
+    val shadowSpread: Float = 0f,
+    val backgroundColor: Color = Color.White,
 ){
     enum class Type{
         GET,
@@ -48,8 +52,7 @@ fun YouWillGetPayCard(
     config: YouWillGetPayCardConfig,
     whole: String,
     decimal: String,
-    onClick: ()->Unit,
-    onArrowClick: ()->Unit
+    notifier: NotificationService = LocalNotificationService.current
 ) {
     Box(
         modifier = Modifier
@@ -59,92 +62,121 @@ fun YouWillGetPayCard(
                 color = config.shadowColor,
                 borderRadius = config.borderRadius.dep(),
                 blurRadius = config.shadowBlurRadius.dep(),
-                spread = 0f,
+                spread = config.shadowSpread,
                 offsetX = config.shadowOffset.dep(),
                 offsetY = config.shadowOffset.dep(),
             )
             .clip(RoundedCornerShape(config.borderRadius.dep()))
-            .background(Color.White)
+            .background(config.backgroundColor)
             .clickable {
-                onClick()
+                notifier.notify("you_will${config.type.name}_big_card", null)
             }
 
     ) {
+        Content(config,whole,decimal)
+        CardIcon(config)
+        ArrowButton(config)
+    }
+}
+
+@Composable
+fun BoxScope.Content(
+    config: YouWillGetPayCardConfig,
+    whole: String,
+    decimal: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Column(
-                modifier = Modifier
-                    .padding(top = config.headingTopPadding.dep())
-            ){
-                val headingStringId by remember {
-                    derivedStateOf {
-                        if(config.type==YouWillGetPayCardConfig.Type.GET){
-                            config.youWillGetStringId
-                        }
-                        else{
-                            config.youWillPayStringId
-                        }
-                    }
-                }
-                RobotoText(
-                    modifier = Modifier,
-                    text = stringResource(headingStringId),
-                    fontSize = config.headingFontSize.sep(),
-                    fontWeight = FontWeight.Bold,
-                )
-                AmountUI(
-                    amountTopPadding = config.amountTopPadding,
-                    currencyTextSize = config.currencyTextSize,
-                    decimalTextSize = config.decimalTextSize,
-                    whole = whole,
-                    decimal = decimal,
-                    amountTextSize = config.amountTextSize
-                )
-            }
-        }
-
-        Box(
-            Modifier
-                .padding(start = config.youWillGetIconLeftPadding.dep())
-                .align(Alignment.BottomStart)
-        ){
-            if(config.type==YouWillGetPayCardConfig.Type.GET){
-                YouWillGetIcon()
-            }
-            else {
-                YouWillPayIcon()
-            }
-        }
-
-
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    end = config.arrowButtonRightPadding.dep(),
-                    bottom = config.arrowButtonBottomPadding.dep()
-                )
-        ){
-            val arrowButtonConfig by remember {
+                .padding(top = config.headingTopPadding.dep())
+        ) {
+            val headingStringId by remember {
                 derivedStateOf {
-                    if(config.type==YouWillGetPayCardConfig.Type.GET){
-                        YouWillGetPayArrowButtonConfiguration.Get
-                    }
-                    else{
-                        YouWillGetPayArrowButtonConfiguration.Pay
+                    if (config.type == YouWillGetPayCardConfig.Type.GET) {
+                        config.youWillGetStringId
+                    } else {
+                        config.youWillPayStringId
                     }
                 }
             }
-            YouWillGetPayArrowButton(
-                arrowButtonConfig,
-                contentDescription = "you_will_${config.type}_arrow_button"
-            ){
-                onArrowClick()
+            RobotoText(
+                modifier = Modifier,
+                text = stringResource(headingStringId),
+                fontSize = config.headingFontSize.sep(),
+                fontWeight = FontWeight.Bold,
+            )
+
+            Box(
+                modifier = Modifier
+                    .padding(top = config.amountTopPadding.dep() - 2.dp)
+                    .align(Alignment.End)
+            ) {
+                YoreAmount(
+                    config = YoreAmountConfiguration(
+                        fontSize = config.amountTextSize,
+                        fontFamily = robotoFonts,
+                        wholeFontWeight = FontWeight.Bold,
+                        currencyFontSize = config.currencyTextSize,
+                        decimalFontSize = config.decimalTextSize,
+                        color = config.amountColor
+                    ),
+                    whole = whole,
+                    decimal = decimal
+                )
             }
+
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.CardIcon(
+    config: YouWillGetPayCardConfig
+) {
+    Box(
+        Modifier
+            .padding(start = config.youWillGetIconLeftPadding.dep())
+            .align(Alignment.BottomStart)
+    ) {
+        if (config.type == YouWillGetPayCardConfig.Type.GET) {
+            YouWillGetIcon()
+        } else {
+            YouWillPayIcon()
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.ArrowButton(
+    config: YouWillGetPayCardConfig,
+    notifier: NotificationService = LocalNotificationService.current
+) {
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(
+                end = config.arrowButtonRightPadding.dep(),
+                bottom = config.arrowButtonBottomPadding.dep()
+            )
+    ) {
+        val arrowButtonConfig by remember {
+            derivedStateOf {
+                if (config.type == YouWillGetPayCardConfig.Type.GET) {
+                    YouWillGetPayArrowButtonConfiguration.Get
+                } else {
+                    YouWillGetPayArrowButtonConfiguration.Pay
+                }
+            }
+        }
+        YouWillGetPayArrowButton(
+            arrowButtonConfig,
+            contentDescription = "you_will_${config.type}_arrow_button"
+        ) {
+            notifier.notify("you_will_${config.type}_arrow_button", null)
         }
     }
 }

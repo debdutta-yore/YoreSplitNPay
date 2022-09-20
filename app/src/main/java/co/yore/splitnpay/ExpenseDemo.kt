@@ -788,8 +788,13 @@ fun ExpenseDemo() {
 }
 
 @Composable
-fun Number.sx(){
-    Spacer(modifier = Modifier.width(this.dep()))
+fun Number.sx(color: Color? = null){
+    if(color!=null){
+        Spacer(modifier = Modifier.width(this.dep()).height(5.dep()).background(color))
+    }
+    else{
+        Spacer(modifier = Modifier.width(this.dep()))
+    }
 }
 
 @Composable

@@ -27,14 +27,7 @@ enum class SwipingStates {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SplitPage(
-    wholeGet: String,
-    decGet: String,
-    wholePay: String,
-    decPay: String,
-    whole: String,
-    decimal: String,
-) {
+fun SplitPage() {
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val heightInPx = with(LocalDensity.current) { maxHeight.toPx() } // Get height of screen
@@ -96,12 +89,6 @@ fun SplitPage(
             }
                 SplitPageMotionLayout(
                     progress = computedProgress,
-                    wholeGet,
-                    decGet,
-                    wholePay,
-                    decPay,
-                    whole,
-                    decimal,
                 ) {
                     swipingState.performDrag(-0.01f)
                 }

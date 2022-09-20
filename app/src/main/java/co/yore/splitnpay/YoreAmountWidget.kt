@@ -16,6 +16,8 @@ data class YoreAmountConfiguration(
     val fontFamily: FontFamily = robotoFonts,
     val color: Color,
     val fontWeight: FontWeight = FontWeight.Normal,
+    val decimalPointLocationInDecimalPart: Boolean = true,
+    val negative: Boolean = false,
 
     val currencyFontSize: Number? = null,
     val currencyFontFamily: FontFamily? = null,
@@ -41,6 +43,23 @@ data class YoreAmountConfiguration(
             currencyFontSize = 21,
             decimalFontSize = 14,
             currencyBaselineShift = -0.2f
+        )
+
+        val splitGroupCardGet = YoreAmountConfiguration(
+            color = Color(0xff37D8CF),
+            fontSize = 14,
+            currencyFontSize = 12,
+            decimalFontSize = 10,
+            wholeFontWeight = FontWeight.Bold
+        )
+
+        val splitGroupCardPay = YoreAmountConfiguration(
+            color = Color(0xffFF4077),
+            fontSize = 14,
+            currencyFontSize = 12,
+            decimalFontSize = 10,
+            wholeFontWeight = FontWeight.Bold,
+            negative = true
         )
     }
     val _currencyFontWeight: FontWeight
@@ -105,7 +124,7 @@ fun YoreAmount(
     decimal: String,
 ){
     Text(
-        modifier = Modifier,
+        modifier = modifier,
         text = buildAnnotatedString {
             withStyle(
                 SpanStyle(
@@ -116,6 +135,9 @@ fun YoreAmount(
                     fontWeight = config._currencyFontWeight
                 )
             ){
+                if(config.negative){
+                    append("-")
+                }
                 append(localCurrency.current)
                 append(" ")
             }
@@ -128,6 +150,9 @@ fun YoreAmount(
                 )
             ){
                 append(whole)
+                if(!config.decimalPointLocationInDecimalPart){
+                    append(".")
+                }
             }
             withStyle(
                 SpanStyle(
@@ -137,6 +162,9 @@ fun YoreAmount(
                     fontWeight = config._decimalFontWeight
                 )
             ){
+                if(config.decimalPointLocationInDecimalPart){
+                    append(".")
+                }
                 append(decimal)
             }
         }
