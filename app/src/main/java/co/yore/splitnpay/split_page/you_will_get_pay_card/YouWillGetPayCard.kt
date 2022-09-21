@@ -23,10 +23,13 @@ import co.yore.splitnpay.R
 data class YouWillGetPayCardConfig(
     val height: Float = 153f,
     val width: Float = 149f,
+
     val shadowColor: Color = Color(0x80C6CFD8),
-    val borderRadius: Float = 15f,
     val shadowBlurRadius: Float = 33f,
     val shadowOffset: Float = 7f,
+    val borderRadius: Float = 15f,
+    val shadowSpread: Float = 0f,
+
     val headingTopPadding: Float = 22f,
     val youWillGetStringId:  Int = R.string.you_will_get,
     val youWillPayStringId:  Int = R.string.you_will_pay,
@@ -40,7 +43,6 @@ data class YouWillGetPayCardConfig(
     val arrowButtonBottomPadding: Float = 8f,
     val type: Type,
     val amountColor: Color = Color(0xff839BB9),
-    val shadowSpread: Float = 0f,
     val backgroundColor: Color = Color.White,
     val activeGetColor: Color = Color(0xff37D8CF),
     val activePayColor: Color = Color(0xffFF4077),

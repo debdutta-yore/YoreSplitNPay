@@ -40,7 +40,7 @@ import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCard
 import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCardConfig
 
 @Composable
-private fun JsonConstraintSetStart() = ConstraintSet(
+fun JsonConstraintSetStart() = ConstraintSet(
     """ 
 {
 	poster: { 
@@ -68,7 +68,7 @@ private fun JsonConstraintSetStart() = ConstraintSet(
 )
 
 @Composable
-private fun JsonConstraintSetEnd(
+fun JsonConstraintSetEnd(
     dim: Float
 ) = ConstraintSet(
     """ {
