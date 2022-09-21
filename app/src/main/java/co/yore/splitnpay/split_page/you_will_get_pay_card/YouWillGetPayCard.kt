@@ -1,5 +1,7 @@
 package co.yore.splitnpay.split_page.you_will_get_pay_card
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -40,6 +42,8 @@ data class YouWillGetPayCardConfig(
     val amountColor: Color = Color(0xff839BB9),
     val shadowSpread: Float = 0f,
     val backgroundColor: Color = Color.White,
+    val activeGetColor: Color = Color(0xff37D8CF),
+    val activePayColor: Color = Color(0xffFF4077),
 ){
     enum class Type{
         GET,
@@ -52,6 +56,7 @@ fun YouWillGetPayCard(
     config: YouWillGetPayCardConfig,
     whole: String,
     decimal: String,
+    active: Boolean,
     notifier: NotificationService = LocalNotificationService.current
 ) {
     Box(
@@ -73,7 +78,7 @@ fun YouWillGetPayCard(
             }
 
     ) {
-        Content(config,whole,decimal)
+        Content(config,whole,decimal,active)
         CardIcon(config)
         ArrowButton(config)
     }
@@ -83,7 +88,8 @@ fun YouWillGetPayCard(
 fun BoxScope.Content(
     config: YouWillGetPayCardConfig,
     whole: String,
-    decimal: String
+    decimal: String,
+    active: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -115,6 +121,25 @@ fun BoxScope.Content(
                     .padding(top = config.amountTopPadding.dep() - 2.dp)
                     .align(Alignment.End)
             ) {
+                val computedAmountColor by remember(active) {
+                    derivedStateOf {
+                        if(!active){
+                            config.amountColor
+                        }
+                        else{
+                            if(config.type==YouWillGetPayCardConfig.Type.GET){
+                                config.activeGetColor
+                            }
+                            else{
+                                config.activePayColor
+                            }
+                        }
+                    }
+                }
+                val animatedAmountColor by animateColorAsState(
+                    computedAmountColor,
+                    animationSpec = tween(700)
+                )
                 YoreAmount(
                     config = YoreAmountConfiguration(
                         fontSize = config.amountTextSize,
@@ -122,7 +147,7 @@ fun BoxScope.Content(
                         wholeFontWeight = FontWeight.Bold,
                         currencyFontSize = config.currencyTextSize,
                         decimalFontSize = config.decimalTextSize,
-                        color = config.amountColor
+                        color = animatedAmountColor
                     ),
                     whole = whole,
                     decimal = decimal

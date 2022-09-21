@@ -18,6 +18,8 @@ object SplitDataIds{
     const val ultimateState = 6
     const val groups = 7
     const val peoples = 8
+    const val willGetActive = 9
+    const val willPayActive = 10
 }
 
 enum class SplitPageState{
@@ -28,7 +30,7 @@ enum class SplitPageState{
 
 class SplitPageViewModel: ViewModel() {
     private val _notificationService = NotificationService{id,arg->
-
+        _whole.value = (System.currentTimeMillis()%1000).toString()
     }
     val notifier = _notificationService
     private val _resolver = Resolver()
@@ -42,6 +44,8 @@ class SplitPageViewModel: ViewModel() {
     private val _ultimateState = mutableStateOf(SplitPageState.NONE)
     private val _groups = mutableStateListOf<GroupCardData>()
     private val _peoples = mutableStateListOf<PeopleData>()
+    private val _willGetActive = mutableStateOf(false)
+    private val _willPayActive = mutableStateOf(false)
     init {
         _resolver.set(SplitDataIds.whole,_whole)
         _resolver.set(SplitDataIds.decimal,_decimal)
@@ -52,6 +56,12 @@ class SplitPageViewModel: ViewModel() {
         _resolver.set(SplitDataIds.ultimateState,_ultimateState)
         _resolver.set(SplitDataIds.groups,_groups)
         _resolver.set(SplitDataIds.peoples,_peoples)
+        _resolver.set(SplitDataIds.willGetActive,_willGetActive)
+        _resolver.set(SplitDataIds.willPayActive,_willPayActive)
+        _ultimateState.value = SplitPageState.GET
+        _wholeGet.value = "4,500"
+        _willGetActive.value = true
+        _willPayActive.value = true
         viewModelScope.launch {
             while (true){
                 delay(2000)

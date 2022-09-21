@@ -28,6 +28,10 @@ fun stringState(key: Int): State<String> {
     return LocalResolver.current.get(key)
 }
 @Composable
+fun boolState(key: Int): State<Boolean> {
+    return LocalResolver.current.get(key)
+}
+@Composable
 fun <T>listState(key: Int): SnapshotStateList<T> {
     return LocalResolver.current.get(key)
 }

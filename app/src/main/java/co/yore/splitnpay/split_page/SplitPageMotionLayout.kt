@@ -178,8 +178,10 @@ fun GroupsChildPage(
                         .padding(
                             start = 18.dep(),
                             bottom = 21.dep()
-                        ),
-                    horizontalArrangement = Arrangement.spacedBy(11.dep())
+                        )
+                        .height(40.dep()),
+                    //horizontalArrangement = Arrangement.spacedBy(11.dep()),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     var selectedTab by remember {
                         mutableStateOf(SplitPageTabs.All)
@@ -192,6 +194,7 @@ fun GroupsChildPage(
                     ) {
                         selectedTab = SplitPageTabs.All
                     }
+                    7.sx()
                     SplitTabItem_89keto(
                         text = "You owe",
                         selected = selectedTab,
@@ -200,6 +203,7 @@ fun GroupsChildPage(
                     ) {
                         selectedTab = SplitPageTabs.YouOwe
                     }
+                    7.sx()
                     SplitTabItem_89keto(
                         text = "You owe",
                         selected = selectedTab,
@@ -208,6 +212,12 @@ fun GroupsChildPage(
                     ) {
                         selectedTab = SplitPageTabs.YouAreOwed
                     }
+
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f))
+                    AddGroupButton_kbf1at()
+                    16.sx()
                 }
                 LazyColumn(
                     modifier = Modifier.fadingEdge(),
@@ -247,8 +257,10 @@ fun PeoplesChildPage(
                     .padding(
                         start = 18.dep(),
                         bottom = 21.dep()
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(11.dep())
+                    )
+                    .height(40.dep()),
+                horizontalArrangement = Arrangement.spacedBy(7.dep()),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 var selectedTab by remember {
                     mutableStateOf(SplitPageTabs.All)
@@ -518,7 +530,7 @@ data class ExpandedCardsConfiguration(
 @Composable
 fun BoxScope.ExpandedCards(
     progress: Float,
-    config: ExpandedCardsConfiguration = ExpandedCardsConfiguration()
+    config: ExpandedCardsConfiguration = ExpandedCardsConfiguration(),
 ) {
     if (progress > 0f) {
         Row(
@@ -531,12 +543,14 @@ fun BoxScope.ExpandedCards(
                 config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.GET),
                 whole = stringState(SplitDataIds.wholeGet).value,
                 decimal = stringState(SplitDataIds.decimalGet).value,
+                boolState(SplitDataIds.willGetActive).value
             )
             config.space.sx()
             YouWillGetPayCard(
                 config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.PAY),
                 whole = stringState(SplitDataIds.wholePay).value,
                 decimal = stringState(SplitDataIds.decimalPay).value,
+                boolState(SplitDataIds.willPayActive).value
             )
         }
     }
@@ -841,6 +855,7 @@ fun HeaderContent(
     Column(
         modifier = Modifier
             .padding(top = config.topPadding.dep())
+            .wrapContentWidth()
     ) {
         SplitBalanceText(
             config.splitBalanceTextId,
