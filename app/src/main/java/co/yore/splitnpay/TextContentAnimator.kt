@@ -19,14 +19,14 @@ import androidx.compose.ui.text.style.TextGeometricTransform
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 
-interface Content
+private interface Content
 
-data class FromTo(
+private data class FromTo(
     val f: String,
     val t: String
 ): Content
 
-data class Only(
+private data class Only(
     val value: String
 ): Content
 
