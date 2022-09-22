@@ -44,6 +44,7 @@ import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.GreyShadow
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.rudra.yoresplitbill.ui.split.group.addmembers.ContactData
 
 
 data class ProfileImageConfiguration(
@@ -51,13 +52,13 @@ data class ProfileImageConfiguration(
     val borderStroke: Float = 3f,
     val borderColor: Color = Color(0xffEDF5FF),
     val shape: Shape = CircleShape,
-    val imageUrl: String = "https://i.pravatar.cc/300",
-    val placeholder: Int = R.drawable.personactionbar,
+    val placeholder: Int = R.drawable.user_dummy4,
     val contentScale: ContentScale = ContentScale.Crop
 )
 
 @Composable
 fun ProfileImage_2hf7q0(
+    image: Any?,
     config: ProfileImageConfiguration = ProfileImageConfiguration(),
     contentDescription: String
 ) {
@@ -72,7 +73,7 @@ fun ProfileImage_2hf7q0(
             .padding(config.borderStroke.dep())
             .clip(CircleShape),
         model = ImageRequest.Builder(LocalContext.current)
-            .data(config.imageUrl)
+            .data(image)
             .crossfade(true)
             .build(),
         placeholder = painterResource(config.placeholder),
@@ -238,7 +239,7 @@ fun FontFamilyText(
 
 @Composable
 fun AddMemberCard_eq3k8h(
-    member: Friend,
+    member: ContactData,
     selected: Boolean,
     contentDescription: String,
     checkBoxContentDescription: String,
@@ -322,7 +323,10 @@ fun AddMemberCard_eq3k8h(
                     bottom = 23.dep()
                 )
         ) {
-            ProfileImage_2hf7q0(contentDescription = profileImageContentDescription)
+            ProfileImage_2hf7q0(
+                contentDescription = profileImageContentDescription,
+                image = member.image
+            )
 
             Column(
                 modifier = Modifier
@@ -336,7 +340,7 @@ fun AddMemberCard_eq3k8h(
                 )
                 Spacer(modifier = Modifier.height(5.dep()))
                 FontFamilyText(
-                    text = member.mobileNumber,
+                    text = member.mobile,
                     fontSize = 11.sep(),
                     fontWeight = FontWeight.Normal,
                     color = colorResource(R.color.lightblue5)

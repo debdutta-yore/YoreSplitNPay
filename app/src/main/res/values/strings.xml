@@ -8,4 +8,5 @@
     <string name="group_balance">Group Balance</string>
     <string name="office">Office</string>
     <string name="split_with">Split With</string>
+    <string name="search_groups_or_contacts">Search groups or contacts</string>
 </resources>

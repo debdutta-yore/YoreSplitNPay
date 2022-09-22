@@ -8,20 +8,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import co.yore.splitnpay.*
 import co.yore.splitnpay.R
-import co.yore.splitnpay.dep
-import co.yore.splitnpay.sep
-import co.yore.splitnpay.sx
 
 data class ContactSearchBarConfiguration(
     val height: Float = 44f,
@@ -45,9 +42,9 @@ data class ContactSearchBarConfiguration(
 fun ContactSearchBar(
     config: ContactSearchBarConfiguration = ContactSearchBarConfiguration(),
     contentDescription: String,
-    onChange: (String) -> Unit
+    text: String = stringState(DataIds.textInput).value,
+    notifier: NotificationService = notifier()
 ) {
-    val (value, onValueChange) = remember { mutableStateOf("") }
     Box(
         contentAlignment = Alignment.CenterStart,
         modifier = Modifier
@@ -66,10 +63,9 @@ fun ContactSearchBar(
                     config.backgroundColor,
                     RoundedCornerShape(config.borderRadius.dep())
                 ),
-            value = value,
+            value = text,
             onValueChange = {
-                onValueChange(it)
-                onChange(it)
+                notifier.notify(DataIds.textInput,it)
             },
             textStyle = TextStyle(fontSize = config.fontSize.sep()),
             shape = RoundedCornerShape(config.borderRadius.dep()),
@@ -100,12 +96,12 @@ fun ContactSearchBar(
         )
 
         AnimatedVisibility(
-            visible = value.isEmpty(),
+            visible = text.isEmpty(),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
             Text(
-                text = "Search groups or contacts",
+                text = stringResource(R.string.search_groups_or_contacts),
                 fontSize = config.fontSize.sep(),
                 color = config.color,
                 textAlign = TextAlign.Start,

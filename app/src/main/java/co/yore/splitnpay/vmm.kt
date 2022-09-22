@@ -6,12 +6,12 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
 class Resolver{
-    private val map: MutableMap<Int,Any?> = mutableMapOf()
-    fun <T>get(key: Int): T{
+    private val map: MutableMap<Any,Any?> = mutableMapOf()
+    fun <T>get(key: Any): T{
         return map[key] as T
     }
 
-    fun set(key: Int, value: Any?){
+    operator fun set(key: Any, value: Any?){
         map[key] = value
     }
 }
@@ -24,19 +24,19 @@ val LocalResolver = compositionLocalOf { Resolver() }
 val LocalNotificationService = compositionLocalOf { NotificationService{ _, _->} }
 
 @Composable
-fun stringState(key: Int): State<String> {
+fun stringState(key: Any): State<String> {
     return LocalResolver.current.get(key)
 }
 @Composable
-fun boolState(key: Int): State<Boolean> {
+fun boolState(key: Any): State<Boolean> {
     return LocalResolver.current.get(key)
 }
 @Composable
-fun <T>listState(key: Int): SnapshotStateList<T> {
+fun <T>listState(key: Any): SnapshotStateList<T> {
     return LocalResolver.current.get(key)
 }
 @Composable
-fun <T>tState(key: Int): State<T> {
+fun <T>tState(key: Any): State<T> {
     return LocalResolver.current.get(key)
 }
 

@@ -514,9 +514,7 @@ fun BoxScope.SearchBar(
     ) {
         ContactSearchBar(
             contentDescription = "split_search"
-        ) {
-
-        }
+        )
     }
 }
 

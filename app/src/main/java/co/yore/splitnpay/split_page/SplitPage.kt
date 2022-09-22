@@ -556,9 +556,7 @@ fun SearchBarSection() {
     ) {
         ContactSearchBar(
             contentDescription = "split_search"
-        ) {
-
-        }
+        )
     }
 }
 

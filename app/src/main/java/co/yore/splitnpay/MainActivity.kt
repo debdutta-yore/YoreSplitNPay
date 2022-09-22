@@ -9,12 +9,11 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
+import co.yore.splitnpay.addmembers.SplitWithPageViewModel
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.rudra.yoresplitbill.ui.split.group.addmembers.AddMembersScreen_g5024t
 
 object SplitPageColor{
@@ -37,24 +36,24 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        val vm: SplitPageViewModel = viewModel()
-                        CompositionLocalProvider(
-                            LocalNotificationService provides vm.notifier,
-                            LocalResolver provides vm.resolver
-                        ) {
-                            val systemUiController = rememberSystemUiController()
-                            val state = tState<SplitPageState>(SplitDataIds.ultimateState)
-                            LaunchedEffect(key1 = state.value) {
-                                val color = when(state.value){
-                                    SplitPageState.GET -> SplitPageColor.getColor
-                                    SplitPageState.PAY -> SplitPageColor.payColor
-                                    SplitPageState.NONE -> SplitPageColor.noneColor
-                                }
-                                systemUiController.setStatusBarColor(
-                                    color = color,
-                                    darkIcons = false
-                                )
+                        /*val systemUiController = rememberSystemUiController()
+                        val state = tState<SplitPageState>(SplitDataIds.ultimateState)
+                        LaunchedEffect(key1 = state.value) {
+                            val color = when(state.value){
+                                SplitPageState.GET -> SplitPageColor.getColor
+                                SplitPageState.PAY -> SplitPageColor.payColor
+                                SplitPageState.NONE -> SplitPageColor.noneColor
                             }
+                            systemUiController.setStatusBarColor(
+                                color = color,
+                                darkIcons = false
+                            )
+                        }*/
+                        val vm: SplitWithPageViewModel = viewModel()
+                        CompositionLocalProvider(
+                            LocalResolver provides vm.resolver,
+                            LocalNotificationService provides vm.notifier
+                        ) {
                             AddMembersScreen_g5024t()
                         }
                     }

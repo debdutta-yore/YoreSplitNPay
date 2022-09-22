@@ -243,23 +243,11 @@ fun TopBarWithIcon_1t9xbo(
 fun AddMembersScreen_g5024t(
 
 ) {
-    /*val fabVisible = remember { mutableStateOf(false) }
-    val viewModel = AddMembersViewModel()
-
-    if (viewModel.newlist.size > 0) {
-        fabVisible.value = true
-    }*/
-
-    val coroutineScope = rememberCoroutineScope()
-
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
         confirmStateChange = { it!=ModalBottomSheetValue.HalfExpanded }
     )
-
-
-
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
@@ -320,9 +308,7 @@ fun SplitWithPageContent(
             ){
                 ContactSearchBar(
                     contentDescription = "split_search"
-                ) {
-
-                }
+                )
             }
 
 
@@ -353,42 +339,82 @@ fun SplitWithPageContent(
     }
 }
 
-@Composable
-fun SplitWithListSection() {
+interface GroupOrContact{
+    fun id(): Any
+}
 
-    val listState = rememberLazyListState()
-    val friends = remember {
-        mutableStateListOf<Friend>(
-            Friend(name = "Manisha Roy", mobileNumber = "95633376942", imageUrl = ""),
-            Friend(name = "Sushil Roy", mobileNumber = "95633376942", imageUrl = ""),
-            Friend(name = "Ankita Roy", mobileNumber = "95633376942", imageUrl = ""),
-            Friend(name = "Banhi Sen", mobileNumber = "95633376942", imageUrl = ""),
-            Friend(name = "Chitrak Dutta", mobileNumber = "95633376942", imageUrl = ""),
-            Friend(name = "Sanchita Sen", mobileNumber = "95633376942", imageUrl = ""),
-            Friend(name = "Chumki Sen", mobileNumber = "95633376942", imageUrl = ""),
-        )
+data class ContactData(
+    val id: Any,
+    val image: Any?,
+    val name: String,
+    val mobile: String,
+    val selected: Boolean = false,
+): GroupOrContact{
+    override fun id(): Any {
+        return this.id
     }
-    LazyColumn(
-        state = listState,
-        modifier = Modifier,
-        contentPadding = PaddingValues(
-            start = 16f.dep(),
-            end = 16f.dep(),
-            top = 26f.dep(),
-            bottom = 26f.dep()
-        ),
-        verticalArrangement = Arrangement.spacedBy(13.dep())
-    ) {
-        itemsIndexed(friends) { index, item ->
-            AddMemberCard_eq3k8h(
-                member = item,
-                selected = false,
-                contentDescription = "",
-                checkBoxContentDescription = "",
-                profileImageContentDescription = "",
-                onSelected = {
+}
 
+data class GroupData(
+    val id: Any,
+    val image: Any?,
+    val name: String,
+    val memberImages: List<Any?>
+): GroupOrContact{
+    override fun id(): Any {
+        return this.id
+    }
+}
+
+@Composable
+fun SplitWithListSection(
+    items: List<GroupOrContact> = listState(DataIds.groupOrContact),
+    notifier: NotificationService = notifier()
+) {
+    val listState = rememberLazyListState()
+    if(items.isNotEmpty()){
+        LazyColumn(
+            state = listState,
+            modifier = Modifier,
+            contentPadding = PaddingValues(
+                start = 16f.dep(),
+                end = 16f.dep(),
+                top = 26f.dep(),
+                bottom = 26f.dep()
+            ),
+            verticalArrangement = Arrangement.spacedBy(13.dep())
+        ) {
+            items(
+                items,
+                key = {
+                    it.id()
                 }
+            ) {
+                if(it is ContactData){
+                    AddMemberCard_eq3k8h(
+                        member = it,
+                        selected = it.selected,
+                        contentDescription = "",
+                        checkBoxContentDescription = "",
+                        profileImageContentDescription = "",
+                        onSelected = {selected->
+                            notifier.notify(DataIds.checkItem,it)
+                        }
+                    )
+                }
+            }
+        }
+    }
+    else{
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ){
+            RobotoText(
+                "Nothing found",
+                fontSize = 13.sep(),
+                color = Color(0xff839BB9),
+                fontWeight = FontWeight.Bold
             )
         }
     }
