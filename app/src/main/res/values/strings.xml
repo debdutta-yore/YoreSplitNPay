@@ -7,4 +7,5 @@
     <string name="no_group_has_been_created_yet">No group has been created yet</string>
     <string name="group_balance">Group Balance</string>
     <string name="office">Office</string>
+    <string name="split_with">Split With</string>
 </resources>

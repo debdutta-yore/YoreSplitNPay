@@ -3,10 +3,7 @@ package co.yore.splitnpay
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.friend_item.models.PeopleData
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 object SplitDataIds{
     const val whole = 0
@@ -62,7 +59,7 @@ class SplitPageViewModel: ViewModel() {
         _wholeGet.value = "4,500"
         _willGetActive.value = true
         _willPayActive.value = true
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             while (true){
                 delay(2000)
                 _groups.add(GroupCardData(
@@ -90,6 +87,6 @@ class SplitPageViewModel: ViewModel() {
                     )
                 )
             }
-        }
+        }*/
     }
 }

@@ -4,6 +4,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import java.text.DecimalFormat
 
 object YoreAmountFormatter{
@@ -83,3 +85,34 @@ fun Modifier.fadingEdge(
         }
     }
 )
+
+//34*1.dep() and 1.dep()*34 can be achieved by the following extensions
+operator fun Dp.times(number: Number): Dp {
+    return (this.value*number.toFloat()).dp
+}
+operator fun Number.times(dp: Dp): Dp {
+    return (this.toFloat()*dp.value).dp
+}
+
+fun Color.Companion.blend(color1: Color, color2: Color, progress: Float): Color{
+    val r1 = color1.red
+    val g1 = color1.green
+    val b1 = color1.blue
+
+    val r2 = color2.red
+    val g2 = color2.green
+    val b2 = color2.blue
+
+    val p = progress
+    val q = 1f - progress
+    return Color(
+        red = q*r1 + p*r2,
+        green = q*g1 + p*g2,
+        blue = q*b1 + p*b2,
+    )
+}
+
+const val root2 = 1.4142
+
+val Number.droot2
+    get() = this.toFloat() / root2

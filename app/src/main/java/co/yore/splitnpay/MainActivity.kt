@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.rudra.yoresplitbill.ui.split.group.addmembers.AddMembersScreen_g5024t
 
 object SplitPageColor{
     val noneColor = Color(0xff7589A4)
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
                                     darkIcons = false
                                 )
                             }
-                            SplitPageFull()
+                            AddMembersScreen_g5024t()
                         }
                     }
                 }
