@@ -1,5 +1,7 @@
 package co.yore.splitnpay.split_page
 
+import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
@@ -15,6 +17,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -197,7 +200,6 @@ fun SplitPage() {
                     val tabs = createRefFor("tabs")
                     val cardm = createRefFor("cardm")
                     val cardm1 = createRefFor("cardm1")
-                    val get_card = createRefFor("get_card")
                     constrain(upper_cut){
                         height = Dimension.value(_219_dep)
                     }
@@ -232,6 +234,7 @@ fun SplitPage() {
                         top.linkTo(search_bar.top,-_183_dep)
                         start.linkTo(upper_cut.start,_191_dep)
                     }
+
                 },
                 end = ConstraintSet {
                     val upper_cut = createRefFor("upper_cut")
@@ -327,6 +330,9 @@ fun MyCard(
     val _16_dep = 16.dep()
     val _332_dep = 332.dep()
     val _28_dep = 28.dep()
+    val _33_dep = 33.dep()
+    val _8_dep = 8.dep()
+    val _10_dep = 10.dep()
     val textColor by remember(progress) {
         derivedStateOf {
             Color.blend(Color(0xff243257), Color(0xff839BB9),progress)
@@ -337,6 +343,8 @@ fun MyCard(
             val get_card = createRefFor("get_card")
             val text = createRefFor("text")
             val amount = createRefFor("amount")
+            val get_icon = createRefFor("get_icon")
+            val arrow = createRefFor("arrow")
             constrain(get_card){
 
                 width = Dimension.value(_153_dep)
@@ -350,11 +358,25 @@ fun MyCard(
                 centerHorizontallyTo(get_card)
                 top.linkTo(text.bottom,_6_dep)
             }
+            constrain(get_icon){
+                pivotX = 0f
+                pivotY = 1f
+                start.linkTo(get_card.start,_33_dep)
+                bottom.linkTo(get_card.bottom)
+            }
+            constrain(arrow){
+                pivotX = 1f
+                pivotY = 1f
+                bottom.linkTo(get_card.bottom,_8_dep)
+                end.linkTo(get_card.end,_10_dep)
+            }
         },
         end = ConstraintSet {
             val get_card = createRefFor("get_card")
             val text = createRefFor("text")
             val amount = createRefFor("amount")
+            val get_icon = createRefFor("get_icon")
+            val arrow = createRefFor("arrow")
             constrain(get_card){
                 height = Dimension.value(_32_dep)
                 width = Dimension.fillToConstraints
@@ -373,13 +395,28 @@ fun MyCard(
                 end.linkTo(parent.end,_28_dep)
                 centerVerticallyTo(get_card)
             }
+            constrain(get_icon){
+                start.linkTo(get_card.start,_33_dep)
+                bottom.linkTo(get_card.bottom)
+                pivotX = 0f
+                pivotY = 1f
+                alpha = 0.0f
+                scaleX = 0f
+                scaleY = 0f
+            }
+            constrain(arrow){
+                bottom.linkTo(get_card.bottom,_8_dep)
+                end.linkTo(get_card.end,_10_dep)
+                pivotX = 1f
+                pivotY = 1f
+                alpha = 0.0f
+                scaleX = 0f
+                scaleY = 0f
+            }
         },
         progress = progress,
         modifier = Modifier
             .layoutId("cardm")
-            //.size(cardSize)
-            //.background(Color.Red)
-            //.clipToBounds()
     ) {
         Box(
             modifier = Modifier
@@ -392,53 +429,24 @@ fun MyCard(
                     offsetX = 7.dep(),
                     offsetY = 7.dep(),
                 )
-                /*.onGloballyPositioned {
-                    cardSize = DpSize((it.size.width/density).dp,(it.size.height/density).dp)
-                    it.positionInWindow()
-                }*/
-                .background(Color.White/*.copy(alpha = 0.5f)*/, RoundedCornerShape((15*(1f+progress)).dep()))
+                .background(
+                    Color.White/*.copy(alpha = 0.5f)*/,
+                    RoundedCornerShape(15.dep())
+                )
         ){
 
         }
-        /*RobotoText(
-            "You'll get",
-            fontWeight = FontWeight((700 - 300*progress).toInt()),
-            modifier = Modifier
-                .layoutId("text"),
-            color = textColor,
-            fontSize = (16-5*progress).sep()
-        )*/
         AnimatedTextContent(
             modifier = Modifier
-                .layoutId("text"),
-            items = listOf(
-                NonAnimatableText(
-                    "You",
-                    style = SpanStyle(
-                        fontWeight = FontWeight((700 - 300*progress).toInt()),
-                        color = textColor,
-                        fontSize = (16-5*progress).sep()
-                    )
-                ),
-                AnimatableTextPair(
-                    start = "'",
-                    end = " wi",
-                    style = SpanStyle(
-                        fontWeight = FontWeight((700 - 300*progress).toInt()),
-                        color = textColor,
-                        fontSize = (16-5*progress).sep()
-                    )
-                ),
-                NonAnimatableText(
-                    "ll get",
-                    style = SpanStyle(
-                        fontWeight = FontWeight((700 - 300*progress).toInt()),
-                        color = textColor,
-                        fontSize = (16-5*progress).sep()
-                    )
-                ),
-            ),
-            progress = progress
+            .layoutId("text"),
+            from = "You’ll get",
+            to = "You will get",
+            progress = progress,
+            spanStyle = SpanStyle(
+                fontWeight = FontWeight((700 - 300*progress).toInt()),
+                color = textColor,
+                fontSize = (16-5*progress).sep()
+            )
         )
         Box(
             modifier = Modifier
@@ -457,6 +465,21 @@ fun MyCard(
                 decimal = "00"
             )
         }
+        Image(
+            painter = painterResource(id = R.drawable.you_will_get_icon),
+            contentDescription = "you_will_get_icon",
+            modifier = Modifier
+                .layoutId("get_icon")
+                .size(42.dep(), 68.dep())
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.ic_you_will_get_arrow),
+            contentDescription = "",
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .layoutId("arrow")
+                .size(26.dep())
+        )
     }
 }
 
@@ -483,6 +506,10 @@ fun MyCard1(
     val _16_dep = 16.dep()
     val _332_dep = 332.dep()
     val _28_dep = 28.dep()
+    val _8_dep = 8.dep()
+    val _10_dep = 10.dep()
+    val _33_dep = 33.dep()
+    val _27_dep = 27.dep()
     val density = LocalDensity.current.density
 
     val textColor by remember(progress) {
@@ -496,6 +523,8 @@ fun MyCard1(
             val get_card = createRefFor("get_card")
             val text = createRefFor("text")
             val amount = createRefFor("amount")
+            val pay_icon = createRefFor("pay_icon")
+            val arrow = createRefFor("arrow")
             constrain(get_card){
 
                 width = Dimension.value(_153_dep)
@@ -509,11 +538,25 @@ fun MyCard1(
                 centerHorizontallyTo(get_card)
                 top.linkTo(text.bottom,_6_dep)
             }
+            constrain(pay_icon){
+                pivotX = 0f
+                pivotY = 1f
+                start.linkTo(get_card.start,_27_dep)
+                bottom.linkTo(get_card.bottom)
+            }
+            constrain(arrow){
+                pivotX = 1f
+                pivotY = 1f
+                bottom.linkTo(get_card.bottom,_8_dep)
+                end.linkTo(get_card.end,_10_dep)
+            }
         },
         end = ConstraintSet {
             val get_card = createRefFor("get_card")
             val text = createRefFor("text")
             val amount = createRefFor("amount")
+            val pay_icon = createRefFor("pay_icon")
+            val arrow = createRefFor("arrow")
             constrain(get_card){
                 height = Dimension.value(_32_dep)
                 width = Dimension.fillToConstraints
@@ -531,6 +574,24 @@ fun MyCard1(
                 start.linkTo(text.end,_12_dep)
                 end.linkTo(parent.end,_28_dep)
                 centerVerticallyTo(get_card)
+            }
+            constrain(pay_icon){
+                start.linkTo(get_card.start,_33_dep)
+                bottom.linkTo(get_card.bottom)
+                pivotX = 0f
+                pivotY = 1f
+                alpha = 0.0f
+                scaleX = 0f
+                scaleY = 0f
+            }
+            constrain(arrow){
+                bottom.linkTo(get_card.bottom,_8_dep)
+                end.linkTo(get_card.end,_10_dep)
+                pivotX = 1f
+                pivotY = 1f
+                alpha = 0.0f
+                scaleX = 0f
+                scaleY = 0f
             }
         },
         progress = progress,
@@ -555,7 +616,10 @@ fun MyCard1(
                     cardSize = DpSize((it.size.width/density).dp,(it.size.height/density).dp)
                     it.positionInWindow()
                 }*/
-                .background(Color.White/*.copy(alpha = 0.5f)*/, RoundedCornerShape((15*(1f+progress)).dep()))
+                .background(
+                    Color.White/*.copy(alpha = 0.5f)*/,
+                    RoundedCornerShape((15 * (1f + progress)).dep())
+                )
         ){
 
         }
@@ -616,6 +680,21 @@ fun MyCard1(
                 decimal = "00"
             )
         }
+        Image(
+            painter = painterResource(id = R.drawable.you_will_pay_hand_icon),
+            contentDescription = "you_will_pay_icon",
+            modifier = Modifier
+                .layoutId("pay_icon")
+                .size(46.dep(), 68.dep())
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.ic_you_will_pay_arrow),
+            contentDescription = "",
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .layoutId("arrow")
+                .size(26.dep())
+        )
     }
 }
 

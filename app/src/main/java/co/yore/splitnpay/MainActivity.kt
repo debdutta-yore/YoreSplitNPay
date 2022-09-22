@@ -4,17 +4,17 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 object SplitPageColor{
     val noneColor = Color(0xff7589A4)
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        /*val vm: SplitPageViewModel = viewModel()
+                        val vm: SplitPageViewModel = viewModel()
                         CompositionLocalProvider(
                             LocalNotificationService provides vm.notifier,
                             LocalResolver provides vm.resolver
@@ -55,34 +55,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             SplitPageFull()
-                        }*/
-
-                        Column(){
-                            var progress by remember {
-                                mutableStateOf(0f)
-                            }
-                            AnimatedTextContent(
-                                from = "i am a boy",
-                                to = "i am a girl",
-                                progress = progress,
-                                spanStyle = SpanStyle(
-                                    fontSize = 48.sp
-                                ),
-                                color = Color.Red,
-                                diffSettings = AnimatableTextPart.DiffSettings(
-                                    scheme = AnimatableTextPart.Scheme.EFFICIENT,
-                                    editCost = 40
-                                )
-                            )
-                            Slider(
-                                value = progress,
-                                onValueChange = {
-                                    progress = it
-                                },
-                                valueRange = 0f..1f,
-                                modifier = Modifier.padding(24.dp)
-                            )
-                            Text("$progress")
                         }
                     }
                 }
