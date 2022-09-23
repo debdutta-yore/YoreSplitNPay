@@ -116,7 +116,7 @@ fun CheckBoxIcon_b6qwbf(
             durationMillis = 700
         )
     )
-    val computedBorderStroke by remember {
+    val computedBorderStroke by remember(selected) {
         derivedStateOf {
             if (selected) 0f else 1f
         }
@@ -249,10 +249,13 @@ fun AddMemberCard_eq3k8h(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+    var isCheckBoxPressed by remember(selected) {
+        mutableStateOf(selected)
+    }
 
-    val computedBackgroundColor by remember(selected,config) {
+    val computedBackgroundColor by remember(selected,config,isCheckBoxPressed) {
         derivedStateOf{
-            if (selected||isPressed)
+            if (selected||isPressed||isCheckBoxPressed)
                 config.cardBackgroundColor 
             else 
                 config.cardUnselectedColor
@@ -262,9 +265,9 @@ fun AddMemberCard_eq3k8h(
         targetValue = computedBackgroundColor,
         animationSpec = tween(700)
     )
-    val computedBorderStroke by remember(selected,config) {
+    val computedBorderStroke by remember(selected,config,isCheckBoxPressed) {
         derivedStateOf{
-            if (selected||isPressed)
+            if (selected||isPressed||isCheckBoxPressed)
                 config.borderStroke
             else
                 0f
@@ -274,9 +277,9 @@ fun AddMemberCard_eq3k8h(
         targetValue = computedBorderStroke,
         animationSpec = tween(700)
     )
-    val computedStrokeColor by remember(selected,config) {
+    val computedStrokeColor by remember(selected,config,isCheckBoxPressed) {
         derivedStateOf {
-            if(selected||isPressed){
+            if(selected||isPressed||isCheckBoxPressed){
                 config.borderColor
             }
             else{
@@ -360,7 +363,9 @@ fun AddMemberCard_eq3k8h(
                 onClick = {
                     onSelected(selected.not())
                 },
-                onPressed = {}
+                onPressed = {
+                    isCheckBoxPressed = it
+                }
             )
         }
     }

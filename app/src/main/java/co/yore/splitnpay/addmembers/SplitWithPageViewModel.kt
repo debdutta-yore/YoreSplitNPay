@@ -1,6 +1,5 @@
 package co.yore.splitnpay.addmembers
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,6 +14,7 @@ class SplitWithPageViewModel: ViewModel() {
     val resolver = Resolver()
     private val splitWithInput = mutableStateOf("")
     private val groupOrContacts = mutableStateListOf<GroupOrContact>()
+    private val addedContacts = mutableStateListOf<ContactData>()
     private val _notificationService = NotificationService{id,arg->
         when(id){
             DataIds.textInput->{
@@ -24,7 +24,14 @@ class SplitWithPageViewModel: ViewModel() {
                 val item = (arg as? GroupOrContact)?:return@NotificationService
                 if(item is ContactData){
                     val index = groupOrContacts.indexOf(item)
-                    Log.d("fldfjldf","$index")
+                    val finalChecked = !item.selected
+                    if(finalChecked){
+                        addedContacts.add(item)
+                    }
+                    else{
+                        val ind = addedContacts.indexOfFirst { it.id==item.id }
+                        addedContacts.removeAt(ind)
+                    }
                     groupOrContacts[index] = item.copy(selected = !item.selected)
                 }
             }
@@ -34,6 +41,7 @@ class SplitWithPageViewModel: ViewModel() {
     init {
         resolver[DataIds.textInput] = splitWithInput
         resolver[DataIds.groupOrContact] = groupOrContacts
+        resolver[DataIds.addedContacts] = addedContacts
         var i = 0
         groupOrContacts.addAll(MutableList(20){
             ContactData(

@@ -1,10 +1,9 @@
 package com.rudra.yoresplitbill.ui.split.group.addmembers
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -332,7 +330,7 @@ fun SplitWithPageContent(
             val addedFriends = remember {
                 mutableStateListOf<Friend>()
             }
-            AddedMembersSection(addedFriends)
+            AddedMembersSection()
 
             SplitWithListSection()
         }
@@ -420,31 +418,47 @@ fun SplitWithListSection(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun AddedMembersSection(addedFriends: SnapshotStateList<Friend>) {
-    Box(modifier = Modifier.padding(start = 16.dep(), end = 16.dep())) {
-        androidx.compose.animation.AnimatedVisibility(
-            visible = true,
-            enter = scaleIn(),
-            exit = scaleOut(),
+fun AddedMembersSection(addedFriends: List<ContactData> = listState(DataIds.addedContacts)) {
+    Box(
+        modifier = Modifier
+            .padding(
+                start = 16.dep(),
+                end = 16.dep()
+            )
+            .animateContentSize(tween(700))
+    ) {
+        AnimatedVisibility(
+            visible = addedFriends.isNotEmpty(),
+            enter = fadeIn(tween(700)),
+            exit = fadeOut(tween(700)),
         ) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(15.dep())
             ) {
-                items(addedFriends) { item ->
-                    PeopleImageItem_r02b97(
-                        onClick = {
+                items(
+                    addedFriends,
+                    key = {
+                        it.id
+                    }
+                ) { item ->
+                    Box(
+                        modifier = Modifier.animateItemPlacement()
+                    ){
+                        PeopleImageItem_r02b97(
+                            onClick = {
 
-                        },
-                        onDelete = {
-                            addedFriends.remove(item)
-                        },
-                        friend = item,
-                        contentDescription = "people image"
-                    )
+                            },
+                            onDelete = {
+
+                            },
+                            friend = item,
+                            contentDescription = "people image"
+                        )
+                    }
                 }
             }
         }
@@ -525,7 +539,7 @@ fun PeopleImageItem_r02b97(
     config: PeopleRowItemConfiguration = PeopleRowItemConfiguration(),
     onClick: () -> Unit,
     onDelete: () -> Unit,
-    friend: Friend,
+    friend: ContactData,
     contentDescription: String
 ) {
     Box(
