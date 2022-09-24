@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.addmembers.GroupData
 import co.yore.splitnpay.friend_item.FriendItem
 import co.yore.splitnpay.friend_item.models.PeopleData
 import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCard
@@ -165,7 +166,7 @@ fun Contents(
 
 @Composable
 fun GroupsChildPage(
-    groups: List<GroupCardData> = listState(SplitDataIds.groups)
+    groups: List<GroupData> = listState(SplitDataIds.groups)
 ) {
     if(groups.isEmpty()){
         Box(

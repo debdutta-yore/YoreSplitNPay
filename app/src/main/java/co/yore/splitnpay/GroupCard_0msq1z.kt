@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import co.yore.splitnpay.addmembers.GroupData
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
@@ -40,17 +41,12 @@ data class GroupCardData(
 
 @Composable
 fun GroupCard_0msq1z(
-    data: GroupCardData,
+    data: GroupData,
     config: GroupCardConfiguration = GroupCardConfiguration(),
     contentDescription: String
 ) {
     Box(
         modifier = Modifier
-            .padding(
-                /*start = config.cardPaddingX.dep(),
-                end = config.cardPaddingX.dep(),*/
-                top = config.cardPaddingTop.dep()
-            )
             .semantics { this.contentDescription = contentDescription }
             .coloredShadow(
                 color = config.shadowColor,
@@ -79,11 +75,9 @@ fun GroupCard_0msq1z(
             verticalAlignment = CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            /*Row(modifier = Modifier.fillMaxHeight()) {*/
-
                 Box(modifier = Modifier.align(CenterVertically)) {
                     GroupProfileImage_l5sx9n(
-                        imageUrl = data.profileImage,
+                        imageUrl = data.image,
                         contentDescription = "GroupProfilePhoto"
                     )
                 }
@@ -107,53 +101,51 @@ fun GroupCard_0msq1z(
                         data.memberImages
                     )
                 }
-            /*}*/
-
-            /*Row(
-                verticalAlignment = CenterVertically
-            ) {*/
                 Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
-                Column(
-                    modifier = Modifier
-                        .padding(vertical = config.groupBalanceTopPadding.dep())
-                        .fillMaxHeight(),
-                ) {
-                    RobotoText(
-                        text = stringResource(R.string.group_balance),
-                        color = LightBlue4,
-                        fontSize = config.groupBalanceFontSize.sep(),
-                    )
 
+                if(data.showGroupBalance){
                     Column(
                         modifier = Modifier
-                            .align(CenterHorizontally)
-                            .wrapContentWidth()
+                            .padding(vertical = config.groupBalanceTopPadding.dep())
                             .fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center
                     ) {
-                        if (data.willGet > 0) {
-                            val willGetSplitted by remember(data.willGet) {
-                                derivedStateOf {
-                                    data.willGet.splitted()
+                        RobotoText(
+                            text = stringResource(R.string.group_balance),
+                            color = LightBlue4,
+                            fontSize = config.groupBalanceFontSize.sep(),
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .wrapContentWidth()
+                                .fillMaxHeight(),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            if (data.willGet > 0) {
+                                val willGetSplitted by remember(data.willGet) {
+                                    derivedStateOf {
+                                        data.willGet.splitted()
+                                    }
                                 }
+                                YoreAmount(
+                                    config = YoreAmountConfiguration.splitGroupCardGet,
+                                    whole = willGetSplitted.wholeString,
+                                    decimal = willGetSplitted.decString
+                                )
                             }
-                            YoreAmount(
-                                config = YoreAmountConfiguration.splitGroupCardGet,
-                                whole = willGetSplitted.wholeString,
-                                decimal = willGetSplitted.decString
-                            )
-                        }
-                        if (data.willPay > 0) {
-                            val willPaySplitted by remember(data.willPay) {
-                                derivedStateOf {
-                                    data.willPay.splitted()
+                            if (data.willPay > 0) {
+                                val willPaySplitted by remember(data.willPay) {
+                                    derivedStateOf {
+                                        data.willPay.splitted()
+                                    }
                                 }
+                                YoreAmount(
+                                    config = YoreAmountConfiguration.splitGroupCardPay,
+                                    whole = willPaySplitted.wholeString,
+                                    decimal = willPaySplitted.decString
+                                )
                             }
-                            YoreAmount(
-                                config = YoreAmountConfiguration.splitGroupCardPay,
-                                whole = willPaySplitted.wholeString,
-                                decimal = willPaySplitted.decString
-                            )
                         }
                     }
                 }
@@ -172,7 +164,7 @@ fun GroupCard_0msq1z(
 
 @Composable
 fun GroupProfileImage_l5sx9n(
-    imageUrl: String,
+    imageUrl: Any?,
     config: GroupProfileImageConfiguration = GroupProfileImageConfiguration(),
     contentDescription: String
 ) {
@@ -217,7 +209,7 @@ data class GroupMemberProfilePicsConfiguration(
 
 @Composable
 fun GroupMemberProfilePics(
-    images: List<String>,
+    images: List<Any?>,
     config: GroupMemberProfilePicsConfiguration = GroupMemberProfilePicsConfiguration()
 ) {
     val visibleImages by remember(images) {
@@ -258,7 +250,7 @@ fun GroupMemberProfilePics(
 
 @Composable
 fun SingleGroupMemberProfilePic(
-    image: String,
+    image: Any?,
     contentDescription: String,
     config: SingleGroupMemberProfilePicConfiguration = SingleGroupMemberProfilePicConfiguration()
 ) {

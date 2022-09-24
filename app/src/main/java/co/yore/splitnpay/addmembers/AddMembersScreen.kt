@@ -1,4 +1,4 @@
-package com.rudra.yoresplitbill.ui.split.group.addmembers
+package co.yore.splitnpay.addmembers
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.AddMemberCard_eq3k8h
-import co.yore.splitnpay.addmembers.Friend
 import co.yore.splitnpay.split_page.ContactSearchBar
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.Pink
@@ -271,7 +269,9 @@ data class SplitWithPageContentConfiguration(
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SplitWithPageContent(
-    config: SplitWithPageContentConfiguration = SplitWithPageContentConfiguration()
+    config: SplitWithPageContentConfiguration = SplitWithPageContentConfiguration(),
+    selectedIndex: Int = intState(DataIds.selectedTabIndex).value,
+    notifier: NotificationService = notifier()
 ){
     Scaffold(
         floatingActionButton = {
@@ -311,7 +311,6 @@ fun SplitWithPageContent(
 
 
             Spacer(modifier = Modifier.height(38.dep()))
-            var selectedIndex by remember { mutableStateOf(0) }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -321,18 +320,12 @@ fun SplitWithPageContent(
                     )
             ) {
                 SplitWithPageTabsSection(selectedIndex){
-                    selectedIndex = it
+                    notifier.notify(DataIds.selectedTabIndex,it)
                 }
             }
-
             Spacer(modifier = Modifier.height(18.dep()))
-
-            val addedFriends = remember {
-                mutableStateListOf<Friend>()
-            }
             AddedMembersSection()
-
-            SplitWithListSection()
+            SplitWithListSection(selectedIndex)
         }
     }
 }
@@ -347,7 +340,7 @@ data class ContactData(
     val name: String,
     val mobile: String,
     val selected: Boolean = false,
-): GroupOrContact{
+): GroupOrContact {
     override fun id(): Any {
         return this.id
     }
@@ -357,28 +350,152 @@ data class GroupData(
     val id: Any,
     val image: Any?,
     val name: String,
-    val memberImages: List<Any?>
-): GroupOrContact{
+    val memberImages: List<Any?>,
+    val willGet: Float = 0.0f,
+    val willPay: Float = 0.0f,
+    val showGroupBalance: Boolean = willGet>0f&&willPay>0f
+): GroupOrContact {
     override fun id(): Any {
         return this.id
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SplitWithListSection(
-    items: List<GroupOrContact> = listState(DataIds.groupOrContact),
-    notifier: NotificationService = notifier()
+    selectedIndex: Int = intState(DataIds.selectedTabIndex).value,
 ) {
-    val listState = rememberLazyListState()
+    AnimatedContent(
+        targetState = selectedIndex,
+        transitionSpec = { fadeIn(tween(700)) with fadeOut(tween(700)) }
+    ) {
+        when(it){
+            0->{
+                suffix("recent") {
+                    RecentsUI()
+                }
+            }
+            1->{
+                suffix("groups") {
+                    GroupsUI()
+                }
+            }
+            2->{
+                suffix("contacts") {
+                    ContactsUI()
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun ContactsUI(
+    items: List<ContactData> = listState(DataIds.contacts)
+) {
     if(items.isNotEmpty()){
+        val listState = rememberLazyListState()
         LazyColumn(
             state = listState,
-            modifier = Modifier,
+            modifier = Modifier
+                .fadingEdge(),
             contentPadding = PaddingValues(
                 start = 16f.dep(),
                 end = 16f.dep(),
                 top = 26f.dep(),
-                bottom = 26f.dep()
+                bottom = 85f.dep()
+            ),
+            verticalArrangement = Arrangement.spacedBy(13.dep())
+        ) {
+            items(
+                items,
+                key = {
+                    it.id()
+                }
+            ) {
+                AddMemberCard_eq3k8h(
+                    member = it,
+                    selected = it.selected,
+                    contentDescription = "",
+                    checkBoxContentDescription = "",
+                    profileImageContentDescription = "",
+                )
+            }
+        }
+    }
+    else{
+        NothingFoundUI()
+    }
+}
+
+@Composable
+fun GroupsUI(
+    items: List<GroupData> = listState(DataIds.groups),
+    notifier: NotificationService = notifier()
+) {
+    if(items.isNotEmpty()){
+        val listState = rememberLazyListState()
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fadingEdge(),
+            contentPadding = PaddingValues(
+                start = 16f.dep(),
+                end = 16f.dep(),
+                top = 26f.dep(),
+                bottom = 85f.dep()
+            ),
+            verticalArrangement = Arrangement.spacedBy(13.dep())
+        ) {
+            items(
+                items,
+                key = {
+                    it.id()
+                }
+            ) {
+                GroupCard_0msq1z(
+                    data = it,
+                    contentDescription = ""
+                )
+            }
+        }
+    }
+    else{
+        NothingFoundUI()
+    }
+}
+
+@Composable
+fun NothingFoundUI() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        RobotoText(
+            "Nothing found",
+            fontSize = 13.sep(),
+            color = Color(0xff839BB9),
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun RecentsUI(
+    items: List<GroupOrContact> = listState(DataIds.groupOrContact)
+) {
+    if(items.isNotEmpty()){
+        val listState = rememberLazyListState()
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fadingEdge(),
+            contentPadding = PaddingValues(
+                start = 16f.dep(),
+                end = 16f.dep(),
+                top = 26f.dep(),
+                bottom = 85f.dep()
             ),
             verticalArrangement = Arrangement.spacedBy(13.dep())
         ) {
@@ -395,42 +512,39 @@ fun SplitWithListSection(
                         contentDescription = "",
                         checkBoxContentDescription = "",
                         profileImageContentDescription = "",
-                        onSelected = {selected->
-                            notifier.notify(DataIds.checkItem,it)
-                        }
+                    )
+                }
+                else if(it is GroupData){
+                    GroupCard_0msq1z(
+                        data = it,
+                        contentDescription = ""
                     )
                 }
             }
         }
     }
     else{
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ){
-            RobotoText(
-                "Nothing found",
-                fontSize = 13.sep(),
-                color = Color(0xff839BB9),
-                fontWeight = FontWeight.Bold
-            )
-        }
+        NothingFoundUI()
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun AddedMembersSection(addedFriends: List<ContactData> = listState(DataIds.addedContacts)) {
+fun AddedMembersSection(
+    addedFriends: VisibilityList<ContactData> = t(DataIds.addedContacts),
+    notifier: NotificationService = notifier()
+) {
     Box(
         modifier = Modifier
             .padding(
                 start = 16.dep(),
-                end = 16.dep()
+                end = 16.dep(),
+                bottom = 16.dep()
             )
             .animateContentSize(tween(700))
     ) {
         AnimatedVisibility(
-            visible = addedFriends.isNotEmpty(),
+            visible = addedFriends.size.value>0,
             enter = fadeIn(tween(700)),
             exit = fadeOut(tween(700)),
         ) {
@@ -439,21 +553,24 @@ fun AddedMembersSection(addedFriends: List<ContactData> = listState(DataIds.adde
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(15.dep())
             ) {
-                items(
+                animatedItems(
                     addedFriends,
                     key = {
                         it.id
-                    }
+                    },
+                    enter = fadeIn(tween(700))+ scaleIn(tween(700)),
+                    exit = fadeOut(tween(700))+ scaleOut(tween(700)),
+                    exitDuration = 700
                 ) { item ->
                     Box(
-                        modifier = Modifier.animateItemPlacement()
+                        //modifier = Modifier.animateItemPlacement()
                     ){
                         PeopleImageItem_r02b97(
                             onClick = {
 
                             },
                             onDelete = {
-
+                                notifier.notify(DataIds.deleteAdded,item)
                             },
                             friend = item,
                             contentDescription = "people image"

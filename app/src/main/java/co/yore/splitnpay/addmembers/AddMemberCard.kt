@@ -44,7 +44,6 @@ import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.GreyShadow
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.rudra.yoresplitbill.ui.split.group.addmembers.ContactData
 
 
 data class ProfileImageConfiguration(
@@ -245,7 +244,8 @@ fun AddMemberCard_eq3k8h(
     checkBoxContentDescription: String,
     profileImageContentDescription: String,
     config: AddMemberCardConfiguration = AddMemberCardConfiguration(),
-    onSelected: (Boolean)->Unit
+    notifier: NotificationService = notifier(),
+    suffix: String = suffix()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -308,7 +308,8 @@ fun AddMemberCard_eq3k8h(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current
             ) {
-                onSelected(!selected)
+                notifier.notify("${DataIds.checkItem}${suffix}", member)
+                //onSelected(!selected)
             }
             .border(
                 width = animatedBorderStroke.dep(),
@@ -337,7 +338,7 @@ fun AddMemberCard_eq3k8h(
             ) {
                 FontFamilyText(
                     text = member.name,
-                    fontSize = 16.sep(),
+                    fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.darkblue),
                 )
@@ -361,7 +362,7 @@ fun AddMemberCard_eq3k8h(
                 selected = selected,
                 contentDescription = checkBoxContentDescription,
                 onClick = {
-                    onSelected(selected.not())
+                    notifier.notify("${DataIds.checkItem}${suffix}", member)
                 },
                 onPressed = {
                     isCheckBoxPressed = it

@@ -5,4 +5,8 @@ object DataIds {
     const val groupOrContact = 1
     const val checkItem = 2
     const val addedContacts = 3
+    const val deleteAdded = 4
+    const val selectedTabIndex = 5
+    const val groups = 6
+    const val contacts = 7
 }

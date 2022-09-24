@@ -26,9 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
-import dev.chrisbanes.snapper.rememberLazyListSnapperLayoutInfo
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import co.yore.splitnpay.snapper.ExperimentalSnapperApi
 import java.util.*
 import kotlin.math.abs
 
