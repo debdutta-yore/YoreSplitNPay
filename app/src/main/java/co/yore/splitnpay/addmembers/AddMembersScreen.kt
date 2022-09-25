@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -683,16 +685,29 @@ fun PeopleImageItem_r02b97(
 
         DeleteIcon_iw4d3p(
             modifier = Modifier
-                .padding(
-                    top = (config.imageSize/2f+config.imageSize.droot2/2f-10f).dep(),
-                    start = (config.imageSize/2f+config.imageSize.droot2/2f-10f).dep()
-                ),
+                .radialBottomLeft(config.imageSize.dep()),
             config = DeleteIconConfiguration(),
             contentDescription = "",
             onClick = {
                 onDelete()
             }
         )
+    }
+}
+
+fun Modifier.radialBottomLeft(
+    parentSize: Dp
+) = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    val pw = parentSize.roundToPx()
+    val ph = pw
+    val mw = placeable.width
+    val mh = placeable.height
+    val cx = (pw - mw)/2
+    val cy = (ph - mh)/2
+    val offset = (pw/2.8284f).toInt()
+    layout(pw/2+mw/2+offset, ph/2+mh/2+offset) {
+        placeable.placeRelative(cx+offset, cy+offset)
     }
 }
 

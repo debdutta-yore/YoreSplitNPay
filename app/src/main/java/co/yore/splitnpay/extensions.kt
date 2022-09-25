@@ -116,3 +116,64 @@ const val root2 = 1.4142
 
 val Number.droot2
     get() = this.toFloat() / root2
+
+fun lcs(a: String, b: String): String {
+    if (a.length > b.length) return lcs(b, a)
+    var res = ""
+    for (ai in 0 until a.length) {
+        for (len in a.length - ai downTo 1) {
+            for (bi in 0 until b.length - len) {
+                if (a.regionMatches(ai, b, bi,len) && len > res.length) {
+                    res = a.substring(ai, ai + len)
+                }
+            }
+        }
+    }
+    return res
+}
+
+fun countFreq(pat: String, txt: String): Int {
+    val M = pat.length
+    val N = txt.length
+    var res = 0
+
+    for (i in 0..N - M) {
+        var j: Int
+        j = 0
+        while (j < M) {
+            if (txt[i + j] != pat[j]) {
+                break
+            }
+            j++
+        }
+        if (j == M) {
+            res++
+            j = 0
+        }
+    }
+    return res
+}
+
+fun String.containsAny(vararg sub: String): Boolean{
+    val s = sub.joinToString("|")
+    if(s.isEmpty()){
+        return false
+    }
+    return this.contains(s.toRegex())
+}
+
+fun search(query: String, vararg targets: String): Boolean{
+    if(query.isEmpty()){
+        return false
+    }
+    val q = query
+        .lowercase()
+        .split("[ ,\n\t-]+".toRegex())
+        .distinct()
+
+    var matched = 0
+    targets.forEach {
+        matched += if(it.containsAny(*(q.toTypedArray()))) 1 else 0
+    }
+    return matched>0
+}

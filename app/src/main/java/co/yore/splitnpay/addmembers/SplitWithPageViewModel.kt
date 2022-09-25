@@ -3,11 +3,11 @@ package co.yore.splitnpay.addmembers
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import co.yore.splitnpay.DataIds
-import co.yore.splitnpay.NotificationService
-import co.yore.splitnpay.Resolver
-import co.yore.splitnpay.animated
+import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.*
 import io.github.serpro69.kfaker.Faker
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 
@@ -24,7 +24,9 @@ class SplitWithPageViewModel: ViewModel() {
     private val _notificationService = NotificationService{id,arg->
         when(id){
             DataIds.textInput->{
-                splitWithInput.value = (arg as? String)?:return@NotificationService
+                val query = (arg as? String)?:return@NotificationService
+                splitWithInput.value = query
+                initiateSearch(query)
             }
             "${DataIds.checkItem}recent"->{
                 val item = (arg as? GroupOrContact)?:return@NotificationService
@@ -96,6 +98,52 @@ class SplitWithPageViewModel: ViewModel() {
             }
         }
     }
+
+    private var searchJob: kotlinx.coroutines.Job? = null
+    private fun initiateSearch(query: String) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(500)
+            reallySearch(query)
+        }
+    }
+
+    private var _recentVault = mutableListOf<GroupOrContact>()
+    private var _contactVault = mutableListOf<ContactData>()
+    private var _groupVault = mutableListOf<GroupData>()
+    private fun reallySearch(query: String) {
+        if(_recentVault.isEmpty()){
+            _recentVault.addAll(recents)
+        }
+        else if(query.isEmpty()){
+            recents.clear()
+            recents.addAll(_recentVault)
+            _recentVault.clear()
+        }
+        if(_contactVault.isEmpty()){
+            _contactVault.addAll(contacts)
+        }
+        if(_groupVault.isEmpty()){
+            _groupVault.addAll(groups)
+        }
+        recents.clear()
+        recents.addAll(
+            _recentVault.filter {
+                when (it) {
+                    is GroupData -> {
+                        search(query,it.name)
+                    }
+                    is ContactData -> {
+                        search(query,it.name,it.mobile)
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+        )
+    }
+
     val notifier = _notificationService
     init {
         resolver[DataIds.textInput] = splitWithInput
