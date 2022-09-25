@@ -47,6 +47,28 @@ class SplitWithPageViewModel: ViewModel() {
                     contacts[contactIndex] = item.copy(selected = !item.selected)
                 }
             }
+            "${DataIds.checkItem}contact"->{
+                val item = (arg as? ContactData)?:return@NotificationService
+                val index = contacts.indexOf(item)
+                val finalChecked = !item.selected
+                if(finalChecked){
+                    addedContacts.add(item)
+                }
+                else{
+                    addedContacts.remove{
+                        it.id==item.id
+                    }
+                }
+                contacts[index] = item.copy(selected = !item.selected)
+                /////////////////
+                val recentIndex = recents.indexOfFirst {
+                    it.id()==item.id
+                }
+                if(recentIndex<0){
+                    return@NotificationService
+                }
+                recents[recentIndex] = item.copy(selected = !item.selected)
+            }
             DataIds.deleteAdded->{
                 val item = (arg as? ContactData)?:return@NotificationService
                 val index = addedContacts.indexOf{

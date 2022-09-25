@@ -21,9 +21,9 @@ data class NotificationService(
     val notify: (Any,Any?)->Unit
 )
 val LocalResolver = compositionLocalOf { Resolver() }
-val LocalSuffix = compositionLocalOf { "" }
 val LocalNotificationService = compositionLocalOf { NotificationService{ _, _->} }
 
+val LocalSuffix = compositionLocalOf { "" }
 @Composable
 fun suffix(): String{
     return LocalSuffix.current

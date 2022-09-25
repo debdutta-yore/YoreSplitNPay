@@ -381,7 +381,7 @@ fun SplitWithListSection(
                 }
             }
             2->{
-                suffix("contacts") {
+                suffix("contact") {
                     ContactsUI()
                 }
             }
@@ -537,7 +537,7 @@ fun AddedMembersSection(
     Box(
         modifier = Modifier
             .padding(
-                start = 16.dep(),
+                //start = 16.dep(),
                 end = 16.dep(),
                 bottom = 16.dep()
             )
@@ -550,8 +550,7 @@ fun AddedMembersSection(
         ) {
             LazyRow(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(15.dep())
+                    .fillMaxWidth()
             ) {
                 animatedItems(
                     addedFriends,
@@ -563,7 +562,9 @@ fun AddedMembersSection(
                     exitDuration = 700
                 ) { item ->
                     Box(
-                        //modifier = Modifier.animateItemPlacement()
+                        modifier = Modifier
+                            .padding(start = 16.dep())
+                            .animateItemPlacement()
                     ){
                         PeopleImageItem_r02b97(
                             onClick = {
@@ -681,6 +682,11 @@ fun PeopleImageItem_r02b97(
         )
 
         DeleteIcon_iw4d3p(
+            modifier = Modifier
+                .padding(
+                    top = (config.imageSize/2f+config.imageSize.droot2/2f-10f).dep(),
+                    start = (config.imageSize/2f+config.imageSize.droot2/2f-10f).dep()
+                ),
             config = DeleteIconConfiguration(),
             contentDescription = "",
             onClick = {
@@ -692,16 +698,13 @@ fun PeopleImageItem_r02b97(
 
 @Composable
 fun DeleteIcon_iw4d3p(
+    modifier: Modifier = Modifier,
     config: DeleteIconConfiguration = DeleteIconConfiguration(),
     contentDescription: String,
     onClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .padding(
-                start = 45.droot2.dep(),
-                top = 45.droot2.dep()
-            )
+        modifier = modifier
             .size(config.selectorSize.dep())
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .border(
