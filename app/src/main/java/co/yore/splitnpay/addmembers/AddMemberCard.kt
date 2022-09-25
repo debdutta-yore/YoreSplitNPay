@@ -245,7 +245,7 @@ fun AddMemberCard_eq3k8h(
     profileImageContentDescription: String,
     config: AddMemberCardConfiguration = AddMemberCardConfiguration(),
     notifier: NotificationService = notifier(),
-    suffix: String = suffix()
+    //suffix: String = suffix()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -308,8 +308,7 @@ fun AddMemberCard_eq3k8h(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current
             ) {
-                notifier.notify("${DataIds.checkItem}${suffix}", member)
-                //onSelected(!selected)
+                notifier.notify(DataIds.checkItem, member.id)
             }
             .border(
                 width = animatedBorderStroke.dep(),
@@ -362,7 +361,7 @@ fun AddMemberCard_eq3k8h(
                 selected = selected,
                 contentDescription = checkBoxContentDescription,
                 onClick = {
-                    notifier.notify("${DataIds.checkItem}${suffix}", member)
+                    notifier.notify(DataIds.checkItem, member.id)
                 },
                 onPressed = {
                     isCheckBoxPressed = it

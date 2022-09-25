@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import java.text.DecimalFormat
+import java.util.concurrent.ThreadLocalRandom
 
 object YoreAmountFormatter{
     val formatter = DecimalFormat("#,##,###")
@@ -162,9 +163,9 @@ fun String.containsAny(vararg sub: String): Boolean{
     return this.contains(s.toRegex())
 }
 
-fun search(query: String, vararg targets: String): Boolean{
+fun search(query: String, targets: List<String>): Boolean{
     if(query.isEmpty()){
-        return false
+        return true
     }
     val q = query
         .lowercase()
@@ -176,4 +177,10 @@ fun search(query: String, vararg targets: String): Boolean{
         matched += if(it.containsAny(*(q.toTypedArray()))) 1 else 0
     }
     return matched>0
+}
+
+fun randomDate(start: Long, end: Long): Long {
+    return ThreadLocalRandom
+        .current()
+        .nextLong(start, end)
 }

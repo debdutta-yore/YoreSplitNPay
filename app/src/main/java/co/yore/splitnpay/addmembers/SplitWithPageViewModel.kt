@@ -1,7 +1,9 @@
 package co.yore.splitnpay.addmembers
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.*
@@ -10,14 +12,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+data class ObservableMutableStateList<T>(
+    val list: SnapshotStateList<T>
+)
+
+val <T>SnapshotStateList<T>.observable
+get() = ObservableMutableStateList(this)
 
 class SplitWithPageViewModel: ViewModel() {
     private val f = Faker()
     private val r = Random(0)
     val resolver = Resolver()
-    private val groups = mutableStateListOf<GroupData>()
-    private val contacts = mutableStateListOf<ContactData>()
-    private val recents = mutableStateListOf<GroupOrContact>()
+    private val selectedContacts = mutableStateListOf<Any>()
+    private val groupsAndContacts = mutableStateListOf<GroupOrContact>()
+    private val visibleGroupsAndContacts = mutableStateListOf<GroupOrContact>()
     private val selectedIndex = mutableStateOf(0)
     private val splitWithInput = mutableStateOf("")
     private val addedContacts = mutableStateListOf<ContactData>().animated
@@ -26,142 +34,61 @@ class SplitWithPageViewModel: ViewModel() {
             DataIds.textInput->{
                 val query = (arg as? String)?:return@NotificationService
                 splitWithInput.value = query
-                initiateSearch(query)
+                initiateSearch()
             }
-            "${DataIds.checkItem}recent"->{
-                val item = (arg as? GroupOrContact)?:return@NotificationService
-                if(item is ContactData){
-                    val index = recents.indexOf(item)
-                    val finalChecked = !item.selected
-                    if(finalChecked){
-                        addedContacts.add(item)
-                    }
-                    else{
-                        addedContacts.remove{
-                            it.id==item.id
-                        }
-                    }
-                    recents[index] = item.copy(selected = !item.selected)
-                    /////////////////
-                    val contactIndex = contacts.indexOfFirst {
-                        it.id()==item.id
-                    }
-                    contacts[contactIndex] = item.copy(selected = !item.selected)
+            DataIds.checkItem->{
+                if(arg==null){
+                    return@NotificationService
                 }
-            }
-            "${DataIds.checkItem}contact"->{
-                val item = (arg as? ContactData)?:return@NotificationService
-                val index = contacts.indexOf(item)
-                val finalChecked = !item.selected
-                if(finalChecked){
-                    addedContacts.add(item)
+                if(selectedContacts.contains(arg)){
+                    selectedContacts.remove(arg)
                 }
                 else{
-                    addedContacts.remove{
-                        it.id==item.id
-                    }
+                    selectedContacts.add(arg)
                 }
-                contacts[index] = item.copy(selected = !item.selected)
-                /////////////////
-                val recentIndex = recents.indexOfFirst {
-                    it.id()==item.id
-                }
-                if(recentIndex<0){
-                    return@NotificationService
-                }
-                recents[recentIndex] = item.copy(selected = !item.selected)
             }
             DataIds.deleteAdded->{
-                val item = (arg as? ContactData)?:return@NotificationService
-                val index = addedContacts.indexOf{
-                    it.id==item.id
-                }
-                if(index<0){
-                    return@NotificationService
-                }
-                addedContacts.removeAt(index)
-                ////////////
-                val recentIndex = recents.indexOfFirst {
-                    it.id()==item.id
-                }
-                recents[recentIndex] = item.copy(selected = false)
-                ////////////
-                val contactIndex = contacts.indexOfFirst {
-                    it.id()==item.id
-                }
-                contacts[contactIndex] = item.copy(selected = false)
+
             }
             DataIds.selectedTabIndex->{
                 if(arg is Int){
                     selectedIndex.value = arg
+                    filter()
                 }
             }
         }
     }
 
     private var searchJob: kotlinx.coroutines.Job? = null
-    private fun initiateSearch(query: String) {
+    private fun initiateSearch() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(500)
-            reallySearch(query)
+            filter()
         }
-    }
-
-    private var _recentVault = mutableListOf<GroupOrContact>()
-    private var _contactVault = mutableListOf<ContactData>()
-    private var _groupVault = mutableListOf<GroupData>()
-    private fun reallySearch(query: String) {
-        if(_recentVault.isEmpty()){
-            _recentVault.addAll(recents)
-        }
-        else if(query.isEmpty()){
-            recents.clear()
-            recents.addAll(_recentVault)
-            _recentVault.clear()
-        }
-        if(_contactVault.isEmpty()){
-            _contactVault.addAll(contacts)
-        }
-        if(_groupVault.isEmpty()){
-            _groupVault.addAll(groups)
-        }
-        recents.clear()
-        recents.addAll(
-            _recentVault.filter {
-                when (it) {
-                    is GroupData -> {
-                        search(query,it.name)
-                    }
-                    is ContactData -> {
-                        search(query,it.name,it.mobile)
-                    }
-                    else -> {
-                        false
-                    }
-                }
-            }
-        )
     }
 
     val notifier = _notificationService
     init {
+        selectedContacts.onEach {
+            Log.d("ffsfsf","$it")
+        }
         resolver[DataIds.textInput] = splitWithInput
-        resolver[DataIds.groupOrContact] = recents
+        resolver[DataIds.groupOrContact] = visibleGroupsAndContacts
         resolver[DataIds.addedContacts] = addedContacts
         resolver[DataIds.selectedTabIndex] = selectedIndex
-        resolver[DataIds.groups] = groups
-        resolver[DataIds.contacts] = contacts
+        resolver[DataIds.selecteds] = selectedContacts
         var i = 0
-        contacts.addAll(MutableList(20){
+        groupsAndContacts.addAll(MutableList(20){
             ContactData(
                 id = ++i,
                 name = f.name.name(),
                 mobile = f.phoneNumber.cellPhone(),
                 image = "https://randomuser.me/api/portraits/men/${i-1}.jpg",
+                lastActivity = randomDate(1643049000000L,1664099455386L)
             )
         })
-        groups.addAll(MutableList<GroupData>(10){
+        groupsAndContacts.addAll(MutableList<GroupData>(10){
             val images = MutableList(r.nextInt(1,7)){
                 "https://randomuser.me/api/portraits/men/${i+it}.jpg"
             }
@@ -169,13 +96,34 @@ class SplitWithPageViewModel: ViewModel() {
                 id = ++i,
                 name = f.animal.name(),
                 image = "https://randomuser.me/api/portraits/lego/${i%10}.jpg",
-                memberImages = images
+                memberImages = images,
+                lastActivity = randomDate(1643049000000L,1664099455386L)
             )
         })
-        val _recents = mutableListOf<GroupOrContact>()
-        _recents.addAll(groups.take(5))
-        _recents.addAll(contacts.take(5))
-        _recents.shuffle()
-        recents.addAll(_recents)
+        groupsAndContacts.shuffle()
+        filter()
+    }
+
+    fun filter(){
+        visibleGroupsAndContacts.clear()
+        visibleGroupsAndContacts.addAll(groupsAndContacts.filter {
+            itemFilter(it)
+        })
+    }
+
+    private fun itemFilter(it: GroupOrContact): Boolean {
+        val now = System.currentTimeMillis()
+        return when (selectedIndex.value) {
+            1 -> {
+                (it is GroupData) && search(splitWithInput.value,it.searchables())
+            }
+            2 -> {
+                (it is ContactData) && search(splitWithInput.value,it.searchables())
+            }
+            else -> {
+                val dif = (now - it.lastActivity())/(24*3600000)
+                dif <= 30 && search(splitWithInput.value,it.searchables())
+            }
+        }
     }
 }

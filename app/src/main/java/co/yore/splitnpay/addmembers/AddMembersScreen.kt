@@ -327,13 +327,15 @@ fun SplitWithPageContent(
             }
             Spacer(modifier = Modifier.height(18.dep()))
             AddedMembersSection()
-            SplitWithListSection(selectedIndex)
+            GroupAndContactsUI()
         }
     }
 }
 
 interface GroupOrContact{
     fun id(): Any
+    fun lastActivity():Long
+    fun searchables(): List<String>
 }
 
 data class ContactData(
@@ -342,9 +344,21 @@ data class ContactData(
     val name: String,
     val mobile: String,
     val selected: Boolean = false,
+    val lastActivity: Long = 0
 ): GroupOrContact {
     override fun id(): Any {
         return this.id
+    }
+
+    override fun lastActivity(): Long {
+        return this.lastActivity
+    }
+
+    override fun searchables(): List<String> {
+        return listOf(
+            name.lowercase(),
+            mobile
+        )
     }
 }
 
@@ -355,116 +369,21 @@ data class GroupData(
     val memberImages: List<Any?>,
     val willGet: Float = 0.0f,
     val willPay: Float = 0.0f,
-    val showGroupBalance: Boolean = willGet>0f&&willPay>0f
+    val showGroupBalance: Boolean = willGet>0f&&willPay>0f,
+    val lastActivity: Long = 0
 ): GroupOrContact {
     override fun id(): Any {
         return this.id
     }
-}
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun SplitWithListSection(
-    selectedIndex: Int = intState(DataIds.selectedTabIndex).value,
-) {
-    AnimatedContent(
-        targetState = selectedIndex,
-        transitionSpec = { fadeIn(tween(700)) with fadeOut(tween(700)) }
-    ) {
-        when(it){
-            0->{
-                suffix("recent") {
-                    RecentsUI()
-                }
-            }
-            1->{
-                suffix("groups") {
-                    GroupsUI()
-                }
-            }
-            2->{
-                suffix("contact") {
-                    ContactsUI()
-                }
-            }
-        }
+    override fun lastActivity(): Long {
+        return this.lastActivity
     }
 
-}
-
-@Composable
-fun ContactsUI(
-    items: List<ContactData> = listState(DataIds.contacts)
-) {
-    if(items.isNotEmpty()){
-        val listState = rememberLazyListState()
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fadingEdge(),
-            contentPadding = PaddingValues(
-                start = 16f.dep(),
-                end = 16f.dep(),
-                top = 26f.dep(),
-                bottom = 85f.dep()
-            ),
-            verticalArrangement = Arrangement.spacedBy(13.dep())
-        ) {
-            items(
-                items,
-                key = {
-                    it.id()
-                }
-            ) {
-                AddMemberCard_eq3k8h(
-                    member = it,
-                    selected = it.selected,
-                    contentDescription = "",
-                    checkBoxContentDescription = "",
-                    profileImageContentDescription = "",
-                )
-            }
-        }
-    }
-    else{
-        NothingFoundUI()
-    }
-}
-
-@Composable
-fun GroupsUI(
-    items: List<GroupData> = listState(DataIds.groups),
-    notifier: NotificationService = notifier()
-) {
-    if(items.isNotEmpty()){
-        val listState = rememberLazyListState()
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fadingEdge(),
-            contentPadding = PaddingValues(
-                start = 16f.dep(),
-                end = 16f.dep(),
-                top = 26f.dep(),
-                bottom = 85f.dep()
-            ),
-            verticalArrangement = Arrangement.spacedBy(13.dep())
-        ) {
-            items(
-                items,
-                key = {
-                    it.id()
-                }
-            ) {
-                GroupCard_0msq1z(
-                    data = it,
-                    contentDescription = ""
-                )
-            }
-        }
-    }
-    else{
-        NothingFoundUI()
+    override fun searchables(): List<String> {
+        return listOf(
+            name.lowercase(),
+        )
     }
 }
 
@@ -484,8 +403,9 @@ fun NothingFoundUI() {
 }
 
 @Composable
-fun RecentsUI(
-    items: List<GroupOrContact> = listState(DataIds.groupOrContact)
+fun GroupAndContactsUI(
+    items: List<GroupOrContact> = listState(DataIds.groupOrContact),
+    selecteds: List<Any> = listState(DataIds.selecteds)
 ) {
     if(items.isNotEmpty()){
         val listState = rememberLazyListState()
@@ -510,7 +430,7 @@ fun RecentsUI(
                 if(it is ContactData){
                     AddMemberCard_eq3k8h(
                         member = it,
-                        selected = it.selected,
+                        selected = selecteds.contains(it.id),
                         contentDescription = "",
                         checkBoxContentDescription = "",
                         profileImageContentDescription = "",

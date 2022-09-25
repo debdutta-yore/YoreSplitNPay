@@ -9,4 +9,5 @@ object DataIds {
     const val selectedTabIndex = 5
     const val groups = 6
     const val contacts = 7
+    const val selecteds = 8
 }
