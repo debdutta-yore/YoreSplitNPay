@@ -13,46 +13,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.yore.splitnpay.*
-import co.yore.splitnpay.R
+import co.yore.splitnpay.libs.LocalNotificationService
+import co.yore.splitnpay.libs.NotificationService
+import co.yore.splitnpay.components.components.YoreAmount
+import co.yore.splitnpay.components.components.YoreAmountConfiguration
 import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.components.configuration.YouWillGetPayArrowButtonConfiguration
+import co.yore.splitnpay.components.configuration.YouWillGetPayCardConfig
+import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.locals.RobotoText
+import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.ui.theme.robotoFonts
 
-data class YouWillGetPayCardConfig(
-    val height: Float = 153f,
-    val width: Float = 149f,
 
-    val shadowColor: Color = Color(0x80C6CFD8),
-    val shadowBlurRadius: Float = 33f,
-    val shadowOffset: Float = 7f,
-    val borderRadius: Float = 15f,
-    val shadowSpread: Float = 0f,
-
-    val headingTopPadding: Float = 22f,
-    val youWillGetStringId:  Int = R.string.you_will_get,
-    val youWillPayStringId:  Int = R.string.you_will_pay,
-    val headingFontSize: Int = 16,
-    val decimalTextSize: Float = 12f,
-    val amountTextSize: Float = 20f,
-    val youWillGetIconLeftPadding: Float = 33f,
-    val amountTopPadding: Float = 6f,
-    val currencyTextSize: Float = 12f,
-    val arrowButtonRightPadding: Float = 10f,
-    val arrowButtonBottomPadding: Float = 8f,
-    val type: Type,
-    val amountColor: Color = Color(0xff839BB9),
-    val backgroundColor: Color = Color.White,
-    val activeGetColor: Color = Color(0xff37D8CF),
-    val activePayColor: Color = Color(0xffFF4077),
-){
-    enum class Type{
-        GET,
-        PAY
-    }
-}
 
 @Composable
 fun YouWillGetPayCard(

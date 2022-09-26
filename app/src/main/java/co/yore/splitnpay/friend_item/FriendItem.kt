@@ -16,16 +16,22 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.YoreAmount
+import co.yore.splitnpay.components.components.YoreAmountConfiguration
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.friend_item.models.FriendItemConfiguration
-import co.yore.splitnpay.friend_item.models.PeopleData
+import co.yore.splitnpay.components.configuration.FriendItemConfiguration
+import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.splitted
+import co.yore.splitnpay.models.ContactData
+import co.yore.splitnpay.ui.theme.robotoFonts
 
 @Composable
 fun FriendItem(
     selected: Boolean,
-    peopleData: PeopleData,
+    contactData: ContactData,
     contentDescription: String,
     config: FriendItemConfiguration = FriendItemConfiguration(),
     onPressed: (Boolean) -> Unit = {},
@@ -91,7 +97,7 @@ fun FriendItem(
                     .weight(1f)
             ) {
                 Text(
-                    text = peopleData.name,
+                    text = contactData.name,
                     fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold,
                     color = colorResource(
@@ -102,7 +108,7 @@ fun FriendItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = peopleData.mobile,
+                    text = contactData.mobile,
                     fontSize = 11.sep(),
                     color = colorResource(
                         R.color.lightblue5,
@@ -117,10 +123,10 @@ fun FriendItem(
                     .wrapContentWidth(),
                 horizontalAlignment = Alignment.End
             ) {
-                if (peopleData.willGet > 0) {
-                    val willGetSplitted by remember(peopleData.willGet) {
+                if (contactData.willGet > 0) {
+                    val willGetSplitted by remember(contactData.willGet) {
                         derivedStateOf {
-                            peopleData.willGet.splitted()
+                            contactData.willGet.splitted()
                         }
                     }
                     YoreAmount(
@@ -135,10 +141,10 @@ fun FriendItem(
                         decimal = willGetSplitted.decString
                     )
                 }
-                if (peopleData.willPay > 0) {
-                    val willPaySplitted by remember(peopleData.willPay) {
+                if (contactData.willPay > 0) {
+                    val willPaySplitted by remember(contactData.willPay) {
                         derivedStateOf {
-                            peopleData.willPay.splitted()
+                            contactData.willPay.splitted()
                         }
                     }
                     YoreAmount(

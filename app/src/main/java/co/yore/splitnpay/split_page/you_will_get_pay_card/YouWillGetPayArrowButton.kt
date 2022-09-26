@@ -9,20 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import co.yore.splitnpay.R
-import co.yore.splitnpay.dep
+import co.yore.splitnpay.components.configuration.YouWillGetPayArrowButtonConfiguration
+import co.yore.splitnpay.libs.dep
 
-data class YouWillGetPayArrowButtonConfiguration(
-    val arrowButtonSize: Float = 26f,
-    val icon: Int
-){
-    companion object{
-        val Get: YouWillGetPayArrowButtonConfiguration
-            get() = YouWillGetPayArrowButtonConfiguration(icon = R.drawable.ic_you_will_get_arrow)
-        val Pay: YouWillGetPayArrowButtonConfiguration
-            get() = YouWillGetPayArrowButtonConfiguration(icon = R.drawable.ic_you_will_pay_arrow)
-    }
-}
+
 
 @Composable
 fun YouWillGetPayArrowButton(

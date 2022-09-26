@@ -1,0 +1,50 @@
+package co.yore.splitnpay.demos
+
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.FloatingActionButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import co.yore.splitnpay.libs.NotificationService
+import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.components.configuration.SplitButtonConfiguration
+import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.libs.notifier
+
+
+@Composable
+fun SplitButton(
+    config: SplitButtonConfiguration = SplitButtonConfiguration(),
+    notifier: NotificationService = notifier()
+) {
+    FloatingActionButton(
+        onClick = {notifier.notify("split_page_button",null)},
+        backgroundColor = config.backgroundColor,
+        contentColor = config.tint,
+        modifier = Modifier
+            .coloredShadow(
+                color = config.shadowColor,
+                borderRadius = config.shadowBorderRadius.dep(),
+                blurRadius = config.shadowBlurRadius.dep(),
+                spread = config.shadowSpread,
+                offsetX = config.offsetX.dep(),
+                offsetY = config.offsetY.dep(),
+            ),
+        shape = CircleShape,
+        elevation = FloatingActionButtonDefaults.elevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            focusedElevation = 0.dp,
+        )
+    ) {
+        Icon(
+            painter = painterResource(id = config.iconId),
+            "", tint = Color.Unspecified
+        )
+    }
+}

@@ -15,11 +15,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import co.yore.splitnpay.dep
-import co.yore.splitnpay.friend_item.models.ArrowButtonConfiguration
+import co.yore.splitnpay.components.configuration.ArrowButtonConfiguration
+import co.yore.splitnpay.libs.dep
 
 @Composable
 fun ArrowButton_ohezqf(
+    modifier: Modifier = Modifier,
     contentDescription: String,
     config: ArrowButtonConfiguration = ArrowButtonConfiguration(),
     pressed: Boolean,
@@ -34,7 +35,7 @@ fun ArrowButton_ohezqf(
 
     IconButton(
         interactionSource = interactionSource,
-        modifier = Modifier
+        modifier = modifier
             .semantics {
                 this.contentDescription = contentDescription
             }

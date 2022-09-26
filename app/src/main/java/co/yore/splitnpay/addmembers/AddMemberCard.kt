@@ -16,13 +16,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -38,28 +36,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.YoreAmount
+import co.yore.splitnpay.components.components.YoreAmountConfiguration
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.ui.theme.Bluish
+import co.yore.splitnpay.components.configuration.CheckboxConfiguration
+import co.yore.splitnpay.components.configuration.PeopleCardConfiguration
+import co.yore.splitnpay.components.configuration.ProfileImageConfiguration2
+import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
+import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.ContactData
+import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.GreyShadow
+import co.yore.splitnpay.ui.theme.robotoFonts
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 
-data class ProfileImageConfiguration(
-    val imageSize: Float = 49f,
-    val borderStroke: Float = 3f,
-    val borderColor: Color = Color(0xffEDF5FF),
-    val shape: Shape = CircleShape,
-    val placeholder: Int = R.drawable.user_dummy4,
-    val contentScale: ContentScale = ContentScale.Crop
-)
+
 
 @Composable
 fun ProfileImage_2hf7q0(
     image: Any?,
-    config: ProfileImageConfiguration = ProfileImageConfiguration(),
+    config: ProfileImageConfiguration2 = ProfileImageConfiguration2(),
     contentDescription: String
 ) {
     AsyncImage(
@@ -83,12 +83,7 @@ fun ProfileImage_2hf7q0(
 }
 
 
-data class CheckboxConfiguration(
-    val iconColor: Color = Bluish,
-    val iconSize: Float = 28f,
-    val icon: Int = R.drawable.ic_check,
-    val cornerRadius: Float = 10f
-)
+
 @Composable
 fun CheckBoxIcon_b6qwbf(
     selected: Boolean,
@@ -152,28 +147,8 @@ fun CheckBoxIcon_b6qwbf(
         )
     }
 }
-data class Friend(
-    val uid: Int = 0,
-    val name: String,
-    val mobileNumber: String,
-    val imageUrl: String = "https://i.pravatar.cc/300",
-    val isSelected: Boolean = false,
-    val hasRead: Boolean = false
-)
-data class AddMemberCardConfiguration(
-    val cardHeight: Float = 95f,
-    val paddingStart: Float = 18f,
-    val paddingEnd: Float = 18f,
-    val borderStroke: Float = 1f,
-    val borderColor: Color = Bluish,
-    val cardBackgroundColor: Color = Color(0xffEDF5FF),
-    val cardUnselectedColor: Color = Color.White,
-    val cornerRadius: Float = 22f,
-    val blurRadius: Float = 33f,
-    val blurOffsetX: Float = 7f,
-    val blurOffsetY: Float = 7f,
-    val blurSpread: Float = 0f,
-)
+
+
 
 @Composable
 fun FontFamilyText(
@@ -238,14 +213,14 @@ fun FontFamilyText(
 }
 
 @Composable
-fun AddMemberCard_eq3k8h(
+fun PeopleCard_eq3k8h(
     modifier: Modifier = Modifier,
-    member: ContactData,
-    selected: Boolean,
+    data: ContactData,
+    selected: Boolean = false,
     contentDescription: String,
     checkBoxContentDescription: String,
     profileImageContentDescription: String,
-    config: AddMemberCardConfiguration = AddMemberCardConfiguration(),
+    config: PeopleCardConfiguration = PeopleCardConfiguration(),
     notifier: NotificationService = notifier()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -254,9 +229,15 @@ fun AddMemberCard_eq3k8h(
         mutableStateOf(selected)
     }
 
-    val computedBackgroundColor by remember(selected,config,isCheckBoxPressed) {
+    val focused by remember(selected,isPressed,isCheckBoxPressed) {
+        derivedStateOf {
+            selected||isPressed||isCheckBoxPressed
+        }
+    }
+
+    val computedBackgroundColor by remember(config) {
         derivedStateOf{
-            if (selected||isPressed||isCheckBoxPressed)
+            if (focused)
                 config.cardBackgroundColor 
             else 
                 config.cardUnselectedColor
@@ -266,9 +247,9 @@ fun AddMemberCard_eq3k8h(
         targetValue = computedBackgroundColor,
         animationSpec = tween(700)
     )
-    val computedBorderStroke by remember(selected,config,isCheckBoxPressed) {
+    val computedBorderStroke by remember(config) {
         derivedStateOf{
-            if (selected||isPressed||isCheckBoxPressed)
+            if (focused)
                 config.borderStroke
             else
                 0f
@@ -278,7 +259,7 @@ fun AddMemberCard_eq3k8h(
         targetValue = computedBorderStroke,
         animationSpec = tween(700)
     )
-    val computedStrokeColor by remember(selected,config,isCheckBoxPressed) {
+    val computedStrokeColor by remember(config) {
         derivedStateOf {
             if(selected||isPressed||isCheckBoxPressed){
                 config.borderColor
@@ -292,6 +273,11 @@ fun AddMemberCard_eq3k8h(
         targetValue = computedStrokeColor,
         tween(700)
     )
+    val showAmount by remember(data) {
+        derivedStateOf {
+            data.willGet>0f||data.willPay>0f
+        }
+    }
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -309,7 +295,7 @@ fun AddMemberCard_eq3k8h(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current
             ) {
-                notifier.notify(DataIds.checkItem, member.id)
+                notifier.notify(DataIds.checkItem, data.id)
             }
             .border(
                 width = animatedBorderStroke.dep(),
@@ -326,48 +312,124 @@ fun AddMemberCard_eq3k8h(
                     top = 23.dep(),
                     bottom = 23.dep()
                 )
+                .fillMaxWidth()
         ) {
             ProfileImage_2hf7q0(
                 contentDescription = profileImageContentDescription,
-                image = member.image
+                image = data.image
             )
 
             Column(
                 modifier = Modifier
                     .padding(start = 22.dep())
+                    .then(
+                        if (showAmount)
+                            Modifier.width(85.dep())
+                        else
+                            Modifier.weight(1f)
+                    )
+                    .align(Alignment.CenterVertically),
             ) {
                 FontFamilyText(
-                    text = member.name,
+                    text = data.name,
                     fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.darkblue),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
                 )
                 Spacer(modifier = Modifier.height(5.dep()))
                 FontFamilyText(
-                    text = member.mobile,
+                    text = data.mobile,
                     fontSize = 11.sep(),
                     fontWeight = FontWeight.Normal,
-                    color = colorResource(R.color.lightblue5)
+                    color = colorResource(R.color.lightblue5),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
                 )
             }
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 23.dep()),
-            contentAlignment = CenterEnd
-        ) {
-            CheckBoxIcon_b6qwbf(
-                selected = selected,
-                contentDescription = checkBoxContentDescription,
-                onClick = {
-                    notifier.notify(DataIds.checkItem, member.id)
-                },
-                onPressed = {
-                    isCheckBoxPressed = it
+            if(showAmount){
+                Spacer(modifier = Modifier
+                    .width(10.dep())
+                    .weight(1f))
+            }
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .wrapContentWidth(),
+                horizontalAlignment = Alignment.End,
+            ) {
+                if (data.willGet > 0) {
+                    val willGetSplitted by remember(data.willGet) {
+                        derivedStateOf {
+                            data.willGet.splitted()
+                        }
+                    }
+                    YoreAmount(
+                        config = YoreAmountConfiguration(
+                            color = Color(0xff37D8CF),
+                            fontSize = 14,
+                            currencyFontSize = 12,
+                            decimalFontSize = 10,
+                            wholeFontWeight = FontWeight.Bold
+                        ),
+                        whole = willGetSplitted.wholeString,
+                        decimal = willGetSplitted.decString
+                    )
                 }
-            )
+                if (data.willPay > 0) {
+                    val willPaySplitted by remember(data.willPay) {
+                        derivedStateOf {
+                            data.willPay.splitted()
+                        }
+                    }
+                    YoreAmount(
+                        config = YoreAmountConfiguration(
+                            color = Color(0xffFF4077),
+                            fontSize = 14,
+                            currencyFontSize = 12,
+                            decimalFontSize = 10,
+                            wholeFontWeight = FontWeight.Bold,
+                            negative = true
+                        ),
+                        whole = willPaySplitted.wholeString,
+                        decimal = willPaySplitted.decString
+                    )
+                }
+            }
+            25.sx()
+            if(config.checkable){
+                Box(
+                    modifier = Modifier
+                        .padding(end = 23.dep()),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    CheckBoxIcon_b6qwbf(
+                        selected = focused,
+                        contentDescription = checkBoxContentDescription,
+                        onClick = {
+                            notifier.notify(DataIds.checkItem, data.id)
+                        },
+                        onPressed = {
+                            isCheckBoxPressed = it
+                        }
+                    )
+                }
+            }
+            else{
+                ArrowButton_ohezqf(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    contentDescription = "",
+                    pressed = focused,
+                    onClicked = {
+                        notifier.notify(DataIds.checkItem, data.id)
+                    },
+                    onPressed = {
+                        isCheckBoxPressed = it
+                    }
+                )
+                14.sx()
+            }
         }
     }
 }

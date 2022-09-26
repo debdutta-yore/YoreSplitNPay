@@ -3,12 +3,14 @@ package co.yore.splitnpay.split_page
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -32,14 +34,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
-import co.yore.splitnpay.*
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.GroupData
-import co.yore.splitnpay.components.configuration.AddGroupButton_kbf1at
-import co.yore.splitnpay.friend_item.FriendItem
-import co.yore.splitnpay.friend_item.models.PeopleData
+import co.yore.splitnpay.addmembers.PeopleCard_eq3k8h
+import co.yore.splitnpay.components.components.*
+import co.yore.splitnpay.components.configuration.*
+import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.locals.RobotoText
+import co.yore.splitnpay.locals.localCurrency
+import co.yore.splitnpay.models.ContactData
+import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.GroupData
+import co.yore.splitnpay.models.GroupOrContact
+import co.yore.splitnpay.pages.NothingFoundUI
 import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCard
-import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCardConfig
+import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.viewModels.SplitPageState
 
 @Composable
 fun JsonConstraintSetStart() = ConstraintSet(
@@ -128,7 +139,7 @@ fun SplitPageMotionLayout(
             f = it
         }
         val tabsList =
-            listOf(ContactTabs.Groups.name, ContactTabs.Friends.name)
+            listOf(ContactTabs.Groups.name, ContactTabs.People.name)
         var selectedIndex by remember { mutableStateOf(0) }
 
         Tabs(
@@ -156,10 +167,14 @@ fun Contents(
             animationSpec = tween(durationMillis = 700)
         ) {
             if(it==0){
-                GroupsChildPage()
+                suffix("group"){
+                    GroupsChildPage()
+                }
             }
             else{
-                PeoplesChildPage()
+                suffix("people"){
+                    PeoplesChildPage()
+                }
             }
         }
     }
@@ -167,9 +182,10 @@ fun Contents(
 
 @Composable
 fun GroupsChildPage(
-    groups: List<GroupData> = listState(DataIds.groups)
+    groups: List<GroupOrContact> = listState(DataIds.groupsAndPeoples),
+    nogroup: Boolean = boolState(DataIds.noGroup).value
 ) {
-    if(groups.isEmpty()){
+    if(nogroup){
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopCenter
@@ -178,69 +194,56 @@ fun GroupsChildPage(
         }
     }
     else{
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Row(
+        if(groups.isEmpty()){
+            NothingFoundUI()
+        }
+        else{
+            Column(
                 modifier = Modifier
-                    .padding(
-                        start = 18.dep(),
-                        bottom = 21.dep()
-                    )
-                    .height(40.dep()),
-                //horizontalArrangement = Arrangement.spacedBy(11.dep()),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
             ) {
-                var selectedTab by remember {
-                    mutableStateOf(SplitPageTabs.All)
-                }
-                SplitTabItem_89keto(
-                    text = "All",
-                    selected = selectedTab,
-                    currentTab = SplitPageTabs.All,
-                    contentDescription = "all"
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            start = 18.dep(),
+                            bottom = 21.dep()
+                        )
+                        .height(40.dep()),
+                    //horizontalArrangement = Arrangement.spacedBy(11.dep()),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    selectedTab = SplitPageTabs.All
-                }
-                7.sx()
-                SplitTabItem_89keto(
-                    text = "You owe",
-                    selected = selectedTab,
-                    currentTab = SplitPageTabs.YouOwe,
-                    contentDescription = "you_owe"
-                ) {
-                    selectedTab = SplitPageTabs.YouOwe
-                }
-                7.sx()
-                SplitTabItem_89keto(
-                    text = "You owe",
-                    selected = selectedTab,
-                    currentTab = SplitPageTabs.YouAreOwed,
-                    contentDescription = "you_are_owed"
-                ) {
-                    selectedTab = SplitPageTabs.YouAreOwed
-                }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxHeight(),
+                        horizontalArrangement = Arrangement.spacedBy(7.dep()),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        GiveTakeTypeTabs()
+                    }
 
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f))
-                16.sx()
-                AddGroupButton_kbf1at()
-            }
-            LazyColumn(
-                modifier = Modifier.fadingEdge(),
-                contentPadding = PaddingValues(
-                    start = 17.dep(),
-                    end = 17.dep(),
-                    bottom = 110.dep()
-                )
-            ) {
-                items(groups, key = { it.id }) {
-                    GroupCard_0msq1z(
-                        contentDescription = "",
-                        data = it
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f))
+                    16.sx()
+                    AddGroupButton_kbf1at()
+                }
+                LazyColumn(
+                    modifier = Modifier.fadingEdge(),
+                    contentPadding = PaddingValues(
+                        start = 17.dep(),
+                        end = 17.dep(),
+                        bottom = 110.dep()
                     )
+                ) {
+                    items(groups, key = { it.id() }) {
+                        if(it is GroupData){
+                            GroupCard_0msq1z(
+                                modifier = Modifier.padding(top = 13.dep()),
+                                contentDescription = "",
+                                data = it
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -263,60 +266,84 @@ fun PeoplesChildPage() {
             horizontalArrangement = Arrangement.spacedBy(7.dep()),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            var selectedTab by remember {
-                mutableStateOf(SplitPageTabs.All)
-            }
-            SplitTabItem_89keto(
-                text = "All",
-                selected = selectedTab,
-                currentTab = SplitPageTabs.All,
-                contentDescription = "all"
-            ) {
-                selectedTab = SplitPageTabs.All
-            }
-            SplitTabItem_89keto(
-                text = "You owe",
-                selected = selectedTab,
-                currentTab = SplitPageTabs.YouOwe,
-                contentDescription = "you_owe"
-            ) {
-                selectedTab = SplitPageTabs.YouOwe
-            }
-            SplitTabItem_89keto(
-                text = "You owe",
-                selected = selectedTab,
-                currentTab = SplitPageTabs.YouAreOwed,
-                contentDescription = "you_are_owed"
-            ) {
-                selectedTab = SplitPageTabs.YouAreOwed
-            }
+            GiveTakeTypeTabs()
         }
         FriendsContent()
     }
 }
 
 @Composable
-fun FriendsContent(
-    peoples: List<PeopleData> = listState(DataIds.peoples)
+fun GiveTakeTypeTabs(
+    suffix: String = suffix(),
+    selectedTab: SplitPageTabs = tState<SplitPageTabs>("${DataIds.subTab}$suffix").value,
+    notifier: NotificationService = notifier(),
 ) {
+    val notificationId by remember(suffix) {
+        derivedStateOf {
+            "${DataIds.subTab}$suffix"
+        }
+    }
+    SplitTabItem_89keto(
+        text = "All",
+        selected = selectedTab,
+        currentTab = SplitPageTabs.All,
+        contentDescription = "all"
+    ) {
+        notifier.notify(notificationId,SplitPageTabs.All)
+    }
+    SplitTabItem_89keto(
+        text = "You owe",
+        selected = selectedTab,
+        currentTab = SplitPageTabs.YouOwe,
+        contentDescription = "you_owe"
+    ) {
+        notifier.notify(notificationId,SplitPageTabs.YouOwe)
+    }
+    SplitTabItem_89keto(
+        text = "You are owed",
+        selected = selectedTab,
+        currentTab = SplitPageTabs.YouAreOwed,
+        contentDescription = "you_are_owed"
+    ) {
+        notifier.notify(notificationId,SplitPageTabs.YouAreOwed)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FriendsContent(
+    peoples: List<GroupOrContact> = listState(DataIds.groupsAndPeoples)
+) {
+    val state = rememberLazyListState()
     LazyColumn(
+        state = state,
         modifier = Modifier
             .fillMaxSize()
             .fadingEdge(),
-        contentPadding = PaddingValues(horizontal = 17.dep()),
+        contentPadding = PaddingValues(
+            start = 17.dep(),
+            end = 17.dep(),
+            bottom = 85.dep()
+        ),
+        //verticalArrangement = Arrangement.spacedBy(13.dep())
     ) {
         items(
             peoples,
             key = {
-                it.uid
+                it.id()
             }
         ) {
-            FriendItem(
-                selected = false,
-                it,
-                contentDescription = "friend_item",
-            ) {
-
+            if(it is ContactData){
+                PeopleCard_eq3k8h(
+                    modifier = Modifier
+                        .animateItemPlacement()
+                        .padding(top = 13.dep()),
+                    data = it,
+                    contentDescription = "",
+                    checkBoxContentDescription = "",
+                    profileImageContentDescription = "",
+                    config = PeopleCardConfiguration.unCheckable
+                )
             }
         }
     }
@@ -336,13 +363,7 @@ fun NoGroupsContent() {
     }
 }
 
-data class GroupCreationButtonConfiguration(
-    val width: Float = 90f,
-    val height: Float = 35f,
-    val backgroundColor: Color = Color(0xff839BB9),
-    val iconId: Int = R.drawable.ic_add_group,
-    val size: Float = 18f
-)
+
 
 @Composable
 fun GroupCreationButton(
@@ -365,12 +386,6 @@ fun GroupCreationButton(
     }
 }
 
-data class NoGroupHasBeenCreatedYetConfiguration(
-    val stringId: Int = R.string.no_group_has_been_created_yet,
-    val color: Color = Color(0xff839BB9),
-    val fontSize: Float = 13f
-)
-
 @Composable
 fun NoGroupHasBeenCreatedYet(
     config: NoGroupHasBeenCreatedYetConfiguration = NoGroupHasBeenCreatedYetConfiguration()
@@ -385,16 +400,7 @@ fun NoGroupHasBeenCreatedYet(
     )
 }
 
-data class TabsConfiguration(
-    val backgroundColor: Color = Color.White,
-    val startPadding: Float = 15f,
-    val fontSize: Float = 21f,
-    val color: Color = Color(0xffCFD8E4),
-    val selectedColor: Color = Color(0xff243257),
-    val height: Float = 73f,
-    val dividerThickness: Float = 1f,
-    val dividerColor: Color = Color(0xfffafcff),
-)
+
 
 @Composable
 fun Tabs(
@@ -460,12 +466,7 @@ fun Tabs(
 
 /**/
 
-data class HeadersAndSearchBarConfiguration(
-    val height: Float = 411f,
-    val maxHeight: Float = 411f,
-    val minHeight: Float = headerMinHeight,
-    val color: Color = Color.White,
-)
+
 
 @Composable
 fun HeaderAndSearchBar(
@@ -499,9 +500,7 @@ fun HeaderAndSearchBar(
     }
 }
 
-data class SearchBarConfiguration(
-    val horizontalPadding: Float = 16f
-)
+
 
 @Composable
 fun BoxScope.SearchBar(
@@ -520,10 +519,7 @@ fun BoxScope.SearchBar(
     }
 }
 
-data class ExpandedCardsConfiguration(
-    val bottomPadding: Float = 78f,
-    val space: Float = 22f,
-)
+
 
 @Composable
 fun BoxScope.ExpandedCards(
@@ -567,12 +563,6 @@ fun HeaderCutout(
         HeaderBottomCutout(splitPageState)
     }
 }
-
-data class HeaderUpperCutoutConfiguration(
-    val curveHeightConstant: Float = 159f,
-    val curveHeightVariable: Float = 60f,
-    val curveRadius: Number = 47,
-)
 
 @Composable
 fun <T> rememberArgument(arg: T): T {
@@ -638,12 +628,6 @@ fun HeaderUpperCutout(
     }
 }
 
-data class HeaderBottomCutoutConfiguration(
-    val noneColor: Color = Color(0xff839BB9),
-    val getColor: Color = Color(0xff37D8CF),
-    val payColor: Color = Color(0xffFF4077)
-)
-
 @Composable
 fun HeaderBottomCutout(
     state: SplitPageState,
@@ -683,10 +667,6 @@ fun HeaderBottomCutout(
     }
 }
 
-data class HeaderContentAndCardsConfiguration(
-    val headerTopPadding: Float = 83f
-)
-
 @Composable
 fun HeaderContentAndCards(
     progress: Float,
@@ -707,10 +687,7 @@ fun HeaderContentAndCards(
     }
 }
 
-data class CollapsedCardsSectionConfiguration(
-    val space: Float = 8f,
-    val endPadding: Float = 16f,
-)
+
 
 @Composable
 fun CollapsedCards(
@@ -824,14 +801,12 @@ fun YouWillGetPayCollapsedCard(
     }
 }
 
-data class HeaderContentRightSpace(
-    val rightSpace: Float = 38f
-)
+
 
 @Composable
 fun HeaderContentWithSpace(
     progress: Float,
-    config: HeaderContentRightSpace = HeaderContentRightSpace(),
+    config: HeaderContentRightSpaceConfiguration = HeaderContentRightSpaceConfiguration(),
 ) {
     Row {
         (config.rightSpace * (1f - progress)).sx()
@@ -839,12 +814,7 @@ fun HeaderContentWithSpace(
     }
 }
 
-data class HeaderContentConfiguration(
-    val topPadding: Number = 4,
-    val splitBalanceTextId: Int = R.string.split_balance,
-    val splitBalanceFontSize: Float = 12f,
-    val splitBalanceColor: Color = Color.White
-)
+
 
 @Composable
 fun HeaderContent(
@@ -881,12 +851,6 @@ fun SplitBalanceText(
         color = color,
     )
 }
-
-data class HeaderUpperCutShapeConfiguration(
-    val noneColor: Color = Color(0xff839BB9),
-    val getColor: Color = Color(0xff37D8CF),
-    val payColor: Color = Color(0xffFF4077)
-)
 
 @Composable
 fun HeaderUpperCutShape(
@@ -925,13 +889,7 @@ fun HeaderUpperCutShape(
     }
 }
 
-data class HeaderBackAndSplitConfiguration(
-    val splitTextId: Int = R.string.split,
-    val splitFontSize: Number = 14,
-    val tint: Color = Color.White,
 
-    val space: Number = 4,
-)
 
 @Composable
 fun HeaderBackAndSplit(

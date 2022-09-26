@@ -1,5 +1,6 @@
 package co.yore.splitnpay.split_page
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,19 +9,69 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.max
 import androidx.constraintlayout.compose.*
-import co.yore.splitnpay.*
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.components.components.*
+import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.ui.theme.robotoFonts
 
-@OptIn(ExperimentalMotionApi::class)
+class KeyboardStater{
+    private var prevValue = -1
+    private var lastState = false
+    fun process(value: Int): Boolean {
+        if(value==0){
+            lastState = false
+            return lastState
+        }
+        if(value<prevValue){
+            prevValue = value
+            lastState = false
+            return lastState
+        }
+        if(value>prevValue){
+            prevValue = value
+            lastState = true
+            return lastState
+        }
+        return if(value>0) lastState else !lastState
+    }
+
+}
+@OptIn(ExperimentalMotionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun SplitPage() {
-    CollapsibleBox{progress->
+    CollapsibleBox(threshold = 0.05f){progress->
+        val ks = remember {
+            KeyboardStater()
+        }
+        val insetLength = WindowInsets.ime.getBottom(LocalDensity.current)
+        val height = LocalConfiguration.current.screenHeightDp*LocalDensity.current.density
+        val keyboardStat by remember(insetLength) {
+            derivedStateOf {
+                ks.process(insetLength)
+            }
+        }
+        var persistentKeyboardState by remember {
+            mutableStateOf(false)
+        }
+        LaunchedEffect(key1 = keyboardStat){
+            persistentKeyboardState = keyboardStat
+        }
+        val cp by remember {
+            derivedStateOf {
+                if(!persistentKeyboardState&&insetLength>0){
+                    insetLength/height
+                }
+            }
+        }
         val dep = 1.dep()
         MotionLayout(
             progress = progress,
@@ -34,7 +85,11 @@ fun SplitPage() {
 }
 
 @Composable
-fun CollapsibleContents(progress: Float) {
+fun CollapsibleContents(
+    progress: Float,
+    notifier: NotificationService = notifier(),
+    selectedIndex: Int = intState(DataIds.selectedTabIndex).value
+) {
     UpperCut()
     HeaderBackAndSplit(
         modifier = Modifier
@@ -52,9 +107,8 @@ fun CollapsibleContents(progress: Float) {
     YouWillGetCard(progress)
     YouWillPayCard(progress)
     SearchBarSection()
-    var selectedIndex by remember { mutableStateOf(0) }
     TabsSection(selectedIndex){
-        selectedIndex = it
+        notifier.notify(DataIds.selectedTabIndex,it)
     }
     ContentSection(selectedIndex)
 }
@@ -512,7 +566,7 @@ fun TabsSection(
     onIndexChanged: (Int)->Unit
 ) {
     val tabsList =
-        listOf(ContactTabs.Groups.name, ContactTabs.Friends.name)
+        listOf(ContactTabs.Groups.name, ContactTabs.People.name)
 
     Box(
         modifier = Modifier

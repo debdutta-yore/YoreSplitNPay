@@ -17,26 +17,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
+import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.DataIds
 
-data class ContactSearchBarConfiguration(
-    val height: Float = 44f,
-    val backgroundColor: Color = Color(0xFFf9f9f9),
-    val borderRadius: Float = 8f,
-    val fontSize: Float = 11f,
-    val cursorColor: Color = Color.DarkGray,
-    val iconLeftSpace: Float = 20.5f,
-    val searchIconId: Int = R.drawable.ic_search,
-    val searchIconTint: Color = Color(0xff989898),
-    val iconRightSpace: Float = 12.5f,
-    val dividerColor: Color = Color(0xffBCBCBC),
-    val dividerHeight: Float = 13f,
-    val dividerWidth: Float = 1f,
-    val dividerRightSpace: Float = 15f,
-    val color: Color = Color(0xffBCBCBC),
-    val startPadding: Float = 72f
-)
+
 
 @Composable
 fun ContactSearchBar(

@@ -9,19 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import co.yore.splitnpay.R
-import co.yore.splitnpay.dep
+import co.yore.splitnpay.components.configuration.SplitBackButtonConfiguration
+import co.yore.splitnpay.libs.dep
 
-data class SplitBackButtonConfiguration(
-    val boxSize: Number = 24,
-    val iconSize: Number = 12,
-    val iconId: Int = R.drawable.ic_left_chevron,
-    val tint: Color = Color.White,
-)
+
 
 @Composable
 fun BackButton(

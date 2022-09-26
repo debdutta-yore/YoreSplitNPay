@@ -14,15 +14,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.R
-import co.yore.splitnpay.dep
-import co.yore.splitnpay.friend_item.models.ProfileImageConfiguration
+import co.yore.splitnpay.components.configuration.ProfileImageConfiguration1
+import co.yore.splitnpay.libs.dep
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
 fun ProfileImage(
     contentDescription: String,
-    config: ProfileImageConfiguration = ProfileImageConfiguration()
+    config: ProfileImageConfiguration1 = ProfileImageConfiguration1()
 ){
 
     Box(

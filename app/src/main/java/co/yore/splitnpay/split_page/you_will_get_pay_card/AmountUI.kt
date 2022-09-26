@@ -15,6 +15,10 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.*
+import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.locals.localCurrency
+import co.yore.splitnpay.ui.theme.robotoFonts
 
 @Composable
 fun ColumnScope.AmountUI(
