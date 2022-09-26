@@ -1,6 +1,7 @@
 package co.yore.splitnpay
 
 object DataIds {
+    const val statusBarColor = -1
     const val textInput = 0
     const val groupOrContact = 1
     const val checkItem = 2
@@ -10,4 +11,16 @@ object DataIds {
     const val groups = 6
     const val contacts = 7
     const val selecteds = 8
+    const val proceedWithContacts = 9
+
+    const val whole = 10
+    const val decimal = 11
+    const val wholeGet = 12
+    const val decimalGet = 13
+    const val wholePay= 14
+    const val decimalPay = 15
+    const val ultimateState = 16
+    const val peoples = 17
+    const val willGetActive = 18
+    const val willPayActive = 19
 }

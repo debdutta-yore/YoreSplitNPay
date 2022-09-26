@@ -7,13 +7,21 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
 class Resolver{
-    private val map: MutableMap<Any,Any?> = mutableMapOf()
+    private val _map: MutableMap<Any,Any?> = mutableMapOf()
     fun <T>get(key: Any): T{
-        return map[key] as T
+        return _map[key] as T
     }
 
     operator fun set(key: Any, value: Any?){
-        map[key] = value
+        _map[key] = value
+    }
+
+    fun addAll(map: Map<Any,Any?>){
+        _map.putAll(map)
+    }
+
+    fun addAll(vararg pairs: Pair<Any,Any?>){
+        _map.putAll(pairs)
     }
 }
 
@@ -62,6 +70,10 @@ fun <T>t(key: Any): T {
 }
 @Composable
 fun <T>tState(key: Any): State<T> {
+    return LocalResolver.current.get(key)
+}
+@Composable
+fun <T>safeTState(key: Any): State<T>? {
     return LocalResolver.current.get(key)
 }
 

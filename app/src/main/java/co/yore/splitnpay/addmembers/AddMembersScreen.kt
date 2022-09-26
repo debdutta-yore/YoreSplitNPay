@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.split_page.ContactSearchBar
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.Pink
@@ -268,16 +269,24 @@ data class SplitWithPageContentConfiguration(
     val splitWithTextId: Int = R.string.split_with,
 )
 
+@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SplitWithPageContent(
     config: SplitWithPageContentConfiguration = SplitWithPageContentConfiguration(),
     selectedIndex: Int = intState(DataIds.selectedTabIndex).value,
+    proceedWithContacts: Boolean = boolState(DataIds.proceedWithContacts).value,
     notifier: NotificationService = notifier()
 ){
     Scaffold(
         floatingActionButton = {
-            Fab()
+            AnimatedVisibility(
+                proceedWithContacts,
+                enter = fadeIn(tween(300))+ scaleIn(tween(300)),
+                exit = fadeOut(tween(300))+ scaleOut(tween(300))
+            ){
+                Fab()
+            }
         }
     ) {
         Column {
@@ -402,11 +411,21 @@ fun NothingFoundUI() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GroupAndContactsUI(
     items: List<GroupOrContact> = listState(DataIds.groupOrContact),
-    selecteds: List<Any> = listState(DataIds.selecteds)
+    selecteds: List<Any> = listState(DataIds.selecteds),
+    proceedWithContacts: Boolean = boolState(DataIds.proceedWithContacts).value
 ) {
+    val bottomPadding by remember(proceedWithContacts) {
+        derivedStateOf {
+            if(proceedWithContacts)
+                85
+            else
+                13
+        }
+    }
     if(items.isNotEmpty()){
         val listState = rememberLazyListState()
         LazyColumn(
@@ -417,7 +436,7 @@ fun GroupAndContactsUI(
                 start = 16f.dep(),
                 end = 16f.dep(),
                 top = 26f.dep(),
-                bottom = 85f.dep()
+                bottom = bottomPadding.dep()
             ),
             verticalArrangement = Arrangement.spacedBy(13.dep())
         ) {
@@ -429,6 +448,7 @@ fun GroupAndContactsUI(
             ) {
                 if(it is ContactData){
                     AddMemberCard_eq3k8h(
+                        modifier = Modifier.animateItemPlacement(),
                         member = it,
                         selected = selecteds.contains(it.id),
                         contentDescription = "",
@@ -438,6 +458,7 @@ fun GroupAndContactsUI(
                 }
                 else if(it is GroupData){
                     GroupCard_0msq1z(
+                        modifier = Modifier.animateItemPlacement(),
                         data = it,
                         contentDescription = ""
                     )
@@ -459,7 +480,6 @@ fun AddedMembersSection(
     Box(
         modifier = Modifier
             .padding(
-                //start = 16.dep(),
                 end = 16.dep(),
                 bottom = 16.dep()
             )
@@ -479,8 +499,8 @@ fun AddedMembersSection(
                     key = {
                         it.id
                     },
-                    enter = fadeIn(tween(700))+ scaleIn(tween(700)),
-                    exit = fadeOut(tween(700))+ scaleOut(tween(700)),
+                    enter = fadeIn(tween(700)) + scaleIn(tween(700)),
+                    exit = fadeOut(tween(700)) + scaleOut(tween(700)),
                     exitDuration = 700
                 ) { item ->
                     Box(
@@ -489,11 +509,8 @@ fun AddedMembersSection(
                             .animateItemPlacement()
                     ){
                         PeopleImageItem_r02b97(
-                            onClick = {
-
-                            },
                             onDelete = {
-                                notifier.notify(DataIds.deleteAdded,item)
+                                notifier.notify(DataIds.deleteAdded,item.id)
                             },
                             friend = item,
                             contentDescription = "people image"
@@ -510,11 +527,13 @@ fun SplitWithPageTabsSection(
     selectedIndex: Int,
     onIndexChanged: (Int)->Unit
 ) {
-    val tabsList = listOf(
-        ContactTabs.Recent.name,
-        ContactTabs.Groups.name,
-        ContactTabs.Contact.name
-    )
+    val tabsList = remember {
+        listOf(
+            ContactTabs.Recent.name,
+            ContactTabs.Groups.name,
+            ContactTabs.Contact.name
+        )
+    }
     TabRow(
         selectedTabIndex = selectedIndex,
         backgroundColor = Color.White,
@@ -524,7 +543,19 @@ fun SplitWithPageTabsSection(
         divider = { TabRowDefaults.Divider(color = Color.Transparent) },
     ) {
         tabsList.forEachIndexed { index, text ->
-            val selected = selectedIndex == index
+            val computedColor by remember(selectedIndex) {
+                derivedStateOf {
+                    if (selectedIndex == index)
+                        Color(0xff243257)
+                    else
+                        Color(0xffCFD8E4)
+                }
+            }
+
+            val animatedColor by animateColorAsState(
+                targetValue = computedColor,
+                animationSpec = tween(700)
+            )
 
             Text(
                 modifier = Modifier
@@ -537,10 +568,7 @@ fun SplitWithPageTabsSection(
                     .padding(0.dep()),
                 text = text,
                 fontSize = 21f.dep().value.sp,
-                color = if (selected) colorResource(id = R.color.lightblue2)
-                else colorResource(
-                    id = R.color.lightgrey5
-                ),
+                color = animatedColor,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -577,16 +605,12 @@ data class PeopleRowItemConfiguration(
 @Composable
 fun PeopleImageItem_r02b97(
     config: PeopleRowItemConfiguration = PeopleRowItemConfiguration(),
-    onClick: () -> Unit,
     onDelete: () -> Unit,
     friend: ContactData,
     contentDescription: String
 ) {
     Box(
         modifier = Modifier
-            .clickable {
-                onClick()
-            }
             .semantics { this.contentDescription = contentDescription }
     ) {
         AsyncImage(
@@ -595,7 +619,7 @@ fun PeopleImageItem_r02b97(
                 .size(config.imageSize.dep()),
             model = ImageRequest.Builder(LocalContext.current)
                 //TODO- update using friend.imageUrl
-                .data("https://i.pravatar.cc/300?" + friend.name)
+                .data(friend.image)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.personactionbar),

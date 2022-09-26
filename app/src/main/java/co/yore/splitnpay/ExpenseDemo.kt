@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import co.yore.splitnpay.components.components.coloredShadow
 import coil.compose.AsyncImage
 import java.text.DecimalFormat
 

@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.addmembers.GroupData
+import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
@@ -41,12 +42,13 @@ data class GroupCardData(
 
 @Composable
 fun GroupCard_0msq1z(
+    modifier: Modifier = Modifier,
     data: GroupData,
     config: GroupCardConfiguration = GroupCardConfiguration(),
     contentDescription: String
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .semantics { this.contentDescription = contentDescription }
             .coloredShadow(
                 color = config.shadowColor,

@@ -1,4 +1,4 @@
-package co.yore.splitnpay
+package co.yore.splitnpay.components.components
 
 import android.graphics.BlurMaskFilter
 import androidx.compose.ui.Modifier

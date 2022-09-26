@@ -1,4 +1,4 @@
-package co.yore.splitnpay
+package co.yore.splitnpay.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -12,9 +12,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
-import co.yore.splitnpay.addmembers.SplitWithPageViewModel
+import co.yore.splitnpay.*
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
-import co.yore.splitnpay.addmembers.AddMembersScreen_g5024t
 
 object SplitPageColor{
     val noneColor = Color(0xff7589A4)
@@ -36,25 +35,13 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        /*val systemUiController = rememberSystemUiController()
-                        val state = tState<SplitPageState>(SplitDataIds.ultimateState)
-                        LaunchedEffect(key1 = state.value) {
-                            val color = when(state.value){
-                                SplitPageState.GET -> SplitPageColor.getColor
-                                SplitPageState.PAY -> SplitPageColor.payColor
-                                SplitPageState.NONE -> SplitPageColor.noneColor
-                            }
-                            systemUiController.setStatusBarColor(
-                                color = color,
-                                darkIcons = false
-                            )
-                        }*/
-                        val vm: SplitWithPageViewModel = viewModel()
+                        val vm: SplitPageViewModel = viewModel()
                         CompositionLocalProvider(
                             LocalResolver provides vm.resolver,
                             LocalNotificationService provides vm.notifier
                         ) {
-                            AddMembersScreen_g5024t()
+                            StatusBarColorControl()
+                            SplitPageFull()
                         }
                     }
                 }
@@ -62,6 +49,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
 
 
 

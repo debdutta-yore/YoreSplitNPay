@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.GreyShadow
 import coil.compose.AsyncImage
@@ -238,14 +239,14 @@ fun FontFamilyText(
 
 @Composable
 fun AddMemberCard_eq3k8h(
+    modifier: Modifier = Modifier,
     member: ContactData,
     selected: Boolean,
     contentDescription: String,
     checkBoxContentDescription: String,
     profileImageContentDescription: String,
     config: AddMemberCardConfiguration = AddMemberCardConfiguration(),
-    notifier: NotificationService = notifier(),
-    //suffix: String = suffix()
+    notifier: NotificationService = notifier()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -292,7 +293,7 @@ fun AddMemberCard_eq3k8h(
         tween(700)
     )
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(config.cardHeight.dep())
             .coloredShadow(

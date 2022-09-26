@@ -35,6 +35,7 @@ import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.GroupData
+import co.yore.splitnpay.components.configuration.AddGroupButton_kbf1at
 import co.yore.splitnpay.friend_item.FriendItem
 import co.yore.splitnpay.friend_item.models.PeopleData
 import co.yore.splitnpay.split_page.you_will_get_pay_card.YouWillGetPayCard
@@ -166,7 +167,7 @@ fun Contents(
 
 @Composable
 fun GroupsChildPage(
-    groups: List<GroupData> = listState(SplitDataIds.groups)
+    groups: List<GroupData> = listState(DataIds.groups)
 ) {
     if(groups.isEmpty()){
         Box(
@@ -224,8 +225,8 @@ fun GroupsChildPage(
                 Spacer(modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f))
-                AddGroupButton_kbf1at()
                 16.sx()
+                AddGroupButton_kbf1at()
             }
             LazyColumn(
                 modifier = Modifier.fadingEdge(),
@@ -296,7 +297,7 @@ fun PeoplesChildPage() {
 
 @Composable
 fun FriendsContent(
-    peoples: List<PeopleData> = listState(SplitDataIds.peoples)
+    peoples: List<PeopleData> = listState(DataIds.peoples)
 ) {
     LazyColumn(
         modifier = Modifier
@@ -538,16 +539,16 @@ fun BoxScope.ExpandedCards(
         ) {
             YouWillGetPayCard(
                 config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.GET),
-                whole = stringState(SplitDataIds.wholeGet).value,
-                decimal = stringState(SplitDataIds.decimalGet).value,
-                boolState(SplitDataIds.willGetActive).value
+                whole = stringState(DataIds.wholeGet).value,
+                decimal = stringState(DataIds.decimalGet).value,
+                boolState(DataIds.willGetActive).value
             )
             config.space.sx()
             YouWillGetPayCard(
                 config = YouWillGetPayCardConfig(type = YouWillGetPayCardConfig.Type.PAY),
-                whole = stringState(SplitDataIds.wholePay).value,
-                decimal = stringState(SplitDataIds.decimalPay).value,
-                boolState(SplitDataIds.willPayActive).value
+                whole = stringState(DataIds.wholePay).value,
+                decimal = stringState(DataIds.decimalPay).value,
+                boolState(DataIds.willPayActive).value
             )
         }
     }
@@ -556,7 +557,7 @@ fun BoxScope.ExpandedCards(
 @Composable
 fun HeaderCutout(
     progress: Float,
-    splitPageState: SplitPageState = tState<SplitPageState>(SplitDataIds.ultimateState).value
+    splitPageState: SplitPageState = tState<SplitPageState>(DataIds.ultimateState).value
 ) {
     Column() {
         HeaderUpperCutout(
@@ -724,15 +725,15 @@ fun CollapsedCards(
     ) {
         YouWillGetPayCollapsedCard(
             progress,
-            whole = stringState(SplitDataIds.wholeGet).value,
-            decimal = stringState(SplitDataIds.decimalGet).value,
+            whole = stringState(DataIds.wholeGet).value,
+            decimal = stringState(DataIds.decimalGet).value,
             config = YouWillGetPayCollapsedCardConfiguration.get
         )
         (config.space * (1f - progress)).sy()
         YouWillGetPayCollapsedCard(
             progress,
-            whole = stringState(SplitDataIds.wholePay).value,
-            decimal = stringState(SplitDataIds.decimalPay).value,
+            whole = stringState(DataIds.wholePay).value,
+            decimal = stringState(DataIds.decimalPay).value,
             config = YouWillGetPayCollapsedCardConfiguration.pay
         )
     }
@@ -862,8 +863,8 @@ fun HeaderContent(
 
         YoreAmount(
             config = YoreAmountConfiguration.splitPageHeadContent,
-            whole = stringState(SplitDataIds.whole).value,
-            decimal = stringState(SplitDataIds.decimal).value,
+            whole = stringState(DataIds.whole).value,
+            decimal = stringState(DataIds.decimal).value,
         )
     }
 }

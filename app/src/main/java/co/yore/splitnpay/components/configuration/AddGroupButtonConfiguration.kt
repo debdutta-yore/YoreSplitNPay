@@ -1,4 +1,4 @@
-package co.yore.splitnpay
+package co.yore.splitnpay.components.configuration
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import co.yore.splitnpay.R
+import co.yore.splitnpay.dep
 import co.yore.splitnpay.ui.theme.LightRedButton
 
 data class AddGroupButtonConfiguration(

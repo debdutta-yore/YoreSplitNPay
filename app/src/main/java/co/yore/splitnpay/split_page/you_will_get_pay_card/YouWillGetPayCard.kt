@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.coloredShadow
 
 data class YouWillGetPayCardConfig(
     val height: Float = 153f,

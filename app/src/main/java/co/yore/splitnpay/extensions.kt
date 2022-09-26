@@ -1,11 +1,14 @@
 package co.yore.splitnpay
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.text.DecimalFormat
 import java.util.concurrent.ThreadLocalRandom
 
@@ -183,4 +186,24 @@ fun randomDate(start: Long, end: Long): Long {
     return ThreadLocalRandom
         .current()
         .nextLong(start, end)
+}
+
+data class StatusBarColor(
+    val color: Color,
+    val darkIcons: Boolean = false
+)
+
+@Composable
+fun StatusBarColorControl(
+    state:StatusBarColor? = safeTState<StatusBarColor>(DataIds.statusBarColor)?.value
+) {
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(key1 = state) {
+        state?.let {
+            systemUiController.setStatusBarColor(
+                color = state.color,
+                darkIcons = state.darkIcons
+            )
+        }
+    }
 }

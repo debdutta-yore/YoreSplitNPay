@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.friend_item.models.FriendItemConfiguration
 import co.yore.splitnpay.friend_item.models.PeopleData
 

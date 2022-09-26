@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.*
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.coloredShadow
 
 @OptIn(ExperimentalMotionApi::class)
 @Composable
@@ -541,8 +542,8 @@ fun HeaderContentSection() {
 
         YoreAmount(
             config = YoreAmountConfiguration.splitPageHeadContent,
-            whole = stringState(SplitDataIds.whole).value,
-            decimal = stringState(SplitDataIds.decimal).value,
+            whole = stringState(DataIds.whole).value,
+            decimal = stringState(DataIds.decimal).value,
         )
     }
 }
