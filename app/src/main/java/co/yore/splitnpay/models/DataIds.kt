@@ -25,4 +25,14 @@ object DataIds {
     const val willPayActive = 19
     const val subTab = 20
     const val noGroup = 21
+    const val back = 22
+    const val getCard = 23
+    const val payCard = 24
+    const val groupCardGo = 25
+    const val peopleCardGo = 26
+    const val addGroup = 27
+    const val split = 28
+    const val peopleCard = 29
+    const val groupCard = 30
+    const val haveSplit = 31
 }

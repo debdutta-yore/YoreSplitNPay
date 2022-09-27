@@ -30,7 +30,7 @@ import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.fadingEdge
 import co.yore.splitnpay.locals.RobotoText
-import co.yore.splitnpay.locals.localFullWidth
+import co.yore.splitnpay.locals.localDesignWidth
 import co.yore.splitnpay.rememberLazyListSnapperLayoutInfo
 import co.yore.splitnpay.rememberSnapperFlingBehavior
 import co.yore.splitnpay.libs.sep
@@ -1101,7 +1101,7 @@ fun MonthDayPicker(
             .height(config.height.dep())
             .background(config.backgroundColor)
     ) {
-        val full = localFullWidth.current
+        val full = localDesignWidth.current
         val box = config.boxSize
         val pad = (full - box)/2f
         val halfRowWidth = constraints.maxWidth / 2

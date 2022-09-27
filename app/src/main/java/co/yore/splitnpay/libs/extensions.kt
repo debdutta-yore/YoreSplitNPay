@@ -1,11 +1,17 @@
 package co.yore.splitnpay.libs
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.models.DataIds
@@ -196,15 +202,45 @@ data class StatusBarColor(
 
 @Composable
 fun StatusBarColorControl(
-    state: StatusBarColor? = safeTState<StatusBarColor>(DataIds.statusBarColor)?.value
+    suffix: String,
+    state: StatusBarColor? = safeTState<StatusBarColor>("${DataIds.statusBarColor}$suffix")?.value
 ) {
     val systemUiController = rememberSystemUiController()
-    LaunchedEffect(key1 = state) {
+
+    DisposableEffect(systemUiController, state) {
         state?.let {
+            val color = it.color
+            val darkIcons = it.darkIcons
             systemUiController.setStatusBarColor(
-                color = state.color,
-                darkIcons = state.darkIcons
+                color = color,
+                darkIcons = darkIcons
             )
         }
+        onDispose {}
     }
 }
+
+fun Modifier.clickable(
+    rippleColor: Color,
+    rippleRadius: Dp = Dp.Unspecified,
+    enabled: Boolean = true,
+    onClickLabel: String? = null,
+    role: Role? = null,
+    onClick: () -> Unit
+) = composed(
+    factory = {
+        val interactionSource = remember { MutableInteractionSource() }
+        Modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = rememberRipple(
+                    color = rippleColor,
+                    radius = rippleRadius,
+                ),
+                enabled = enabled,
+                onClickLabel = onClickLabel,
+                role = role,
+                onClick = onClick
+            )
+    }
+)

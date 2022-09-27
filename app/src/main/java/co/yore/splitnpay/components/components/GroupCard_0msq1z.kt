@@ -3,13 +3,17 @@ package co.yore.splitnpay.components.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -37,8 +41,6 @@ import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-
-
 
 @Composable
 fun GroupCard_0msq1z(
@@ -116,9 +118,11 @@ fun GroupCard_0msq1z(
             )
             .clickable(
                 interactionSource = interactionSource,
-                indication = LocalIndication.current
+                indication = rememberRipple(
+                    color = config.cardBackgroundColor
+                )
             ) {
-                notifier.notify(DataIds.checkItem, data.id)
+                notifier.notify(DataIds.groupCard, data.id)
             }
             .border(
                 width = animatedBorderStroke.dep(),
@@ -220,7 +224,9 @@ fun GroupCard_0msq1z(
 
                 ArrowButton_ohezqf(contentDescription = "arrow ",
                     pressed = false,
-                    onClicked = { },
+                    onClicked = {
+                        notifier.notify(DataIds.groupCardGo,data)
+                    },
                     onPressed = {
                         isCheckBoxPressed = it
                     }

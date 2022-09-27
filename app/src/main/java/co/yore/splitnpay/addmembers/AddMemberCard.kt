@@ -295,7 +295,7 @@ fun PeopleCard_eq3k8h(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current
             ) {
-                notifier.notify(DataIds.checkItem, data.id)
+                notifier.notify(DataIds.peopleCard, data.id)
             }
             .border(
                 width = animatedBorderStroke.dep(),
@@ -423,7 +423,7 @@ fun PeopleCard_eq3k8h(
                     contentDescription = "",
                     pressed = focused,
                     onClicked = {
-                        notifier.notify(DataIds.checkItem, data.id)
+                        notifier.notify(DataIds.peopleCardGo,data)
                     },
                     onPressed = {
                         isCheckBoxPressed = it

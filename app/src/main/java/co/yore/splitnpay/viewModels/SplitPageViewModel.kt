@@ -24,14 +24,14 @@ enum class SplitPageState{
 class SplitPageViewModel(
     private val repo: Repo = RepoImpl()
 ): ViewModel() {
-    private val _whole = mutableStateOf("00")
-    private val _decimal = mutableStateOf("00")
-    private val _wholeGet = mutableStateOf("00")
-    private val _decimalGet = mutableStateOf("00")
-    private val _wholePay = mutableStateOf("00")
-    private val _decimalPay = mutableStateOf("00")
+    private val _whole = mutableStateOf("4,000")
+    private val _decimal = mutableStateOf("05")
+    private val _wholeGet = mutableStateOf("2,000")
+    private val _decimalGet = mutableStateOf("50")
+    private val _wholePay = mutableStateOf("500")
+    private val _decimalPay = mutableStateOf("30")
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
-    private val _ultimateState = mutableStateOf(SplitPageState.NONE)
+    private val _ultimateState = mutableStateOf(SplitPageState.PAY)
     private val _groups = mutableStateListOf<GroupCardData>()
     private val _peoples = mutableStateListOf<ContactData>()
     private val _willGetActive = mutableStateOf(false)
@@ -43,6 +43,7 @@ class SplitPageViewModel(
     private val _groupsAndPeoples = mutableStateListOf<GroupOrContact>()
     private val _selectedTabIndex = mutableStateOf(0)
     private val _noGroup = mutableStateOf(false)
+    private val _haveSplit = mutableStateOf(true)
     ///////////////////////////////////////////////////////
     private val _notificationService = NotificationService{id,arg->
         when(id){
@@ -50,8 +51,39 @@ class SplitPageViewModel(
                 _input.value = (arg as? String)?:return@NotificationService
                 filter()
             }
+            DataIds.groupCard ->{
+                //Todo
+            }
+            DataIds.peopleCard ->{
+                //Todo
+            }
+            DataIds.split ->{
+                //Todo
+            }
+            DataIds.groupCardGo ->{
+                //Todo
+            }
+            DataIds.addGroup ->{
+                //Todo
+            }
+            DataIds.peopleCardGo ->{
+                //Todo
+            }
+            "${DataIds.back}split_page" ->{
+                //Todo
+            }
+            DataIds.getCard ->{
+                //Todo
+            }
+            DataIds.payCard ->{
+                //Todo
+            }
             DataIds.selectedTabIndex ->{
-                _selectedTabIndex.value = (arg as? Int)?:return@NotificationService
+                val index = (arg as? Int)?:return@NotificationService
+                if(_selectedTabIndex.value==index){
+                    return@NotificationService
+                }
+                _selectedTabIndex.value = index
                 filter()
             }
             "${DataIds.subTab}group"->{
@@ -85,10 +117,11 @@ class SplitPageViewModel(
             DataIds.groupsAndPeoples to _groupsAndPeoples,
             DataIds.selectedTabIndex to _selectedTabIndex,
             DataIds.noGroup to _noGroup,
+            DataIds.haveSplit to _haveSplit,
             "${DataIds.subTab}group" to _subTabGroup,
             "${DataIds.subTab}people" to _subTabPeople,
         )
-        _statusBarColor.value = StatusBarColor(Color(0xff7589A4),false)
+        _statusBarColor.value = StatusBarColor(Color(0xffDB3665),false)
         viewModelScope.launch {
             _groupsAndPeoplesVault.addAll(repo.groupAndContacts())
             filter()

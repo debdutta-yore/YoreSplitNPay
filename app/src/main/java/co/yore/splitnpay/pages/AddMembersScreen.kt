@@ -45,7 +45,7 @@ import co.yore.splitnpay.components.configuration.TopbarWithIconConfiguration
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.split_page.ContactSearchBar
+import co.yore.splitnpay.split_page_components.ContactSearchBar
 import co.yore.splitnpay.ui.theme.robotoFonts
 import coil.compose.AsyncImage
 import coil.request.ImageRequest

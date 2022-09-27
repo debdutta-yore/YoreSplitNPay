@@ -1,7 +1,6 @@
 package co.yore.splitnpay.components.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -13,18 +12,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import co.yore.splitnpay.components.configuration.AddGroupButtonConfiguration
+import co.yore.splitnpay.libs.NotificationService
+import co.yore.splitnpay.libs.clickable
 import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.libs.notifier
+import co.yore.splitnpay.models.DataIds
 
 @Composable
 fun AddGroupButton_kbf1at(
-    config: AddGroupButtonConfiguration = AddGroupButtonConfiguration()
+    config: AddGroupButtonConfiguration = AddGroupButtonConfiguration(),
+    notifier: NotificationService = notifier()
 ) {
     Box(
         modifier = Modifier
             .clip(CircleShape)
             .background(color = config.backgroundColor)
             .size(config.size.dep())
-            .clickable {  },
+            .clickable(
+                rippleColor = Color(0xffFF4077)
+            ) {
+                       notifier.notify(DataIds.addGroup,null)
+            },
         contentAlignment = Alignment.Center
     ) {
         Icon(

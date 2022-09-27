@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.split_page.headerMinHeight
 import co.yore.splitnpay.ui.theme.*
 
 data class FriendItemConfiguration(
@@ -337,12 +336,6 @@ data class HeaderContentConfiguration(
     val splitBalanceColor: Color = Color.White
 )
 
-data class HeadersAndSearchBarConfiguration(
-    val height: Float = 411f,
-    val maxHeight: Float = 411f,
-    val minHeight: Float = headerMinHeight,
-    val color: Color = Color.White,
-)
 
 data class TabsConfiguration(
     val backgroundColor: Color = Color.White,

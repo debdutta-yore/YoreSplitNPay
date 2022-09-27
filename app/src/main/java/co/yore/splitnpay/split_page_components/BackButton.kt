@@ -1,4 +1,4 @@
-package co.yore.splitnpay.split_page
+package co.yore.splitnpay.split_page_components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

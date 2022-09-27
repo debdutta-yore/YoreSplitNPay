@@ -1,4 +1,4 @@
-package co.yore.splitnpay.split_page
+package co.yore.splitnpay.split_page_components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

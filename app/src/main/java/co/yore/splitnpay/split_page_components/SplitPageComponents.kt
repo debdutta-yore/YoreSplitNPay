@@ -1,52 +1,41 @@
-package co.yore.splitnpay.split_page
+package co.yore.splitnpay.split_page_components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.viewModels.SplitPageState
 
-class KeyboardStater{
-    private var prevValue = -1
-    private var lastState = false
-    fun process(value: Int): Boolean {
-        if(value==0){
-            lastState = false
-            return lastState
-        }
-        if(value<prevValue){
-            prevValue = value
-            lastState = false
-            return lastState
-        }
-        if(value>prevValue){
-            prevValue = value
-            lastState = true
-            return lastState
-        }
-        return if(value>0) lastState else !lastState
-    }
-
-}
 @OptIn(ExperimentalMotionApi::class, ExperimentalLayoutApi::class)
 @Composable
-fun SplitPage() {
+fun SplitPageContent() {
     CollapsibleBox(
         threshold = 0.05f,
         keyboardAware = true,
@@ -81,9 +70,7 @@ fun CollapsibleContents(
             )
             .layoutId("back_button_section"),
         contentDescription = "header_back_and_split"
-    ) {
-
-    }
+    )
     HeaderContentSection()
     BottomCut()
     YouWillGetCard(progress)
@@ -206,8 +193,20 @@ fun SplitPageStartConstraint(dep: Dp): ConstraintSet {
 @OptIn(ExperimentalMotionApi::class)
 @Composable
 fun YouWillGetCard(
-    progress: Float
+    progress: Float,
+    haveSplit: Boolean = tState<Boolean>(DataIds.haveSplit).value,
+    wholeGet: String = stringState(DataIds.wholeGet).value,
+    decimalGet: String = stringState(DataIds.decimalGet).value,
+    notifier: NotificationService = notifier()
 ) {
+    val themeColor by remember {
+        derivedStateOf {
+            if(haveSplit)
+                Color(0xff37D8CF)
+            else
+                Color(0xff859DBA)
+        }
+    }
     val dep = 1.dep()
     val textColor by remember(progress) {
         derivedStateOf {
@@ -225,17 +224,22 @@ fun YouWillGetCard(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Color(0x80C6CFD8),
+                    color = Color(0x80C6CFD8).copy(alpha = 1f-progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
                     offsetX = 7.dep(),
                     offsetY = 7.dep(),
                 )
+                .clip(RoundedCornerShape(15.dep()))
                 .background(
-                    Color.White/*.copy(alpha = 0.5f)*/,
-                    RoundedCornerShape(15.dep())
+                    Color.White
                 )
+                .clickable(
+                    rippleColor = themeColor
+                ) {
+                    notifier.notify(DataIds.getCard, null)
+                }
         ){
 
         }
@@ -257,15 +261,15 @@ fun YouWillGetCard(
         ){
             YoreAmount(
                 config = YoreAmountConfiguration(
-                    color = Color(0xff859DBA),
+                    color = themeColor,
                     fontFamily = robotoFonts,
                     fontSize = 20,
                     currencyFontSize = 12,
                     decimalFontSize = 12,
                     wholeFontWeight = FontWeight.Bold
                 ),
-                whole = "00",
-                decimal = "00"
+                whole = wholeGet,
+                decimal = decimalGet
             )
         }
         Image(
@@ -282,6 +286,12 @@ fun YouWillGetCard(
             modifier = Modifier
                 .layoutId("arrow")
                 .size(26.dep())
+                .clip(CircleShape)
+                .clickable(
+                    rippleColor = themeColor
+                ) {
+                    notifier.notify(DataIds.getCard, null)
+                }
         )
     }
 }
@@ -370,8 +380,21 @@ fun YouWillGetCardStartConstraint(dep: Dp): ConstraintSet {
 @OptIn(ExperimentalMotionApi::class)
 @Composable
 fun YouWillPayCard(
-    progress: Float
+    progress: Float,
+    haveSplit: Boolean = tState<Boolean>(DataIds.haveSplit).value,
+    wholePay: String = stringState(DataIds.wholePay).value,
+    decimalPay: String = stringState(DataIds.decimalPay).value,
+    notifier: NotificationService = notifier()
 ) {
+
+    val themeColor by remember {
+        derivedStateOf {
+            if(haveSplit)
+                Color(0xffFF4077)
+            else
+                Color(0xff859DBA)
+        }
+    }
     val dep = 1.dep()
 
     val textColor by remember(progress) {
@@ -467,17 +490,24 @@ fun YouWillPayCard(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Color(0x80C6CFD8),
+                    color = Color(0x80C6CFD8).copy(alpha = 1f-progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
                     offsetX = 7.dep(),
                     offsetY = 7.dep(),
                 )
-                .background(
-                    Color.White,
+                .clip(
                     RoundedCornerShape((15 * (1f + progress)).dep())
                 )
+                .background(
+                    Color.White,
+                )
+                .clickable(
+                    rippleColor = themeColor
+                ){
+                    notifier.notify(DataIds.payCard, null)
+                }
         ){
 
         }
@@ -499,15 +529,15 @@ fun YouWillPayCard(
         ){
             YoreAmount(
                 config = YoreAmountConfiguration(
-                    color = Color(0xff859DBA),
+                    color = themeColor,
                     fontFamily = robotoFonts,
                     fontSize = 20,
                     currencyFontSize = 12,
                     decimalFontSize = 12,
                     wholeFontWeight = FontWeight.Bold
                 ),
-                whole = "00",
-                decimal = "00"
+                whole = wholePay,
+                decimal = decimalPay
             )
         }
         Image(
@@ -517,6 +547,7 @@ fun YouWillPayCard(
                 .layoutId("pay_icon")
                 .size(46.dep(), 68.dep())
         )
+
         Icon(
             painter = painterResource(id = R.drawable.ic_you_will_pay_arrow),
             contentDescription = "",
@@ -524,10 +555,32 @@ fun YouWillPayCard(
             modifier = Modifier
                 .layoutId("arrow")
                 .size(26.dep())
+                .clip(CircleShape)
+                .clickable(
+                    rippleColor = Color(0xffFF4077)
+                ) {
+                    notifier.notify(DataIds.payCard, null)
+                }
         )
     }
 }
 
+
+
+fun Modifier.ripple() = composed(
+    factory = {
+        val interactionSource = remember { MutableInteractionSource() }
+        val rippleColor = Color.Red
+        Modifier
+            .indication(
+                interactionSource = interactionSource,
+                indication = rememberRipple(
+                    color = rippleColor,
+                    radius = 8.dp
+                )
+            )
+    }
+)
 
 
 @Composable
@@ -564,11 +617,15 @@ fun TabsSection(
 }
 
 @Composable
-fun HeaderContentSection() {
+fun HeaderContentSection(
+    whole: String = stringState(DataIds.whole).value,
+    decimal: String = stringState(DataIds.decimal).value,
+) {
     Column(
         modifier = Modifier
             .layoutId("header_content")
-            .wrapContentWidth()
+            .wrapContentWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SplitBalanceText(
             R.string.split_balance,
@@ -578,8 +635,8 @@ fun HeaderContentSection() {
 
         YoreAmount(
             config = YoreAmountConfiguration.splitPageHeadContent,
-            whole = stringState(DataIds.whole).value,
-            decimal = stringState(DataIds.decimal).value,
+            whole = whole,
+            decimal = decimal,
         )
     }
 }
@@ -598,13 +655,24 @@ fun SearchBarSection() {
 }
 
 @Composable
-fun BottomCut() {
+fun BottomCut(
+    pageState: SplitPageState = tState<SplitPageState>(DataIds.ultimateState).value
+) {
+    val backgroundColor by remember(pageState) {
+        derivedStateOf {
+            when(pageState){
+                SplitPageState.GET -> Color(0xff37D8CF)
+                SplitPageState.PAY -> Color(0xffFF4077)
+                SplitPageState.NONE -> Color(0xff839BB9)
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .layoutId("bottom_cut")
             .fillMaxWidth()
             .height(42.dep())
-            .background(Color(0xff839BB9))
+            .background(backgroundColor)
             .background(
                 Color.White,
                 RoundedCornerShape(
@@ -618,14 +686,25 @@ fun BottomCut() {
 }
 
 @Composable
-fun UpperCut() {
+fun UpperCut(
+    pageState: SplitPageState = tState<SplitPageState>(DataIds.ultimateState).value
+) {
+    val backgroundColor by remember(pageState) {
+        derivedStateOf {
+            when(pageState){
+                SplitPageState.GET -> Color(0xff37D8CF)
+                SplitPageState.PAY -> Color(0xffFF4077)
+                SplitPageState.NONE -> Color(0xff839BB9)
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .layoutId("upper_cut")
             .fillMaxWidth()
             .height(219.dep())
             .background(
-                Color(0xff839BB9),
+                backgroundColor,
                 RoundedCornerShape(
                     bottomStart = 48.dep(),
 

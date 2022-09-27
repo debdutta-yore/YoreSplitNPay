@@ -9,20 +9,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import co.yore.splitnpay.libs.NotificationService
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.components.configuration.SplitButtonConfiguration
+import co.yore.splitnpay.libs.NotificationService
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.notifier
+import co.yore.splitnpay.models.DataIds
 
 
 @Composable
-fun SplitButton(
+fun FloatingSplitButton(
     config: SplitButtonConfiguration = SplitButtonConfiguration(),
     notifier: NotificationService = notifier()
 ) {
     FloatingActionButton(
-        onClick = {notifier.notify("split_page_button",null)},
+        onClick = {
+            notifier.notify(DataIds.split,null)
+        },
         backgroundColor = config.backgroundColor,
         contentColor = config.tint,
         modifier = Modifier

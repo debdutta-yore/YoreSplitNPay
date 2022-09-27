@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import co.yore.splitnpay.locals.localFullWidth
+import co.yore.splitnpay.locals.localDesignWidth
 
 @Composable
 fun ep(
@@ -40,11 +40,11 @@ fun sep(
 }
 
 @Composable
-fun Number.dep(fullWidth: Number = localFullWidth.current): Dp{
+fun Number.dep(fullWidth: Number = localDesignWidth.current): Dp{
     return dep(dimension = toFloat(),fullWidth = fullWidth.toFloat())
 }
 
 @Composable
-fun Number.sep(fullWidth: Number = localFullWidth.current): TextUnit{
+fun Number.sep(fullWidth: Number = localDesignWidth.current): TextUnit{
     return sep(dimension = toFloat(), fullWidth = fullWidth.toFloat())
 }

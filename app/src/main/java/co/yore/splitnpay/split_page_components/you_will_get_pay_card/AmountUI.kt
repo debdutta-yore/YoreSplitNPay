@@ -1,4 +1,4 @@
-package co.yore.splitnpay.split_page.you_will_get_pay_card
+package co.yore.splitnpay.split_page_components.you_will_get_pay_card
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
