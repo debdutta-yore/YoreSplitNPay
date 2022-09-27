@@ -5,16 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.libs.NotificationService
-import co.yore.splitnpay.libs.Resolver
 import co.yore.splitnpay.components.components.animated
-import co.yore.splitnpay.repo.Repo
-import co.yore.splitnpay.repo.RepoImpl
-import co.yore.splitnpay.libs.search
+import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
+import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.GroupData
 import co.yore.splitnpay.models.GroupOrContact
+import co.yore.splitnpay.repo.Repo
+import co.yore.splitnpay.repo.RepoImpl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -27,8 +25,9 @@ get() = ObservableMutableStateList(this)
 
 class SplitWithPageViewModel(
     private val repo: Repo = RepoImpl()
-): ViewModel() {
-    val resolver = Resolver()
+): ViewModel(), WirelessViewModelInterface {
+    override val navigation = mutableStateOf<UIScope?>(null)
+    override val resolver = Resolver()
     private val selectedContactIds = mutableStateListOf<Any>()
     private val groupsAndContacts = mutableStateListOf<GroupOrContact>()
     private val visibleGroupsAndContacts = mutableStateListOf<GroupOrContact>()
@@ -91,7 +90,7 @@ class SplitWithPageViewModel(
         }
     }
 
-    val notifier = _notificationService
+    override val notifier = _notificationService
     init {
         resolver[DataIds.textInput] = splitWithInput
         resolver[DataIds.groupsAndPeoples] = visibleGroupsAndContacts

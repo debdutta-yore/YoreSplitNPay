@@ -6,10 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.components.SplitPageTabs
-import co.yore.splitnpay.libs.NotificationService
-import co.yore.splitnpay.libs.Resolver
-import co.yore.splitnpay.libs.StatusBarColor
-import co.yore.splitnpay.libs.search
+import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
@@ -23,7 +20,8 @@ enum class SplitPageState{
 
 class SplitPageViewModel(
     private val repo: Repo = RepoImpl()
-): ViewModel() {
+): ViewModel(), WirelessViewModelInterface {
+    override val navigation = mutableStateOf<UIScope?>(null)
     private val _whole = mutableStateOf("4,000")
     private val _decimal = mutableStateOf("05")
     private val _wholeGet = mutableStateOf("2,000")
@@ -58,7 +56,7 @@ class SplitPageViewModel(
                 //Todo
             }
             DataIds.split ->{
-                //Todo
+                gotoSplitWithPage()
             }
             DataIds.groupCardGo ->{
                 //Todo
@@ -96,9 +94,16 @@ class SplitPageViewModel(
             }
         }
     }
-    val notifier = _notificationService
+
+    private fun gotoSplitWithPage() {
+        navigation.scope{ navHostController, lifecycleOwner, toaster ->
+            navHostController.navigate("split_with_page")
+        }
+    }
+
+    override val notifier = _notificationService
     private val _resolver = Resolver()
-    val resolver = _resolver
+    override val resolver = _resolver
     init {
         resolver.addAll(
             DataIds.whole to _whole,

@@ -12,10 +12,14 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import co.yore.splitnpay.libs.YorePage
 import co.yore.splitnpay.locals.localDesignWidth
 import co.yore.splitnpay.pages.AddMembersScreen_g5024t
-import co.yore.splitnpay.pages.SplitPageWithViewModel
+import co.yore.splitnpay.pages.SplitPage
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+import co.yore.splitnpay.viewModels.SplitPageViewModel
+import co.yore.splitnpay.viewModels.SplitWithPageViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -38,12 +42,25 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 "split_page"
                             ){
-                                SplitPageWithViewModel()
+                                YorePage(
+                                    navController,
+                                    suffix = "split_page",
+                                    wvm = viewModel<SplitPageViewModel>()
+                                ) {
+                                    SplitPage()
+                                }
                             }
                             composable(
-                                "add_member"
+                                "split_with_page"
                             ){
-                                AddMembersScreen_g5024t()
+                                YorePage(
+                                    navController,
+                                    suffix = "split_with_page",
+                                    wvm = viewModel<SplitWithPageViewModel>()
+                                ) {
+                                    AddMembersScreen_g5024t()
+                                }
+
                             }
                         }
                     }

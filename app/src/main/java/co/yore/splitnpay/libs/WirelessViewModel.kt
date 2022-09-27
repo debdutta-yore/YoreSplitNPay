@@ -1,10 +1,10 @@
 package co.yore.splitnpay.libs
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.State
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.navigation.NavHostController
+import co.yore.splitnpay.pages.BackHandle
 
 class Resolver{
     private val _map: MutableMap<Any,Any?> = mutableMapOf()
@@ -80,4 +80,31 @@ fun <T>safeTState(key: Any): State<T>? {
 @Composable
 fun notifier(): NotificationService {
     return LocalNotificationService.current
+}
+
+interface WirelessViewModelInterface{
+    val resolver: Resolver
+    val notifier: NotificationService
+    val navigation: MutableState<UIScope?>
+}
+
+@Composable
+fun YorePage(
+    navController: NavHostController,
+    suffix: String,
+    wvm: WirelessViewModelInterface,
+    content: @Composable () -> Unit
+) {
+    val owner = LocalLifecycleOwner.current
+    LaunchedEffect(key1 = wvm.navigation.value){
+        wvm.navigation.forward(navController,owner)
+    }
+    CompositionLocalProvider(
+        LocalResolver provides wvm.resolver,
+        LocalNotificationService provides wvm.notifier
+    ) {
+        StatusBarColorControl(suffix)
+        content()
+        BackHandle(suffix)
+    }
 }
