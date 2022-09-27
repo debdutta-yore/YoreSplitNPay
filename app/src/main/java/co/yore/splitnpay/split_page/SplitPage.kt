@@ -1,21 +1,20 @@
 package co.yore.splitnpay.split_page
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.max
 import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
@@ -48,38 +47,21 @@ class KeyboardStater{
 @OptIn(ExperimentalMotionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun SplitPage() {
-    CollapsibleBox(threshold = 0.05f){progress->
-        val ks = remember {
-            KeyboardStater()
-        }
-        val insetLength = WindowInsets.ime.getBottom(LocalDensity.current)
-        val height = LocalConfiguration.current.screenHeightDp*LocalDensity.current.density
-        val keyboardStat by remember(insetLength) {
-            derivedStateOf {
-                ks.process(insetLength)
-            }
-        }
-        var persistentKeyboardState by remember {
-            mutableStateOf(false)
-        }
-        LaunchedEffect(key1 = keyboardStat){
-            persistentKeyboardState = keyboardStat
-        }
-        val cp by remember {
-            derivedStateOf {
-                if(!persistentKeyboardState&&insetLength>0){
-                    insetLength/height
-                }
-            }
-        }
+    CollapsibleBox(
+        threshold = 0.05f,
+        keyboardAware = true,
+        insetAware = false
+    ){progress->
         val dep = 1.dep()
         MotionLayout(
             progress = progress,
             start = SplitPageStartConstraint(dep),
             end = SplitPageEndConstraint(dep),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
-            CollapsibleContents(progress)
+            CollapsibleContents(
+                progress = progress,
+            )
         }
     }
 }

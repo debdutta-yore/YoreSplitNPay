@@ -1,21 +1,22 @@
 package co.yore.splitnpay.components.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -28,10 +29,9 @@ import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
-import co.yore.splitnpay.libs.dep
-import co.yore.splitnpay.libs.sep
-import co.yore.splitnpay.libs.splitted
+import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
+import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.GroupData
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
@@ -45,8 +45,60 @@ fun GroupCard_0msq1z(
     modifier: Modifier = Modifier,
     data: GroupData,
     config: GroupCardConfiguration = GroupCardConfiguration(),
-    contentDescription: String
+    selected: Boolean = false,
+    contentDescription: String,
+    notifier: NotificationService = notifier()
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    var isCheckBoxPressed by remember(selected) {
+        mutableStateOf(selected)
+    }
+
+    val focused by remember(selected,isPressed,isCheckBoxPressed) {
+        derivedStateOf {
+            selected||isPressed||isCheckBoxPressed
+        }
+    }
+
+    val computedBackgroundColor by remember(config) {
+        derivedStateOf{
+            if (focused)
+                config.cardBackgroundColor
+            else
+                config.cardUnselectedColor
+        }
+    }
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = computedBackgroundColor,
+        animationSpec = tween(700)
+    )
+    val computedBorderStroke by remember(config) {
+        derivedStateOf{
+            if (focused)
+                config.borderStroke
+            else
+                0f
+        }
+    }
+    val animatedBorderStroke by animateFloatAsState(
+        targetValue = computedBorderStroke,
+        animationSpec = tween(700)
+    )
+    val computedStrokeColor by remember(config) {
+        derivedStateOf {
+            if(selected||isPressed||isCheckBoxPressed){
+                config.borderColor
+            }
+            else{
+                Color.Transparent
+            }
+        }
+    }
+    val animatedStrokeColor by animateColorAsState(
+        targetValue = computedStrokeColor,
+        tween(700)
+    )
     Box(
         modifier = modifier
             .semantics { this.contentDescription = contentDescription }
@@ -62,8 +114,19 @@ fun GroupCard_0msq1z(
             .clip(
                 RoundedCornerShape(config.cornerRadius.dep())
             )
+            .clickable(
+                interactionSource = interactionSource,
+                indication = LocalIndication.current
+            ) {
+                notifier.notify(DataIds.checkItem, data.id)
+            }
+            .border(
+                width = animatedBorderStroke.dep(),
+                color = animatedStrokeColor,
+                shape = RoundedCornerShape(config.cornerRadius.dep())
+            )
             .background(
-                config.backGroundColor,
+                animatedBackgroundColor,
                 shape = RoundedCornerShape(config.cornerRadius.dep())
             ),
     ) {
@@ -122,7 +185,8 @@ fun GroupCard_0msq1z(
                                 .align(Alignment.CenterHorizontally)
                                 .wrapContentWidth()
                                 .fillMaxHeight(),
-                            verticalArrangement = Arrangement.Center
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.End
                         ) {
                             if (data.willGet > 0) {
                                 val willGetSplitted by remember(data.willGet) {
@@ -157,7 +221,9 @@ fun GroupCard_0msq1z(
                 ArrowButton_ohezqf(contentDescription = "arrow ",
                     pressed = false,
                     onClicked = { },
-                    onPressed = {}
+                    onPressed = {
+                        isCheckBoxPressed = it
+                    }
                 )
             /*}*/
         }

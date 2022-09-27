@@ -166,13 +166,12 @@ fun Contents(
             targetState = selectedIndex,
             animationSpec = tween(durationMillis = 700)
         ) {
-            if(it==0){
-                suffix("group"){
+            if (it == 0) {
+                suffix("group") {
                     GroupsChildPage()
                 }
-            }
-            else{
-                suffix("people"){
+            } else {
+                suffix("people") {
                     PeoplesChildPage()
                 }
             }
@@ -185,48 +184,49 @@ fun GroupsChildPage(
     groups: List<GroupOrContact> = listState(DataIds.groupsAndPeoples),
     nogroup: Boolean = boolState(DataIds.noGroup).value
 ) {
-    if(nogroup){
+    if (nogroup) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopCenter
-        ){
+        ) {
             NoGroupsContent()
         }
-    }
-    else{
-        if(groups.isEmpty()){
-            NothingFoundUI()
-        }
-        else{
-            Column(
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .padding(
+                        start = 18.dep(),
+                        bottom = 21.dep()
+                    )
+                    .height(40.dep()),
+                //horizontalArrangement = Arrangement.spacedBy(11.dep()),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(
-                            start = 18.dep(),
-                            bottom = 21.dep()
-                        )
-                        .height(40.dep()),
-                    //horizontalArrangement = Arrangement.spacedBy(11.dep()),
+                        .fillMaxHeight(),
+                    horizontalArrangement = Arrangement.spacedBy(7.dep()),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxHeight(),
-                        horizontalArrangement = Arrangement.spacedBy(7.dep()),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        GiveTakeTypeTabs()
-                    }
-
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f))
-                    16.sx()
-                    AddGroupButton_kbf1at()
+                    GiveTakeTypeTabs()
                 }
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+                AddGroupButton_kbf1at()
+                16.sx()
+            }
+            if(groups.isEmpty()){
+                NothingFoundUI()
+            }
+            else{
                 LazyColumn(
                     modifier = Modifier.fadingEdge(),
                     contentPadding = PaddingValues(
@@ -236,7 +236,7 @@ fun GroupsChildPage(
                     )
                 ) {
                     items(groups, key = { it.id() }) {
-                        if(it is GroupData){
+                        if (it is GroupData) {
                             GroupCard_0msq1z(
                                 modifier = Modifier.padding(top = 13.dep()),
                                 contentDescription = "",
@@ -289,7 +289,7 @@ fun GiveTakeTypeTabs(
         currentTab = SplitPageTabs.All,
         contentDescription = "all"
     ) {
-        notifier.notify(notificationId,SplitPageTabs.All)
+        notifier.notify(notificationId, SplitPageTabs.All)
     }
     SplitTabItem_89keto(
         text = "You owe",
@@ -297,7 +297,7 @@ fun GiveTakeTypeTabs(
         currentTab = SplitPageTabs.YouOwe,
         contentDescription = "you_owe"
     ) {
-        notifier.notify(notificationId,SplitPageTabs.YouOwe)
+        notifier.notify(notificationId, SplitPageTabs.YouOwe)
     }
     SplitTabItem_89keto(
         text = "You are owed",
@@ -305,7 +305,7 @@ fun GiveTakeTypeTabs(
         currentTab = SplitPageTabs.YouAreOwed,
         contentDescription = "you_are_owed"
     ) {
-        notifier.notify(notificationId,SplitPageTabs.YouAreOwed)
+        notifier.notify(notificationId, SplitPageTabs.YouAreOwed)
     }
 }
 
@@ -333,7 +333,7 @@ fun FriendsContent(
                 it.id()
             }
         ) {
-            if(it is ContactData){
+            if (it is ContactData) {
                 PeopleCard_eq3k8h(
                     modifier = Modifier
                         .animateItemPlacement()
@@ -362,7 +362,6 @@ fun NoGroupsContent() {
         GroupCreationButton()
     }
 }
-
 
 
 @Composable
@@ -399,7 +398,6 @@ fun NoGroupHasBeenCreatedYet(
         fontSize = config.fontSize.sep()
     )
 }
-
 
 
 @Composable
@@ -501,7 +499,6 @@ fun HeaderAndSearchBar(
 }
 
 
-
 @Composable
 fun BoxScope.SearchBar(
     config: SearchBarConfiguration = SearchBarConfiguration()
@@ -518,7 +515,6 @@ fun BoxScope.SearchBar(
         )
     }
 }
-
 
 
 @Composable
@@ -688,7 +684,6 @@ fun HeaderContentAndCards(
 }
 
 
-
 @Composable
 fun CollapsedCards(
     progress: Float,
@@ -802,7 +797,6 @@ fun YouWillGetPayCollapsedCard(
 }
 
 
-
 @Composable
 fun HeaderContentWithSpace(
     progress: Float,
@@ -813,7 +807,6 @@ fun HeaderContentWithSpace(
         HeaderContent()
     }
 }
-
 
 
 @Composable
@@ -888,7 +881,6 @@ fun HeaderUpperCutShape(
         content()
     }
 }
-
 
 
 @Composable

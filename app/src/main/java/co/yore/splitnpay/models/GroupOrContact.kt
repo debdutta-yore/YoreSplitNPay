@@ -49,7 +49,7 @@ data class GroupData(
     val memberImages: List<Any?>,
     val willGet: Float = 0.0f,
     val willPay: Float = 0.0f,
-    val showGroupBalance: Boolean = willGet>0f&&willPay>0f,
+    val showGroupBalance: Boolean = willGet>0f||willPay>0f,
     val lastActivity: Long = 0
 ): GroupOrContact {
     override fun id(): Any {

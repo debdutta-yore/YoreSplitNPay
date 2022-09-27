@@ -355,7 +355,8 @@ fun PeopleCard_eq3k8h(
             }
             Column(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
+                    .align(Alignment.Top)
+                    .padding(top = 7.dep())
                     .wrapContentWidth(),
                 horizontalAlignment = Alignment.End,
             ) {

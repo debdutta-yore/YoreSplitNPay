@@ -22,20 +22,23 @@ class RepoImpl:Repo {
 
     override suspend fun groups(): List<GroupData> {
         val f = Faker()
-        val r = Random(0)
+        val r = Random(System.nanoTime())
         var i = 0
-        return MutableList(10){
+        return MutableList(50){
             val images = MutableList(r.nextInt(1,7)){
                 "https://randomuser.me/api/portraits/men/${i+it}.jpg"
             }
+            val willGet = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f)
+            val willPay = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f)
+            val name = f.animal.name()
             GroupData(
                 id = newId,
-                name = f.animal.name(),
+                name = name,
                 image = "https://randomuser.me/api/portraits/lego/${(++i)%10}.jpg",
                 memberImages = images,
                 lastActivity = randomDate(1643049000000L,1664099455386L),
-                willGet = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f),
-                willPay = Rand.nextFloat(0f,1000f, reseed = true, biased = 0f),
+                willGet = willGet,
+                willPay = willPay,
             )
         }
     }

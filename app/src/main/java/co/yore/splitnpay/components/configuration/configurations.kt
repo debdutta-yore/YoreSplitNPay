@@ -422,6 +422,10 @@ data class GroupCardConfiguration(
     val groupBalanceTopPadding: Float = 21f,
     val groupBalanceFontSize: Float = 10f,
     val cardPaddingTop: Float = 17f,
+    val cardBackgroundColor: Color = Color(0xffEDF5FF),
+    val cardUnselectedColor: Color = Color.White,
+    val borderStroke: Float = 1f,
+    val borderColor: Color = Bluish,
 )
 
 data class NoGroupHasBeenCreatedYetConfiguration(

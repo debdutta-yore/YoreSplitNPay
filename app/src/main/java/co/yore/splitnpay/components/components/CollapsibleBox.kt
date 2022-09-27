@@ -1,18 +1,13 @@
 package co.yore.splitnpay.components.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -26,16 +21,65 @@ enum class SwipingStates {
     COLLAPSED
 }
 
+class DragRecord{
+    private var prev = 0
+    fun current(value: Int):Int{
+        val r = prev - value
+        var dir = 0
+        if(r<0){
+            dir = -1
+        }
+        if(r>0){
+            dir = 1
+        }
+        prev = value
+        return dir
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CollapsibleBox(
     modifier: Modifier = Modifier,
     threshold: Float = 0.5f,
+    keyboardAware: Boolean = false,
+    insetAware: Boolean = keyboardAware,
     content: @Composable BoxScope.(Float) -> Unit
 ){
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
+    if(keyboardAware){
+        val insetLength = WindowInsets.ime.getBottom(LocalDensity.current)
+        val record = remember {
+            DragRecord()
+        }
+        LaunchedEffect(key1 = insetLength){
+            val d = record.current(insetLength)
+            if(d<0){
+                swipingState.animateTo(
+                    SwipingStates.COLLAPSED,
+                    anim = tween(2000)
+                )
+                return@LaunchedEffect
+            }
+            if(d>0){
+                swipingState.animateTo(
+                    SwipingStates.EXPANDED,
+                    anim = tween(2000)
+                )
+                return@LaunchedEffect
+            }
+        }
+    }
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .then(
+                if(insetAware)
+                    Modifier.safeDrawingPadding()
+                else
+                    Modifier
+            )
+        ,
     ) {
         val heightInPx = with(LocalDensity.current) { maxHeight.toPx() }
         val connection = remember {
@@ -72,7 +116,6 @@ fun CollapsibleBox(
                 private fun Float.toOffset() = Offset(0f, this)
             }
         }
-
         Box(
             modifier = modifier
                 .swipeable(
