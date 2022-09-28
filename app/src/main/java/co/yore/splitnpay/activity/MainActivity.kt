@@ -25,6 +25,7 @@ import co.yore.splitnpay.viewModels.SplitPageViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
+
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
@@ -35,7 +36,9 @@ class MainActivity : ComponentActivity() {
             YoreSplitNPayTheme {
                 CompositionLocalProvider(localDesignWidth provides 360f) {
                     Surface(
-                        modifier = Modifier.safeDrawingPadding().fillMaxSize(),
+                        modifier = Modifier
+                            .safeDrawingPadding()
+                            .fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
                         val splitPageViewModel: SplitPageViewModel = viewModel()
@@ -71,6 +74,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 
 
