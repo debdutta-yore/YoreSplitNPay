@@ -46,7 +46,7 @@ data class GroupData(
     val id: Any,
     val image: Any?,
     val name: String,
-    val memberImages: List<Any?>,
+    val members: List<ContactData>,
     val willGet: Float = 0.0f,
     val willPay: Float = 0.0f,
     val showGroupBalance: Boolean = willGet>0f||willPay>0f,

@@ -24,7 +24,7 @@ data class ObservableMutableStateList<T>(
 val <T>SnapshotStateList<T>.observable
 get() = ObservableMutableStateList(this)
 
-class SplitWithPageViewModel(
+class MemberSelectionPageViewModel(
     private val repo: Repo = RepoImpl()
 ): ViewModel(), WirelessViewModelInterface {
     override val navigation = mutableStateOf<UIScope?>(null)
@@ -65,6 +65,24 @@ class SplitWithPageViewModel(
                 proceedWithContacts.value = selectedContactIds.isNotEmpty()
             }
             DataIds.checkItem->{
+                if(arg==null){
+                    return@NotificationService
+                }
+                if(selectedContactIds.contains(arg)){
+                    selectedContactIds.remove(arg)
+                    addedContacts.remove {
+                        it.id==arg
+                    }
+                }
+                else{
+                    selectedContactIds.add(arg)
+                    addedContacts.add(groupsAndContacts.first {
+                        (it is ContactData && it.id()==arg)
+                    } as ContactData)
+                }
+                proceedWithContacts.value = selectedContactIds.isNotEmpty()
+            }
+            DataIds.checkGroupItem->{
                 if(arg==null){
                     return@NotificationService
                 }

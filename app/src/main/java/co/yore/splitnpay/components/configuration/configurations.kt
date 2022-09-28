@@ -419,7 +419,13 @@ data class GroupCardConfiguration(
     val cardUnselectedColor: Color = Color.White,
     val borderStroke: Float = 1f,
     val borderColor: Color = Bluish,
-)
+    val checkable: Boolean = false,
+){
+    companion object{
+        val checked = GroupCardConfiguration(checkable = true)
+        val unchecked = GroupCardConfiguration(checkable = false)
+    }
+}
 
 data class NoGroupHasBeenCreatedYetConfiguration(
     val stringId: Int = R.string.no_group_has_been_created_yet,

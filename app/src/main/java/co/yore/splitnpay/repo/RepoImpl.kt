@@ -12,7 +12,7 @@ import kotlin.random.Random
 class RepoImpl:Repo {
     override suspend fun groupAndContacts(): List<GroupOrContact> {
         val contacts = peoples()
-        val groups = groups()
+        val groups = groups(contacts)
         val list = mutableListOf<GroupOrContact>()
         list.addAll(contacts)
         list.addAll(groups)
@@ -20,14 +20,12 @@ class RepoImpl:Repo {
         return list
     }
 
-    override suspend fun groups(): List<GroupData> {
+    override suspend fun groups(contacts: List<ContactData>): List<GroupData> {
         val f = Faker()
         val r = Random(System.nanoTime())
         var i = 0
         return MutableList(50){
-            val images = MutableList(r.nextInt(1,7)){
-                "https://randomuser.me/api/portraits/men/${i+it}.jpg"
-            }
+            val members = contacts.takeSome(2,5).toList()
             val willGet = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f)
             val willPay = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f)
             val name = f.animal.name()
@@ -35,7 +33,7 @@ class RepoImpl:Repo {
                 id = newId,
                 name = name,
                 image = "https://randomuser.me/api/portraits/lego/${(++i)%10}.jpg",
-                memberImages = images,
+                members = members,
                 lastActivity = randomDate(1643049000000L,1664099455386L),
                 willGet = willGet,
                 willPay = willPay,
@@ -61,4 +59,12 @@ class RepoImpl:Repo {
     }
 
     private val newId get() = UUID.randomUUID().toString()
+}
+
+fun <T>Collection<T>.takeSome(min: Int, max: Int): Collection<T>{
+    val count = (Random(System.nanoTime()).nextInt())*(max-min)+min
+    val indices = (0..this.size).toList().shuffled()
+    return indices.take(count).map {
+        this.elementAt(it)
+    }
 }

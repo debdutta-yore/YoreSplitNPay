@@ -6,6 +6,6 @@ import co.yore.splitnpay.models.GroupOrContact
 
 interface Repo {
     suspend fun groupAndContacts(): List<GroupOrContact>
-    suspend fun groups(): List<GroupData>
+    suspend fun groups(contacts: List<ContactData>): List<GroupData>
     suspend fun peoples(): List<ContactData>
 }

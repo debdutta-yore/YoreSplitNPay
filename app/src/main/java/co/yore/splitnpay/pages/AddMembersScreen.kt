@@ -233,7 +233,7 @@ fun TopBarWithIcon_1t9xbo(
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun AddMembersScreen_g5024t(
+fun MemberSelectionPage_g5024t(
 
 ) {
     val sheetState = rememberModalBottomSheetState(

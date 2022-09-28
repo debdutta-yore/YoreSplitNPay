@@ -29,6 +29,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
+import co.yore.splitnpay.addmembers.CheckBoxIcon_b6qwbf
 import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
@@ -46,7 +47,7 @@ import coil.request.ImageRequest
 fun GroupCard_0msq1z(
     modifier: Modifier = Modifier,
     data: GroupData,
-    config: GroupCardConfiguration = GroupCardConfiguration(),
+    config: GroupCardConfiguration = GroupCardConfiguration.checked,
     selected: Boolean = false,
     contentDescription: String,
     notifier: NotificationService = notifier()
@@ -167,7 +168,7 @@ fun GroupCard_0msq1z(
                     config.groupNameProfileImagesGap.sy()
 
                     GroupMemberProfilePics(
-                        data.memberImages
+                        data.members
                     )
                 }
                 Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
@@ -222,7 +223,7 @@ fun GroupCard_0msq1z(
 
                 config.arrowButtonLeftPadding.sx()
 
-                ArrowButton_ohezqf(contentDescription = "arrow ",
+                /*ArrowButton_ohezqf(contentDescription = "arrow ",
                     pressed = false,
                     onClicked = {
                         notifier.notify(DataIds.groupCardGo,data)
@@ -230,8 +231,39 @@ fun GroupCard_0msq1z(
                     onPressed = {
                         isCheckBoxPressed = it
                     }
+                )*/
+            if(config.checkable){
+                Box(
+                    modifier = Modifier
+                        .padding(end = 23.dep()),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    CheckBoxIcon_b6qwbf(
+                        selected = focused,
+                        contentDescription = "",
+                        onClick = {
+                            notifier.notify(DataIds.checkGroupItem, data.id)
+                        },
+                        onPressed = {
+                            isCheckBoxPressed = it
+                        }
+                    )
+                }
+            }
+            else{
+                ArrowButton_ohezqf(
+                    modifier = Modifier.align(CenterVertically),
+                    contentDescription = "",
+                    pressed = focused,
+                    onClicked = {
+                        notifier.notify(DataIds.groupCardGo,data)
+                    },
+                    onPressed = {
+                        isCheckBoxPressed = it
+                    }
                 )
-            /*}*/
+                14.sx()
+            }
         }
     }
 }

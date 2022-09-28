@@ -255,37 +255,43 @@ fun Modifier.clickable(
     }
 )
 
+data class NavAnimation @OptIn(ExperimentalAnimationApi::class) constructor(
+    val duration: Int = 700,
+    val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = {
+        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(duration))
+
+    },
+    val exitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = {
+        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(duration))
+    },
+    val popEnterTransition: (
+    AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?
+    )? = {
+        slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(duration))
+    },
+    val popExitTransition: (
+    AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?
+    )? = {
+        slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(duration))
+    },
+)
+
 @ExperimentalAnimationApi
 public fun NavGraphBuilder.yoreComposable(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = {
-        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
-    },
-    exitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = {
-        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
-    },
-    popEnterTransition: (
-    AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?
-    )? = {
-        slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))
-    },
-    popExitTransition: (
-    AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?
-    )? = {
-        slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))
-    },
+    navAnimation: NavAnimation = NavAnimation(),
     content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
 ){
     composable(
         route,
         arguments,
         deepLinks,
-        enterTransition,
-        exitTransition,
-        popEnterTransition,
-        popExitTransition,
+        navAnimation.enterTransition,
+        navAnimation.exitTransition,
+        navAnimation.popEnterTransition,
+        navAnimation.popExitTransition,
         content
     )
 }

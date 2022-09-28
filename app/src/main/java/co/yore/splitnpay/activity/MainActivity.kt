@@ -17,11 +17,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import co.yore.splitnpay.libs.YorePage
 import co.yore.splitnpay.libs.yoreComposable
 import co.yore.splitnpay.locals.localDesignWidth
-import co.yore.splitnpay.pages.AddMembersScreen_g5024t
+import co.yore.splitnpay.pages.MemberSelectionPage_g5024t
 import co.yore.splitnpay.pages.SplitPage
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+import co.yore.splitnpay.viewModels.MemberSelectionPageViewModel
 import co.yore.splitnpay.viewModels.SplitPageViewModel
-import co.yore.splitnpay.viewModels.SplitWithPageViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colors.background,
                     ) {
                         val splitPageViewModel: SplitPageViewModel = viewModel()
-                        val splitWithPageViewModel: SplitWithPageViewModel = viewModel()
+                        val splitWithPageViewModel: MemberSelectionPageViewModel = viewModel()
                         val navController = rememberAnimatedNavController()
                         AnimatedNavHost(navController, startDestination = "split_page") {
                             yoreComposable(
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                                     suffix = "split_with_page",
                                     wvm = splitWithPageViewModel
                                 ) {
-                                    AddMembersScreen_g5024t()
+                                    MemberSelectionPage_g5024t()
                                 }
                             }
                         }
