@@ -1,5 +1,7 @@
 package co.yore.splitnpay.libs
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.rememberRipple
@@ -14,7 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDeepLink
+import androidx.navigation.NavGraphBuilder
 import co.yore.splitnpay.models.DataIds
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.text.DecimalFormat
 import java.util.concurrent.ThreadLocalRandom
@@ -105,7 +112,11 @@ operator fun Number.times(dp: Dp): Dp {
     return (this.toFloat()*dp.value).dp
 }
 
-fun Color.Companion.blend(color1: Color, color2: Color, progress: Float): Color{
+fun Color.Companion.blend(
+    color1: Color,
+    color2: Color,
+    progress: Float
+): Color{
     val r1 = color1.red
     val g1 = color1.green
     val b1 = color1.blue
@@ -243,3 +254,38 @@ fun Modifier.clickable(
             )
     }
 )
+
+@ExperimentalAnimationApi
+public fun NavGraphBuilder.yoreComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = {
+        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+    },
+    exitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = {
+        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+    },
+    popEnterTransition: (
+    AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?
+    )? = {
+        slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))
+    },
+    popExitTransition: (
+    AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?
+    )? = {
+        slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))
+    },
+    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
+){
+    composable(
+        route,
+        arguments,
+        deepLinks,
+        enterTransition,
+        exitTransition,
+        popEnterTransition,
+        popExitTransition,
+        content
+    )
+}
