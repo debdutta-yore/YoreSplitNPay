@@ -50,6 +50,7 @@ import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.GreyShadow
 import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.viewModels.TriState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -86,7 +87,8 @@ fun ProfileImage_2hf7q0(
 
 @Composable
 fun CheckBoxIcon_b6qwbf(
-    selected: Boolean,
+    modifier: Modifier = Modifier,
+    selected: TriState,
     contentDescription: String,
     config: CheckboxConfiguration = CheckboxConfiguration(),
     onPressed: (Boolean)->Unit,
@@ -99,7 +101,7 @@ fun CheckBoxIcon_b6qwbf(
     }
     val computedBackgroundColor by remember(selected,config) {
         derivedStateOf{
-            if (selected)
+            if (selected==TriState.CHECKED)
                 config.iconColor
             else
                 Color.White
@@ -113,7 +115,7 @@ fun CheckBoxIcon_b6qwbf(
     )
     val computedBorderStroke by remember(selected) {
         derivedStateOf {
-            if (selected) 0f else 1f
+            if (selected==TriState.CHECKED) 0f else 1f
         }
     }
     val animatedBorderStroke by animateFloatAsState(
@@ -121,7 +123,7 @@ fun CheckBoxIcon_b6qwbf(
         animationSpec = tween(700)
     )
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(config.iconSize.dep())
             .clip(RoundedCornerShape(config.cornerRadius.dep()))
             .background(animatedBackgroundColor)
@@ -138,13 +140,24 @@ fun CheckBoxIcon_b6qwbf(
             }
             .semantics { this.contentDescription = contentDescription }
     ) {
-        Icon(
-            modifier = Modifier
-                .align(Center),
-            painter = painterResource(config.icon),
-            contentDescription = "check icon",
-            tint = Color.White
-        )
+        if(selected==TriState.INTERMEDIATE){
+            Icon(
+                modifier = Modifier
+                    .align(Center),
+                painter = painterResource(R.drawable.square),
+                contentDescription = "check icon",
+                tint = config.iconColor
+            )
+        }
+        else{
+            Icon(
+                modifier = Modifier
+                    .align(Center),
+                painter = painterResource(config.icon),
+                contentDescription = "check icon",
+                tint = Color.White
+            )
+        }
     }
 }
 
@@ -223,15 +236,21 @@ fun PeopleCard_eq3k8h(
     config: PeopleCardConfiguration = PeopleCardConfiguration(),
     notifier: NotificationService = notifier()
 ) {
+    var _selected by remember {
+        mutableStateOf(selected)
+    }
+    LaunchedEffect(key1 = selected){
+        _selected = selected
+    }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     var isCheckBoxPressed by remember(selected) {
         mutableStateOf(selected)
     }
 
-    val focused by remember(selected,isPressed,isCheckBoxPressed) {
+    val focused by remember {
         derivedStateOf {
-            selected||isPressed||isCheckBoxPressed
+            _selected||isPressed||isCheckBoxPressed
         }
     }
 
@@ -261,7 +280,7 @@ fun PeopleCard_eq3k8h(
     )
     val computedStrokeColor by remember(config) {
         derivedStateOf {
-            if(selected||isPressed||isCheckBoxPressed){
+            if(focused){
                 config.borderColor
             }
             else{
@@ -295,7 +314,7 @@ fun PeopleCard_eq3k8h(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current
             ) {
-                notifier.notify(DataIds.peopleCard, data.id)
+                notifier.notify(DataIds.checkItem, data.id)
             }
             .border(
                 width = animatedBorderStroke.dep(),
@@ -400,26 +419,21 @@ fun PeopleCard_eq3k8h(
             }
             25.sx()
             if(config.checkable){
-                Box(
-                    modifier = Modifier
-                        .padding(end = 23.dep()),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    CheckBoxIcon_b6qwbf(
-                        selected = focused,
-                        contentDescription = checkBoxContentDescription,
-                        onClick = {
-                            notifier.notify(DataIds.checkItem, data.id)
-                        },
-                        onPressed = {
-                            isCheckBoxPressed = it
-                        }
-                    )
-                }
+                CheckBoxIcon_b6qwbf(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    selected = if(selected) TriState.CHECKED else TriState.UNCHECKED,
+                    contentDescription = checkBoxContentDescription,
+                    onClick = {
+                        notifier.notify(DataIds.checkItem, data.id)
+                    },
+                    onPressed = {
+                        isCheckBoxPressed = it
+                    }
+                )
+                14.sx()
             }
             else{
                 ArrowButton_ohezqf(
-                    modifier = Modifier.align(Alignment.CenterVertically),
                     contentDescription = "",
                     pressed = focused,
                     onClicked = {

@@ -3,17 +3,13 @@ package co.yore.splitnpay.components.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -40,6 +36,7 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.GroupData
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
+import co.yore.splitnpay.viewModels.TriState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -47,20 +44,26 @@ import coil.request.ImageRequest
 fun GroupCard_0msq1z(
     modifier: Modifier = Modifier,
     data: GroupData,
-    config: GroupCardConfiguration = GroupCardConfiguration.checked,
-    selected: Boolean = false,
+    config: GroupCardConfiguration,
+    selected: TriState = TriState.UNCHECKED,
     contentDescription: String,
     notifier: NotificationService = notifier()
 ) {
+    var _selected by remember {
+        mutableStateOf(selected)
+    }
+    LaunchedEffect(key1 = selected){
+        _selected = selected
+    }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     var isCheckBoxPressed by remember(selected) {
-        mutableStateOf(selected)
+        mutableStateOf(false)
     }
 
-    val focused by remember(selected,isPressed,isCheckBoxPressed) {
+    val focused by remember {
         derivedStateOf {
-            selected||isPressed||isCheckBoxPressed
+            (_selected==TriState.CHECKED)||isPressed||isCheckBoxPressed
         }
     }
 
@@ -90,7 +93,7 @@ fun GroupCard_0msq1z(
     )
     val computedStrokeColor by remember(config) {
         derivedStateOf {
-            if(selected||isPressed||isCheckBoxPressed){
+            if(focused){
                 config.borderColor
             }
             else{
@@ -119,11 +122,9 @@ fun GroupCard_0msq1z(
             )
             .clickable(
                 interactionSource = interactionSource,
-                indication = rememberRipple(
-                    color = config.cardBackgroundColor
-                )
+                indication = LocalIndication.current
             ) {
-                notifier.notify(DataIds.groupCard, data.id)
+                notifier.notify(DataIds.checkGroupItem, data.id)
             }
             .border(
                 width = animatedBorderStroke.dep(),
@@ -168,10 +169,12 @@ fun GroupCard_0msq1z(
                     config.groupNameProfileImagesGap.sy()
 
                     GroupMemberProfilePics(
-                        data.members
+                        data.members.map { it.image }
                     )
                 }
-                Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f))
 
                 if(data.showGroupBalance){
                     Column(
@@ -223,7 +226,21 @@ fun GroupCard_0msq1z(
 
                 config.arrowButtonLeftPadding.sx()
 
-                /*ArrowButton_ohezqf(contentDescription = "arrow ",
+
+            if(config.checkable){
+                CheckBoxIcon_b6qwbf(
+                    selected = selected,
+                    contentDescription = "",
+                    onClick = {
+                        notifier.notify(DataIds.checkGroupItem, data.id)
+                    },
+                    onPressed = {
+                        isCheckBoxPressed = it
+                    }
+                )
+            }
+            else{
+                ArrowButton_ohezqf(contentDescription = "arrow ",
                     pressed = false,
                     onClicked = {
                         notifier.notify(DataIds.groupCardGo,data)
@@ -231,38 +248,7 @@ fun GroupCard_0msq1z(
                     onPressed = {
                         isCheckBoxPressed = it
                     }
-                )*/
-            if(config.checkable){
-                Box(
-                    modifier = Modifier
-                        .padding(end = 23.dep()),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    CheckBoxIcon_b6qwbf(
-                        selected = focused,
-                        contentDescription = "",
-                        onClick = {
-                            notifier.notify(DataIds.checkGroupItem, data.id)
-                        },
-                        onPressed = {
-                            isCheckBoxPressed = it
-                        }
-                    )
-                }
-            }
-            else{
-                ArrowButton_ohezqf(
-                    modifier = Modifier.align(CenterVertically),
-                    contentDescription = "",
-                    pressed = focused,
-                    onClicked = {
-                        notifier.notify(DataIds.groupCardGo,data)
-                    },
-                    onPressed = {
-                        isCheckBoxPressed = it
-                    }
                 )
-                14.sx()
             }
         }
     }

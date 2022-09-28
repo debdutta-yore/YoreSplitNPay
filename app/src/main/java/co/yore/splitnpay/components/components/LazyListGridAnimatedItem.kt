@@ -20,7 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 data class VisibleItem<T>(
     val visible: Boolean,
@@ -35,9 +38,13 @@ data class VisibleItem<T>(
     }
 }
 
-class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = false){
+class VisibilityList<T>(
+    core: SnapshotStateList<T>,
+    initialAnimated: Boolean = false,
+    val identify: (T)->Any
+){
     private var _originalSize = mutableStateOf(0)
-    private val visibilityList = mutableStateListOf<VisibleItem<T>>()
+    private val _visibilityList = mutableStateListOf<VisibleItem<T>>()
         .apply {
             val state = if(initialAnimated)
                 VisibleItem.State.ADDING
@@ -56,14 +63,14 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
             _originalSize.value = core.size
         }
     val actualSize
-        get() = visibilityList.size
+        get() = _visibilityList.size
     val size
         get() = _originalSize
     val list: SnapshotStateList<VisibleItem<T>>
-        get() = visibilityList
+        get() = _visibilityList
 
     fun add(item: T){
-        visibilityList.add(
+        _visibilityList.add(
             VisibleItem(
                 visible = false,
                 data = item,
@@ -79,7 +86,7 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
         else
             VisibleItem.State.ADDED
         val visible = !initialAnimated
-        visibilityList.addAll(items.map {
+        _visibilityList.addAll(items.map {
             VisibleItem(
                 visible = visible,
                 data = it,
@@ -90,15 +97,15 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
     }
 
     operator fun set(index: Int, item: T){
-        val size = visibilityList.size
+        val size = _visibilityList.size
         if(index in 0 until size){
-            val visibleItem = visibilityList[index]
-            visibilityList[index] = visibleItem.copy(data = item)
+            val visibleItem = _visibilityList[index]
+            _visibilityList[index] = visibleItem.copy(data = item)
         }
     }
 
     fun add(index: Int, item: T){
-        visibilityList.add(index, VisibleItem(
+        _visibilityList.add(index, VisibleItem(
             visible = false,
             data = item,
             state = VisibleItem.State.ADDING
@@ -108,11 +115,11 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
     }
 
     fun remove(item: T): T?{
-        val index = visibilityList.indexOfFirst {
-            it.data == item
+        val index = _visibilityList.indexOfFirst {
+            identify(it.data) == identify(item)
         }
         if(index > -1){
-            visibilityList[index] = VisibleItem(
+            _visibilityList[index] = VisibleItem(
                 visible = false,
                 data = item,
                 state = VisibleItem.State.REMOVING
@@ -124,12 +131,12 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
     }
 
     fun remove(block: (T)->Boolean): T?{
-        val index = visibilityList.indexOfFirst {
+        val index = _visibilityList.indexOfFirst {
             block(it.data)
         }
         if(index > -1){
-            val item = visibilityList[index]
-            visibilityList[index] = VisibleItem(
+            val item = _visibilityList[index]
+            _visibilityList[index] = VisibleItem(
                 visible = false,
                 data = item.data,
                 state = VisibleItem.State.REMOVING
@@ -141,9 +148,9 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
     }
 
     fun makeVisible(item: VisibleItem<T>){
-        val index = visibilityList.indexOf(item)
+        val index = _visibilityList.indexOf(item)
         if(index > -1){
-            visibilityList[index] = item.copy(
+            _visibilityList[index] = item.copy(
                 visible = true,
                 data = item.data,
                 state = VisibleItem.State.ADDED
@@ -151,57 +158,82 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
         }
     }
 
-    fun makeInvisible(item: VisibleItem<T>){
-        val index = visibilityList.indexOf(item)
+    fun makeInvisible(item: VisibleItem<T>, duration: Long){
+        val index = _visibilityList.indexOf(item)
         if(index > -1){
-            visibilityList[index] = item.copy(
+            _visibilityList[index] = item.copy(
                 visible = false,
                 data = item.data,
                 state = VisibleItem.State.REMOVED
             )
+            deleteAsync(item,duration)
+        }
+    }
+
+    private var _deleting = false
+    private val _deleteQue = mutableListOf<VisibleItem<T>>()
+    private fun deleteAsync(item: VisibleItem<T>, duration: Long) {
+        _deleteQue.add(item)
+        if(_deleting){
+            return
+        }
+        _deleting = true
+        CoroutineScope(Dispatchers.IO).launch {
+            if(duration>0){
+                delay(duration)
+                while(_deleteQue.size>0){
+                    val _d = _deleteQue.removeAt(0)
+                    dont_touch___delete(_d)
+                }
+                _deleting = false
+            }
         }
     }
 
     fun dont_touch___delete(item: VisibleItem<T>) {
-        val index = visibilityList.indexOfFirst {
-            it.data==item.data
+        val index = _visibilityList.indexOfFirst {
+            identify(it.data) == identify(item.data)
         }
-        val success = visibilityList.removeAt(index)
+        _visibilityList.removeAt(index)
+    }
+
+    fun dont_touch___delete(index: Int) {
+        _visibilityList.removeAt(index)
     }
 
     fun clear(animated: Boolean = false){
         if(!animated){
-            visibilityList.clear()
+            _visibilityList.clear()
         }
         else{
-            val list = visibilityList.map {
+            val list = _visibilityList.map {
                 VisibleItem(
                     visible = false,
                     data = it.data,
                     state = VisibleItem.State.REMOVING
                 )
             }
-            visibilityList.clear()
-            visibilityList.addAll(list)
+            _visibilityList.clear()
+            _visibilityList.addAll(list)
         }
         _originalSize.value = 0
     }
 
     fun indexOf(item: T):Int {
-        return visibilityList.indexOfFirst {
-            it.data==item
+        return _visibilityList.indexOfFirst {
+            identify(it.data) == identify(item)
         }
     }
 
     fun indexOf(block: (T)->Boolean):Int {
-        val index = visibilityList.indexOfFirst {
+        val index = _visibilityList.indexOfFirst {
             block(it.data)
         }
         return index
     }
 
     fun shuffle() {
-        visibilityList.shuffle()
+        _visibilityList.shuffle()
     }
 
     fun isNotEmpty(): Boolean {
@@ -209,11 +241,11 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
     }
 
     fun removeAt(index: Int): Boolean {
-        if(index !in 0..visibilityList.size){
+        if(index !in 0.._visibilityList.size){
             return false
         }
-        val item = visibilityList[index]
-        visibilityList[index] = item.copy(
+        val item = _visibilityList[index]
+        _visibilityList[index] = item.copy(
             visible = false,
             data = item.data,
             state = VisibleItem.State.REMOVING
@@ -221,11 +253,24 @@ class VisibilityList<T>(core: SnapshotStateList<T>, initialAnimated: Boolean = f
         --_originalSize.value
         return true
     }
+
+    fun removeAll(items: Set<T?>) {
+        items
+    }
+
+    fun <E>map(block: (T) -> E): List<E> {
+        return _visibilityList.map {
+            block(it.data)
+        }
+    }
 }
 
-val <T>SnapshotStateList<T>.animated: VisibilityList<T>
-    get(){
-        return VisibilityList(this)
+fun <T>SnapshotStateList<T>.animated(
+    animated: Boolean = false,
+    identify: (T) -> Any
+): VisibilityList<T>
+{
+        return VisibilityList(this,animated,identify)
     }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -257,10 +302,8 @@ inline fun <T> LazyListScope.animatedItems(
             }
             if(!it.visible&&it.state== VisibleItem.State.REMOVING){
                 if(exitDuration>0){
-                    items.makeInvisible(it)
-                    delay(exitDuration)
+                    items.makeInvisible(it,exitDuration)
                 }
-                items.dont_touch___delete(it)
             }
         }
         AnimatedVisibility(
@@ -354,7 +397,7 @@ inline fun <T> LazyGridScope.animatedItems(
             }
             if(!it.visible&&it.state== VisibleItem.State.REMOVING){
                 if(exitDuration>0){
-                    items.makeInvisible(it)
+                    items.makeInvisible(it,exitDuration)
                     delay(exitDuration)
                 }
                 items.dont_touch___delete(it)

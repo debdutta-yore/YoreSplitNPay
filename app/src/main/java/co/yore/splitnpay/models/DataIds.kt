@@ -36,4 +36,5 @@ object DataIds {
     const val groupCard = 30
     const val haveSplit = 31
     const val checkGroupItem = 32
+    const val groupsChecked = 33
 }

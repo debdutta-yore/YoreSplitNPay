@@ -2,6 +2,7 @@ package co.yore.splitnpay.libs
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import co.yore.splitnpay.pages.BackHandle
@@ -62,6 +63,14 @@ fun intState(key: Any): State<Int> {
 }
 @Composable
 fun <T>listState(key: Any): SnapshotStateList<T> {
+    return LocalResolver.current.get(key)
+}
+@Composable
+fun <T,E>mapState(key: Any): SnapshotStateMap<T,E> {
+    return LocalResolver.current.get(key)
+}
+@Composable
+fun <T,E>safeMapState(key: Any): SnapshotStateMap<T,E>? {
     return LocalResolver.current.get(key)
 }
 @Composable

@@ -1,12 +1,11 @@
 package co.yore.splitnpay.viewModels
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.animated
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
@@ -17,12 +16,11 @@ import co.yore.splitnpay.repo.RepoImpl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-data class ObservableMutableStateList<T>(
-    val list: SnapshotStateList<T>
-)
-
-val <T>SnapshotStateList<T>.observable
-get() = ObservableMutableStateList(this)
+enum class TriState{
+    CHECKED,
+    UNCHECKED,
+    INTERMEDIATE
+}
 
 class MemberSelectionPageViewModel(
     private val repo: Repo = RepoImpl()
@@ -35,8 +33,11 @@ class MemberSelectionPageViewModel(
     private val selectedIndex = mutableStateOf(0)
     private val splitWithInput = mutableStateOf("")
     private val proceedWithContacts = mutableStateOf(false)
-    private val addedContacts = mutableStateListOf<ContactData>().animated
+    private val addedContacts = mutableStateListOf<ContactData>()/*.animated{
+        it.id
+    }*/
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
+    private val _groupsChecked = mutableStateMapOf<Any,TriState>()
     private val _notificationService = NotificationService{id,arg->
         when(id){
             WirelessViewModelInterface.startupNotification->{
@@ -57,10 +58,7 @@ class MemberSelectionPageViewModel(
                     return@NotificationService
                 }
                 if(selectedContactIds.contains(arg)){
-                    selectedContactIds.remove(arg)
-                    addedContacts.remove {
-                        it.id==arg
-                    }
+                    removeMembersFromSelecteds(setOf(arg))
                 }
                 proceedWithContacts.value = selectedContactIds.isNotEmpty()
             }
@@ -69,34 +67,23 @@ class MemberSelectionPageViewModel(
                     return@NotificationService
                 }
                 if(selectedContactIds.contains(arg)){
-                    selectedContactIds.remove(arg)
-                    addedContacts.remove {
-                        it.id==arg
-                    }
+                    removeMembersFromSelecteds(setOf(arg))
                 }
                 else{
-                    selectedContactIds.add(arg)
-                    addedContacts.add(groupsAndContacts.first {
-                        (it is ContactData && it.id()==arg)
-                    } as ContactData)
+                    addMembersToSelecteds(setOf(arg))
                 }
                 proceedWithContacts.value = selectedContactIds.isNotEmpty()
             }
             DataIds.checkGroupItem->{
-                if(arg==null){
-                    return@NotificationService
-                }
-                if(selectedContactIds.contains(arg)){
-                    selectedContactIds.remove(arg)
-                    addedContacts.remove {
-                        it.id==arg
-                    }
+                val groupId = arg?:return@NotificationService
+                val checked = _groupsChecked[groupId]?:TriState.UNCHECKED
+                val group = (groupsAndContacts.first { it.id()==groupId } as? GroupData)?:return@NotificationService
+                val memberIds = group.members.map { it.id() }.toSet()
+                if(checked!=TriState.UNCHECKED){
+                    removeMembersFromSelecteds(memberIds)
                 }
                 else{
-                    selectedContactIds.add(arg)
-                    addedContacts.add(groupsAndContacts.first {
-                        (it is ContactData && it.id()==arg)
-                    } as ContactData)
+                    addMembersToSelecteds(memberIds)
                 }
                 proceedWithContacts.value = selectedContactIds.isNotEmpty()
             }
@@ -109,6 +96,82 @@ class MemberSelectionPageViewModel(
         }
     }
 
+    private fun addMembersToSelecteds(memberIds: Set<Any>) {
+        val finalIds = selectedContactIds.union(memberIds)
+        val states = mutableMapOf<Any,TriState>()
+        val membersToAdd = mutableListOf<ContactData>()
+        val alreadyAdded = addedContacts.map{
+            it.id()
+        }
+        groupsAndContacts.forEach {
+            if(it is GroupData){
+                val ids = it.members.map { it.id }.toSet()
+                val commonCount = finalIds.intersect(ids).size
+                if(commonCount!=0){
+                    if(commonCount==it.members.size){
+                        states[it.id] = TriState.CHECKED
+                    }
+                    else if(commonCount<it.members.size){
+                        states[it.id] = TriState.INTERMEDIATE
+                    }
+                }
+                else{
+                    states[it.id] = TriState.UNCHECKED
+                }
+            }
+            else{
+                if(memberIds.contains(it.id())&&!alreadyAdded.contains(it.id())){
+                    membersToAdd.add(it as ContactData)
+                }
+            }
+        }
+        _groupsChecked.putAll(states)
+        selectedContactIds.addAll(membersToAdd.map { it.id })
+        addedContacts.addAll(membersToAdd)
+    }
+
+    private fun removeMembersFromSelecteds(memberIds: Set<Any?>) {
+        val finalIds = selectedContactIds.minus(memberIds)
+        if(finalIds.isEmpty()){
+            _groupsChecked.clear()
+        }
+        else{
+            val states = mutableMapOf<Any,TriState>()
+            groupsAndContacts.forEach {
+                if(it is GroupData){
+                    val ids = it.members.map { it.id }.toSet()
+                    val commonCount = finalIds.intersect(ids).size
+                    if(commonCount!=0){
+                        if(commonCount==it.members.size){
+                            states[it.id] = TriState.CHECKED
+                        }
+                        else if(commonCount<it.members.size){
+                            states[it.id] = TriState.INTERMEDIATE
+                        }
+                    }
+                    else{
+                        states[it.id] = TriState.UNCHECKED
+                    }
+                }
+            }
+            _groupsChecked.putAll(states)
+        }
+        selectedContactIds.removeAll(memberIds)
+        memberIds.forEach { m->
+            val index = addedContacts.indexOfFirst {
+                it.id == m
+            }
+            if(index>-1){
+                addedContacts.removeAt(index)
+            }
+        }
+    }
+
+    data class GroupIdState(
+        val id: Any,
+        val state: TriState
+    )
+
     private var searchJob: kotlinx.coroutines.Job? = null
     private fun initiateSearch() {
         searchJob?.cancel()
@@ -117,6 +180,10 @@ class MemberSelectionPageViewModel(
             filter()
         }
     }
+
+    //1. Any possibility of changing details of split like amount, member(add, delete) etc? If yes then system will recalculate the settlement status?
+    //2. If unsettled member can be deleted then system will recalculate the settlement status?
+
 
     override val notifier = _notificationService
     init {
@@ -127,6 +194,7 @@ class MemberSelectionPageViewModel(
         resolver[DataIds.selecteds] = selectedContactIds
         resolver[DataIds.proceedWithContacts] = proceedWithContacts
         resolver[DataIds.statusBarColor] = _statusBarColor
+        resolver[DataIds.groupsChecked] = _groupsChecked
         fetchGroupAndContacts()
         filter()
     }

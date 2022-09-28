@@ -130,6 +130,7 @@ fun GroupsChildPage(
                         if (it is GroupData) {
                             GroupCard_0msq1z(
                                 modifier = Modifier.padding(top = 13.dep()),
+                                config = GroupCardConfiguration.unchecked,
                                 contentDescription = "",
                                 data = it
                             )

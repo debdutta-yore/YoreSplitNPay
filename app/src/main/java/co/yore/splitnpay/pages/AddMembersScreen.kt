@@ -37,16 +37,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.PeopleCard_eq3k8h
-import co.yore.splitnpay.components.components.*
-import co.yore.splitnpay.components.configuration.DeleteIconConfiguration
-import co.yore.splitnpay.components.configuration.PeopleRowItemConfiguration
-import co.yore.splitnpay.components.configuration.SplitWithPageContentConfiguration
-import co.yore.splitnpay.components.configuration.TopbarWithIconConfiguration
+import co.yore.splitnpay.components.components.ContactTabs
+import co.yore.splitnpay.components.components.GroupCard_0msq1z
+import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.split_page_components.ContactSearchBar
 import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.viewModels.TriState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -209,7 +209,7 @@ fun TopBarWithIcon_1t9xbo(
             Spacer(modifier = Modifier.width((config.startPadding-12).dep()))
             Icon(
                 modifier = Modifier
-                    .size((config.iconSize+12).dep())
+                    .size((config.iconSize + 12).dep())
                     .clip(CircleShape)
                     .clickable {
                         onClick()
@@ -353,7 +353,8 @@ fun NothingFoundUI() {
 fun GroupAndContactsUI(
     items: List<GroupOrContact> = listState(DataIds.groupsAndPeoples),
     selecteds: List<Any> = listState(DataIds.selecteds),
-    proceedWithContacts: Boolean = boolState(DataIds.proceedWithContacts).value
+    proceedWithContacts: Boolean = boolState(DataIds.proceedWithContacts).value,
+    groupsChecked: Map<Any,TriState>? = safeMapState(DataIds.groupsChecked)
 ) {
     val bottomPadding by remember(proceedWithContacts) {
         derivedStateOf {
@@ -396,8 +397,10 @@ fun GroupAndContactsUI(
                 else if(it is GroupData){
                     GroupCard_0msq1z(
                         modifier = Modifier.animateItemPlacement(),
+                        config = GroupCardConfiguration.checked,
                         data = it,
-                        contentDescription = ""
+                        contentDescription = "",
+                        selected = groupsChecked?.get(it.id)?:TriState.UNCHECKED
                     )
                 }
             }
@@ -411,7 +414,7 @@ fun GroupAndContactsUI(
 @OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun AddedMembersSection(
-    addedFriends: VisibilityList<ContactData> = t(DataIds.addedContacts),
+    addedFriends: List<ContactData> = t(DataIds.addedContacts),
     notifier: NotificationService = notifier()
 ) {
     Box(
@@ -423,7 +426,7 @@ fun AddedMembersSection(
             .animateContentSize(tween(700))
     ) {
         AnimatedVisibility(
-            visible = addedFriends.size.value>0,
+            visible = addedFriends.isNotEmpty(),
             enter = fadeIn(tween(700)),
             exit = fadeOut(tween(700)),
         ) {
@@ -431,14 +434,11 @@ fun AddedMembersSection(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                animatedItems(
+                items(
                     addedFriends,
                     key = {
                         it.id
                     },
-                    enter = fadeIn(tween(700)) + scaleIn(tween(700)),
-                    exit = fadeOut(tween(700)) + scaleOut(tween(700)),
-                    exitDuration = 700
                 ) { item ->
                     Box(
                         modifier = Modifier
