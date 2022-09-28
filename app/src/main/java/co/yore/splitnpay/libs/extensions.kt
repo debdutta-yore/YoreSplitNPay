@@ -202,8 +202,7 @@ data class StatusBarColor(
 
 @Composable
 fun StatusBarColorControl(
-    suffix: String,
-    state: StatusBarColor? = safeTState<StatusBarColor>("${DataIds.statusBarColor}$suffix")?.value
+    state: StatusBarColor? = safeTState<StatusBarColor>(DataIds.statusBarColor)?.value
 ) {
     val systemUiController = rememberSystemUiController()
 

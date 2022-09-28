@@ -2,10 +2,8 @@ package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import co.yore.splitnpay.demos.FloatingSplitButton
 import co.yore.splitnpay.libs.NotificationService
 import co.yore.splitnpay.libs.notifier
@@ -18,8 +16,7 @@ fun SplitPage() {
     Scaffold(
         floatingActionButton = {
             FloatingSplitButton()
-        },
-        modifier = Modifier.safeDrawingPadding()
+        }
     ) {
         SplitPageContent()
     }

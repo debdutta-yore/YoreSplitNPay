@@ -86,6 +86,9 @@ interface WirelessViewModelInterface{
     val resolver: Resolver
     val notifier: NotificationService
     val navigation: MutableState<UIScope?>
+    companion object{
+        const val startupNotification = -10000
+    }
 }
 
 @Composable
@@ -95,6 +98,9 @@ fun YorePage(
     wvm: WirelessViewModelInterface,
     content: @Composable () -> Unit
 ) {
+    LaunchedEffect(key1 = Unit){
+        wvm.notifier.notify(WirelessViewModelInterface.startupNotification,null)
+    }
     val owner = LocalLifecycleOwner.current
     LaunchedEffect(key1 = wvm.navigation.value){
         wvm.navigation.forward(navController,owner)
@@ -103,7 +109,7 @@ fun YorePage(
         LocalResolver provides wvm.resolver,
         LocalNotificationService provides wvm.notifier
     ) {
-        StatusBarColorControl(suffix)
+        StatusBarColorControl()
         content()
         BackHandle(suffix)
     }

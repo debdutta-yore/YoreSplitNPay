@@ -3,6 +3,7 @@ package co.yore.splitnpay.viewModels
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.components.animated
@@ -35,8 +36,17 @@ class SplitWithPageViewModel(
     private val splitWithInput = mutableStateOf("")
     private val proceedWithContacts = mutableStateOf(false)
     private val addedContacts = mutableStateListOf<ContactData>().animated
+    private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _notificationService = NotificationService{id,arg->
         when(id){
+            WirelessViewModelInterface.startupNotification->{
+                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
+            }
+            DataIds.back->{
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.popBackStack()
+                }
+            }
             DataIds.textInput->{
                 val query = (arg as? String)?:return@NotificationService
                 splitWithInput.value = query
@@ -98,6 +108,7 @@ class SplitWithPageViewModel(
         resolver[DataIds.selectedTabIndex] = selectedIndex
         resolver[DataIds.selecteds] = selectedContactIds
         resolver[DataIds.proceedWithContacts] = proceedWithContacts
+        resolver[DataIds.statusBarColor] = _statusBarColor
         fetchGroupAndContacts()
         filter()
     }

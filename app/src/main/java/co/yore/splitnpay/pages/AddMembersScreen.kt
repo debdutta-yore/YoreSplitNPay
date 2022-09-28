@@ -206,18 +206,20 @@ fun TopBarWithIcon_1t9xbo(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Spacer(modifier = Modifier.width(config.startPadding.dep()))
+            Spacer(modifier = Modifier.width((config.startPadding-12).dep()))
             Icon(
                 modifier = Modifier
-                    .size(config.iconSize.dep())
+                    .size((config.iconSize+12).dep())
+                    .clip(CircleShape)
                     .clickable {
                         onClick()
-                    },
+                    }
+                    .padding(6.dep()),
                 painter = painterResource(config.icon),
                 contentDescription = "back arrow",
                 tint = config.iconTint
             )
-            Spacer(modifier = Modifier.width(config.space.dep()))
+            Spacer(modifier = Modifier.width((config.space-6).dep()))
             Text(
                 text = text,
                 fontSize = config.textSize.sep(),
@@ -280,7 +282,7 @@ fun SplitWithPageContent(
         Column {
             TopBarWithIcon_1t9xbo(
                 onClick = {
-
+                    notifier.notify(DataIds.back,null)
                 },
                 text = stringResource(config.splitTextId)
             )
