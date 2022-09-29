@@ -40,6 +40,9 @@ class MemberSelectionPageViewModel(
     private val _groupsChecked = mutableStateMapOf<Any,TriState>()
     private val _notificationService = NotificationService{id,arg->
         when(id){
+            DataIds.proceedWithContacts->{
+                gotoGroupCreationPage()
+            }
             WirelessViewModelInterface.startupNotification->{
                 _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
             }
@@ -93,6 +96,12 @@ class MemberSelectionPageViewModel(
                     filter()
                 }
             }
+        }
+    }
+
+    private fun gotoGroupCreationPage() {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.navigate("group_creation")
         }
     }
 

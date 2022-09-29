@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
 
@@ -35,3 +36,5 @@ suspend fun MutableState<UIScope?>.forward(
 ){
     this.value?.invoke(navHostController,lifecycleOwner,toaster)
 }
+
+fun Navigation() = mutableStateOf<UIScope?>(null)

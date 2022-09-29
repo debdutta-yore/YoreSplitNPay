@@ -111,7 +111,6 @@ operator fun Dp.times(number: Number): Dp {
 operator fun Number.times(dp: Dp): Dp {
     return (this.toFloat()*dp.value).dp
 }
-
 fun Color.Companion.blend(
     color1: Color,
     color2: Color,

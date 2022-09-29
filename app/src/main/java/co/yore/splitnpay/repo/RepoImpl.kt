@@ -41,11 +41,11 @@ class RepoImpl:Repo {
         }
     }
 
-    override suspend fun peoples(): List<ContactData> {
+    override suspend fun peoples(count: Int): List<ContactData> {
         val f = Faker()
         val r = Random(System.nanoTime())
         var i = 0
-        return MutableList(20){
+        return MutableList(count){
             ContactData(
                 id = newId,
                 name = "fdfdfdfdfd fdfdf12345678901234",//f.name.name(),

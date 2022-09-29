@@ -4,42 +4,42 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.TextFieldDefaults.indicatorLine
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.rudra.yoresplitbill.R
-import com.rudra.yoresplitbill.common.dep
-import com.rudra.yoresplitbill.common.ep
-import com.rudra.yoresplitbill.common.sep
-import com.rudra.yoresplitbill.data.config.TextFieldConfiguration
-import com.rudra.yoresplitbill.ui.theme.Black
-import com.rudra.yoresplitbill.ui.theme.LightGrey
-import com.rudra.yoresplitbill.ui.theme.LightGrey4
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import co.yore.splitnpay.R
+import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.libs.sep
 
+data class TextFieldConfiguration(
+    val cardHeight: Float = 95f,
+    val textFieldBackgroundColor: Color = Color(0xffF8F8F8),
+    val cursorColor: Color = Color.Gray,
+    val cornerRadius: Float = 8f,
+    val hintTextSize: Float = 14f,
+    val hintTextColor: Color = Color(0xffBCBCBC),
+    val textColor: Color = Color(0xff656565),
+    val textSize: Float = 14f,
+)
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun GroupNameTextField(
-    config: TextFieldConfiguration = TextFieldConfiguration()
+    value: String,
+    config: TextFieldConfiguration = TextFieldConfiguration(),
+    onValueChange: (String)->Unit,
 ) {
-
-    var groupName by remember { mutableStateOf("") }
     val interactionSource = remember { MutableInteractionSource() }
 
     val colors = TextFieldDefaults.textFieldColors(
@@ -53,8 +53,8 @@ fun GroupNameTextField(
     )
 
     BasicTextField(
-        value = groupName,
-        onValueChange = { groupName = it },
+        value = value,
+        onValueChange = onValueChange,
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(8.dep()))
@@ -76,11 +76,11 @@ fun GroupNameTextField(
         interactionSource = interactionSource,
     ) { innerTextField ->
         TextFieldDefaults.TextFieldDecorationBox(
-            value = groupName,
+            value = value,
             innerTextField = innerTextField,
             interactionSource = interactionSource,
             contentPadding = PaddingValues(
-                start = 15.dep(),
+                start = 22.dep(),
                 top = 10f.dep(),
                 bottom = 10f.dep()
             ),
@@ -98,20 +98,23 @@ fun GroupNameTextField(
                 )
             },
             leadingIcon = {
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         modifier = Modifier
+                            .padding(start = 17.dep())
                             .width(22f.dep())
                             .height(14f.dep()),
                         painter = painterResource(id = R.drawable.ic_group_icon),
-                        tint = LightGrey,
+                        tint = Color(0xff656565),
                         contentDescription = "people icon"
                     )
 
                     Spacer(modifier = Modifier.width(9f.dep()))
 
                     Divider(
-                        color = LightGrey4,
+                        color = Color(0xffBCBCBC),
                         modifier = Modifier
                             .width(1f.dep())
                             .height(13f.dep())

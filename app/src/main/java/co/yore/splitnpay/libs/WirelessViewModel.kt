@@ -27,8 +27,12 @@ class Resolver{
 }
 
 data class NotificationService(
-    val notify: (Any,Any?)->Unit
-)
+    val callback: (Any,Any?)->Unit
+){
+    fun notify(id: Any, arg: Any? = null){
+        callback(id,arg)
+    }
+}
 val LocalResolver = compositionLocalOf { Resolver() }
 val LocalNotificationService = compositionLocalOf { NotificationService{ _, _->} }
 

@@ -275,7 +275,19 @@ fun SplitWithPageContent(
                 enter = fadeIn(tween(300))+ scaleIn(tween(300)),
                 exit = fadeOut(tween(300))+ scaleOut(tween(300))
             ){
-                Fab()
+                FloatingActionButton(
+                    shape = CircleShape,
+                    backgroundColor = colorResource(id = R.color.pink),
+                    modifier = Modifier
+                        .size(61.dep()),
+                    onClick = {
+                        notifier.notify(DataIds.proceedWithContacts,null)
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_forward_black_24dp_1),
+                        contentDescription = "next", tint = Color.Unspecified
+                    )
+                }
             }
         }
     ) {
@@ -512,29 +524,6 @@ fun SplitWithPageTabsSection(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun Fab() {
-    AnimatedVisibility(
-        visible = true,
-        enter = scaleIn(),
-        exit = scaleOut(),
-    ) {
-        FloatingActionButton(
-            shape = CircleShape,
-            backgroundColor = colorResource(id = R.color.pink),
-            modifier = Modifier
-                .size(61.dep()),
-            onClick = {
-
-            }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_forward_black_24dp_1),
-                contentDescription = "next", tint = Color.Unspecified
-            )
-        }
-    }
-}
 
 @Composable
 fun PeopleImageItem_r02b97(

@@ -37,4 +37,6 @@ object DataIds {
     const val haveSplit = 31
     const val checkGroupItem = 32
     const val groupsChecked = 33
+    const val pickImage = 34
+    const val groupName = 35
 }
