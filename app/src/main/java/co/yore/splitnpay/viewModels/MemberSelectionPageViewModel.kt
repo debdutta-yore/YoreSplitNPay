@@ -13,6 +13,7 @@ import co.yore.splitnpay.models.GroupData
 import co.yore.splitnpay.models.GroupOrContact
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -33,11 +34,20 @@ class MemberSelectionPageViewModel(
     private val selectedIndex = mutableStateOf(0)
     private val splitWithInput = mutableStateOf("")
     private val proceedWithContacts = mutableStateOf(false)
-    private val addedContacts = mutableStateListOf<ContactData>()/*.animated{
-        it.id
-    }*/
+    private val addedContacts = mutableStateListOf<ContactData>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupsChecked = mutableStateMapOf<Any,TriState>()
+    init {
+        resolver[DataIds.textInput] = splitWithInput
+        resolver[DataIds.groupsAndPeoples] = visibleGroupsAndContacts
+        resolver[DataIds.addedContacts] = addedContacts
+        resolver[DataIds.selectedTabIndex] = selectedIndex
+        resolver[DataIds.selecteds] = selectedContactIds
+        resolver[DataIds.proceedWithContacts] = proceedWithContacts
+        resolver[DataIds.statusBarColor] = _statusBarColor
+        resolver[DataIds.groupsChecked] = _groupsChecked
+        fetchGroupAndContacts()
+    }
     private val _notificationService = NotificationService{id,arg->
         when(id){
             DataIds.proceedWithContacts->{
@@ -98,6 +108,7 @@ class MemberSelectionPageViewModel(
             }
         }
     }
+    override val notifier = _notificationService
 
     private fun gotoGroupCreationPage() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -194,23 +205,13 @@ class MemberSelectionPageViewModel(
     //2. If unsettled member can be deleted then system will recalculate the settlement status?
 
 
-    override val notifier = _notificationService
-    init {
-        resolver[DataIds.textInput] = splitWithInput
-        resolver[DataIds.groupsAndPeoples] = visibleGroupsAndContacts
-        resolver[DataIds.addedContacts] = addedContacts
-        resolver[DataIds.selectedTabIndex] = selectedIndex
-        resolver[DataIds.selecteds] = selectedContactIds
-        resolver[DataIds.proceedWithContacts] = proceedWithContacts
-        resolver[DataIds.statusBarColor] = _statusBarColor
-        resolver[DataIds.groupsChecked] = _groupsChecked
-        fetchGroupAndContacts()
-        filter()
-    }
+
+
 
     private fun fetchGroupAndContacts() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             groupsAndContacts.addAll(repo.groupAndContacts())
+            filter()
         }
     }
 

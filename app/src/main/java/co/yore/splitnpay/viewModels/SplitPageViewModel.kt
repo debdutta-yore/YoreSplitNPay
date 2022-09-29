@@ -1,6 +1,5 @@
 package co.yore.splitnpay.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -11,6 +10,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 enum class SplitPageState{
@@ -100,7 +100,6 @@ class SplitPageViewModel(
     }
 
     private fun gotoSplitWithPage() {
-        Log.d("fldfldkj","f1256")
         navigation.scope{ navHostController, lifecycleOwner, toaster ->
             navHostController.navigate("split_with_page")
         }
@@ -131,7 +130,7 @@ class SplitPageViewModel(
             "${DataIds.subTab}group" to _subTabGroup,
             "${DataIds.subTab}people" to _subTabPeople,
         )
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _groupsAndPeoplesVault.addAll(repo.groupAndContacts())
             filter()
         }

@@ -10,6 +10,7 @@ import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class GroupCreationPageViewModel(
@@ -48,7 +49,7 @@ class GroupCreationPageViewModel(
             color = Color(0xffEDF3F9),
             darkIcons = true
         )
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _friends.addAll(repo.peoples(4))
         }
     }

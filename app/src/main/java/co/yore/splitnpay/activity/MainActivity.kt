@@ -52,9 +52,8 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
-                        CutPage()
-                        val splitPageViewModel: SplitPageViewModel = viewModel()
-                        val splitWithPageViewModel: MemberSelectionPageViewModel = viewModel()
+                        //CutPage()
+                        //val splitPageViewModel: SplitPageViewModel = viewModel()
                         //val groupCreationPageViewModel: GroupCreationPageViewModel = viewModel()
                         val navController = rememberAnimatedNavController()
                         AnimatedNavHost(navController, startDestination = "split_page") {
@@ -64,7 +63,7 @@ class MainActivity : ComponentActivity() {
                                 YorePage(
                                     navController,
                                     suffix = "split_page",
-                                    wvm = splitPageViewModel
+                                    wvm = viewModel<SplitPageViewModel>()
                                 ) {
                                     SplitPage()
                                 }
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                 YorePage(
                                     navController,
                                     suffix = "split_with_page",
-                                    wvm = splitWithPageViewModel
+                                    wvm = viewModel<MemberSelectionPageViewModel>()
                                 ) {
                                     MemberSelectionPage_g5024t()
                                 }
