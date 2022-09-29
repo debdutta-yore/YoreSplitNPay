@@ -6,6 +6,11 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import co.yore.splitnpay.pages.BackHandle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 class Resolver{
     private val _map: MutableMap<Any,Any?> = mutableMapOf()
@@ -62,11 +67,19 @@ fun boolState(key: Any): State<Boolean> {
     return LocalResolver.current.get(key)
 }
 @Composable
+fun safeBoolState(key: Any): State<Boolean>? {
+    return LocalResolver.current.get(key)
+}
+@Composable
 fun intState(key: Any): State<Int> {
     return LocalResolver.current.get(key)
 }
 @Composable
 fun <T>listState(key: Any): SnapshotStateList<T> {
+    return LocalResolver.current.get(key)
+}
+@Composable
+fun <T>safeListState(key: Any): SnapshotStateList<T>? {
     return LocalResolver.current.get(key)
 }
 @Composable
@@ -99,8 +112,13 @@ interface WirelessViewModelInterface{
     val resolver: Resolver
     val notifier: NotificationService
     val navigation: MutableState<UIScope?>
+    val permissionHandler: PermissionHandler
     companion object{
         const val startupNotification = -10000
+        const val permissions = -10001
+        const val requestPermission = -10002
+        const val permissionResult = -10003
+        const val permissionDisposition = -10004
     }
 }
 
@@ -111,6 +129,7 @@ fun YorePage(
     wvm: WirelessViewModelInterface,
     content: @Composable () -> Unit
 ) {
+    wvm.permissionHandler.handlePermission()
     LaunchedEffect(key1 = Unit){
         wvm.notifier.notify(WirelessViewModelInterface.startupNotification,null)
     }
@@ -127,3 +146,5 @@ fun YorePage(
         BackHandle(suffix)
     }
 }
+
+

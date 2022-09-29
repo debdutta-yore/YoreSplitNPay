@@ -276,7 +276,7 @@ data class NavAnimation @OptIn(ExperimentalAnimationApi::class) constructor(
 )
 
 @ExperimentalAnimationApi
-public fun NavGraphBuilder.yoreComposable(
+fun NavGraphBuilder.yoreComposable(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),

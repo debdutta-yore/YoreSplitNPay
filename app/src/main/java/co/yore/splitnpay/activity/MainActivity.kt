@@ -52,9 +52,6 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
-                        //CutPage()
-                        //val splitPageViewModel: SplitPageViewModel = viewModel()
-                        //val groupCreationPageViewModel: GroupCreationPageViewModel = viewModel()
                         val navController = rememberAnimatedNavController()
                         AnimatedNavHost(navController, startDestination = "split_page") {
                             yoreComposable(

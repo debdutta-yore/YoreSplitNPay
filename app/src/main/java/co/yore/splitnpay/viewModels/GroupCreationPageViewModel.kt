@@ -1,5 +1,7 @@
 package co.yore.splitnpay.viewModels
 
+import android.Manifest
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -10,6 +12,7 @@ import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -18,12 +21,15 @@ class GroupCreationPageViewModel(
 ): ViewModel(), WirelessViewModelInterface {
     override val resolver = Resolver()
     override val navigation = Navigation()
+    override val permissionHandler = PermissionHandler()
+
     //////////////////////////////////////////
     private val _friends = mutableStateListOf<ContactData>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("")
     //////////////////////////////////////////
-    override val notifier = NotificationService{id,arg->
+    @OptIn(ExperimentalPermissionsApi::class)
+    override val notifier = NotificationService{ id, arg->
         when(id){
             DataIds.back->{
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -31,7 +37,14 @@ class GroupCreationPageViewModel(
                 }
             }
             DataIds.pickImage->{
-
+                viewModelScope.launch {
+                    val r = permissionHandler.check(Manifest.permission.CAMERA) ?: return@launch
+                    Log.d("fldjfdlf","${r.permissions}")
+                    if(!r.allPermissionsGranted){
+                        var m = permissionHandler.request(Manifest.permission.CAMERA)
+                        Log.d("fldjfdlf","$m")
+                    }
+                }
             }
             DataIds.groupName->{
                 _groupName.value = (arg as? String)?:""
@@ -43,7 +56,7 @@ class GroupCreationPageViewModel(
         resolver.addAll(
             DataIds.contacts to _friends,
             DataIds.statusBarColor to _statusBarColor,
-            DataIds.groupName to _groupName
+            DataIds.groupName to _groupName,
         )
         _statusBarColor.value = StatusBarColor(
             color = Color(0xffEDF3F9),

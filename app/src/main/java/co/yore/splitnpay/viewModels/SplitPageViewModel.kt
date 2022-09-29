@@ -22,6 +22,7 @@ enum class SplitPageState{
 class SplitPageViewModel(
     private val repo: Repo = RepoImpl()
 ): ViewModel(), WirelessViewModelInterface {
+    override val permissionHandler = PermissionHandler()
     override val navigation = mutableStateOf<UIScope?>(null)
     private val _whole = mutableStateOf("4,000")
     private val _decimal = mutableStateOf("05")
