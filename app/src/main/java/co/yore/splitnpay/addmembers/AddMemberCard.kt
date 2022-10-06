@@ -434,6 +434,7 @@ fun PeopleCard_eq3k8h(
             }
             else{
                 ArrowButton_ohezqf(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     contentDescription = "",
                     pressed = focused,
                     onClicked = {

@@ -22,6 +22,7 @@ enum class SplitPageState{
 class SplitPageViewModel(
     private val repo: Repo = RepoImpl()
 ): ViewModel(), WirelessViewModelInterface {
+    private val rh = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
     override val navigation = mutableStateOf<UIScope?>(null)
     private val _whole = mutableStateOf("4,000")
@@ -61,13 +62,13 @@ class SplitPageViewModel(
                 //Todo
             }
             DataIds.split ->{
-                gotoSplitWithPage()
+
             }
             DataIds.groupCardGo ->{
                 //Todo
             }
             DataIds.addGroup ->{
-                //Todo
+                gotoSplitWithPage()
             }
             DataIds.peopleCardGo ->{
                 //Todo
