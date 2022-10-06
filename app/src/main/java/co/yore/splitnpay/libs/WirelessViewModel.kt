@@ -1,16 +1,14 @@
 package co.yore.splitnpay.libs
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import co.yore.splitnpay.pages.BackHandle
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
+import co.yore.splitnpay.pages.SheetHandler
 
 class Resolver{
     private val _map: MutableMap<Any,Any?> = mutableMapOf()
@@ -39,6 +37,16 @@ data class NotificationService(
     }
 }
 val LocalResolver = compositionLocalOf { Resolver() }
+@OptIn(ExperimentalMaterialApi::class)
+val LocalSheetHandler = compositionLocalOf { SheetHandler(
+    initialValue = ModalBottomSheetValue.Hidden,
+    skipHalfExpanded = true,
+    confirmStateChange = { false }
+) }
+@Composable
+fun localSheetHandler(): SheetHandler{
+    return LocalSheetHandler.current
+}
 val LocalNotificationService = compositionLocalOf { NotificationService{ _, _->} }
 
 val LocalSuffix = compositionLocalOf { "" }
@@ -113,12 +121,16 @@ interface WirelessViewModelInterface{
     val notifier: NotificationService
     val navigation: MutableState<UIScope?>
     val permissionHandler: PermissionHandler
+    val resultingActivityHandler: ResultingActivityHandler
+    @OptIn(ExperimentalMaterialApi::class)
+    val sheetHandler: SheetHandler
+    get() = SheetHandler(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
+        confirmStateChange = { false }
+    )
     companion object{
         const val startupNotification = -10000
-        const val permissions = -10001
-        const val requestPermission = -10002
-        const val permissionResult = -10003
-        const val permissionDisposition = -10004
     }
 }
 
@@ -130,6 +142,7 @@ fun YorePage(
     content: @Composable () -> Unit
 ) {
     wvm.permissionHandler.handlePermission()
+    wvm.resultingActivityHandler.handle()
     LaunchedEffect(key1 = Unit){
         wvm.notifier.notify(WirelessViewModelInterface.startupNotification,null)
     }
@@ -139,7 +152,8 @@ fun YorePage(
     }
     CompositionLocalProvider(
         LocalResolver provides wvm.resolver,
-        LocalNotificationService provides wvm.notifier
+        LocalNotificationService provides wvm.notifier,
+        LocalSheetHandler provides wvm.sheetHandler
     ) {
         StatusBarColorControl()
         content()

@@ -1,16 +1,14 @@
 package co.yore.splitnpay.pages
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,27 +22,61 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.robotoFonts
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+data class SheetHandler @OptIn(ExperimentalMaterialApi::class) constructor(
+    val initialValue: ModalBottomSheetValue,
+    val skipHalfExpanded: Boolean,
+    val confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true }
+){
+
+    fun scope(block: suspend ()->Unit){
+        stateScope.value = block
+    }
+
+    private val stateScope = mutableStateOf<(suspend ()->Unit)?>(null)
+    @OptIn(ExperimentalMaterialApi::class)
+    private lateinit var _state: ModalBottomSheetState
+
+    @OptIn(ExperimentalMaterialApi::class)
+    val state get() = _state
+
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    fun handle(animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec): ModalBottomSheetState{
+        _state = rememberSaveable(
+            initialValue, animationSpec, skipHalfExpanded, confirmStateChange,
+            saver = ModalBottomSheetState.Saver(
+                animationSpec = animationSpec,
+                skipHalfExpanded = skipHalfExpanded,
+                confirmStateChange = confirmStateChange
+            )
+        ) {
+            ModalBottomSheetState(
+                initialValue = initialValue,
+                animationSpec = animationSpec,
+                isSkipHalfExpanded = skipHalfExpanded,
+                confirmStateChange = confirmStateChange
+            )
+        }
+        LaunchedEffect(key1 = stateScope.value){
+            stateScope.value?.let {
+                it()
+                stateScope.value = null
+            }
+        }
+        return _state
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GroupCreationScreen(
-
+    sheetHandler: SheetHandler = localSheetHandler()
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmStateChange = { true },
-
-    )
-
-
-
+    val state = sheetHandler.handle()
     ModalBottomSheetLayout(
-        sheetState = sheetState,
+        sheetState = state,
         sheetContent = {
-            /*PhotoSelectionBottomSheet(sheetState, coroutineScope){
-                groupImage.value = R.drawable.person
-            }*/
-                       Text("")
+            NoUi()
         },
         sheetShape = RoundedCornerShape(
             topStart = 25f.dep(),
@@ -54,6 +86,11 @@ fun GroupCreationScreen(
     ) {
         GroupCreationPageContent()
     }
+}
+
+@Composable
+fun NoUi() {
+    Text("")
 }
 
 @Composable

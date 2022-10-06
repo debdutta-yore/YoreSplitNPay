@@ -1,7 +1,7 @@
 package co.yore.splitnpay.viewModels
 
-import android.Manifest
-import android.util.Log
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.pages.SheetHandler
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -19,6 +20,15 @@ import kotlinx.coroutines.launch
 class GroupCreationPageViewModel(
     private val repo: Repo = RepoImpl()
 ): ViewModel(), WirelessViewModelInterface {
+    @OptIn(ExperimentalMaterialApi::class)
+    override val sheetHandler = SheetHandler(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
+        confirmStateChange = {
+            true
+        }
+    )
+    override val resultingActivityHandler = ResultingActivityHandler()
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
@@ -28,7 +38,7 @@ class GroupCreationPageViewModel(
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("")
     //////////////////////////////////////////
-    @OptIn(ExperimentalPermissionsApi::class)
+    @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
     override val notifier = NotificationService{ id, arg->
         when(id){
             DataIds.back->{
@@ -38,11 +48,25 @@ class GroupCreationPageViewModel(
             }
             DataIds.pickImage->{
                 viewModelScope.launch {
-                    val r = permissionHandler.check(Manifest.permission.CAMERA) ?: return@launch
+                    /*val r = permissionHandler.check(Manifest.permission.CAMERA) ?: return@launch
                     Log.d("fldjfdlf","${r.permissions}")
                     if(!r.allPermissionsGranted){
                         var m = permissionHandler.request(Manifest.permission.CAMERA)
                         Log.d("fldjfdlf","$m")
+                    }
+                    else{
+                        val a = resultingActivityHandler.takePicturePreview()
+                        if(a!=null){
+                            val b = a.width
+                        }
+                    }*/
+
+                    //val a = resultingActivityHandler.getContent("image/*")
+                    /*if(a!=null){
+                        val b = a
+                    }*/
+                    sheetHandler.scope {
+                        sheetHandler.state.show()
                     }
                 }
             }

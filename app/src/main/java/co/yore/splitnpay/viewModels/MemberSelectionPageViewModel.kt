@@ -26,6 +26,7 @@ enum class TriState{
 class MemberSelectionPageViewModel(
     private val repo: Repo = RepoImpl()
 ): ViewModel(), WirelessViewModelInterface {
+    override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
     override val navigation = mutableStateOf<UIScope?>(null)
     override val resolver = Resolver()

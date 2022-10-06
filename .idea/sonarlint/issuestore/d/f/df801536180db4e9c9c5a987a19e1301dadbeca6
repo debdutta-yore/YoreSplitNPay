@@ -1,0 +1,7 @@
+
+`kotlin:S107š"HThis function has 17 parameters, which is greater than the 7 authorized.(ÂÖÿÝ
+_kotlin:S107Ø"GThis function has 8 parameters, which is greater than the 7 authorized.(ô‡Êµ
+skotlin:S100<"\Rename function "ProfileImage_2hf7q0" to match the regular expression ^[a-zA-Z][a-zA-Z0-9]*$(Ò†¥©
+xkotlin:S100X"\Rename function "CheckBoxIcon_b6qwbf" to match the regular expression ^[a-zA-Z][a-zA-Z0-9]*$(Ç» œúÿÿÿÿ
+rkotlin:S100Ø"ZRename function "PeopleCard_eq3k8h" to match the regular expression ^[a-zA-Z][a-zA-Z0-9]*$(ô‡Êµ
+kkotlin:S3776Ø"RRefactor this method to reduce its Cognitive Complexity from 31 to the 15 allowed.(ô‡Êµ

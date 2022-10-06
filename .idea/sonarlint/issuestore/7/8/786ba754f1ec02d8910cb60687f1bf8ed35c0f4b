@@ -1,0 +1,28 @@
+
+2kotlin:S1128"Remove this unused import.(ŠëÙ 
+9kotlin:S1128"Remove this unused import.(°’¨æ8ëÛ”ş·0
+okotlin:S117W"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(³œ¾çşÿÿÿÿ
+jkotlin:S117X"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‰ğ§Î
+okotlin:S117Y"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(§íè”üÿÿÿÿ
+okotlin:S117Z"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‰«Å»şÿÿÿÿ
+jkotlin:S117["SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(ù÷ğğ
+ikotlin:S117^"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‹â¹ 
+okotlin:S117_"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‰—ÿËüÿÿÿÿ
+jkotlin:S117`"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(ŸË‰Ü
+pkotlin:S117Œ"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(³œ¾çşÿÿÿÿ
+kkotlin:S117"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‰ğ§Î
+pkotlin:S117"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(§íè”üÿÿÿÿ
+kkotlin:S117"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(âŞÒû
+pkotlin:S117"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‰«Å»şÿÿÿÿ
+kkotlin:S117‘"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(ù÷ğğ
+pkotlin:S117”"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‰—ÿËüÿÿÿÿ
+kkotlin:S117•"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(ŸË‰Ü
+pkotlin:S117–"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‹²õøÿÿÿÿ
+jkotlin:S117­"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‹â¹ 
+kkotlin:S117°"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(»ØÏ‡
+jkotlin:S117Û"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‹â¹ 
+kkotlin:S117Ş"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(»ØÏ‡
+qkotlin:S117˜"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‹â¹ 8Ë‰²ı·0
+rkotlin:S117›"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(ñŒ¢Ÿ8Ë‰²ı·0
+qkotlin:S117¸"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(‹â¹ 8Ë‰²ı·0
+rkotlin:S117»"SRename this local variable to match the regular expression ^`?[_a-z][a-zA-Z0-9]*`?$(ñŒ¢Ÿ8Ë‰²ı·0
