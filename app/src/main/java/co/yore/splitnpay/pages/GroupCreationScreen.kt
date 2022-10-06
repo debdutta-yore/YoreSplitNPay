@@ -22,50 +22,7 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.robotoFonts
 
-data class SheetHandler @OptIn(ExperimentalMaterialApi::class) constructor(
-    val initialValue: ModalBottomSheetValue,
-    val skipHalfExpanded: Boolean,
-    val confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true }
-){
 
-    fun scope(block: suspend ()->Unit){
-        stateScope.value = block
-    }
-
-    private val stateScope = mutableStateOf<(suspend ()->Unit)?>(null)
-    @OptIn(ExperimentalMaterialApi::class)
-    private lateinit var _state: ModalBottomSheetState
-
-    @OptIn(ExperimentalMaterialApi::class)
-    val state get() = _state
-
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    fun handle(animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec): ModalBottomSheetState{
-        _state = rememberSaveable(
-            initialValue, animationSpec, skipHalfExpanded, confirmStateChange,
-            saver = ModalBottomSheetState.Saver(
-                animationSpec = animationSpec,
-                skipHalfExpanded = skipHalfExpanded,
-                confirmStateChange = confirmStateChange
-            )
-        ) {
-            ModalBottomSheetState(
-                initialValue = initialValue,
-                animationSpec = animationSpec,
-                isSkipHalfExpanded = skipHalfExpanded,
-                confirmStateChange = confirmStateChange
-            )
-        }
-        LaunchedEffect(key1 = stateScope.value){
-            stateScope.value?.let {
-                it()
-                stateScope.value = null
-            }
-        }
-        return _state
-    }
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

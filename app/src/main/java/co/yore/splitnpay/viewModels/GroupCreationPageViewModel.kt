@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.SheetHandler
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -42,7 +41,7 @@ class GroupCreationPageViewModel(
     override val notifier = NotificationService{ id, arg->
         when(id){
             DataIds.back->{
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                navigation.state { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack()
                 }
             }
@@ -65,8 +64,8 @@ class GroupCreationPageViewModel(
                     /*if(a!=null){
                         val b = a
                     }*/
-                    sheetHandler.scope {
-                        sheetHandler.state.show()
+                    sheetHandler.state {
+                        show()
                     }
                 }
             }
