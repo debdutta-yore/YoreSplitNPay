@@ -550,15 +550,17 @@ fun PeopleImageItem_r02b97(
             contentDescription = ""
         )
 
-        DeleteIcon_iw4d3p(
-            modifier = Modifier
-                .radialBottomLeft(config.imageSize.dep()),
-            config = DeleteIconConfiguration(),
-            contentDescription = "",
-            onClick = {
-                onDelete()
-            }
-        )
+        if(friend.deletable){
+            DeleteIcon_iw4d3p(
+                modifier = Modifier
+                    .radialBottomLeft(config.imageSize.dep()),
+                config = DeleteIconConfiguration(),
+                contentDescription = "",
+                onClick = {
+                    onDelete()
+                }
+            )
+        }
     }
 }
 

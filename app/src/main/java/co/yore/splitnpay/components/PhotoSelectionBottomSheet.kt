@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -24,6 +25,7 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.NotificationService
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.notifier
+import co.yore.splitnpay.models.DataIds
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -31,10 +33,12 @@ fun PhotoSelectionBottomSheet(
     notifier: NotificationService = notifier()
 ) {
 
-    val itemList = listOf(
-        Item(id = 0, painterResource(R.drawable.ic_camera_blue), "Camera"),
-        Item(id = 1, painterResource(id = R.drawable.ic_gallery_blue), "Gallery")
-    )
+    val itemList = remember {
+        listOf(
+            Item(id = 0, R.drawable.ic_camera_blue, "Camera"),
+            Item(id = 1, R.drawable.ic_gallery_blue, "Gallery")
+        )
+    }
 
     val listState = rememberLazyListState()
     var selectedIndex by remember { mutableStateOf(-1) }
@@ -68,26 +72,19 @@ fun PhotoSelectionBottomSheet(
                 SingleItem(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .selectable(
-                            selected = itemList[index].id == selectedIndex,
-                            onClick = {
-                                notifier.notify("camera_or_gallery",itemList[index].name)
-                            }
-                        )
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onPress = {
-                                    selectedIndex = if (selectedIndex != itemList[index].id)
-                                        itemList[index].id else -1
+                                    selectedIndex = itemList[index].id
                                 },
                                 onTap = {
-
+                                    notifier.notify(DataIds.cameraOrGallery, itemList[index].name)
                                 },
                                 onDoubleTap = { },
                                 onLongPress = { }
                             )
                         },
-                    icon = itemList[index].icon,
+                    icon = painterResource(itemList[index].icon),
                     text = itemList[index].name,
                     isSelected = itemList[index].id == selectedIndex
                 )
@@ -137,19 +134,23 @@ private fun SingleItem(
         }
 
         if (isSelected) {
-            Icon(
+            Box(
                 modifier = Modifier
-                //  .width(18f.dep())
-                ,
-                tint = Color(26, 121, 229),
-                painter = painterResource(id = R.drawable.ic_sheet_selector),
-                contentDescription = "holder"
-            )
+                    .height(49.dep())
+                    .width(16.dep())
+                    .offset(x = 8.dep())
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 6.dep(),
+                            bottomStart = 6.dep()
+                        )
+                    )
+                    .background(Color(0xff1A79E5))
+            ){
+
+            }
         }
-
-
     }
-
 }
 
-data class Item(val id: Int, val icon: Painter, val name: String)
+data class Item(val id: Int, val icon: Int, val name: String)

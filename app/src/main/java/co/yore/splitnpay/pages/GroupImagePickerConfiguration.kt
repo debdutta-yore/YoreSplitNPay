@@ -33,7 +33,7 @@ fun GroupImagePicker_ncbmdg(
     config: GroupImagePickerConfiguration = GroupImagePickerConfiguration(),
     contentDescription: String,
     onClick: () -> Unit,
-    groupImage: Any
+    groupImage: Any?
 ) {
     Box(
         modifier = Modifier

@@ -50,10 +50,20 @@ class MemberSelectionPageViewModel(
         resolver[DataIds.groupsChecked] = _groupsChecked
         fetchGroupAndContacts()
     }
+
+    private fun purgeContacts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.purgeContacts()
+        }
+    }
+
     private val _notificationService = NotificationService{id,arg->
         when(id){
+            WirelessViewModelInterface.startupNotification->{
+                purgeContacts()
+            }
             DataIds.proceedWithContacts->{
-                gotoGroupCreationPage()
+                proceedWithContacts()
             }
             WirelessViewModelInterface.startupNotification->{
                 _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
@@ -75,7 +85,7 @@ class MemberSelectionPageViewModel(
                 if(selectedContactIds.contains(arg)){
                     removeMembersFromSelecteds(setOf(arg))
                 }
-                proceedWithContacts.value = selectedContactIds.isNotEmpty()
+                updateCanProceed()
             }
             DataIds.checkItem->{
                 if(arg==null){
@@ -87,7 +97,7 @@ class MemberSelectionPageViewModel(
                 else{
                     addMembersToSelecteds(setOf(arg))
                 }
-                proceedWithContacts.value = selectedContactIds.isNotEmpty()
+                updateCanProceed()
             }
             DataIds.checkGroupItem->{
                 val groupId = arg?:return@NotificationService
@@ -100,7 +110,7 @@ class MemberSelectionPageViewModel(
                 else{
                     addMembersToSelecteds(memberIds)
                 }
-                proceedWithContacts.value = selectedContactIds.isNotEmpty()
+                updateCanProceed()
             }
             DataIds.selectedTabIndex->{
                 if(arg is Int){
@@ -110,7 +120,24 @@ class MemberSelectionPageViewModel(
             }
         }
     }
+
+    private fun updateCanProceed() {
+        proceedWithContacts.value = addedContacts.size>1
+    }
+
     override val notifier = _notificationService
+
+    private fun proceedWithContacts() {
+        saveAddedContacts()
+        gotoGroupCreationPage()
+    }
+
+    private fun saveAddedContacts() {
+        val contacts = addedContacts.map { it.mobile }
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.saveContacts(contacts)
+        }
+    }
 
     private fun gotoGroupCreationPage() {
         navigation.state { navHostController, lifecycleOwner, toaster ->

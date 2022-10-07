@@ -39,4 +39,10 @@ object DataIds {
     const val groupsChecked = 33
     const val pickImage = 34
     const val groupName = 35
+    const val cameraOrGallery = 36
+    const val profileImage = 37
+    const val transactions = 38
+    const val groupAmount = 39
+    const val groupImage = 40
+    const val groupCreationDate = 41
 }

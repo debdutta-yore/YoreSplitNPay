@@ -64,7 +64,10 @@ fun suffix(
         content
     )
 }
-
+@Composable
+fun floatState(key: Any): State<Float> {
+    return LocalResolver.current.get(key)
+}
 @Composable
 fun stringState(key: Any): State<String> {
     return LocalResolver.current.get(key)

@@ -1,21 +1,21 @@
 package co.yore.splitnpay.pages
 
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.PhotoSelectionBottomSheet
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
@@ -33,7 +33,7 @@ fun GroupCreationScreen(
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
-            NoUi()
+            PhotoSelectionBottomSheet()
         },
         sheetShape = RoundedCornerShape(
             topStart = 25f.dep(),
@@ -54,10 +54,9 @@ fun NoUi() {
 fun GroupCreationPageContent(
     friends: List<ContactData> = listState(DataIds.contacts),
     groupName: String = stringState(DataIds.groupName).value,
+    groupImage: Any? = stringState(DataIds.profileImage).value,
     notifier: NotificationService = notifier()
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val groupImage = remember { mutableStateOf(R.drawable.ic_people) }
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             Box(
@@ -84,7 +83,7 @@ fun GroupCreationPageContent(
                     onClick = {
                         notifier.notify(DataIds.pickImage)
                     },
-                    groupImage = groupImage.value
+                    groupImage = groupImage
                 )
             }
 
@@ -132,7 +131,7 @@ fun GroupCreationPageContent(
                     items(friends) { item ->
                         PeopleImageItem_r02b97(
                             onDelete = {
-                                //friends.remove(item)
+                                notifier.notify(DataIds.deleteAdded,item)
                             },
                             friend = item,
                             contentDescription = "people image"

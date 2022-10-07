@@ -16,7 +16,8 @@ data class ContactData(
     val willPay: Float = 0.0f,
     val willGet: Float = 0.0f,
     val selected: Boolean = false,
-    val lastActivity: Long = 0
+    val lastActivity: Long = 0,
+    val deletable: Boolean = true
 ): GroupOrContact {
     override fun id(): Any {
         return this.id

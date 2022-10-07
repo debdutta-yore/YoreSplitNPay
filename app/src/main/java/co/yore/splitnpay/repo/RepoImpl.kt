@@ -5,6 +5,8 @@ import co.yore.splitnpay.libs.randomDate
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.GroupData
 import co.yore.splitnpay.models.GroupOrContact
+import co.yore.splitnpay.object_box.Contact
+import co.yore.splitnpay.object_box.box
 import io.github.serpro69.kfaker.Faker
 import java.util.*
 import kotlin.random.Random
@@ -54,6 +56,44 @@ class RepoImpl:Repo {
                 lastActivity = randomDate(1643049000000L,1664099455386L),
                 willGet = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f),
                 willPay = Rand.nextFloat(0f,1000f, reseed = true, biased = 0f),
+            )
+        }
+    }
+
+
+
+    override suspend fun saveContacts(contacts: List<String>) {
+        Contact::class.java.box
+            .put(contacts.map {
+            Contact(
+                mobile = it
+            )
+        })
+    }
+
+    override suspend fun purgeContacts() {
+        Contact::class.java
+            .box
+            .removeAll()
+    }
+
+    override suspend fun contacts(): List<String> {
+        return Contact::class.java
+            .box
+            .all
+            .map {
+                it.mobile
+            }
+    }
+
+    override fun deviceContacts(contacts: List<String>): List<ContactData> {
+        var i = 0
+        return contacts.map {
+            ContactData(
+                id = ++i,
+                mobile = it,
+                image = "https://randomuser.me/api/portraits/men/$i.jpg",
+                name = "Name$i"
             )
         }
     }

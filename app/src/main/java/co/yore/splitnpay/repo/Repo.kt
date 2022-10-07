@@ -8,4 +8,8 @@ interface Repo {
     suspend fun groupAndContacts(): List<GroupOrContact>
     suspend fun groups(contacts: List<ContactData>): List<GroupData>
     suspend fun peoples(count: Int = 20): List<ContactData>
+    suspend fun saveContacts(contacts: List<String>)
+    suspend fun purgeContacts()
+    suspend fun contacts(): List<String>
+    fun deviceContacts(contacts: List<String>): List<ContactData>
 }
