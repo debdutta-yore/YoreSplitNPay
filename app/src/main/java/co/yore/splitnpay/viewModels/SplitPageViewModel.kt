@@ -102,7 +102,7 @@ class SplitPageViewModel(
     }
 
     private fun gotoSplitWithPage() {
-        navigation.state{ navHostController, lifecycleOwner, toaster ->
+        navigation.scope{ navHostController, lifecycleOwner, toaster ->
             navHostController.navigate("split_with_page")
         }
     }

@@ -45,4 +45,16 @@ object DataIds {
     const val groupAmount = 39
     const val groupImage = 40
     const val groupCreationDate = 41
+    const val isSingleChat = 42
+    const val filteredMemberName = 43
+    const val filteredMemberImage = 44
+    const val settleClick = 45
+    const val summaryClick = 46
+    const val manageClick = 47
+    const val cardClick = 48
+    const val searchText = 49
+    const val chatMessage = 50
+    const val proceed = 51
+    const val filter = 52
+    const val conversations = 53
 }

@@ -24,6 +24,7 @@ import co.yore.splitnpay.models.DataIds
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.text.DecimalFormat
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 object YoreAmountFormatter{
@@ -293,4 +294,18 @@ fun NavGraphBuilder.yoreComposable(
         navAnimation.popExitTransition,
         content
     )
+}
+
+fun <E>MutableCollection<E>.removeIfMy(filter: (E)->Boolean): Boolean{
+    Objects.requireNonNull(filter)
+    var removed = false
+    val each: MutableIterator<E> = iterator()
+    while (each.hasNext()) {
+        val item = each.next()
+        if (filter(item)) {
+            each.remove()
+            removed = true
+        }
+    }
+    return removed
 }

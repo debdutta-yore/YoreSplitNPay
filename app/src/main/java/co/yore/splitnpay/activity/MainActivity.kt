@@ -20,16 +20,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.constraintlayout.compose.*
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.yore.splitnpay.components.components.CollapsibleBox
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localDesignWidth
+import co.yore.splitnpay.pages.GroupChatScreen
 import co.yore.splitnpay.pages.GroupCreationScreen
 import co.yore.splitnpay.pages.MemberSelectionPage_g5024t
 import co.yore.splitnpay.pages.SplitPage
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+import co.yore.splitnpay.viewModels.GroupChatViewModel
 import co.yore.splitnpay.viewModels.GroupCreationPageViewModel
 import co.yore.splitnpay.viewModels.MemberSelectionPageViewModel
 import co.yore.splitnpay.viewModels.SplitPageViewModel
@@ -42,13 +43,13 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             YoreSplitNPayTheme {
                 CompositionLocalProvider(localDesignWidth provides 360f) {
                     Surface(
                         modifier = Modifier
-                            .safeDrawingPadding()
+                            //.safeDrawingPadding()
                             .fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
@@ -86,6 +87,16 @@ class MainActivity : ComponentActivity() {
                                     wvm = viewModel<GroupCreationPageViewModel>()
                                 ) {
                                     GroupCreationScreen()
+                                }
+                            }
+
+                            yoreComposable("group_chat_page") {
+                                YorePage(
+                                    navController = navController,
+                                    suffix = "group_chat_page",
+                                    wvm = viewModel<GroupChatViewModel>()
+                                ) {
+                                    GroupChatScreen()
                                 }
                             }
                         }

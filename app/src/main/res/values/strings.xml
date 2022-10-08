@@ -9,4 +9,22 @@
     <string name="office">Office</string>
     <string name="split_with">Split With</string>
     <string name="search_groups_or_contacts">Search groups or contacts</string>
+    <string name="settle">Settle</string>
+    <string name="summary">Summary</string>
+    <string name="Manage">Manage</string>
+    <string name="you_created_group">You created the group</string>
+    <string name="bill_total">Bill total</string>
+    <string name="paid">paid</string>
+    <string name="received">Received</string>
+    <string name="you_received">You Received</string>
+    <string name="you_paid">You Paid</string>
+    <string name="all_received">All Received</string>
+    <string name="all_paid">All Paid</string>
+    <string name="all_settled">All Settled</string>
+    <string name="settled">Settled</string>
+    <string name="left">Left</string>
+    <string name="split_payments">Split payments</string>
+    <string name="message">Message</string>
+    <string name="split_group">Split Group</string>
+    <string name="x_created_group">%s created the group</string>
 </resources>

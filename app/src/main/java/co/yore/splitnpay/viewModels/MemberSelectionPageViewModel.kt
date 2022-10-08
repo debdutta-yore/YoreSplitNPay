@@ -69,7 +69,7 @@ class MemberSelectionPageViewModel(
                 _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
             }
             DataIds.back->{
-                navigation.state { navHostController, lifecycleOwner, toaster ->
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack()
                 }
             }
@@ -140,7 +140,7 @@ class MemberSelectionPageViewModel(
     }
 
     private fun gotoGroupCreationPage() {
-        navigation.state { navHostController, lifecycleOwner, toaster ->
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
             navHostController.navigate("group_creation")
         }
     }

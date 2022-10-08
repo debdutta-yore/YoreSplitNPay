@@ -42,6 +42,12 @@ class GroupCreationPageViewModel(
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
     override val notifier = NotificationService{ id, arg->
         when(id){
+            DataIds.proceed->{
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.popBackStack("split_page",false)
+                    navHostController.navigate("group_chat_page")
+                }
+            }
             DataIds.deleteAdded->{
                 deleteItem(arg as? ContactData?:return@NotificationService)
             }
@@ -52,32 +58,13 @@ class GroupCreationPageViewModel(
                 handleCameraOrGallery(arg as? String?:return@NotificationService)
             }
             DataIds.back->{
-                navigation.state { navHostController, lifecycleOwner, toaster ->
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack()
                 }
             }
             DataIds.pickImage->{
-                viewModelScope.launch {
-                    /*val r = permissionHandler.check(Manifest.permission.CAMERA) ?: return@launch
-                    Log.d("fldjfdlf","${r.permissions}")
-                    if(!r.allPermissionsGranted){
-                        var m = permissionHandler.request(Manifest.permission.CAMERA)
-                        Log.d("fldjfdlf","$m")
-                    }
-                    else{
-                        val a = resultingActivityHandler.takePicturePreview()
-                        if(a!=null){
-                            val b = a.width
-                        }
-                    }*/
-
-                    //val a = resultingActivityHandler.getContent("image/*")
-                    /*if(a!=null){
-                        val b = a
-                    }*/
-                    sheetHandler.state {
-                        show()
-                    }
+                sheetHandler.state {
+                    show()
                 }
             }
             DataIds.groupName->{
@@ -96,6 +83,10 @@ class GroupCreationPageViewModel(
         if(index > -1){
             contacts.removeAt(index)
         }
+        adjustDeletable()
+    }
+
+    private fun adjustDeletable() {
         if(contacts.size==2){
             try {
                 contacts[0] = contacts[0].copy(deletable = false)
@@ -110,6 +101,7 @@ class GroupCreationPageViewModel(
             val c = repo.contacts()
             contacts.clear()
             contacts.addAll(repo.deviceContacts(c))
+            adjustDeletable()
         }
     }
 

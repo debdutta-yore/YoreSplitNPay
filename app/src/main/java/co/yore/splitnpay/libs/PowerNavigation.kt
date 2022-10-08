@@ -22,7 +22,7 @@ data class Toaster(
 
 typealias UIScope = suspend (NavHostController, LifecycleOwner, Toaster?)->Unit
 
-fun MutableState<UIScope?>.state(block: UIScope?){
+fun MutableState<UIScope?>.scope(block: UIScope?){
     this.value = {navHostController, lifecycleOwner,toaster ->
         block?.invoke(navHostController,lifecycleOwner,toaster)
         this.value = null

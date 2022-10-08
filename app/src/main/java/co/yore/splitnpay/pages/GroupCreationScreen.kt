@@ -190,7 +190,7 @@ fun GroupCreationPageContent(
                 CustomButton_3egxtx(
                     text = "Continue",
                     onClick = {
-                        //navController.navigate("split_details_screen")
+                        notifier.notify(DataIds.proceed)
                     },
                     contentDescription = "Continue Button"
                 )
