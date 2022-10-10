@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
@@ -45,15 +46,16 @@ import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.CollapsibleBox
-import co.yore.splitnpay.components.components.amountAnnotatedString
-import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.components.components.*
+import co.yore.splitnpay.components.configuration.GroupMemberProfilePicsConfiguration
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
+import co.yore.splitnpay.viewModels.ChatData
+import co.yore.splitnpay.viewModels.ChatStatus
 import co.yore.splitnpay.viewModels.Conversation
 import co.yore.splitnpay.viewModels.GroupCreationEvent
 import coil.compose.AsyncImage
@@ -186,6 +188,7 @@ fun GroupChatScreen(
             } else {
                 FilterBottomSheet()
             }*/
+            FilterBottomSheet()
         },
         scrimColor = Color(0x8C243257),
         sheetBackgroundColor = Color.White,
@@ -501,7 +504,7 @@ fun GroupChatScreen(
                         modifier = Modifier.layoutId("summaryCircle"),
                         painter = painterResource(id = R.drawable.statement_icon),
                         onClick = {
-//                                navController.navigate("split_summary_balance")
+                            //navController.navigate("split_summary_balance")
                             notifier.notify(DataIds.summaryClick)
                         },
                         progress = progress
@@ -554,8 +557,8 @@ fun GroupChatScreen(
                         Column(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            13.sy()
-                            if (isSingleChat) {
+                            //13.sy()
+                            /*if (isSingleChat) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically,
@@ -596,104 +599,27 @@ fun GroupChatScreen(
                                 }
                                 11.sy()
                             }
-                            /*FontFamilyText(
-                                modifier = Modifier.align(CenterHorizontally),
-                                text = groupCreationDateString.toString(),
-                                fontSize = 14.sep(),
-                                color = Bluish
-                            )*/
-                            /*if (transactions.isEmpty()) {
-                                8.sy()
-                                FontFamilyText(
-                                    modifier = Modifier.align(CenterHorizontally),
-                                    annotatedString = buildAnnotatedString {
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontSize = 13.sep(),
-                                                color = Color(0xff5A87BB)
-                                            ),
-                                        ) {
-                                            append(stringResource(R.string.you_created_group))
-                                        }
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontSize = 13.sep(),
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color(0xff5A87BB)
-                                            ),
-                                        ) {
-                                            append(" group name")
-                                        }
-                                    },
-                                    color = Color(0xff5A87BB),
-                                    fontSize = 13.sep()
-                                )
-                            }*/
-                            20.sy()
+                            20.sy()*/
                             Box(
                                 modifier = Modifier
                                     .padding(horizontal = 18.dep())
                             ) {
                                 LazyColumn(
-                                    state = lazyScrollState
+                                    state = lazyScrollState,
+                                    verticalArrangement = Arrangement.spacedBy(8.dep()),
+                                    contentPadding = PaddingValues(
+                                        bottom = 80.dep(),
+                                        top = 18.dep()
+                                    ),
+                                    modifier = Modifier.fadingEdge(
+                                        startingColor = Color(0xffF5F9FF)
+                                    )
                                 ) {
                                     items(conversations) { it ->
-                                        when(it.type){
-                                            Conversation.Type.TRANSACTION -> {
-                                                BillCard_s10zd7(
-                                                    transaction = it.data as BillTransaction,
-                                                    onClick = {
-                                                        notifier.notify(DataIds.cardClick)
-                                                    }
-                                                )
-                                            }
-                                            Conversation.Type.DATE -> {
-                                                Box(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ){
-                                                    FontFamilyText(
-                                                        modifier = Modifier.align(Alignment.Center),
-                                                        text = it.data as String,
-                                                        fontSize = 14.sep(),
-                                                        color = Bluish
-                                                    )
-                                                }
-
-                                            }
-                                            Conversation.Type.CREATION -> {
-                                                Box(
-                                                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dep())
-                                                ) {
-                                                    FontFamilyText(
-                                                        modifier = Modifier.align(Alignment.Center),
-                                                        annotatedString = buildAnnotatedString {
-                                                            withStyle(
-                                                                style = SpanStyle(
-                                                                    fontSize = 13.sep(),
-                                                                    color = Color(0xff5A87BB)
-                                                                ),
-                                                            ) {
-                                                                append(stringResource(R.string.x_created_group,(it.data as GroupCreationEvent).creator))
-                                                            }
-                                                            append(" ")
-                                                            withStyle(
-                                                                style = SpanStyle(
-                                                                    fontSize = 13.sep(),
-                                                                    fontWeight = FontWeight.Bold,
-                                                                    color = Color(0xff5A87BB)
-                                                                ),
-                                                            ) {
-                                                                append((it.data as GroupCreationEvent).groupName)
-                                                            }
-                                                        },
-                                                        color = Color(0xff5A87BB),
-                                                        fontSize = 13.sep()
-                                                    )
-                                                }
-                                            }
-                                            Conversation.Type.STATUS -> TODO()
-                                            Conversation.Type.CHAT -> TODO()
-                                        }
+                                        ConversationItemUI(
+                                            it,
+                                            notifier
+                                        )
                                     }
                                 }
                             }
@@ -752,6 +678,209 @@ fun GroupChatScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ConversationItemUI(
+    it: Conversation, notifier: NotificationService
+) {
+    when(it.type){
+        Conversation.Type.TRANSACTION -> {
+            BillCard_s10zd7(
+                transaction = it.data as BillTransaction,
+                onClick = {
+                    notifier.notify(DataIds.cardClick)
+                }
+            )
+        }
+        Conversation.Type.DATE -> {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ){
+                FontFamilyText(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = it.data as String,
+                    fontSize = 14.sep(),
+                    color = Bluish
+                )
+            }
+
+        }
+        Conversation.Type.CREATION -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dep())
+            ) {
+                FontFamilyText(
+                    modifier = Modifier.align(Alignment.Center),
+                    annotatedString = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontSize = 13.sep(),
+                                color = Color(0xff5A87BB)
+                            ),
+                        ) {
+                            append(stringResource(R.string.x_created_group,(it.data as GroupCreationEvent).creator))
+                        }
+                        append(" ")
+                        withStyle(
+                            style = SpanStyle(
+                                fontSize = 13.sep(),
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xff5A87BB)
+                            ),
+                        ) {
+                            append((it.data as GroupCreationEvent).groupName)
+                        }
+                    },
+                    color = Color(0xff5A87BB),
+                    fontSize = 13.sep()
+                )
+            }
+        }
+        Conversation.Type.STATUS -> {
+            StatusUI(it)
+        }
+        Conversation.Type.CHAT -> {
+            ChatItemUI((it.data as? ChatData)?:return)
+        }
+    }
+}
+
+@Composable
+fun ChatItemUI(chatData: ChatData) {
+    if(chatData.profileImage==null){
+        MyChatUI(chatData.content)
+    }
+    else{
+        PeerChatUI(chatData)
+    }
+}
+
+@Composable
+fun PeerChatUI(chatData: ChatData) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
+    ){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+        ){
+            AsyncImage(
+                model = chatData.profileImage,
+                contentDescription = "",
+                modifier = Modifier
+                    .align(Alignment.Bottom)
+                    .size(30.dep())
+                    .clip(CircleShape)
+                    .border(
+                        width = 3.dep(),
+                        color = Color(0xffEDF5FF),
+                        shape = CircleShape
+                    )
+                    .padding(3.dep()),
+                contentScale = ContentScale.Crop
+            )
+            7.sx()
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Top)
+                    .padding(bottom = 10.67.dep())
+                    //.width(154.dep())
+                    .widthIn(max = 154.dep())
+            ){
+
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 2.5.dep(), start = 3.dep())
+                        .widthIn(max = 151.dep())
+                        .clip(RoundedCornerShape(10.dep()))
+                        .background(Color.White)
+                        .padding(12.dep()),
+                    contentAlignment = Alignment.CenterStart
+                ){
+                    Text(
+                        chatData.content as? String?:"Not supported",
+                        fontSize = 9.sep(),
+                        color = Color(0xff243257),
+                        textAlign = TextAlign.Start
+                    )
+                }
+                Icon(
+                    painter = painterResource(id = R.drawable.my_chat_corner_shape),
+                    contentDescription = "my_chat_corner_shape",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .size(18.5.dep())
+                        .rotate(180f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MyChatUI(content: Any) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd
+    ){
+        Box(
+            modifier = Modifier
+                .widthIn(max = 154.dep())
+        ){
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 2.5.dep(), end = 3.dep())
+                    .widthIn(max = 151.dep())
+                    .clip(RoundedCornerShape(10.dep()))
+                    .background(Color(0xffCFD8E4))
+                    .padding(12.dep()),
+                contentAlignment = Alignment.CenterEnd
+            ){
+                Text(
+                    content as? String?:"Not supported",
+                    fontSize = 9.sep(),
+                    color = Color(0xff243257),
+                    textAlign = TextAlign.End
+                )
+            }
+            Icon(
+                painter = painterResource(id = R.drawable.my_chat_corner_shape),
+                contentDescription = "my_chat_corner_shape",
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(18.5.dep())
+            )
+        }
+    }
+}
+
+@Composable
+fun StatusUI(
+    it: Conversation
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = if((it.data as ChatStatus).left) Arrangement.Start else Arrangement.End
+    ){
+        Icon(
+            painter = painterResource(id = R.drawable.status_seen),
+            contentDescription = "",
+            modifier = Modifier.size(16.dep()),
+            tint = Color.Unspecified
+        )
+        3.sx()
+        GroupMemberProfilePics(
+            images = (it.data as ChatStatus).memberImages,
+            config = GroupMemberProfilePicsConfiguration.smaller
+        )
     }
 }
 

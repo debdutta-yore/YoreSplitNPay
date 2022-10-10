@@ -414,7 +414,7 @@ fun BillCard_s10zd7(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height((cardHeight.value+config.cardShadowOffsetY*2+config.cardShadowBlurRadius*2).dep()),
+            //.height((cardHeight.value+config.cardShadowOffsetY*2+config.cardShadowBlurRadius*2).dep()),
     ){
         Column(
             modifier = Modifier
@@ -566,7 +566,10 @@ fun BillCard_s10zd7(
                                     }
                                 }
                                 // Right text
-                                Column {
+                                Column(
+                                    horizontalAlignment = Alignment.End,
+                                    modifier = Modifier.padding(end = 2.dep())
+                                ) {
                                     if (isAllSettled.value) {
                                         FontFamilyText(
                                             text = "${transaction.completedTransactions} of ${transaction.totalTransactions} Paid",

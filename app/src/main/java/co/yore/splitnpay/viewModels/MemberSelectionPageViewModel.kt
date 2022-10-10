@@ -61,12 +61,10 @@ class MemberSelectionPageViewModel(
         when(id){
             WirelessViewModelInterface.startupNotification->{
                 purgeContacts()
+                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
             }
             DataIds.proceedWithContacts->{
                 proceedWithContacts()
-            }
-            WirelessViewModelInterface.startupNotification->{
-                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
             }
             DataIds.back->{
                 navigation.scope { navHostController, lifecycleOwner, toaster ->

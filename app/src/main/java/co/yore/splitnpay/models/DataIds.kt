@@ -57,4 +57,7 @@ object DataIds {
     const val proceed = 51
     const val filter = 52
     const val conversations = 53
+    const val membersForFiltering = 54
+    const val filterMember = 55
+    const val filterDone = 56
 }

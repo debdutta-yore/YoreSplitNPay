@@ -236,8 +236,16 @@ data class WeekDayUIConfiguration(
 )
 
 data class GroupMemberProfilePicsConfiguration(
-    val startPadding: Float = 14f
-)
+    val startPadding: Float = 14.5f,
+    val smaller: Boolean = false
+){
+    companion object{
+        val smaller = GroupMemberProfilePicsConfiguration(
+            smaller = true,
+            startPadding = 8.5f
+        )
+    }
+}
 
 data class ContactSearchBarConfiguration(
     val height: Float = 44f,
@@ -278,7 +286,13 @@ data class SingleGroupMemberProfilePicConfiguration(
     val borderColor: Color = Color.White,
     val placeholder: Int = R.drawable.user_dummy4,
     val contentScale: ContentScale = ContentScale.Crop
-)
+){
+    companion object{
+        val smaller = SingleGroupMemberProfilePicConfiguration(
+            imageSize = 17f
+        )
+    }
+}
 data class PeopleRowItemConfiguration(
     val imageSize: Float = 45f,
 )
@@ -393,7 +407,14 @@ data class TransparentProfilePicConfiguration(
     val fontSize: Float = 12f,
     val fontColor: Color = Color.White,
     val fontWeight: FontWeight = FontWeight.Bold
-)
+){
+    companion object{
+        val smaller = TransparentProfilePicConfiguration(
+            imageSize = 17f,
+            fontSize = 8f
+        )
+    }
+}
 
 data class GroupCardConfiguration(
     val shadowColor: Color = GreyShadow,

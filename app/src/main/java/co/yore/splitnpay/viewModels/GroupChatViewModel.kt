@@ -1,5 +1,6 @@
 package co.yore.splitnpay.viewModels
 
+import androidx.annotation.DrawableRes
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateListOf
@@ -7,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds
@@ -67,11 +69,16 @@ data class GroupCreationEvent(
     val groupName: String
 )
 
+data class ChatStatus(
+    val memberImages: List<Any?>,
+    val left: Boolean = true
+)
+
 data class Conversation(
     val type: Type,
     val data: Any
-){
-    enum class Type{
+) {
+    enum class Type {
         TRANSACTION,
         DATE,
         CREATION,
@@ -80,13 +87,65 @@ data class Conversation(
     }
 }
 
+data class ChatData(
+    val content: Any,
+    val profileImage: Any? = null
+)
+
+data class SingleItem(
+    val id: Int,
+    @DrawableRes
+    val profilePic: Int,
+    val userName: String,
+    val mobileNo: String,
+    val isSelected: Boolean
+)
+
 class GroupChatViewModel(
     private val repo: GroupRepository = GroupsMock()
 ) : ViewModel(), WirelessViewModelInterface {
+    val list = listOf(
+        SingleItem(
+            id = 1,
+            profilePic = R.drawable.ic_profilepic1,
+            userName = "You",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+        SingleItem(
+            id = 2,
+            profilePic = R.drawable.ic_profilepic1,
+            userName = "Manisha Roy",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+        SingleItem(
+            id = 3,
+            profilePic = R.drawable.ic_profilepic1,
+            userName = "Sushil Roy",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+        SingleItem(
+            id = 4,
+            profilePic = R.drawable.ic_profilepic1,
+            userName = "Sanjana Ray",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+        SingleItem(
+            id = 5,
+            profilePic = R.drawable.ic_profilepic1,
+            userName = "Ankita Ray",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+    )
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
+
     @OptIn(ExperimentalMaterialApi::class)
     override val sheetHandler = SheetHandler(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -105,12 +164,32 @@ class GroupChatViewModel(
     private val _filteredMemberName = mutableStateOf("Manisha Roy")
     private val _chatMessage = mutableStateOf("")
     private val _searchText = mutableStateOf("")
+    private val _list = mutableStateListOf<SingleItem>()
 
     //////////////////////////////////////////
+    private var prevSelectedIndex = -1
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
-            WirelessViewModelInterface.startupNotification->{
+            DataIds.filterDone->{
+                sheetHandler.state {
+                    hide()
+                }
+            }
+            DataIds.filterMember->{
+                if(prevSelectedIndex>-1){
+                    _list[prevSelectedIndex] = _list[prevSelectedIndex].copy(isSelected = false)
+                }
+                if(arg is SingleItem){
+                    val index = _list.indexOf(arg)
+                    if(index > -1){
+                        val current = _list[index]
+                        prevSelectedIndex = index
+                        _list[index] = current.copy(isSelected = !current.isSelected)
+                    }
+                }
+            }
+            WirelessViewModelInterface.startupNotification -> {
 
             }
             DataIds.back -> {
@@ -121,7 +200,7 @@ class GroupChatViewModel(
             DataIds.groupAmount -> {
                 _groupAmount.value = (arg as? Float) ?: 0f
             }
-            DataIds.filter->{
+            DataIds.filter -> {
                 sheetHandler.state {
                     show()
                 }
@@ -170,7 +249,9 @@ class GroupChatViewModel(
             DataIds.filteredMemberImage to _filteredMemberImage,
             DataIds.chatMessage to _chatMessage,
             DataIds.searchText to _searchText,
+            DataIds.membersForFiltering to _list,
         )
+        _list.addAll(list)
         viewModelScope.launch(Dispatchers.IO) {
             val billTransactions = repo.getBillTransactions()
             withContext(Dispatchers.Main) {
@@ -197,6 +278,37 @@ class GroupChatViewModel(
                         )
                     }
                 )
+                _conversations.add(
+                    Conversation(
+                        type = Conversation.Type.STATUS,
+                        data = ChatStatus(
+                            listOf(
+                                "https://i.pravatar.cc/100",
+                                "https://i.pravatar.cc/100",
+                                "https://i.pravatar.cc/100",
+                                "https://i.pravatar.cc/100",
+                            ),
+                            left = false
+                        )
+                    )
+                )
+                _conversations.add(
+                    Conversation(
+                        type = Conversation.Type.CHAT,
+                        data = ChatData(
+                            content = "Hello, guy",
+                        )
+                    )
+                )
+                _conversations.add(
+                    Conversation(
+                        type = Conversation.Type.CHAT,
+                        data = ChatData(
+                            content = "Hello, guys",
+                            profileImage = "https://i.pravatar.cc/100"
+                        )
+                    )
+                )
             }
         }
         _statusBarColor.value = StatusBarColor(
@@ -207,3 +319,4 @@ class GroupChatViewModel(
 }
 
 val StatusBarGreen = Color(0xff00CEC3)
+

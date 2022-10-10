@@ -320,7 +320,11 @@ fun GroupMemberProfilePics(
             ) {
                 SingleGroupMemberProfilePic(
                     contentDescription = "SingleGroupMemberProfileImage",
-                    image = item
+                    image = item,
+                    config = if(config.smaller)
+                        SingleGroupMemberProfilePicConfiguration.smaller
+                    else
+                        SingleGroupMemberProfilePicConfiguration()
                 )
             }
         }
@@ -331,7 +335,11 @@ fun GroupMemberProfilePics(
             ) {
                 TransparentProfilePic_k7ibvr(
                     member = Member(invisibleImagesCount),
-                    contentDescription = "TransparentExtraMemberCount"
+                    contentDescription = "TransparentExtraMemberCount",
+                    config = if(config.smaller)
+                        TransparentProfilePicConfiguration.smaller
+                    else
+                        TransparentProfilePicConfiguration()
                 )
             }
         }
