@@ -1,6 +1,7 @@
 package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,11 +40,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.ExperimentalMotionApi
-import androidx.constraintlayout.compose.MotionLayout
+import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
@@ -54,10 +53,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
-import co.yore.splitnpay.viewModels.ChatData
-import co.yore.splitnpay.viewModels.ChatStatus
-import co.yore.splitnpay.viewModels.Conversation
-import co.yore.splitnpay.viewModels.GroupCreationEvent
+import co.yore.splitnpay.viewModels.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
@@ -165,16 +161,11 @@ fun GroupChatScreen(
     groupNameString: String = stringState(key = DataIds.groupName).value,
     groupAmountString: Float = floatState(key = DataIds.groupAmount).value,
     groupImageString: String = stringState(key = DataIds.groupImage).value,
-    groupCreationDateString: String = stringState(key = DataIds.groupCreationDate).value,
-    isSingleChat: Boolean = boolState(key = DataIds.isSingleChat).value,
-    filteredMemberName: String = stringState(key = DataIds.filteredMemberName).value,
-    filteredMemberImage: String = stringState(key = DataIds.filteredMemberImage).value,
     notifier: NotificationService = notifier(),
     sheetHandler: SheetHandler = localSheetHandler()
 ) {
     val sheetState = sheetHandler.handle()
     val scope = rememberCoroutineScope()
-    val lazyScrollState = rememberLazyListState()
     val dep = 1.dep()
 
     ModalBottomSheetLayout(
@@ -206,426 +197,24 @@ fun GroupChatScreen(
             ) {
                 MotionLayout(
                     modifier = Modifier.fillMaxSize(),
-                    start = ConstraintSet {
-                        val upperCut = createRefFor("upperCut")
-                        val bottomCut = createRefFor("bottomCut")
-                        val content = createRefFor("content")
-                        val groupImage = createRefFor("groupImage")
-                        val groupName = createRefFor("groupName")
-                        val amount = createRefFor("amount")
-                        val settleCircle = createRefFor("settleCircle")
-                        val settleText = createRefFor("settleText")
-                        val summaryCircle = createRefFor("summaryCircle")
-                        val summaryText = createRefFor("summaryText")
-                        val menuOverlay = createRefFor("menuOverlay")
-                        val manageCircle = createRefFor("manageCircle")
-                        val manageText = createRefFor("manageText")
-                        val bottomBar = createRefFor("bottomBar")
-                        val topBar = createRefFor("topBar")
-                        val searchBar = createRefFor("searchBar")
-                        val tabs = createRefFor("tabs")
-
-                        constrain(topBar) {
-                            top.linkTo(parent.top)
-                        }
-                        constrain(bottomBar) {
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                        }
-                        constrain(searchBar) {
-                            top.linkTo(upperCut.bottom, 64 * dep)
-                            width = Dimension.fillToConstraints
-                        }
-                        constrain(tabs) {
-                            top.linkTo(searchBar.bottom, 9 * dep)
-                        }
-                        constrain(menuOverlay) {
-                            start.linkTo(upperCut.end)
-                            top.linkTo(upperCut.top, 68 * dep)
-                        }
-                        constrain(summaryCircle) {
-                            centerHorizontallyTo(upperCut)
-                            top.linkTo(upperCut.bottom, -23.5 * dep)
-                            width = Dimension.value(47 * dep)
-                        }
-                        constrain(summaryText) {
-                            centerHorizontallyTo(summaryCircle)
-                            top.linkTo(summaryCircle.bottom, 8 * dep)
-                        }
-                        constrain(manageCircle) {
-                            end.linkTo(upperCut.end, 72 * dep)
-                            top.linkTo(upperCut.bottom, -23.5 * dep)
-                            width = Dimension.value(47 * dep)
-                        }
-                        constrain(manageText) {
-                            centerHorizontallyTo(manageCircle)
-                            top.linkTo(manageCircle.bottom, 8 * dep)
-                        }
-                        constrain(upperCut) {
-                            height = Dimension.value(219 * dep)
-                        }
-                        constrain(bottomCut) {
-                            top.linkTo(upperCut.bottom)
-                        }
-                        constrain(content) {
-                            top.linkTo(tabs.bottom, 20 * dep)
-                            bottom.linkTo(parent.bottom)
-                            height = Dimension.fillToConstraints
-                        }
-                        constrain(groupImage) {
-                            centerHorizontallyTo(upperCut)
-                            top.linkTo(upperCut.top, 51 * dep)
-                        }
-                        constrain(groupName) {
-                            centerHorizontallyTo(groupImage)
-                            top.linkTo(groupImage.bottom, 14 * dep)
-                        }
-                        constrain(amount) {
-                            centerHorizontallyTo(groupImage)
-                            top.linkTo(groupName.bottom, 3 * dep)
-                        }
-                        constrain(settleCircle) {
-                            start.linkTo(upperCut.start, 72 * dep)
-                            top.linkTo(upperCut.bottom, -23.5 * dep)
-                            width = Dimension.value(47 * dep)
-                        }
-                        constrain(settleText) {
-                            centerHorizontallyTo(settleCircle)
-                            top.linkTo(settleCircle.bottom, 8 * dep)
-                        }
-                    },
-                    end = ConstraintSet {
-                        val upperCut = createRefFor("upperCut")
-                        val bottomCut = createRefFor("bottomCut")
-                        val content = createRefFor("content")
-                        val groupImage = createRefFor("groupImage")
-                        val groupName = createRefFor("groupName")
-                        val amount = createRefFor("amount")
-                        val settleCircle = createRefFor("settleCircle")
-                        val settleText = createRefFor("settleText")
-                        val summaryCircle = createRefFor("summaryCircle")
-                        val summaryText = createRefFor("summaryText")
-                        val menuOverlay = createRefFor("menuOverlay")
-                        val manageCircle = createRefFor("manageCircle")
-                        val manageText = createRefFor("manageText")
-                        val topBar = createRefFor("topBar")
-                        val bottomBar = createRefFor("bottomBar")
-                        val searchBar = createRefFor("searchBar")
-                        val tabs = createRefFor("tabs")
-
-                        constrain(topBar) {
-                            top.linkTo(parent.top)
-                        }
-
-                        constrain(bottomBar) {
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                        }
-
-                        constrain(searchBar) {
-                            top.linkTo(upperCut.bottom, 25 * dep)
-                            width = Dimension.fillToConstraints
-                        }
-
-                        constrain(tabs) {
-                            top.linkTo(searchBar.bottom, 9 * dep)
-                        }
-
-                        constrain(menuOverlay) {
-                            centerTo(summaryCircle)
-                        }
-                        constrain(summaryCircle) {
-                            top.linkTo(settleCircle.bottom, 2 * dep)
-                            end.linkTo(upperCut.end, 26 * dep)
-                            width = Dimension.value(4 * dep)
-                        }
-                        constrain(summaryText) {
-                            centerHorizontallyTo(summaryCircle)
-                            top.linkTo(summaryCircle.bottom)
-                            alpha = 0.0f
-                            scaleX = 0.0f
-                            scaleY = 0.0f
-                            pivotX = 0.5f
-                            pivotY = 0.05f
-                        }
-                        constrain(manageCircle) {
-                            top.linkTo(summaryCircle.bottom, 2 * dep)
-                            end.linkTo(upperCut.end, 26 * dep)
-                            width = Dimension.value(4 * dep)
-                        }
-                        constrain(manageText) {
-                            centerHorizontallyTo(manageCircle)
-                            top.linkTo(manageCircle.bottom)
-                            alpha = 0.0f
-                            scaleX = 0.0f
-                            scaleY = 0.0f
-                            pivotX = 0.5f
-                            pivotY = 0.05f
-                        }
-                        constrain(settleText) {
-                            centerHorizontallyTo(settleCircle)
-                            top.linkTo(settleCircle.bottom)
-                            alpha = 0.0f
-                            scaleX = 0.0f
-                            scaleY = 0.0f
-                            pivotX = 0.5f
-                            pivotY = 0.05f
-                        }
-                        constrain(upperCut) {
-                            height = Dimension.value(159 * dep)
-                        }
-                        constrain(bottomCut) {
-                            top.linkTo(upperCut.bottom)
-                        }
-                        constrain(content) {
-                            top.linkTo(tabs.bottom, 40 * dep)
-                            bottom.linkTo(parent.bottom)
-                            height = Dimension.fillToConstraints
-                        }
-                        constrain(groupImage) {
-                            centerVerticallyTo(upperCut)
-                            start.linkTo(upperCut.start, 37 * dep)
-                        }
-                        constrain(groupName) {
-                            top.linkTo(groupImage.top, 3 * dep)
-                            start.linkTo(groupImage.end, 12 * dep)
-                        }
-                        constrain(amount) {
-                            top.linkTo(groupName.bottom, 3 * dep)
-                            start.linkTo(groupName.start)
-                        }
-                        constrain(settleCircle) {
-                            top.linkTo(upperCut.top, 72 * dep)
-                            end.linkTo(upperCut.end, 26 * dep)
-                            width = Dimension.value(4 * dep)
-                        }
-                    },
+                    start = normalStartConstraint(dep),
+                    end = normalEndConstraint(dep),
                     progress = progress
                 ) {
-                    UpperCut(
-                        modifier = Modifier.layoutId("upperCut"),
-                        color = LightGreen3
+
+                    HeaderUI(
+                        groupImageString,
+                        modifier,
+                        groupNameString,
+                        progress,
+                        groupAmountString,
+                        notifier
                     )
 
-                    BottomCut(
-                        modifier = Modifier.layoutId("bottomCut"),
-                        color = LightGreen3
+                    ContentUI(
+                        conversations,
+                        notifier
                     )
-
-                    AsyncImage(
-                        modifier = Modifier
-                            .layoutId("groupImage")
-                            .coloredShadow(
-                                color = Color(0x4F075692),
-                                offsetX = 0.dep(),
-                                offsetY = 2.25.dep(),
-                                blurRadius = 4.5.dep(),
-                                borderRadius = 100.dep(),
-                                spread = 0f
-                            )
-                            .size(51.dep())
-                            .border(
-                                width = 2.25.dep(),
-                                color = Color.White,
-                                shape = CircleShape
-                            )
-                            .padding(2.25.dep())
-                            .clip(CircleShape),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(groupImageString)
-                            .crossfade(true).build(),
-                        placeholder = painterResource(R.drawable.personactionbar),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null
-                    )
-
-                    FontFamilyText(
-                        modifier = modifier.layoutId("groupName"),
-                        text = groupNameString,
-                        fontSize = minMaxRangeValue(
-                            percentage = ((1 - progress) * 100),
-                            min = 11f,
-                            max = 16f
-                        ).sep(),
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        letterSpacing = 0.166667.sep()
-                    )
-
-                    FontFamilyText(
-                        modifier = modifier.layoutId("amount"),
-                        annotatedString = groupAmountString.amountAnnotatedString(
-                            wholeNumberTextColor = Color.White,
-                            decNumberTextColor = Color.White,
-                            currencyTextColor = Color.White,
-                            currencyFontSize = 21f,
-                            wholeNumberFontSize = minMaxRangeValue(
-                                percentage = (1 - progress) * 100,
-                                max = 30f,
-                                min = 24f
-                            ),
-                            wholeNumberFontWeight = FontWeight.Bold,
-                            decNumberFontSize = 14f,
-                        )
-                    )
-
-                    SingleButton(
-                        modifier = Modifier.layoutId("settleCircle"),
-                        painter = painterResource(id = R.drawable.rupee_sign),
-                        onClick = {
-                            //navController.navigate("split_card_details_screen")
-                            notifier.notify(DataIds.settleClick)
-                        },
-                        backgroundColor = Color.Companion.blend(
-                            color1 = Color.Yellow,
-                            color2 = Color.White,
-                            progress = progress
-                        ),
-                        progress = progress
-                    )
-
-                    FontFamilyText(
-                        modifier = Modifier
-                            .layoutId("settleText")
-                            .scale(1 - progress)
-                            .alpha(1 - progress),
-                        text = stringResource(R.string.settle),
-                        fontSize = 11.sep(),
-                        color = LightBlue4,
-                        lineHeight = 12.89.sep(),
-                        letterSpacing = 0.2.sep()
-                    )
-
-                    SingleButton(
-                        modifier = Modifier.layoutId("summaryCircle"),
-                        painter = painterResource(id = R.drawable.statement_icon),
-                        onClick = {
-                            //navController.navigate("split_summary_balance")
-                            notifier.notify(DataIds.summaryClick)
-                        },
-                        progress = progress
-                    )
-
-                    FontFamilyText(
-                        modifier = Modifier
-                            .layoutId("summaryText")
-                            .scale(1 - progress)
-                            .alpha(1 - progress),
-                        text = stringResource(R.string.summary),
-                        fontSize = 11.sep(),
-                        color = LightBlue4,
-                        lineHeight = 12.89.sep(),
-                        letterSpacing = 0.2.sep()
-                    )
-
-                    SingleButton(
-                        modifier = Modifier
-                            .layoutId("manageCircle"),
-                        painter = painterResource(id = R.drawable.manage_icon),
-                        onClick = {
-                            notifier.notify(DataIds.manageClick)
-                        },
-                        progress = progress
-                    )
-
-                    FontFamilyText(
-                        modifier = Modifier
-                            .layoutId("manageText")
-                            .scale(1 - progress)
-                            .alpha(1 - progress),
-                        text = stringResource(R.string.Manage),
-                        fontSize = 11.sep(),
-                        color = LightBlue4,
-                        lineHeight = 12.89.sep(),
-                        letterSpacing = 0.2.sep()
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .layoutId("content")
-                            .clip(RoundedCornerShape(24.dep()))
-                            .fillMaxWidth()
-                            .background(
-                                color = Whitish,
-                                shape = RoundedCornerShape(24.dep())
-                            ),
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            //13.sy()
-                            /*if (isSingleChat) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .coloredShadow(
-                                                color = Color(0x1A000000),
-                                                offsetX = 0.dep(),
-                                                offsetY = 4.dep(),
-                                                blurRadius = 4.dep(),
-                                                spread = 0f
-                                            )
-                                            .clip(
-                                                CircleShape
-                                            )
-                                            .size(33.dep())
-                                            .border(
-                                                width = 2.02.dep(),
-                                                color = Color.White
-                                            ),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(filteredMemberImage).crossfade(true)
-                                            .build(),
-                                        placeholder = painterResource(R.drawable.personactionbar),
-                                        contentScale = ContentScale.Crop,
-                                        contentDescription = null
-                                    )
-                                    8.sx()
-                                    FontFamilyText(
-                                        text = filteredMemberName,
-                                        fontSize = 12.sep(),
-                                        fontWeight = FontWeight.Bold,
-                                        lineHeight = 14.06.sep(),
-                                        letterSpacing = 0.2.sep()
-                                    )
-                                }
-                                11.sy()
-                            }
-                            20.sy()*/
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 18.dep())
-                            ) {
-                                LazyColumn(
-                                    state = lazyScrollState,
-                                    verticalArrangement = Arrangement.spacedBy(8.dep()),
-                                    contentPadding = PaddingValues(
-                                        bottom = 80.dep(),
-                                        top = 18.dep()
-                                    ),
-                                    modifier = Modifier.fadingEdge(
-                                        startingColor = Color(0xffF5F9FF)
-                                    )
-                                ) {
-                                    items(conversations) { it ->
-                                        ConversationItemUI(
-                                            it,
-                                            notifier
-                                        )
-                                    }
-                                }
-                            }
-                            42.sy()
-                        }
-                    }
 
                     SearchBar(
                         modifier = Modifier
@@ -648,6 +237,11 @@ fun GroupChatScreen(
                     TopBar(
                         modifier = Modifier
                             .layoutId("topBar"),
+                    )
+
+                    TypingIndicator(
+                        modifier = Modifier
+                            .layoutId("typingIndicator")
                     )
 
                     Message(
@@ -676,6 +270,457 @@ fun GroupChatScreen(
                             )
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ContentUI(
+    conversations: List<Conversation>,
+    notifier: NotificationService
+) {
+    val lazyScrollState = rememberLazyListState()
+    Box(
+        modifier = Modifier
+            .layoutId("content")
+            .clip(RoundedCornerShape(24.dep()))
+            .fillMaxWidth()
+            .background(
+                color = Whitish,
+                shape = RoundedCornerShape(24.dep())
+            ),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 18.dep())
+            ) {
+                LazyColumn(
+                    state = lazyScrollState,
+                    verticalArrangement = Arrangement.spacedBy(8.dep()),
+                    contentPadding = PaddingValues(
+                        bottom = 80.dep(),
+                        top = 18.dep()
+                    ),
+                    modifier = Modifier.fadingEdge(
+                        startingColor = Color(0xffF5F9FF)
+                    )
+                ) {
+                    items(conversations) { it ->
+                        ConversationItemUI(
+                            it,
+                            notifier
+                        )
+                    }
+                }
+            }
+            42.sy()
+        }
+    }
+}
+
+@Composable
+fun HeaderUI(
+    groupImageString: String,
+    modifier: Modifier,
+    groupNameString: String,
+    progress: Float,
+    groupAmountString: Float,
+    notifier: NotificationService
+) {
+    UpperCut(
+        modifier = Modifier.layoutId("upperCut"),
+        color = LightGreen3
+    )
+
+    BottomCut(
+        modifier = Modifier.layoutId("bottomCut"),
+        color = LightGreen3
+    )
+
+    AsyncImage(
+        modifier = Modifier
+            .layoutId("groupImage")
+            .coloredShadow(
+                color = Color(0x4F075692),
+                offsetX = 0.dep(),
+                offsetY = 2.25.dep(),
+                blurRadius = 4.5.dep(),
+                borderRadius = 100.dep(),
+                spread = 0f
+            )
+            .size(51.dep())
+            .border(
+                width = 2.25.dep(),
+                color = Color.White,
+                shape = CircleShape
+            )
+            .padding(2.25.dep())
+            .clip(CircleShape),
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(groupImageString)
+            .crossfade(true).build(),
+        placeholder = painterResource(R.drawable.personactionbar),
+        contentScale = ContentScale.Crop,
+        contentDescription = null
+    )
+
+    FontFamilyText(
+        modifier = modifier.layoutId("groupName"),
+        text = groupNameString,
+        fontSize = minMaxRangeValue(
+            percentage = ((1 - progress) * 100),
+            min = 11f,
+            max = 16f
+        ).sep(),
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        letterSpacing = 0.166667.sep()
+    )
+
+    FontFamilyText(
+        modifier = modifier.layoutId("amount"),
+        annotatedString = groupAmountString.amountAnnotatedString(
+            wholeNumberTextColor = Color.White,
+            decNumberTextColor = Color.White,
+            currencyTextColor = Color.White,
+            currencyFontSize = 21f,
+            wholeNumberFontSize = minMaxRangeValue(
+                percentage = (1 - progress) * 100,
+                max = 30f,
+                min = 24f
+            ),
+            wholeNumberFontWeight = FontWeight.Bold,
+            decNumberFontSize = 14f,
+        )
+    )
+
+    SingleButton(
+        modifier = Modifier.layoutId("settleCircle"),
+        painter = painterResource(id = R.drawable.rupee_sign),
+        onClick = {
+            //navController.navigate("split_card_details_screen")
+            notifier.notify(DataIds.settleClick)
+        },
+        backgroundColor = Color.Companion.blend(
+            color1 = Color.Yellow,
+            color2 = Color.White,
+            progress = progress
+        ),
+        progress = progress
+    )
+
+    FontFamilyText(
+        modifier = Modifier
+            .layoutId("settleText")
+            .scale(1 - progress)
+            .alpha(1 - progress),
+        text = stringResource(R.string.settle),
+        fontSize = 11.sep(),
+        color = LightBlue4,
+        lineHeight = 12.89.sep(),
+        letterSpacing = 0.2.sep()
+    )
+
+    SingleButton(
+        modifier = Modifier.layoutId("summaryCircle"),
+        painter = painterResource(id = R.drawable.statement_icon),
+        onClick = {
+            //navController.navigate("split_summary_balance")
+            notifier.notify(DataIds.summaryClick)
+        },
+        progress = progress
+    )
+
+    FontFamilyText(
+        modifier = Modifier
+            .layoutId("summaryText")
+            .scale(1 - progress)
+            .alpha(1 - progress),
+        text = stringResource(R.string.summary),
+        fontSize = 11.sep(),
+        color = LightBlue4,
+        lineHeight = 12.89.sep(),
+        letterSpacing = 0.2.sep()
+    )
+
+    SingleButton(
+        modifier = Modifier
+            .layoutId("manageCircle"),
+        painter = painterResource(id = R.drawable.manage_icon),
+        onClick = {
+            notifier.notify(DataIds.manageClick)
+        },
+        progress = progress
+    )
+
+    FontFamilyText(
+        modifier = Modifier
+            .layoutId("manageText")
+            .scale(1 - progress)
+            .alpha(1 - progress),
+        text = stringResource(R.string.Manage),
+        fontSize = 11.sep(),
+        color = LightBlue4,
+        lineHeight = 12.89.sep(),
+        letterSpacing = 0.2.sep()
+    )
+}
+
+fun normalEndConstraint(dep: Dp): ConstraintSet {
+    return ConstraintSet {
+        val upperCut = createRefFor("upperCut")
+        val bottomCut = createRefFor("bottomCut")
+        val content = createRefFor("content")
+        val groupImage = createRefFor("groupImage")
+        val groupName = createRefFor("groupName")
+        val amount = createRefFor("amount")
+        val settleCircle = createRefFor("settleCircle")
+        val settleText = createRefFor("settleText")
+        val summaryCircle = createRefFor("summaryCircle")
+        val summaryText = createRefFor("summaryText")
+        val menuOverlay = createRefFor("menuOverlay")
+        val manageCircle = createRefFor("manageCircle")
+        val manageText = createRefFor("manageText")
+        val topBar = createRefFor("topBar")
+        val bottomBar = createRefFor("bottomBar")
+        val searchBar = createRefFor("searchBar")
+        val tabs = createRefFor("tabs")
+        val typingIndicator = createRefFor("typingIndicator")
+
+        constrain(typingIndicator) {
+            centerHorizontallyTo(parent)
+            bottom.linkTo(bottomBar.top,3*dep)
+        }
+        constrain(topBar) {
+            top.linkTo(parent.top)
+        }
+
+        constrain(bottomBar) {
+            bottom.linkTo(parent.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
+        }
+
+        constrain(searchBar) {
+            top.linkTo(upperCut.bottom, 25 * dep)
+            width = Dimension.fillToConstraints
+        }
+
+        constrain(tabs) {
+            top.linkTo(searchBar.bottom, 9 * dep)
+        }
+
+        constrain(menuOverlay) {
+            centerTo(summaryCircle)
+        }
+        constrain(summaryCircle) {
+            top.linkTo(settleCircle.bottom, 2 * dep)
+            end.linkTo(upperCut.end, 26 * dep)
+            width = Dimension.value(4 * dep)
+        }
+        constrain(summaryText) {
+            centerHorizontallyTo(summaryCircle)
+            top.linkTo(summaryCircle.bottom)
+            alpha = 0.0f
+            scaleX = 0.0f
+            scaleY = 0.0f
+            pivotX = 0.5f
+            pivotY = 0.05f
+        }
+        constrain(manageCircle) {
+            top.linkTo(summaryCircle.bottom, 2 * dep)
+            end.linkTo(upperCut.end, 26 * dep)
+            width = Dimension.value(4 * dep)
+        }
+        constrain(manageText) {
+            centerHorizontallyTo(manageCircle)
+            top.linkTo(manageCircle.bottom)
+            alpha = 0.0f
+            scaleX = 0.0f
+            scaleY = 0.0f
+            pivotX = 0.5f
+            pivotY = 0.05f
+        }
+        constrain(settleText) {
+            centerHorizontallyTo(settleCircle)
+            top.linkTo(settleCircle.bottom)
+            alpha = 0.0f
+            scaleX = 0.0f
+            scaleY = 0.0f
+            pivotX = 0.5f
+            pivotY = 0.05f
+        }
+        constrain(upperCut) {
+            height = Dimension.value(159 * dep)
+        }
+        constrain(bottomCut) {
+            top.linkTo(upperCut.bottom)
+        }
+        constrain(content) {
+            top.linkTo(tabs.bottom, 40 * dep)
+            bottom.linkTo(parent.bottom)
+            height = Dimension.fillToConstraints
+        }
+        constrain(groupImage) {
+            centerVerticallyTo(upperCut)
+            start.linkTo(upperCut.start, 37 * dep)
+        }
+        constrain(groupName) {
+            top.linkTo(groupImage.top, 3 * dep)
+            start.linkTo(groupImage.end, 12 * dep)
+        }
+        constrain(amount) {
+            top.linkTo(groupName.bottom, 3 * dep)
+            start.linkTo(groupName.start)
+        }
+        constrain(settleCircle) {
+            top.linkTo(upperCut.top, 72 * dep)
+            end.linkTo(upperCut.end, 26 * dep)
+            width = Dimension.value(4 * dep)
+        }
+    }
+}
+
+fun normalStartConstraint(dep: Dp): ConstraintSet {
+    return ConstraintSet {
+        val upperCut = createRefFor("upperCut")
+        val bottomCut = createRefFor("bottomCut")
+        val content = createRefFor("content")
+        val groupImage = createRefFor("groupImage")
+        val groupName = createRefFor("groupName")
+        val amount = createRefFor("amount")
+        val settleCircle = createRefFor("settleCircle")
+        val settleText = createRefFor("settleText")
+        val summaryCircle = createRefFor("summaryCircle")
+        val summaryText = createRefFor("summaryText")
+        val menuOverlay = createRefFor("menuOverlay")
+        val manageCircle = createRefFor("manageCircle")
+        val manageText = createRefFor("manageText")
+        val bottomBar = createRefFor("bottomBar")
+        val topBar = createRefFor("topBar")
+        val searchBar = createRefFor("searchBar")
+        val tabs = createRefFor("tabs")
+        val typingIndicator = createRefFor("typingIndicator")
+
+        constrain(typingIndicator) {
+            centerHorizontallyTo(parent)
+            bottom.linkTo(bottomBar.top,3*dep)
+        }
+        constrain(topBar) {
+            top.linkTo(parent.top)
+        }
+        constrain(bottomBar) {
+            bottom.linkTo(parent.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
+        }
+        constrain(searchBar) {
+            top.linkTo(upperCut.bottom, 64 * dep)
+            width = Dimension.fillToConstraints
+        }
+        constrain(tabs) {
+            top.linkTo(searchBar.bottom, 9 * dep)
+        }
+        constrain(menuOverlay) {
+            start.linkTo(upperCut.end)
+            top.linkTo(upperCut.top, 68 * dep)
+        }
+        constrain(summaryCircle) {
+            centerHorizontallyTo(upperCut)
+            top.linkTo(upperCut.bottom, -23.5 * dep)
+            width = Dimension.value(47 * dep)
+        }
+        constrain(summaryText) {
+            centerHorizontallyTo(summaryCircle)
+            top.linkTo(summaryCircle.bottom, 8 * dep)
+        }
+        constrain(manageCircle) {
+            end.linkTo(upperCut.end, 72 * dep)
+            top.linkTo(upperCut.bottom, -23.5 * dep)
+            width = Dimension.value(47 * dep)
+        }
+        constrain(manageText) {
+            centerHorizontallyTo(manageCircle)
+            top.linkTo(manageCircle.bottom, 8 * dep)
+        }
+        constrain(upperCut) {
+            height = Dimension.value(219 * dep)
+        }
+        constrain(bottomCut) {
+            top.linkTo(upperCut.bottom)
+        }
+        constrain(content) {
+            top.linkTo(tabs.bottom, 20 * dep)
+            bottom.linkTo(parent.bottom)
+            height = Dimension.fillToConstraints
+        }
+        constrain(groupImage) {
+            centerHorizontallyTo(upperCut)
+            top.linkTo(upperCut.top, 51 * dep)
+        }
+        constrain(groupName) {
+            centerHorizontallyTo(groupImage)
+            top.linkTo(groupImage.bottom, 14 * dep)
+        }
+        constrain(amount) {
+            centerHorizontallyTo(groupImage)
+            top.linkTo(groupName.bottom, 3 * dep)
+        }
+        constrain(settleCircle) {
+            start.linkTo(upperCut.start, 72 * dep)
+            top.linkTo(upperCut.bottom, -23.5 * dep)
+            width = Dimension.value(47 * dep)
+        }
+        constrain(settleText) {
+            centerHorizontallyTo(settleCircle)
+            top.linkTo(settleCircle.bottom, 8 * dep)
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun TypingIndicator(
+    modifier: Modifier = Modifier,
+    typingMembers: List<Any?> = listState(key = DataIds.typingMembers)
+) {
+    Box(
+        modifier =
+            modifier
+                .layoutId("typingIndicator")
+    ){
+        AnimatedVisibility(
+            typingMembers.isNotEmpty(),
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut()
+        ){
+            Row(
+                modifier = Modifier
+                    .background(Color.White, CircleShape)
+                    .padding(
+                        start = 3.dep(),
+                        end = 6.dep(),
+                        top = 3.dep(),
+                        bottom = 3.dep()
+                    ),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                GroupMemberProfilePics(
+                    images = typingMembers,
+                    config = GroupMemberProfilePicsConfiguration.smaller
+                )
+                4.sx()
+                Text(
+                    stringResource(id = R.string.typing),
+                    color = Color(0xff243257),
+                    fontSize = 9.sep()
+                )
             }
         }
     }
@@ -746,6 +791,94 @@ fun ConversationItemUI(
         Conversation.Type.CHAT -> {
             ChatItemUI((it.data as? ChatData)?:return)
         }
+        Conversation.Type.MEMBER -> {
+            MemberUI(it.data as? MemberData?:return)
+        }
+    }
+}
+
+@Composable
+fun MemberUI(memberData: MemberData) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dep()),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .coloredShadowDp(
+                    borderRadius = 16.5.dep(),
+                    color = Color(0x1A000000),
+                    offsetX = 0.dep(),
+                    offsetY = 4.dep(),
+                    blurRadius = 4.dep(),
+                    spread = 2.dep()
+                )
+                .size(33.dep())
+                .clip(CircleShape)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(
+                        width = 2.02.dep(),
+                        color = Color.White,
+                        shape = CircleShape
+                    )
+                    .padding(2.02.dep())
+                    .clip(CircleShape),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(memberData.profileImage)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.user_dummy4),
+                contentScale = ContentScale.Crop,
+                contentDescription = "profile_image"
+            )
+        }
+        /*Box(
+            modifier = Modifier
+                .size(33.dep())
+                .coloredShadow(
+                    color = Color(0x1A000000),
+                    offsetX = 0.dep(),
+                    offsetY = 4.dep(),
+                    blurRadius = 4.dep(),
+                    spread = 0f
+                )
+                .clip(
+                    CircleShape
+                )
+        ){
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(
+                        width = 2.02.dep(),
+                        color = Color.White,
+                        shape = CircleShape
+                    )
+                    .clip(
+                        CircleShape
+                    ),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(memberData.profileImage).crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.user_dummy4),
+                contentScale = ContentScale.Crop,
+                contentDescription = null
+            )
+        }*/
+        8.sx()
+        FontFamilyText(
+            text = memberData.name,
+            fontSize = 12.sep(),
+            fontWeight = FontWeight.Bold,
+            lineHeight = 14.06.sep(),
+            letterSpacing = 0.2.sep()
+        )
     }
 }
 

@@ -60,4 +60,5 @@ object DataIds {
     const val membersForFiltering = 54
     const val filterMember = 55
     const val filterDone = 56
+    const val typingMembers = 57
 }

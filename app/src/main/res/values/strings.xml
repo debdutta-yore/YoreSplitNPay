@@ -27,4 +27,5 @@
     <string name="message">Message</string>
     <string name="split_group">Split Group</string>
     <string name="x_created_group">%s created the group</string>
+    <string name="typing">Typing...</string>
 </resources>

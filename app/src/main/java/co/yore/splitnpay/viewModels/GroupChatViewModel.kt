@@ -83,13 +83,19 @@ data class Conversation(
         DATE,
         CREATION,
         STATUS,
-        CHAT
+        CHAT,
+        MEMBER,
     }
 }
 
 data class ChatData(
     val content: Any,
     val profileImage: Any? = null
+)
+
+data class MemberData(
+    val name: String,
+    val profileImage: Any?
 )
 
 data class SingleItem(
@@ -165,6 +171,7 @@ class GroupChatViewModel(
     private val _chatMessage = mutableStateOf("")
     private val _searchText = mutableStateOf("")
     private val _list = mutableStateListOf<SingleItem>()
+    private val _typingMembers = mutableStateListOf<Any?>()
 
     //////////////////////////////////////////
     private var prevSelectedIndex = -1
@@ -220,6 +227,7 @@ class GroupChatViewModel(
                     navHostController.navigate("manage_page")
                     navHostController.popBackStack()
                 }*/
+                _typingMembers.add("https://i.pravatar.cc/100")
             }
             DataIds.chatMessage -> {
                 _chatMessage.value = (arg as? String) ?: ""
@@ -250,11 +258,21 @@ class GroupChatViewModel(
             DataIds.chatMessage to _chatMessage,
             DataIds.searchText to _searchText,
             DataIds.membersForFiltering to _list,
+            DataIds.typingMembers to _typingMembers,
         )
         _list.addAll(list)
         viewModelScope.launch(Dispatchers.IO) {
             val billTransactions = repo.getBillTransactions()
             withContext(Dispatchers.Main) {
+                _conversations.add(
+                    Conversation(
+                        type = Conversation.Type.MEMBER,
+                        data = MemberData(
+                            name = "Manisha Roy",
+                            profileImage = "https://i.pravatar.cc/100",
+                        )
+                    )
+                )
                 _conversations.add(
                     Conversation(
                         type = Conversation.Type.DATE,
