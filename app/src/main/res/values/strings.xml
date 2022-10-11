@@ -28,4 +28,11 @@
     <string name="split_group">Split Group</string>
     <string name="x_created_group">%s created the group</string>
     <string name="typing">Typing...</string>
+    <string name="search">Search</string>
+    <string name="enter_bill_total">Enter Bill Total</string>
+    <string name="continue1">Continue</string>
+    <string name="amount">Amount</string>
+    <string name="add_description">Add description</string>
+    <string name="categories">Categories</string>
+    <string name="others">Others</string>
 </resources>

@@ -2,6 +2,8 @@ package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +25,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.painter.Painter
@@ -46,24 +50,29 @@ import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
+import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
 import co.yore.splitnpay.components.configuration.GroupMemberProfilePicsConfiguration
+import co.yore.splitnpay.components.configuration.SplitTabItemConfiguration
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.DataIds.search
+import co.yore.splitnpay.models.DataIds.searchText
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 val LightGrey8 = Color(0xffD9D9D9)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    searchText: String = stringState(key = DataIds.searchText).value,
+    //searchText: String = stringState(key = DataIds.searchText).value,
     notifier: NotificationService = notifier(),
     onFilter: () -> Unit
 ) {
@@ -78,7 +87,7 @@ fun SearchBar(
     val interactionSource = remember { MutableInteractionSource() }
     BasicTextField(
         enabled = false,
-        value = searchText,
+        value = "",
         onValueChange = { notifier.notify(DataIds.searchText, it)},
         modifier = modifier
             .background(
@@ -98,7 +107,7 @@ fun SearchBar(
                 .fillMaxWidth()
         ){
             TextFieldDefaults.TextFieldDecorationBox(
-                value = searchText,
+                value = "",
                 innerTextField = innerTextField,
                 interactionSource = interactionSource,
                 contentPadding = PaddingValues(bottom = 9.dep()),
@@ -126,7 +135,9 @@ fun SearchBar(
                             modifier = Modifier
                                 .size(33.dep())
                                 .clip(CircleShape)
-                                .clickable { }
+                                .clickable {
+                                    notifier.notify(DataIds.search)
+                                }
                                 .padding(7.dep()),
                             painter = painterResource(id = R.drawable.search),
                             contentDescription = "search",
@@ -151,6 +162,101 @@ fun SearchBar(
         }
     }
 }
+@Composable
+fun SearchField(
+    config: ContactSearchBarConfiguration = ContactSearchBarConfiguration(),
+    contentDescription: String,
+    text: String,
+    placeholderText: String,
+    notifier: NotificationService = notifier()
+) {
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = Modifier
+            .semantics {
+                this.contentDescription = contentDescription
+            }
+    ) {
+        val focusRequester = remember { FocusRequester() }
+        LaunchedEffect(key1 = focusRequester){
+            focusRequester.requestFocus()
+        }
+        TextField(
+            modifier = Modifier
+                .semantics {
+                    this.contentDescription = "${contentDescription}_text_field"
+                }
+                .focusRequester(focusRequester)
+                .fillMaxWidth()
+                .height(config.height.dep())
+                .background(
+                    config.backgroundColor,
+                    RoundedCornerShape(config.borderRadius.dep())
+                ),
+            value = text,
+            onValueChange = {
+                notifier.notify(DataIds.searchTextInput,it)
+            },
+            textStyle = TextStyle(fontSize = config.fontSize.sep()),
+            shape = RoundedCornerShape(config.borderRadius.dep()),
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                backgroundColor = Color.Transparent,
+                cursorColor = config.cursorColor
+            ),
+            leadingIcon = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    config.iconLeftSpace.sx()
+                    Icon(
+                        painter = painterResource(id = config.searchIconId),
+                        contentDescription = "search",
+                        tint = config.searchIconTint
+                    )
+                    config.iconRightSpace.sx()
+                    Divider(
+                        color = config.dividerColor,
+                        modifier = Modifier
+                            .height(config.dividerHeight.dep())
+                            .width(config.dividerWidth.dep())
+                    )
+                    config.dividerRightSpace.sx()
+                }
+            },
+        )
+
+        AnimatedVisibility(
+            visible = text.isEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Text(
+                text = placeholderText,
+                fontSize = config.fontSize.sep(),
+                color = config.color,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.padding(start = config.startPadding.dep())
+            )
+        }
+    }
+}
+@Composable
+fun GroupSearchBar(
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Box(
+        modifier = modifier
+            .layoutId("search_bar")
+            .padding(horizontal = 16.dep())
+    ) {
+        SearchField(
+            contentDescription = "split_search",
+            text = text,
+            placeholderText = stringResource(id = R.string.search)
+        )
+    }
+}
 
 @SuppressLint("Range")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMotionApi::class)
@@ -161,8 +267,10 @@ fun GroupChatScreen(
     groupNameString: String = stringState(key = DataIds.groupName).value,
     groupAmountString: Float = floatState(key = DataIds.groupAmount).value,
     groupImageString: String = stringState(key = DataIds.groupImage).value,
+    searchText: String = stringState(key = DataIds.searchText).value,
     notifier: NotificationService = notifier(),
-    sheetHandler: SheetHandler = localSheetHandler()
+    sheetHandler: SheetHandler = localSheetHandler(),
+    searching: Boolean = boolState(key = DataIds.search).value
 ) {
     val sheetState = sheetHandler.handle()
     val scope = rememberCoroutineScope()
@@ -171,7 +279,7 @@ fun GroupChatScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-                       Text("")
+                       //Text("")
             /*if (sheet.value) {
                 BillTotalBottomSheet(
                     modifier = Modifier.fillMaxWidth()
@@ -179,7 +287,8 @@ fun GroupChatScreen(
             } else {
                 FilterBottomSheet()
             }*/
-            FilterBottomSheet()
+            //FilterBottomSheet()
+                       BillTotalBottomSheet()
         },
         scrimColor = Color(0x8C243257),
         sheetBackgroundColor = Color.White,
@@ -195,36 +304,92 @@ fun GroupChatScreen(
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
+                val startGap by remember(searching) {
+                    derivedStateOf {
+                        if(!searching){
+                            337.02f
+                        }
+                        else{
+                            132.3f
+                        }
+                    }
+                }
+                val endGap by remember(searching) {
+                    derivedStateOf {
+                        if(!searching){
+                            236.96f
+                        }
+                        else{
+                            132.3f
+                        }
+                    }
+                }
+                val contentTopGap by remember(searching) {
+                    derivedStateOf {
+                        if(!searching){
+                            40f
+                        }
+                        else{
+                            20f
+                        }
+                    }
+                }
+                val animatedStartGap by animateFloatAsState(targetValue = startGap)
+                val animatedEndGap by animateFloatAsState(targetValue = endGap)
+                val animatedContentGap by animateFloatAsState(targetValue = contentTopGap)
                 MotionLayout(
                     modifier = Modifier.fillMaxSize(),
-                    start = normalStartConstraint(dep),
-                    end = normalEndConstraint(dep),
+                    start = normalStartConstraint(dep,animatedStartGap),
+                    end = normalEndConstraint(dep,animatedEndGap,animatedContentGap),
                     progress = progress
                 ) {
-
                     HeaderUI(
                         groupImageString,
                         modifier,
                         groupNameString,
                         progress,
                         groupAmountString,
-                        notifier
+                        notifier,
+                        searching
                     )
+                    val alpha by remember(searching) {
+                        derivedStateOf {
+                            if(searching){
+                                0f
+                            }
+                            else{
+                                1f
+                            }
+                        }
+                    }
+                    val animatedAlpha by animateFloatAsState(targetValue = alpha)
+                    if(1f-animatedAlpha>0f){
+                        GroupSearchBar(
+                            modifier = Modifier
+                                .layoutId("searchField")
+                                .alpha(1f - animatedAlpha),
+                            text = searchText
+                        )
+                    }
 
                     ContentUI(
                         conversations,
                         notifier
                     )
 
-                    SearchBar(
-                        modifier = Modifier
-                            .padding(end = 11.dep(), start = 18.dep())
-                            .fillMaxWidth()
-                            .layoutId("searchBar"),
-                        onFilter = {
-                            notifier.notify(DataIds.filter)
-                        }
-                    )
+                    if(alpha>0f){
+                        SearchBar(
+                            modifier = Modifier
+                                .padding(end = 11.dep(), start = 18.dep())
+                                .fillMaxWidth()
+                                .layoutId("searchBar")
+                                .alpha(animatedAlpha),
+                            onFilter = {
+                                notifier.notify(DataIds.filter)
+                            }
+                        )
+                    }
+
 
                     Box(
                         modifier = Modifier
@@ -237,6 +402,7 @@ fun GroupChatScreen(
                     TopBar(
                         modifier = Modifier
                             .layoutId("topBar"),
+                        alpha
                     )
 
                     TypingIndicator(
@@ -329,148 +495,183 @@ fun HeaderUI(
     groupNameString: String,
     progress: Float,
     groupAmountString: Float,
-    notifier: NotificationService
+    notifier: NotificationService,
+    searching: Boolean
 ) {
-    UpperCut(
-        modifier = Modifier.layoutId("upperCut"),
-        color = LightGreen3
-    )
-
-    BottomCut(
-        modifier = Modifier.layoutId("bottomCut"),
-        color = LightGreen3
-    )
-
-    AsyncImage(
-        modifier = Modifier
-            .layoutId("groupImage")
-            .coloredShadow(
-                color = Color(0x4F075692),
-                offsetX = 0.dep(),
-                offsetY = 2.25.dep(),
-                blurRadius = 4.5.dep(),
-                borderRadius = 100.dep(),
-                spread = 0f
-            )
-            .size(51.dep())
-            .border(
-                width = 2.25.dep(),
-                color = Color.White,
-                shape = CircleShape
-            )
-            .padding(2.25.dep())
-            .clip(CircleShape),
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(groupImageString)
-            .crossfade(true).build(),
-        placeholder = painterResource(R.drawable.personactionbar),
-        contentScale = ContentScale.Crop,
-        contentDescription = null
-    )
-
-    FontFamilyText(
-        modifier = modifier.layoutId("groupName"),
-        text = groupNameString,
-        fontSize = minMaxRangeValue(
-            percentage = ((1 - progress) * 100),
-            min = 11f,
-            max = 16f
-        ).sep(),
-        fontWeight = FontWeight.Bold,
-        color = Color.White,
-        letterSpacing = 0.166667.sep()
-    )
-
-    FontFamilyText(
-        modifier = modifier.layoutId("amount"),
-        annotatedString = groupAmountString.amountAnnotatedString(
-            wholeNumberTextColor = Color.White,
-            decNumberTextColor = Color.White,
-            currencyTextColor = Color.White,
-            currencyFontSize = 21f,
-            wholeNumberFontSize = minMaxRangeValue(
-                percentage = (1 - progress) * 100,
-                max = 30f,
-                min = 24f
-            ),
-            wholeNumberFontWeight = FontWeight.Bold,
-            decNumberFontSize = 14f,
+    val alpha by remember(searching) {
+        derivedStateOf {
+            if(searching){
+                0f
+            }
+            else{
+                1f
+            }
+        }
+    }
+    val animatedAlpha by animateFloatAsState(targetValue = alpha)
+    if(alpha>0f){
+        UpperCut(
+            modifier = Modifier
+                .layoutId("upperCut")
+                .alpha(animatedAlpha),
+            color = LightGreen3
         )
-    )
 
-    SingleButton(
-        modifier = Modifier.layoutId("settleCircle"),
-        painter = painterResource(id = R.drawable.rupee_sign),
-        onClick = {
-            //navController.navigate("split_card_details_screen")
-            notifier.notify(DataIds.settleClick)
-        },
-        backgroundColor = Color.Companion.blend(
-            color1 = Color.Yellow,
-            color2 = Color.White,
+        BottomCut(
+            modifier = Modifier
+                .layoutId("bottomCut")
+                .alpha(animatedAlpha),
+            color = LightGreen3
+        )
+
+        AsyncImage(
+            modifier = Modifier
+                .layoutId("groupImage")
+                .coloredShadow(
+                    color = Color(0x4F075692),
+                    offsetX = 0.dep(),
+                    offsetY = 2.25.dep(),
+                    blurRadius = 4.5.dep(),
+                    borderRadius = 100.dep(),
+                    spread = 0f
+                )
+                .size(51.dep())
+                .border(
+                    width = 2.25.dep(),
+                    color = Color.White,
+                    shape = CircleShape
+                )
+                .padding(2.25.dep())
+                .clip(CircleShape)
+                .alpha(animatedAlpha),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(groupImageString)
+                .crossfade(true).build(),
+            placeholder = painterResource(R.drawable.personactionbar),
+            contentScale = ContentScale.Crop,
+            contentDescription = null
+        )
+
+        FontFamilyText(
+            modifier = modifier
+                .layoutId("groupName")
+                .alpha(animatedAlpha),
+            text = groupNameString,
+            fontSize = minMaxRangeValue(
+                percentage = ((1 - progress) * 100),
+                min = 11f,
+                max = 16f
+            ).sep(),
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            letterSpacing = 0.166667.sep()
+        )
+
+        FontFamilyText(
+            modifier = modifier
+                .layoutId("amount")
+                .alpha(animatedAlpha),
+            annotatedString = groupAmountString.amountAnnotatedString(
+                wholeNumberTextColor = Color.White,
+                decNumberTextColor = Color.White,
+                currencyTextColor = Color.White,
+                currencyFontSize = 21f,
+                wholeNumberFontSize = minMaxRangeValue(
+                    percentage = (1 - progress) * 100,
+                    max = 30f,
+                    min = 24f
+                ),
+                wholeNumberFontWeight = FontWeight.Bold,
+                decNumberFontSize = 14f,
+            )
+        )
+
+        SingleButton(
+            modifier = Modifier
+                .layoutId("settleCircle")
+                .alpha(animatedAlpha),
+            painter = painterResource(id = R.drawable.rupee_sign),
+            onClick = {
+                //navController.navigate("split_card_details_screen")
+                notifier.notify(DataIds.settleClick)
+            },
+            backgroundColor = Color.Companion.blend(
+                color1 = Color.Yellow,
+                color2 = Color.White,
+                progress = progress
+            ),
             progress = progress
-        ),
-        progress = progress
-    )
+        )
 
-    FontFamilyText(
-        modifier = Modifier
-            .layoutId("settleText")
-            .scale(1 - progress)
-            .alpha(1 - progress),
-        text = stringResource(R.string.settle),
-        fontSize = 11.sep(),
-        color = LightBlue4,
-        lineHeight = 12.89.sep(),
-        letterSpacing = 0.2.sep()
-    )
+        FontFamilyText(
+            modifier = Modifier
+                .layoutId("settleText")
+                .scale(1 - progress)
+                .alpha(1 - progress)
+                .alpha(animatedAlpha),
+            text = stringResource(R.string.settle),
+            fontSize = 11.sep(),
+            color = LightBlue4,
+            lineHeight = 12.89.sep(),
+            letterSpacing = 0.2.sep()
+        )
 
-    SingleButton(
-        modifier = Modifier.layoutId("summaryCircle"),
-        painter = painterResource(id = R.drawable.statement_icon),
-        onClick = {
-            //navController.navigate("split_summary_balance")
-            notifier.notify(DataIds.summaryClick)
-        },
-        progress = progress
-    )
+        SingleButton(
+            modifier = Modifier
+                .layoutId("summaryCircle")
+                .alpha(animatedAlpha),
+            painter = painterResource(id = R.drawable.statement_icon),
+            onClick = {
+                //navController.navigate("split_summary_balance")
+                notifier.notify(DataIds.summaryClick)
+            },
+            progress = progress
+        )
 
-    FontFamilyText(
-        modifier = Modifier
-            .layoutId("summaryText")
-            .scale(1 - progress)
-            .alpha(1 - progress),
-        text = stringResource(R.string.summary),
-        fontSize = 11.sep(),
-        color = LightBlue4,
-        lineHeight = 12.89.sep(),
-        letterSpacing = 0.2.sep()
-    )
+        FontFamilyText(
+            modifier = Modifier
+                .layoutId("summaryText")
+                .scale(1 - progress)
+                .alpha(1 - progress)
+                .alpha(animatedAlpha),
+            text = stringResource(R.string.summary),
+            fontSize = 11.sep(),
+            color = LightBlue4,
+            lineHeight = 12.89.sep(),
+            letterSpacing = 0.2.sep()
+        )
 
-    SingleButton(
-        modifier = Modifier
-            .layoutId("manageCircle"),
-        painter = painterResource(id = R.drawable.manage_icon),
-        onClick = {
-            notifier.notify(DataIds.manageClick)
-        },
-        progress = progress
-    )
+        SingleButton(
+            modifier = Modifier
+                .layoutId("manageCircle")
+                .alpha(animatedAlpha),
+            painter = painterResource(id = R.drawable.manage_icon),
+            onClick = {
+                notifier.notify(DataIds.manageClick)
+            },
+            progress = progress
+        )
 
-    FontFamilyText(
-        modifier = Modifier
-            .layoutId("manageText")
-            .scale(1 - progress)
-            .alpha(1 - progress),
-        text = stringResource(R.string.Manage),
-        fontSize = 11.sep(),
-        color = LightBlue4,
-        lineHeight = 12.89.sep(),
-        letterSpacing = 0.2.sep()
-    )
+        FontFamilyText(
+            modifier = Modifier
+                .layoutId("manageText")
+                .scale(1 - progress)
+                .alpha(1 - progress)
+                .alpha(animatedAlpha),
+            text = stringResource(R.string.Manage),
+            fontSize = 11.sep(),
+            color = LightBlue4,
+            lineHeight = 12.89.sep(),
+            letterSpacing = 0.2.sep()
+        )
+    }
 }
 
-fun normalEndConstraint(dep: Dp): ConstraintSet {
+fun normalEndConstraint(
+    dep: Dp,
+    endGap: Float,
+    animatedContentGap: Float
+): ConstraintSet {
     return ConstraintSet {
         val upperCut = createRefFor("upperCut")
         val bottomCut = createRefFor("bottomCut")
@@ -490,6 +691,11 @@ fun normalEndConstraint(dep: Dp): ConstraintSet {
         val searchBar = createRefFor("searchBar")
         val tabs = createRefFor("tabs")
         val typingIndicator = createRefFor("typingIndicator")
+        val searchField = createRefFor("searchField")
+
+        constrain(searchField) {
+            top.linkTo(parent.top,71*dep)
+        }
 
         constrain(typingIndicator) {
             centerHorizontallyTo(parent)
@@ -512,7 +718,8 @@ fun normalEndConstraint(dep: Dp): ConstraintSet {
         }
 
         constrain(tabs) {
-            top.linkTo(searchBar.bottom, 9 * dep)
+            //top.linkTo(searchBar.bottom, 9 * dep)
+            top.linkTo(parent.top, endGap * dep)
         }
 
         constrain(menuOverlay) {
@@ -562,7 +769,7 @@ fun normalEndConstraint(dep: Dp): ConstraintSet {
             top.linkTo(upperCut.bottom)
         }
         constrain(content) {
-            top.linkTo(tabs.bottom, 40 * dep)
+            top.linkTo(tabs.bottom, animatedContentGap * dep)
             bottom.linkTo(parent.bottom)
             height = Dimension.fillToConstraints
         }
@@ -586,7 +793,10 @@ fun normalEndConstraint(dep: Dp): ConstraintSet {
     }
 }
 
-fun normalStartConstraint(dep: Dp): ConstraintSet {
+fun normalStartConstraint(
+    dep: Dp,
+    startGap: Float
+): ConstraintSet {
     return ConstraintSet {
         val upperCut = createRefFor("upperCut")
         val bottomCut = createRefFor("bottomCut")
@@ -606,7 +816,11 @@ fun normalStartConstraint(dep: Dp): ConstraintSet {
         val searchBar = createRefFor("searchBar")
         val tabs = createRefFor("tabs")
         val typingIndicator = createRefFor("typingIndicator")
+        val searchField = createRefFor("searchField")
 
+        constrain(searchField) {
+            top.linkTo(parent.top,71*dep)
+        }
         constrain(typingIndicator) {
             centerHorizontallyTo(parent)
             bottom.linkTo(bottomBar.top,3*dep)
@@ -625,7 +839,8 @@ fun normalStartConstraint(dep: Dp): ConstraintSet {
             width = Dimension.fillToConstraints
         }
         constrain(tabs) {
-            top.linkTo(searchBar.bottom, 9 * dep)
+            //top.linkTo(searchBar.bottom, 9 * dep)
+            top.linkTo(parent.top, startGap * dep)
         }
         constrain(menuOverlay) {
             start.linkTo(upperCut.end)
@@ -1020,7 +1235,8 @@ fun StatusUI(
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
-    notifier: NotificationService = notifier()
+    alpha: Float,
+    notifier: NotificationService = notifier(),
 ) {
     Row(
         modifier = modifier
@@ -1037,7 +1253,7 @@ fun TopBar(
                 }
                 .padding(6.dep()),
             painter = painterResource(id = R.drawable.ic_left_arrow),
-            tint = Color.White,
+            tint = Color.blend(Color.White,Color.Black, 1-alpha),
             contentDescription = "left arrow"
         )
 
@@ -1047,7 +1263,7 @@ fun TopBar(
             text = stringResource(R.string.split_group),
             fontSize = 14.sep(),
             fontWeight = FontWeight.Bold,
-            color = White,
+            color = Color.blend(Color.White,Color.Black, 1-alpha),
             letterSpacing = (-0.333333).sep()
         )
 
@@ -1056,7 +1272,7 @@ fun TopBar(
         Icon(
             modifier = Modifier.size(18.dep()),
             painter = painterResource(id = R.drawable.ic_heart),
-            tint = Color.White,
+            tint = Color.blend(Color.White,Color.Black, 1-alpha),
             contentDescription = "heart icon"
         )
 
@@ -1066,7 +1282,7 @@ fun TopBar(
             modifier = Modifier
                 .size(18.dep()),
             painter = painterResource(id = R.drawable.ic_share),
-            tint = Color.White,
+            tint = Color.blend(Color.White,Color.Black, 1-alpha),
             contentDescription = "share icon"
         )
     }
@@ -1175,38 +1391,44 @@ enum class GroupChatTab {
 }
 
 @Composable
-fun GroupChatTabs_m5q49j(config: GroupChatTabsConfiguration = GroupChatTabsConfiguration()) {
+fun GroupChatTabs_m5q49j(
+    config: GroupChatTabsConfiguration = GroupChatTabsConfiguration(),
+    selected: GroupChatTab = tState<GroupChatTab>(key = DataIds.groupChantTab).value,
+    notifier: NotificationService = notifier()
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(config.horizontalSpace.dep())
     ) {
-        val selectedTab = remember {
-            mutableStateOf(GroupChatTab.All)
-        }
-
         GroupChatTabItem_yb6b5a(
-            selected = selectedTab.value,
+            selected = selected,
             text = "All",
             current = GroupChatTab.All,
             contentDescription = "tab",
-            onClick = { selectedTab.value = GroupChatTab.All }
+            onClick = {
+                notifier.notify(DataIds.groupChantTab,GroupChatTab.All)
+            }
         )
 
         GroupChatTabItem_yb6b5a(
-            selected = selectedTab.value,
+            selected = selected,
             text = "Pending",
             current = GroupChatTab.Pending,
             contentDescription = "tab",
-            onClick = { selectedTab.value = GroupChatTab.Pending }
+            onClick = {
+                notifier.notify(DataIds.groupChantTab,GroupChatTab.Pending)
+            }
         )
 
         GroupChatTabItem_yb6b5a(
-            selected = selectedTab.value,
+            selected = selected,
             text = "Settled",
             current = GroupChatTab.Settled,
             contentDescription = "tab",
-            onClick = { selectedTab.value = GroupChatTab.Settled }
+            onClick = {
+                notifier.notify(DataIds.groupChantTab,GroupChatTab.Settled)
+            }
         )
     }
 }
@@ -1229,11 +1451,12 @@ fun GroupChatTabItem_yb6b5a(
     selected: GroupChatTab,
     current: GroupChatTab,
     contentDescription: String,
-    config: GroupChatTabItemConfiguration = GroupChatTabItemConfiguration(),
+    //config: GroupChatTabItemConfiguration = GroupChatTabItemConfiguration(),
+    config: SplitTabItemConfiguration = SplitTabItemConfiguration(),
     onClick: () -> Unit,
 ) {
-    val selectedBackground =
-        remember {
+    /*val selectedBackground =
+        remember(selected) {
             derivedStateOf {
                 if (selected == current)
                     config.selectedBackground
@@ -1243,7 +1466,7 @@ fun GroupChatTabItem_yb6b5a(
         }
 
     val selectedTextColor =
-        remember {
+        remember(selected) {
             derivedStateOf {
                 if (selected == current)
                     config.selectedTextColor
@@ -1278,6 +1501,54 @@ fun GroupChatTabItem_yb6b5a(
             color = selectedTextColor.value,
             lineHeight = 13.sep(),
             letterSpacing = 0.166667.sep()
+        )
+    }*/
+    val computedBackgroundColor by remember(selected) {
+        derivedStateOf {
+            if (selected == current)
+                config.selectedBackground
+            else
+                config.unSelectedBackground
+        }
+    }
+    val computedColor by remember(selected) {
+        derivedStateOf {
+            if (selected == current)
+                config.selectedTextColor
+            else
+                config.unSelectedTextColor
+        }
+    }
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = computedBackgroundColor,
+        animationSpec = tween(1000)
+    )
+    val animatedColor by animateColorAsState(
+        targetValue = computedColor,
+        animationSpec = tween(1000)
+    )
+    Box(
+        modifier = Modifier
+            .semantics { this.contentDescription = contentDescription }
+            .widthIn(config.minWidth.dep())
+            .clip(RoundedCornerShape(config.roundedCorner.dep()))
+            .background(animatedBackgroundColor)
+            .clickable {
+                onClick()
+            }
+            .padding(
+                top = config.paddingTop.dep(),
+                bottom = config.paddingBottom.dep(),
+                start = config.paddingStart.dep(),
+                end = config.paddingEnd.dep()
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            fontSize = config.textSize.sep(),
+            color = animatedColor,
+            fontWeight = config.fontWeight
         )
     }
 }

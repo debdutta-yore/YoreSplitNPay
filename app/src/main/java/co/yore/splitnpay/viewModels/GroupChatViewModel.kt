@@ -10,10 +10,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.BillTransaction
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.TransactionStatus
-import co.yore.splitnpay.models.TransactionType
+import co.yore.splitnpay.models.*
+import co.yore.splitnpay.pages.GroupChatTab
 import co.yore.splitnpay.viewModels.MembersMock.transaction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +42,8 @@ data class Group(
 
 interface GroupRepository {
     suspend fun getBillTransactions(): List<BillTransaction>
-
+    suspend fun getCategories(): List<Category>
+    suspend fun getAllCategories(): List<Category>
     suspend fun getBillTransactions(number: Int): List<BillTransaction>
 }
 
@@ -61,6 +60,54 @@ class GroupsMock : GroupRepository {
 
     override suspend fun getBillTransactions(number: Int): List<BillTransaction> {
         return listOf(transaction)
+    }
+    //////////////
+    var categoryList  =
+        listOf(
+            Category(
+                name = "Food",
+                0xFF1A79E5,
+                R.drawable.ic_food,
+                isSelected = true
+            ),
+            Category(
+                name = "Trip",
+                0xFFFF4077,
+                R.drawable.ic_trip
+            ),
+            Category(
+                name = "Rent",
+                0xFFF6CC00,
+                R.drawable.ic_rent
+            ),
+            Category(
+                name = "Party",
+                0xFF37D8CF,
+                R.drawable.ic_party
+            ),
+            Category(
+                name = "Medical",
+                0xFF37D8CF,
+                R.drawable.ic_medical
+            ),
+            Category(
+                name = "Emi",
+                0xFFF6CC00,
+                R.drawable.ic_emi
+            ),
+            Category(
+                name = "Bills",
+                0xFFFF4077,
+                R.drawable.ic_bills
+            ),
+        )
+
+    override suspend fun getCategories(): List<Category> {
+        return categoryList.take(4)
+    }
+
+    override suspend fun getAllCategories(): List<Category> {
+        return categoryList
     }
 }
 
@@ -172,12 +219,32 @@ class GroupChatViewModel(
     private val _searchText = mutableStateOf("")
     private val _list = mutableStateListOf<SingleItem>()
     private val _typingMembers = mutableStateListOf<Any?>()
+    private val searchText = mutableStateOf("")
+    private val search = mutableStateOf(false)
+    private val groupChantTab = mutableStateOf(GroupChatTab.All)
+
+    /////////////////////////////////////////
+    private val _categories = mutableStateListOf<Category>()
+    //private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
+    private val _billTotalAmount = mutableStateOf("")
+    private val _billTotalDescription = mutableStateOf("")
+    private val _renamePressed = mutableStateOf(-1)
 
     //////////////////////////////////////////
     private var prevSelectedIndex = -1
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
+            DataIds.searchTextInput->{
+                searchText.value = arg as? String?:return@NotificationService
+            }
+            DataIds.groupChantTab->{
+                groupChantTab.value = arg as GroupChatTab?:return@NotificationService
+            }
+            DataIds.search->{
+                search.value = true
+                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
+            }
             DataIds.filterDone->{
                 sheetHandler.state {
                     hide()
@@ -197,9 +264,21 @@ class GroupChatViewModel(
                 }
             }
             WirelessViewModelInterface.startupNotification -> {
-
+                _statusBarColor.value = StatusBarColor(
+                    color = StatusBarGreen,
+                    darkIcons = true
+                )
             }
             DataIds.back -> {
+                if(search.value){
+                    search.value = false
+                    _statusBarColor.value = StatusBarColor(
+                        color = StatusBarGreen,
+                        darkIcons = true
+                    )
+                    searchText.value = ""
+                    return@NotificationService
+                }
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack()
                 }
@@ -240,6 +319,39 @@ class GroupChatViewModel(
                     navHostController.navigate("split_card_details_screen")
                 }*/
             }
+            ////////
+            DataIds.categorySelectionClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    withContext(Dispatchers.Main) {
+                        for(i in 0 until _categories.size){
+                            _categories[i] =
+                                _categories[i].copy(isSelected = false)
+                        }
+                        val index = arg as Int
+                        _categories[index] =
+                            _categories[index].copy(isSelected = !_categories[index].isSelected)
+                    }
+                }
+            }
+            DataIds.billTotalAmount -> {
+                _billTotalAmount.value = (arg as? String) ?: ""
+            }
+            DataIds.billTotalDescription -> {
+                _billTotalDescription.value = (arg as? String) ?: ""
+            }
+            DataIds.renamePressed -> {
+                _renamePressed.value = (arg as? Int) ?: -1
+            }
+            DataIds.openAllCategories -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.navigate("all_categories_sheet")
+                }
+            }
+            DataIds.billTotalSetClick -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    //todo navigate to next screen
+                }
+            }
         }
     }
     /////////////////////////////////////////
@@ -259,7 +371,31 @@ class GroupChatViewModel(
             DataIds.searchText to _searchText,
             DataIds.membersForFiltering to _list,
             DataIds.typingMembers to _typingMembers,
+            DataIds.searchText to searchText,
+            DataIds.search to search,
+            DataIds.groupChantTab to groupChantTab,
+            ////////
+            DataIds.categories to _categories,
+            DataIds.statusBarColor to _statusBarColor,
+            DataIds.billTotalAmount to _billTotalAmount,
+            DataIds.billTotalDescription to _billTotalDescription,
+            DataIds.renamePressed to _renamePressed,
         )
+        //////////////////////////////////////
+        viewModelScope.launch(Dispatchers.IO) {
+            val members = repo.getCategories()
+            withContext(Dispatchers.Main) {
+                _categories.addAll(
+                    members
+                )
+            }
+        }
+
+        _statusBarColor.value = StatusBarColor(
+            color = StatusBarGreen,
+            darkIcons = true
+        )
+        //////////////////////////////////////
         _list.addAll(list)
         viewModelScope.launch(Dispatchers.IO) {
             val billTransactions = repo.getBillTransactions()
@@ -329,10 +465,7 @@ class GroupChatViewModel(
                 )
             }
         }
-        _statusBarColor.value = StatusBarColor(
-            color = StatusBarGreen,
-            darkIcons = true
-        )
+
     }
 }
 
