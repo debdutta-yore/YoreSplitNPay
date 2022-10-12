@@ -1,16 +1,40 @@
 package co.yore.splitnpay.components.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
+import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.pages.LightBlue1
+import co.yore.splitnpay.ui.theme.Bluish
+import co.yore.splitnpay.ui.theme.DarkBlue
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AllCategoriesBottomSheet(
     categories: List<Category> = listState(key = DataIds.allCategories),
@@ -95,10 +119,10 @@ fun AllCategoriesBottomSheet(
                 CategoryItem(
                     category = item,
                     onClick = {
-                        notifier.notify(DataIds.categorySelectionClick, index)
+                        notifier.notify(DataIds.categoryEditSelectionClick, index)
                     },
                     onLongTap = {
-                        notifier.notify(DataIds.categorySelectionClick, index)
+                        notifier.notify(DataIds.categoryEditSelectionLongClick, index)
                     },
                     contentDescription = "",
                     selectorItemContentDescription = ""
@@ -114,7 +138,7 @@ fun AllCategoriesBottomSheet(
                         modifier = Modifier
                             .size(45.dep())
                             .background(
-                                color = if (isAddCategoryEnabled) Bluish else White,
+                                color = if (isAddCategoryEnabled) Bluish else Color.White,
                                 shape = CircleShape
                             )
                             .border(
@@ -122,6 +146,7 @@ fun AllCategoriesBottomSheet(
                                 color = Bluish,
                                 shape = CircleShape
                             )
+                            .clip(CircleShape)
                             .clickable {
                                 notifier.notify(DataIds.isAddCategoryEnabled)
                             }
@@ -131,7 +156,7 @@ fun AllCategoriesBottomSheet(
                                 .align(Alignment.Center),
                             painter = painterResource(id = R.drawable.ic_plus),
                             contentDescription = "Plus icon",
-                            tint = if (isAddCategoryEnabled) White else Bluish
+                            tint = if (isAddCategoryEnabled) Color.White else Bluish
                         )
                     }
                 }
@@ -139,36 +164,92 @@ fun AllCategoriesBottomSheet(
         }
 
         15.sy()
-
-        AnimatedVisibility(visible = isAddCategoryEnabled) {
-            if (isAddCategoryEnabled) {
-                Box(
-                    modifier = Modifier
-                        .padding(
-                            top = 10.dep(),
-                            start = 31.dep(),
-                            end = 31.dep()
-                        )
-                        .background(
-                            color = LightGrey2,
-                            shape = RoundedCornerShape(8.dep())
-                        )
-                        .clip(RoundedCornerShape(8.dep()))
-                        .height(52.dep())
-                        .fillMaxWidth()
-                ) {
-                    CustomTextField_wangst(
-                        text = addCategoryName,
-                        change = {
-                            notifier.notify(DataIds.addCategoryName, it)
-                        },
-                        contentDescription = "",
-                        leadingIcon = painterResource(id = R.drawable.ic_description),
-                        placeHolderText = "Custom category name"
-                    )
+        var visible by remember {
+            mutableStateOf(false)
+        }
+        val alpha by remember(isAddCategoryEnabled) {
+            derivedStateOf {
+                if(isAddCategoryEnabled){
+                    visible = true
+                    1f
+                }
+                else{
+                    0f
                 }
             }
         }
+        val animatedAlpha by animateFloatAsState(
+            targetValue = alpha,
+            animationSpec = tween(700),
+            finishedListener = {
+                if(it==0f){
+                    visible = false
+                }
+            }
+        )
+        Box(
+            modifier = Modifier
+                .padding(
+                    top = 10.dep(),
+                    start = 31.dep(),
+                    end = 31.dep()
+                )
+                .background(
+                    color = LightGrey2,
+                    shape = RoundedCornerShape(8.dep())
+                )
+                .clip(RoundedCornerShape(8.dep()))
+                .height((animatedAlpha * 52).dep())
+                .alpha(animatedAlpha)
+                .fillMaxWidth()
+        ) {
+            if(visible){
+                CustomTextField_wangst(
+                    text = addCategoryName,
+                    change = {
+                        notifier.notify(DataIds.addCategoryName, it)
+                    },
+                    contentDescription = "",
+                    leadingIcon = painterResource(id = R.drawable.ic_description),
+                    placeHolderText = "Custom category name"
+                )
+            }
+        }
+        /*AnimatedVisibility(
+            visible = isAddCategoryEnabled,
+            enter = fadeIn(tween(700)) + slideInVertically(tween(700)) {
+                it
+            },
+            exit = fadeOut(tween(700)) + slideOutVertically(tween(700)) {
+                it
+            }
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(
+                        top = 10.dep(),
+                        start = 31.dep(),
+                        end = 31.dep()
+                    )
+                    .background(
+                        color = LightGrey2,
+                        shape = RoundedCornerShape(8.dep())
+                    )
+                    .clip(RoundedCornerShape(8.dep()))
+                    .height(52.dep())
+                    .fillMaxWidth()
+            ) {
+                CustomTextField_wangst(
+                    text = addCategoryName,
+                    change = {
+                        notifier.notify(DataIds.addCategoryName, it)
+                    },
+                    contentDescription = "",
+                    leadingIcon = painterResource(id = R.drawable.ic_description),
+                    placeHolderText = "Custom category name"
+                )
+            }
+        }*/
 
         Box(
             modifier = Modifier

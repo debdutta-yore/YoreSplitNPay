@@ -288,7 +288,8 @@ fun GroupChatScreen(
                 FilterBottomSheet()
             }*/
             //FilterBottomSheet()
-                       BillTotalBottomSheet()
+                       //BillTotalBottomSheet()
+                       AllCategoriesBottomSheet()
         },
         scrimColor = Color(0x8C243257),
         sheetBackgroundColor = Color.White,

@@ -231,6 +231,10 @@ class GroupChatViewModel(
     private val _renamePressed = mutableStateOf(-1)
 
     //////////////////////////////////////////
+    private val _allCategories = mutableStateListOf<Category>()
+    private val _isAddCategoryEnabled = mutableStateOf(false)
+    private val _addCategoryName = mutableStateOf("")
+    //////////////////////////////////////////
     private var prevSelectedIndex = -1
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
@@ -333,6 +337,19 @@ class GroupChatViewModel(
                     }
                 }
             }
+            DataIds.categoryEditSelectionClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    withContext(Dispatchers.Main) {
+                        for(i in 0 until _allCategories.size){
+                            _allCategories[i] =
+                                _allCategories[i].copy(isSelected = false)
+                        }
+                        val index = arg as Int
+                        _allCategories[index] =
+                            _allCategories[index].copy(isSelected = !_allCategories[index].isSelected)
+                    }
+                }
+            }
             DataIds.billTotalAmount -> {
                 _billTotalAmount.value = (arg as? String) ?: ""
             }
@@ -351,6 +368,12 @@ class GroupChatViewModel(
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                     //todo navigate to next screen
                 }
+            }
+            DataIds.isAddCategoryEnabled -> {
+                _isAddCategoryEnabled.value = !_isAddCategoryEnabled.value
+            }
+            DataIds.addCategoryName -> {
+                _addCategoryName.value = (arg as? String) ?: ""
             }
         }
     }
@@ -380,6 +403,10 @@ class GroupChatViewModel(
             DataIds.billTotalAmount to _billTotalAmount,
             DataIds.billTotalDescription to _billTotalDescription,
             DataIds.renamePressed to _renamePressed,
+            ////////////
+            DataIds.allCategories to _allCategories,
+            DataIds.isAddCategoryEnabled to _isAddCategoryEnabled,
+            DataIds.addCategoryName to _addCategoryName,
         )
         //////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {
@@ -395,6 +422,15 @@ class GroupChatViewModel(
             color = StatusBarGreen,
             darkIcons = true
         )
+        ///////////////////////////////////////
+        viewModelScope.launch(Dispatchers.IO) {
+            val members = repo.getAllCategories()
+            withContext(Dispatchers.Main) {
+                _allCategories.addAll(
+                    members
+                )
+            }
+        }
         //////////////////////////////////////
         _list.addAll(list)
         viewModelScope.launch(Dispatchers.IO) {

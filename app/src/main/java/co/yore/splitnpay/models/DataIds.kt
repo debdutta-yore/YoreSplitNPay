@@ -1,8 +1,12 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    addCategoryName,
+    isAddCategoryEnabled,
     allCategories,
     openAllCategories,
+    categoryEditSelectionLongClick,
+    categoryEditSelectionClick,
     categorySelectionClick,
     billTotalSetClick,
     renamePressed,
