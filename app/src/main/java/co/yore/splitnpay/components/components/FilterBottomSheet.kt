@@ -46,7 +46,7 @@ fun FilterBottomSheet(
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 33.dep(), end = 35.dep())
+            .padding(start = 35.dep(), end = 35.dep(), top = 21.dep())
             .fillMaxWidth()
     ) {
         Box(

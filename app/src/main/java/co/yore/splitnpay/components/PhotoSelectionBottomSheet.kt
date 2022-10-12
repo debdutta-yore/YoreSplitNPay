@@ -95,7 +95,7 @@ fun PhotoSelectionBottomSheet(
 
 
 @Composable
-private fun SingleItem(
+fun SingleItem(
     modifier: Modifier = Modifier,
     icon: Painter, text: String,
     isSelected: Boolean = false

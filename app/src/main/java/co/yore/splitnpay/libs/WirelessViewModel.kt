@@ -40,7 +40,8 @@ val LocalResolver = compositionLocalOf { Resolver() }
 val LocalSheetHandler = compositionLocalOf { SheetHandler(
     initialValue = ModalBottomSheetValue.Hidden,
     skipHalfExpanded = true,
-    confirmStateChange = { false }
+    confirmStateChange = { false },
+    onVisibilityChange = {}
 ) }
 @Composable
 fun localSheetHandler(): SheetHandler{
@@ -129,7 +130,8 @@ interface WirelessViewModelInterface{
     get() = SheetHandler(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
-        confirmStateChange = { false }
+        confirmStateChange = { false },
+        onVisibilityChange = {}
     )
     companion object{
         const val startupNotification = -10000

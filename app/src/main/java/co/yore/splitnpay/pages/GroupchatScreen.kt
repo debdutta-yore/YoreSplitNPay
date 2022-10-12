@@ -7,17 +7,18 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.TextFieldDefaults.indicatorLine
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -46,9 +48,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.*
+import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.ExperimentalMotionApi
+import androidx.constraintlayout.compose.MotionLayout
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.Item
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
 import co.yore.splitnpay.components.configuration.GroupMemberProfilePicsConfiguration
@@ -58,14 +64,13 @@ import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.DataIds.search
-import co.yore.splitnpay.models.DataIds.searchText
+import co.yore.splitnpay.models.Sheets
+import co.yore.splitnpay.object_box.Contact_.id
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 val LightGrey8 = Color(0xffD9D9D9)
 @OptIn(ExperimentalMaterialApi::class)
@@ -259,7 +264,9 @@ fun GroupSearchBar(
 }
 
 @SuppressLint("Range")
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMotionApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMotionApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun GroupChatScreen(
     modifier: Modifier = Modifier,
@@ -270,7 +277,8 @@ fun GroupChatScreen(
     searchText: String = stringState(key = DataIds.searchText).value,
     notifier: NotificationService = notifier(),
     sheetHandler: SheetHandler = localSheetHandler(),
-    searching: Boolean = boolState(key = DataIds.search).value
+    searching: Boolean = boolState(key = DataIds.search).value,
+    sheet: Sheets = tState<Sheets>(key = DataIds.sheets).value
 ) {
     val sheetState = sheetHandler.handle()
     val scope = rememberCoroutineScope()
@@ -279,17 +287,15 @@ fun GroupChatScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-                       //Text("")
-            /*if (sheet.value) {
-                BillTotalBottomSheet(
-                    modifier = Modifier.fillMaxWidth()
-                )
-            } else {
-                FilterBottomSheet()
-            }*/
-            //FilterBottomSheet()
-                       //BillTotalBottomSheet()
-                       AllCategoriesBottomSheet()
+            AnimatedContent(targetState = sheet) {
+                when(it){
+                    Sheets.MemberFilter->FilterBottomSheet()
+                    Sheets.BillTotalAndCategories -> BillTotalBottomSheet()
+                    Sheets.CategoriesEdit -> AllCategoriesBottomSheet()
+                    Sheets.SettleSummaryManage -> SettleSummaryManageSheet()
+                    else-> Text("")
+                }
+            }
         },
         scrimColor = Color(0x8C243257),
         sheetBackgroundColor = Color.White,
@@ -431,12 +437,78 @@ fun GroupChatScreen(
                                 rippleRadius = 20.dep(),
                                 enabled = true,
                                 onClick = {
-
+                                    notifier.notify(DataIds.settleSummaryManage)
                                 },
                                 rippleColor = Bluish
                             )
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SettleSummaryManageSheet(
+    notifier: NotificationService = notifier()
+) {
+    val itemList = remember {
+        listOf(
+            Item(id = 0, R.drawable.rupee, "Settle"),
+            Item(id = 1, R.drawable.summary, "Summary"),
+            Item(id = 2, R.drawable.manage, "Manage")
+        )
+    }
+
+    val listState = rememberLazyListState()
+    var selectedIndex by remember { mutableStateOf(-1) }
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Icon(
+            modifier = Modifier
+                .padding(top = 21f.dep()),
+            tint = Color.Unspecified,
+            painter = painterResource(id = R.drawable.ic_sheet_holder),
+            contentDescription = "sheet holder"
+        )
+
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .padding(top = 24f.dep())
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(bottom = 20.dep())
+        )
+        {
+            itemsIndexed(items = itemList)
+            { index, _ ->
+
+                co.yore.splitnpay.components.SingleItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onPress = {
+                                    selectedIndex = itemList[index].id
+                                },
+                                onTap = {
+                                    notifier.notify(DataIds.cameraOrGallery, itemList[index].name)
+                                },
+                                onDoubleTap = { },
+                                onLongPress = { }
+                            )
+                        },
+                    icon = painterResource(itemList[index].icon),
+                    text = itemList[index].name,
+                    isSelected = itemList[index].id == selectedIndex
+                )
             }
         }
     }
@@ -1582,13 +1654,9 @@ fun Message(
                     borderRadius = 100.dep()
                 ),
             onClick = {
-                scope.launch {
-                    if (!sheetState.isVisible)
-                        sheetState.show()
-                    else
-                        sheetState.hide()
-                }
-            }) {
+                notifier.notify(DataIds.split)
+            }
+        ) {
             Icon(
                 tint = White,
                 painter = painterResource(id = R.drawable.ic_fab_icon),

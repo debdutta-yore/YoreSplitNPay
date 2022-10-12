@@ -1,6 +1,7 @@
 package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -129,16 +130,28 @@ fun AllCategoriesBottomSheet(
                 )
             }
             item {
+
                 Box(
                     modifier = Modifier
                         .height(70.dep()),
                     contentAlignment = Alignment.Center
                 ) {
+                    val color by remember(isAddCategoryEnabled) {
+                        derivedStateOf {
+                            if(isAddCategoryEnabled){
+                                Bluish
+                            }
+                            else{
+                                Color.White
+                            }
+                        }
+                    }
+                    val animatedColor by animateColorAsState(targetValue = color)
                     Box(
                         modifier = Modifier
                             .size(45.dep())
                             .background(
-                                color = if (isAddCategoryEnabled) Bluish else Color.White,
+                                color = animatedColor,
                                 shape = CircleShape
                             )
                             .border(

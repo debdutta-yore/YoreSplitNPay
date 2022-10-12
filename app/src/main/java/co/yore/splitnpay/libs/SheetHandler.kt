@@ -9,11 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 
 data class SheetHandler @OptIn(ExperimentalMaterialApi::class) constructor(
     val initialValue: ModalBottomSheetValue,
     val skipHalfExpanded: Boolean,
-    val confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true }
+    val confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true },
+    val onVisibilityChange: (Boolean)->Unit = {}
 ){
 
     @OptIn(ExperimentalMaterialApi::class)
@@ -50,6 +52,12 @@ data class SheetHandler @OptIn(ExperimentalMaterialApi::class) constructor(
                 stateScope.value = null
             }
         }
+        LaunchedEffect(key1 = _state){
+            snapshotFlow { _state.isVisible }.collect{
+                onVisibilityChange(it)
+            }
+        }
+
         return _state
     }
 }

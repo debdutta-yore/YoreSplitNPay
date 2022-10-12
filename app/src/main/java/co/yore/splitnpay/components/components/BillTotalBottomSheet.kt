@@ -1,10 +1,8 @@
 package co.yore.splitnpay.components.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.animation.*
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -15,7 +13,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TextFieldDefaults.indicatorLine
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -25,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -65,7 +65,7 @@ fun BillTotalBottomSheet(
         Icon(
             modifier = Modifier
                 .align(CenterHorizontally)
-                .padding(top = 9.dep()),
+                .padding(top = 21.dep()),
             tint = Color.Unspecified,
             painter = painterResource(id = R.drawable.ic_sheet_holder),
             contentDescription = "sheet holder"
@@ -394,6 +394,7 @@ fun SelectorIcon_ulkel8(
         )
     }
 }
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun CategoryItem(
     category: Category,
@@ -417,25 +418,38 @@ fun CategoryItem(
             ,
             contentAlignment = Alignment.Center
         ) {
+            val interactionSource = remember { MutableInteractionSource() }
+            val borderColor by remember(category.isSelected) {
+                derivedStateOf {
+                    if(category.isSelected){
+                        Color(category.color)
+                    }
+                    else{
+                        config.borderColor
+                    }
+                }
+            }
+            val animatedBorderColor by animateColorAsState(targetValue = borderColor)
             Box(
                 modifier = Modifier
                     .size(config.size.dep())
                     .clip(CircleShape)
                     .border(
                         config.borderStroke.dep(),
-                        color = config.borderColor,
+                        color = animatedBorderColor,
                         shape = CircleShape
                     )
-                    //TODO: Ripple effect
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = {
-                                onClick()
-                            },
-                            onLongPress = {
-                                onLongTap()
-                            }
-                        )
+                    .combinedClickable(
+                        interactionSource = interactionSource,
+                        indication = rememberRipple(
+                            color = Color(category.color),
+                            radius = (config.size / 2f).dep(),
+                        ),
+                        onLongClick = {
+                            onLongTap()
+                        }
+                    ) {
+                        onClick()
                     }
             ) {
                 Icon(
@@ -447,7 +461,11 @@ fun CategoryItem(
                     tint = Color(category.color)
                 )
             }
-            if (category.isSelected) {
+            androidx.compose.animation.AnimatedVisibility (
+                category.isSelected,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
                 Box(
                     modifier = Modifier
                         .padding(
@@ -462,12 +480,17 @@ fun CategoryItem(
                 }
             }
         }
-
+        val fontWeight by remember(category.isSelected) {
+            derivedStateOf{
+                if (category.isSelected) 700 else 400
+            }
+        }
+        val animatedFontWeight by animateIntAsState(targetValue = fontWeight)
         FontFamilyText(
             text = category.name,
             color = config.textColor,
             fontSize = config.textSize.sep(),
-            fontWeight = if (category.isSelected) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = FontWeight(animatedFontWeight),
             letterSpacing = 0.17.sep(),
             lineHeight = 12.89.sep()
         )

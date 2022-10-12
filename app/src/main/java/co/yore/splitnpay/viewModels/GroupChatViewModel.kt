@@ -202,8 +202,28 @@ class GroupChatViewModel(
     @OptIn(ExperimentalMaterialApi::class)
     override val sheetHandler = SheetHandler(
         initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true
+        skipHalfExpanded = true,
+        confirmStateChange = {
+            confirmSheetStateChange()
+        },
+        onVisibilityChange = {
+            onSheetVisibilityChange(it)
+        }
     )
+
+    fun onSheetVisibilityChange(visible: Boolean){
+        if(!visible){
+            _sheets.value = Sheets.None
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    private fun confirmSheetStateChange(): Boolean {
+        if(_sheets.value==Sheets.MemberFilter){
+            return false
+        }
+        return true
+    }
 
     //////////////////////////////////////////
     private val _conversations = mutableStateListOf<Conversation>()
@@ -221,7 +241,8 @@ class GroupChatViewModel(
     private val _typingMembers = mutableStateListOf<Any?>()
     private val searchText = mutableStateOf("")
     private val search = mutableStateOf(false)
-    private val groupChantTab = mutableStateOf(GroupChatTab.All)
+    private val groupChatTab = mutableStateOf(GroupChatTab.All)
+    private val _sheets = mutableStateOf<Sheets>(Sheets.None)
 
     /////////////////////////////////////////
     private val _categories = mutableStateListOf<Category>()
@@ -239,11 +260,23 @@ class GroupChatViewModel(
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
+            DataIds.settleSummaryManage->{
+                _sheets.value = Sheets.SettleSummaryManage
+                sheetHandler.state {
+                    show()
+                }
+            }
+            "${DataIds.back}group_chat_page"->{
+                sheetHandler.state {
+                    this.isVisible
+                    hide()
+                }
+            }
             DataIds.searchTextInput->{
                 searchText.value = arg as? String?:return@NotificationService
             }
             DataIds.groupChantTab->{
-                groupChantTab.value = arg as GroupChatTab?:return@NotificationService
+                groupChatTab.value = arg as GroupChatTab?:return@NotificationService
             }
             DataIds.search->{
                 search.value = true
@@ -252,6 +285,12 @@ class GroupChatViewModel(
             DataIds.filterDone->{
                 sheetHandler.state {
                     hide()
+                }
+            }
+            DataIds.split->{
+                _sheets.value = Sheets.BillTotalAndCategories
+                sheetHandler.state {
+                    show()
                 }
             }
             DataIds.filterMember->{
@@ -291,6 +330,7 @@ class GroupChatViewModel(
                 _groupAmount.value = (arg as? Float) ?: 0f
             }
             DataIds.filter -> {
+                _sheets.value = Sheets.MemberFilter
                 sheetHandler.state {
                     show()
                 }
@@ -360,9 +400,7 @@ class GroupChatViewModel(
                 _renamePressed.value = (arg as? Int) ?: -1
             }
             DataIds.openAllCategories -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("all_categories_sheet")
-                }
+                _sheets.value = Sheets.CategoriesEdit
             }
             DataIds.billTotalSetClick -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -394,9 +432,8 @@ class GroupChatViewModel(
             DataIds.searchText to _searchText,
             DataIds.membersForFiltering to _list,
             DataIds.typingMembers to _typingMembers,
-            DataIds.searchText to searchText,
             DataIds.search to search,
-            DataIds.groupChantTab to groupChantTab,
+            DataIds.groupChantTab to groupChatTab,
             ////////
             DataIds.categories to _categories,
             DataIds.statusBarColor to _statusBarColor,
@@ -407,6 +444,8 @@ class GroupChatViewModel(
             DataIds.allCategories to _allCategories,
             DataIds.isAddCategoryEnabled to _isAddCategoryEnabled,
             DataIds.addCategoryName to _addCategoryName,
+            ///////////////
+            DataIds.sheets to _sheets
         )
         //////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {

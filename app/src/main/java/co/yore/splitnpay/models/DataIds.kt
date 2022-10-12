@@ -1,6 +1,8 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    settleSummaryManage,
+    sheets,
     addCategoryName,
     isAddCategoryEnabled,
     allCategories,
