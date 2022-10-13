@@ -1,6 +1,16 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    deleteGroupClick,
+    leaveGroupClick,
+    inviteViaLinkClick,
+    addMemberClick,
+    groupNotificationSwitch,
+    selectMemberClick,
+    groupMembers,
+    deleteMembersClick,
+    groupCreatedBy,
+    numberOfGroupMembers,
     settleSummaryManage,
     sheets,
     addCategoryName,

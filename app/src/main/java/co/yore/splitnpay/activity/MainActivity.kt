@@ -25,10 +25,7 @@ import co.yore.splitnpay.components.components.CollapsibleBox
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localDesignWidth
-import co.yore.splitnpay.pages.GroupChatScreen
-import co.yore.splitnpay.pages.GroupCreationScreen
-import co.yore.splitnpay.pages.MemberSelectionPage_g5024t
-import co.yore.splitnpay.pages.SplitPage
+import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 import co.yore.splitnpay.viewModels.GroupChatViewModel
 import co.yore.splitnpay.viewModels.GroupCreationPageViewModel
@@ -97,6 +94,16 @@ class MainActivity : ComponentActivity() {
                                     wvm = viewModel<GroupChatViewModel>()
                                 ) {
                                     GroupChatScreen()
+                                }
+                            }
+
+                            yoreComposable("group_manage") {
+                                YorePage(
+                                    navController = navController,
+                                    suffix = "group_manage",
+                                    wvm = viewModel<GroupChatViewModel>()
+                                ) {
+                                    GroupManagePage()
                                 }
                             }
                         }
