@@ -1,10 +1,12 @@
 package co.yore.splitnpay.pages
 
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -57,6 +59,7 @@ data class Member(
     val isSelected: Boolean,
     val isGroupAdmin: Boolean = false
 )
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Members(
@@ -66,96 +69,52 @@ fun Members(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
-    Column(modifier = modifier) {
-        FontFamilyText(
-            modifier = Modifier,
-            text = stringResource(R.string.members),
-            color = DarkBlue,
-            fontSize = 21.sep(),
-            fontWeight = FontWeight.Bold
-        )
-
-        Box(
+    Box(
+        modifier = modifier
+            .coloredShadow(
+                color = GreyShadow,
+                borderRadius = 20.dep(),
+                blurRadius = 16.dep(),
+                offsetY = 7.dep(),
+                offsetX = 7.dep(),
+                spread = 0f
+            )
+            .clip(shape = RoundedCornerShape(20.dep()))
+            .background(Color.White)
+            .fillMaxWidth()
+    ) {
+        Column(
             modifier = Modifier
-                .coloredShadow(
-                    color = GreyShadow,
-                    borderRadius = 20.dep(),
-                    blurRadius = 33.dep(),
-                    offsetY = 7.dep(),
-                    offsetX = 7.dep(),
-                    spread = 0f
-                )
-                .padding(top = 21.dep())
-                .clip(shape = RoundedCornerShape(20.dep()))
-                .background(Color.White)
-                .fillMaxWidth()
-                .height(362.dep())
+                .padding(
+                    top = 22.dep(),
+                    start = 27.dep(),
+                    bottom = 22.dep(),
+                    end = 20.dep()
+                ),
+            verticalArrangement = Arrangement.spacedBy(18.dep())
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Column(
+            groupMembers.forEachIndexed { index, item ->
+                val currentMember = groupMembers[index]
+                SingleMember(
                     modifier = Modifier
-                        .padding(
-                            top = 22.dep(),
-                            start = 27.dep(),
-                            bottom = 22.dep(),
-                            end = 20.dep()
-                        )
-                        .fillMaxSize()
-                ) {
-                    groupMembers.forEachIndexed { index, item ->
-                        val currentMember = groupMembers[index]
-                        SingleMember(
-                            modifier = Modifier
-                                .combinedClickable(
-                                    interactionSource = interactionSource,
-                                    indication = null,
-                                    onClick = {
-                                        if (item.isSelected) {
-                                            notifier.notify(DataIds.selectMemberClick, item)
-                                        }
-                                    },
-                                    onLongClick = {
-                                        notifier.notify(DataIds.selectMemberClick, item)
-                                    },
-                                ),
-                            leadingIcon = currentMember.profilePic,
-                            userName = currentMember.userName,
-                            userPhNo = currentMember.mobileNo,
-                            isSelected = currentMember.isSelected,
-                            isGroupAdmin = currentMember.isGroupAdmin
-                        )
-                    }
-
-                    35.sy()
-                }
-                if (
-                //Todo from viewmodel
-                    groupMembers
-                        .any { it.isSelected }
-                ) {
-                    FloatingActionButton(
-                        modifier = Modifier
-                            .padding(
-                                bottom = 63.dep(),
-                                end = 20.dep()
-                            )
-                            .size(47.dep())
-                            .align(Alignment.BottomEnd),
-                        backgroundColor = Pink,
-                        onClick = {
-                            notifier.notify(DataIds.deleteMembersClick)
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_delete_white),
-                            contentDescription = "delete member icon",
-                            tint = Color.Unspecified
-                        )
-                    }
-                }
+                        .combinedClickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = {
+                                if (item.isSelected) {
+                                    notifier.notify(DataIds.selectMemberClick, item)
+                                }
+                            },
+                            onLongClick = {
+                                notifier.notify(DataIds.selectMemberClick, item)
+                            },
+                        ),
+                    leadingIcon = currentMember.profilePic,
+                    userName = currentMember.userName,
+                    userPhNo = currentMember.mobileNo,
+                    isSelected = currentMember.isSelected,
+                    isGroupAdmin = currentMember.isGroupAdmin
+                )
             }
         }
     }
@@ -187,6 +146,7 @@ fun SelectedIcon(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SingleMember(
     modifier: Modifier = Modifier,
@@ -204,27 +164,39 @@ fun SingleMember(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(49.dep())
-            ) {
-                AsyncImage(
+            Box(){
+                Box(
                     modifier = Modifier
+                        .size(49.dep())
                         .clip(CircleShape)
-                        .fillMaxSize(),
-                    model = leadingIcon,
-                    placeholder = painterResource(id = R.drawable.user_dummy4),
-                    contentDescription = "leadingIcon"
-                )
-                if (isSelected) {
-                    //todo
+                        .border(
+                            width = 3.dep(),
+                            color = Color(0xffEDF5FF),
+                            CircleShape
+                        )
+                        .padding(3.dep())
+                ) {
+                    AsyncImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = leadingIcon,
+                        placeholder = painterResource(id = R.drawable.user_dummy4),
+                        contentDescription = "leadingIcon",
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                androidx.compose.animation.AnimatedVisibility (
+                    isSelected,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                ) {
                     SelectedIcon(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd),
                         iconBackGroundColor = LightBlue
                     )
                 }
             }
+
             22.sx()
             Column {
                 FontFamilyText(
@@ -260,8 +232,12 @@ fun SingleMember(
         }
     }
 }
+
 val SheetScrim = Color(0x8C243257)
-@OptIn(ExperimentalMaterialApi::class)
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun GroupManagePage(
     groupNameString: String = stringState(key = DataIds.groupName).value,
@@ -269,6 +245,8 @@ fun GroupManagePage(
     groupCreatedBy: String = stringState(key = DataIds.groupCreatedBy).value,
     groupCreationDate: String = stringState(key = DataIds.groupCreationDate).value,
     groupImage: Any? = tState<Any?>(key = DataIds.groupImage).value,
+    groupMembers: List<Member> = listState(key = DataIds.groupMembers),
+    notifier: NotificationService = notifier()
 ) {
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -291,14 +269,52 @@ fun GroupManagePage(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Image(
-                modifier = Modifier
-                    .height(212.dep())
-                    .fillMaxWidth(),
-                painter = painterResource(id = R.drawable.image),
-                contentScale = ContentScale.FillBounds,
-                contentDescription = "topBarBackground"
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(165.dep())
+                        .clip(
+                            RoundedCornerShape(
+                                bottomStart = 48.dep(),
+
+                                )
+                        )
+                        .background(
+                            Color(0xff34cfcf),
+                            RoundedCornerShape(
+                                bottomStart = 48.dep(),
+
+                                )
+                        )
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .height(212.dep())
+                            .fillMaxWidth(),
+                        painter = painterResource(id = R.drawable.manage_cut_fill),
+                        contentScale = ContentScale.FillBounds,
+                        contentDescription = "topBarBackground"
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(42.dep())
+                        .background(Color(0xff34cfcf))
+                        .background(
+                            Color.White,
+                            RoundedCornerShape(
+                                topEnd = 48.dep(),
+
+                                )
+                        )
+                ) {
+
+                }
+            }
 
             Profile(
                 modifier = Modifier
@@ -364,47 +380,107 @@ fun GroupManagePage(
                         }
                     }
                 )
-
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .padding(
                             top = 21.dep()
                         )
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    GroupSettingsCard(
-                        modifier = Modifier
-                            .padding(
-                                start = 18.dep(),
-                                end = 18.dep()
-                            ),
-                        /*onDeleteClick = {
-                            coroutineScope.launch {
-                                sheetState.show()
-                            }
-                        },
-                        onLeaveGroupClick = {
-                            notifier.notify(DataIds.leaveGroupClick)
-                        },
-                        addMemberClick = {
-                            notifier.notify(DataIds.addMemberClick)
-                        },
-                        inviteClick = {
-                            notifier.notify(DataIds.inviteViaLinkClick)
-                        },
-                        notificationClick = {
-                            notifier.notify(DataIds.groupNotificationSwitch)
-                        }*/
-                    )
-
-                    Members(
-                        modifier = Modifier
-                            .padding(
-                                top = 50.dep(), start = 18.dep(),
-                                end = 18.dep(),
-                                bottom = 57.dep()
+                        .fillMaxSize()
+                ){
+                    stickyHeader {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color.White)
+                                .padding(vertical = 2.dep())
+                        ){
+                            FontFamilyText(
+                                modifier = Modifier.padding(start = 18.dep()),
+                                text = stringResource(R.string.settings),
+                                color = DarkBlue,
+                                fontSize = 21.sep(),
+                                fontWeight = FontWeight.Bold
                             )
+                        }
+                    }
+
+                    item {
+                        17.sy()
+                    }
+
+                    item {
+                        GroupSettingsCard(
+                            modifier = Modifier
+                                .padding(
+                                    start = 18.dep(),
+                                    end = 18.dep()
+                                ),
+                        )
+                    }
+
+                    item {
+                        50.sy()
+                    }
+
+                    stickyHeader {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color.White)
+                                .padding(vertical = 2.dep())
+                        ){
+                            FontFamilyText(
+                                modifier = Modifier.padding(start = 18.dep()),
+                                text = stringResource(R.string.members),
+                                color = DarkBlue,
+                                fontSize = 21.sep(),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    item {
+                        17.sy()
+                    }
+
+                    item {
+                        Members(
+                            modifier = Modifier
+                                .padding(
+                                    start = 18.dep(),
+                                    end = 18.dep(),
+                                    bottom = 57.dep()
+                                ),
+                            groupMembers = groupMembers
+                        )
+                    }
+                }
+            }
+
+            AnimatedVisibility (
+                groupMembers.any { it.isSelected },
+                modifier = Modifier
+                    .padding(
+                        bottom = 63.dep(),
+                        end = 20.dep()
+                    )
+                    .size(47.dep())
+                    .align(Alignment.BottomEnd),
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .size(47.dep()),
+                    backgroundColor = Pink,
+                    onClick = {
+                        notifier.notify(DataIds.deleteMembersClick)
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_delete_white),
+                        contentDescription = "delete member icon",
+                        tint = Color.Unspecified
                     )
                 }
             }
@@ -417,91 +493,79 @@ fun GroupSettingsCard(
     modifier: Modifier = Modifier,
     notifier: NotificationService = notifier()
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        FontFamilyText(
-            modifier = Modifier,
-            text = stringResource(R.string.settings),
-            color = DarkBlue,
-            fontSize = 21.sep(),
-            fontWeight = FontWeight.Bold
-        )
-        Box(
+    Box(
+        modifier = modifier
+            .coloredShadow(
+                color = GreyShadow,
+                borderRadius = 20.dep(),
+                blurRadius = 16.dep(),
+                offsetY = 7.dep(),
+                offsetX = 7.dep(),
+                spread = 0f
+            )
+            .clip(shape = RoundedCornerShape(20.dep()))
+            .background(White)
+            .fillMaxWidth()
+    ) {
+        Column(
             modifier = Modifier
-                .coloredShadow(
-                    color = GreyShadow,
-                    borderRadius = 20.dep(),
-                    blurRadius = 33.dep(),
-                    offsetY = 7.dep(),
-                    offsetX = 7.dep(),
-                    spread = 0f
-                )
-                .padding(top = 17.dep())
-                .clip(shape = RoundedCornerShape(20.dep()))
-                .background(White)
                 .fillMaxWidth()
+                .padding(
+                    top = 41.dep(),
+                    bottom = 41.dep()
+                ),
+            //verticalArrangement = Arrangement.spacedBy(40.dep())
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = 41.dep(),
-                        start = 23.dep(),
-                        end = 23.dep(),
-                        bottom = 41.dep()
-                    ),
-                verticalArrangement = Arrangement.spacedBy(40.dep())
-            ) {
-                SingleSetting(
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = painterResource(id = R.drawable.ic_person_add),
-                    text = "Add Member",
-                    trailingIcon = painterResource(id = R.drawable.ic_right_arrow),
-                    onClick = {
-                        notifier.notify(DataIds.addMemberClick)
-                    }
-                )
+            SingleSetting(
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = painterResource(id = R.drawable.ic_person_add),
+                text = "Add Member",
+                trailingIcon = painterResource(id = R.drawable.menu_right_arrow),
+                onClick = {
+                    notifier.notify(DataIds.addMemberClick)
+                }
+            )
 
-                SingleSetting(
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = painterResource(id = R.drawable.ic_notification),
-                    text = "Mute notifications",
-                    trailingIcon = painterResource(id = R.drawable.ic_right_arrow),
-                    isThereSwitch = true,
-                    onClick = {
-                        notifier.notify(DataIds.groupNotificationSwitch)
-                    }
-                )
+            SingleSetting(
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = painterResource(id = R.drawable.ic_notification),
+                text = "Mute notifications",
+                trailingIcon = painterResource(id = R.drawable.menu_right_arrow),
+                switchable = true,
+                onClick = {
+                    notifier.notify(DataIds.groupNotificationSwitch)
+                }
+            )
 
-                SingleSetting(
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = painterResource(id = R.drawable.ic_link),
-                    text = "Invite via link",
-                    trailingIcon = painterResource(id = R.drawable.ic_right_arrow),
-                    onClick = {
-                        notifier.notify(DataIds.inviteViaLinkClick)
-                    }
-                )
+            SingleSetting(
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = painterResource(id = R.drawable.ic_link),
+                text = "Invite via link",
+                trailingIcon = painterResource(id = R.drawable.menu_right_arrow),
+                onClick = {
+                    notifier.notify(DataIds.inviteViaLinkClick)
+                }
+            )
 
-                SingleSetting(
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = painterResource(id = R.drawable.ic_logout),
-                    text = "Leave Group",
-                    trailingIcon = painterResource(id = R.drawable.ic_right_arrow),
-                    onClick = {
-                        notifier.notify(DataIds.leaveGroupClick)
-                    }
-                )
+            SingleSetting(
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = painterResource(id = R.drawable.ic_logout),
+                text = "Leave Group",
+                trailingIcon = painterResource(id = R.drawable.menu_right_arrow),
+                onClick = {
+                    notifier.notify(DataIds.leaveGroupClick)
+                }
+            )
 
-                SingleSetting(
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = painterResource(id = R.drawable.ic_delete),
-                    text = "Delete Group",
-                    trailingIcon = painterResource(id = R.drawable.ic_right_arrow),
-                    onClick = {
-                        notifier.notify(DataIds.deleteGroupClick)
-                    }
-                )
-            }
+            SingleSetting(
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = painterResource(id = R.drawable.ic_delete),
+                text = "Delete Group",
+                trailingIcon = painterResource(id = R.drawable.menu_right_arrow),
+                onClick = {
+                    notifier.notify(DataIds.deleteGroupClick)
+                }
+            )
         }
     }
 }
@@ -511,7 +575,7 @@ fun SingleSetting(
     modifier: Modifier = Modifier,
     leadingIcon: Painter, text: String,
     trailingIcon: Painter,
-    isThereSwitch: Boolean = false,
+    switchable: Boolean = false,
     onClick: () -> Unit,
     notifier: NotificationService = notifier(),
     groupNotificationSwitch: Boolean = boolState(key = DataIds.groupNotificationSwitch).value,
@@ -521,13 +585,13 @@ fun SingleSetting(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(60.dep())
             .clickable(
-                interactionSource = interactionSource,
-                indication = null,
+                rippleColor = Color(0xff1A79E5),
                 onClick = {
                     onClick()
                 }
-            ),
+            ).padding(horizontal = 23.dep()),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -547,13 +611,13 @@ fun SingleSetting(
                 fontSize = 14.sep()
             )
         }
-        if (isThereSwitch) {
+        if (switchable) {
             CustomSwitch(
                 scale = 1f,
                 width = 36.dep(),
                 height = 20.dep(),
                 strokeWidth = 1.dep(),
-                checkedTrackColor = LightBlue4,
+                checkedTrackColor = Color(0xff37D8CF),
                 uncheckedTrackColor = LightBlue4,
                 gapBetweenThumbAndTrackEdge = 3.dep(),
                 onSwitch = {
@@ -563,7 +627,15 @@ fun SingleSetting(
             )
         } else {
             Icon(
-                modifier = Modifier.size(14.dep()),
+                modifier = Modifier
+                    .size(32.dep())
+                    .clip(CircleShape)
+                    .clickable(
+                        rippleColor = Color(0xff1A79E5),
+                    ) {
+
+                    }
+                    .padding(12.5.dep()),
                 painter = trailingIcon,
                 tint = Bluish,
                 contentDescription = "trailingIcon"
@@ -581,6 +653,8 @@ fun CustomSwitch(
     strokeWidth: Dp = 2.dep(),
     checkedTrackColor: Color = LightBlue4,
     uncheckedTrackColor: Color = LightBlue4,
+    checkedBackgroundColor: Color = Color(0xffE4FFFA),
+    unCheckedBackgroundColor: Color = colorResource(R.color.lightblue1),
     gapBetweenThumbAndTrackEdge: Dp = 4.dep(),
     onSwitch: () -> Unit
 ) {
@@ -595,8 +669,6 @@ fun CustomSwitch(
         else
             with(LocalDensity.current) { (thumbRadius + gapBetweenThumbAndTrackEdge).toPx() }
     )
-
-    val backGroundColor= colorResource(id = R.color.lightblue1)
 
 
     Canvas(
@@ -615,15 +687,16 @@ fun CustomSwitch(
     ) {
 
 
+        val radius = 200f
         drawRoundRect(
-            color = backGroundColor,
-            cornerRadius = CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx()),
+            color = if (switchON) checkedBackgroundColor else unCheckedBackgroundColor,
+            cornerRadius = CornerRadius(x = radius, y = radius),
             style = Fill
         )
         // Track
         drawRoundRect(
             color = if (switchON) checkedTrackColor else uncheckedTrackColor,
-            cornerRadius = CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx()),
+            cornerRadius = CornerRadius(x = radius, y = radius),
             style = Stroke(width = strokeWidth.toPx())
         )
 
@@ -781,12 +854,14 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
         }
     }
 }
+
 data class UnSettledMembersConfiguration(
     val gapBetweenTwoRow: Float = 33f,
     val topPaddingOfRadioButton: Float = 14f,
     val topPaddingOfButton: Float = 26f,
     val bottomPaddingOfButton: Float = 25f
 )
+
 @Composable
 fun UnSettledMemberItem(
     contentDescription: String,
@@ -882,7 +957,9 @@ fun UnSettledMemberItem(
 
     }
 }
+
 val Whitish5 = Color(0xFFF8FBFF)
+
 data class CustomRadioButton(
     val height: Float = 47f,
     val cornerRadius: Float = 12f,
@@ -894,6 +971,7 @@ data class CustomRadioButton(
     val unSelectedTextColor: Color = DarkBlue,
     val fontSize: Float = 14f
 )
+
 @Composable
 fun CustomRadioButton_2ofz97(
     contentDescription: String,
@@ -947,25 +1025,30 @@ fun CustomRadioButton_2ofz97(
         }
     }
 }
+
 val LightGrayShadow = Color(0xffE6E5E5)
+
 enum class SettleOptions {
     SplitIndividual,
     Delete
 }
+
 data class SettledUnsettledMembersBottomSheet(
     val holderTopPadding: Float = 20f,
     val holderBottomPadding: Float = 33f
 )
+
 ////////////////////////////////
 data class SingleSettledOrUnsettledMember(
     val isChecked: Boolean = false,
-    val isSettledMember:Boolean,
+    val isSettledMember: Boolean,
     val imageUrl: String,
     val userName: String,
     val userPhNo: String,
     val getAmount: Float,
     val paidAmount: Float
 )
+
 private var list by mutableStateOf(
     listOf(
         SingleSettledOrUnsettledMember(
@@ -987,6 +1070,7 @@ private var list by mutableStateOf(
         ),
     )
 )
+
 @Composable
 fun SettledMembers(
     contentDescription: String,
@@ -1002,7 +1086,7 @@ fun SettledMembers(
             list.forEachIndexed { index, item ->
 
                 SettledOrUnsettledSingleRow_70d834(
-                    contentDescription=" SettledOrUnsettledSingleRow",
+                    contentDescription = " SettledOrUnsettledSingleRow",
                     userName = item.userName,
                     userPhNo = item.userPhNo,
                     getAmount = item.getAmount,
@@ -1050,6 +1134,7 @@ data class SettledMembersConfiguration(
     val topPaddingOfBottom: Float = 38f,
     val bottomPaddingOfBottom: Float = 25f
 )
+
 ////////////////////////////
 @Composable
 fun SettledOrUnsettledSingleRow_70d834(
@@ -1226,15 +1311,18 @@ fun SelectorIcon_ulkel8(
 }
 
 val Whitish6 = Color(0xFFE7EEF6)
+
 data class SettledOrUnsettledSingleRowConfiguration(
     val gapBetweenSelectorAndProfileImage: Float = 12f,
     val gapBetweenProfileImageAndUserName: Float = 22f
 )
+
 data class CheckboxConfiguration(
     val iconColor: Color = Bluish,
     val iconSize: Float = 28f,
     val icon: Int = R.drawable.ic_checked_right
 )
+
 /////////////////////////
 @Composable
 fun ProfileImage_2hf7q0(

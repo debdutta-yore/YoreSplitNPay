@@ -20,19 +20,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.constraintlayout.compose.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import co.yore.splitnpay.components.components.CollapsibleBox
-import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.demos.DatePickerDemo
+import co.yore.splitnpay.libs.blend
+import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.times
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localDesignWidth
-import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
-import co.yore.splitnpay.viewModels.GroupChatViewModel
-import co.yore.splitnpay.viewModels.GroupCreationPageViewModel
-import co.yore.splitnpay.viewModels.MemberSelectionPageViewModel
-import co.yore.splitnpay.viewModels.SplitPageViewModel
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 
 class MainActivity : ComponentActivity() {
@@ -50,63 +46,8 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
-                        val navController = rememberAnimatedNavController()
-                        AnimatedNavHost(navController, startDestination = "split_page") {
-                            yoreComposable(
-                                "split_page"
-                            ){
-                                YorePage(
-                                    navController,
-                                    suffix = "split_page",
-                                    wvm = viewModel<SplitPageViewModel>()
-                                ) {
-                                    SplitPage()
-                                }
-                            }
-                            yoreComposable(
-                                "split_with_page",
-                            ){
-                                YorePage(
-                                    navController,
-                                    suffix = "split_with_page",
-                                    wvm = viewModel<MemberSelectionPageViewModel>()
-                                ) {
-                                    MemberSelectionPage_g5024t()
-                                }
-                            }
-
-                            yoreComposable(
-                                "group_creation"
-                            ){
-                                YorePage(
-                                    navController,
-                                    suffix = "group_creation",
-                                    wvm = viewModel<GroupCreationPageViewModel>()
-                                ) {
-                                    GroupCreationScreen()
-                                }
-                            }
-
-                            yoreComposable("group_chat_page") {
-                                YorePage(
-                                    navController = navController,
-                                    suffix = "group_chat_page",
-                                    wvm = viewModel<GroupChatViewModel>()
-                                ) {
-                                    GroupChatScreen()
-                                }
-                            }
-
-                            yoreComposable("group_manage") {
-                                YorePage(
-                                    navController = navController,
-                                    suffix = "group_manage",
-                                    wvm = viewModel<GroupChatViewModel>()
-                                ) {
-                                    GroupManagePage()
-                                }
-                            }
-                        }
+                        //YoreApp()
+                        DatePickerDemo()
                     }
                 }
             }
@@ -343,7 +284,7 @@ fun CutPage() {
                 modifier = Modifier
                     .layoutId("settle_circle")
                     .aspectRatio(1f)
-                    .background(Color.blend(Color.Yellow,Color.White,it), CircleShape)
+                    .background(Color.blend(Color.Yellow, Color.White, it), CircleShape)
             ){
 
             }
@@ -389,7 +330,7 @@ fun CutPage() {
                     .layoutId("menu_overlay")
                     .size(24.dep())
                     .clip(CircleShape)
-                    .clickable {  }
+                    .clickable { }
             ){
 
             }

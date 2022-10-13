@@ -346,11 +346,10 @@ class GroupChatViewModel(
                 }*/
             }
             DataIds.manageClick -> {
-                /*navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("manage_page")
-                    navHostController.popBackStack()
-                }*/
-                _typingMembers.add("https://i.pravatar.cc/100")
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.navigate("group_manage")
+                }
+                //_typingMembers.add("https://i.pravatar.cc/100")
             }
             DataIds.chatMessage -> {
                 _chatMessage.value = (arg as? String) ?: ""

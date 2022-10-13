@@ -4,9 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.libs.NotificationService
-import co.yore.splitnpay.libs.StatusBarColor
-import co.yore.splitnpay.libs.WirelessViewModelInterface
+import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.Member
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +14,58 @@ import kotlinx.coroutines.withContext
 interface ManageRepository {
     suspend fun getMembers(): List<Member>
 }
+class ManageRepositoryMockImpl: ManageRepository {
+    val group = listOf(
+        Member(
+            id = 1,
+            profilePic = "https://i.pravatar.cc/300",
+            userName = "You",
+            mobileNo = "9563376942",
+            isSelected = false,
+            isGroupAdmin = true
+        ),
+        Member(
+            id = 2,
+            profilePic = "https://i.pravatar.cc/300",
+            userName = "Manisha Roy",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+        Member(
+            id = 3,
+            profilePic = "https://i.pravatar.cc/300",
+            userName = "Sushil Roy",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+        Member(
+            id = 4,
+            profilePic = "https://i.pravatar.cc/300",
+            userName = "Sanjana Ray",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+        Member(
+            id = 5,
+            profilePic = "https://i.pravatar.cc/300",
+            userName = "Ankita Ray",
+            mobileNo = "9563376942",
+            isSelected = false
+        ),
+    )
 
+    override suspend fun getMembers(): List<Member> {
+        return group
+    }
+
+}
 class ManageViewModel(
     private val repo: ManageRepository = ManageRepositoryMockImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val resolver = Resolver()
     override val navigation = Navigation()
+    override val permissionHandler = PermissionHandler()
+    override val resultingActivityHandler = ResultingActivityHandler()
 
     //////////////////////////////////////////
     private val _groupMembers = mutableStateListOf<Member>()

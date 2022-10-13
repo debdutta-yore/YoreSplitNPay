@@ -29,12 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.fadingEdge
+import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localDesignWidth
-import co.yore.splitnpay.rememberLazyListSnapperLayoutInfo
-import co.yore.splitnpay.rememberSnapperFlingBehavior
-import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.snapper.ExperimentalSnapperApi
+import co.yore.splitnpay.snapper.rememberLazyListSnapperLayoutInfo
+import co.yore.splitnpay.snapper.rememberSnapperFlingBehavior
 import java.util.*
 import kotlin.math.abs
 
@@ -1034,6 +1034,7 @@ suspend fun LazyListState.safeScrollToItem(index: Int){
     } catch (e: Exception) {
     }
 }
+
 @OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun MonthDayPicker(
@@ -1121,8 +1122,7 @@ fun MonthDayPicker(
             LazyRow(
                 state = listState,
                 modifier = Modifier
-                    .fillMaxWidth()
-                ,
+                    .fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = pad.dep()),
                 flingBehavior = rememberSnapperFlingBehavior(listState),
             ) {

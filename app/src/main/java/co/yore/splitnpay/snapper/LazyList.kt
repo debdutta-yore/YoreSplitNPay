@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package co.yore.splitnpay
+package co.yore.splitnpay.snapper
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.DecayAnimationSpec
