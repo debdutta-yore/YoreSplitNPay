@@ -183,7 +183,7 @@ data class YearsListConfiguration(
 )
 
 data class YearItemConfiguration(
-    val width: Float = 72f,
+    val width: Float = 84f,
     val height: Float = 42f,
     val borderRadius: Float = 21f,
     val selectedBackgroundColor: Color = Color(0xffEDF5FF),

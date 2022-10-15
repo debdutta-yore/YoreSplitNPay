@@ -38,7 +38,7 @@ fun DatePickerDemo() {
                             selectedMonth,
                             selectedYear,
                             Kal.Date.create(22,3,2022),
-                            Kal.Date.create(23,8,2026),
+                            Kal.Date.create(23,8,2036),
                             dateSelectable = true,
                             yearSwitchable = true
                         )

@@ -14,8 +14,13 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
@@ -24,6 +29,7 @@ import co.yore.splitnpay.models.DataIds
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
@@ -308,4 +314,113 @@ fun <E>MutableCollection<E>.removeIfMy(filter: (E)->Boolean): Boolean{
         }
     }
     return removed
+}
+
+val String.isValidFormattableAmount get(): Boolean = isNotBlank() && isDigitsOnly() && length <= 6
+fun formatAmountOrMessage(
+    input: String
+): String = if (input.isValidFormattableAmount) {
+    DecimalFormat("#,##,###").format(input.toDouble())
+} else {
+    input
+}
+class AmountOrMessageVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+
+        val originalText = text.text
+        val formattedText = formatAmountOrMessage(text.text)
+
+        val offsetMapping = object : OffsetMapping {
+
+            override fun originalToTransformed(offset: Int): Int {
+                if (originalText.isValidFormattableAmount) {
+                    val commas = formattedText.count { it == ',' }
+                    return when {
+                        offset <= 1 -> offset
+                        offset <= 3 -> if (commas >= 1) offset + 1 else offset
+                        offset <= 5 -> if (commas == 2) offset + 2 else offset + 1
+                        else -> 8
+                    }
+                }
+                return offset
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (originalText.isValidFormattableAmount) {
+                    val commas = formattedText.count { it == ',' }
+                    return when (offset) {
+                        8, 7 -> offset - 2
+                        6 -> if (commas == 1) 5 else 4
+                        5 -> if (commas == 1) 4 else if (commas == 2) 3 else offset
+                        4, 3 -> if (commas >= 1) offset - 1 else offset
+                        2 -> if (commas == 2) 1 else offset
+                        else -> offset
+                    }
+                }
+                return offset
+            }
+        }
+
+        return TransformedText(
+            text = AnnotatedString(formattedText),
+            offsetMapping = offsetMapping
+        )
+    }
+}
+
+// format long to 123,456,789,9
+class NumberCommaTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        return TransformedText(
+            text = AnnotatedString(text.text.toLongOrNull().formatWithComma()),
+            offsetMapping = object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    //return text.text.toLongOrNull().formatWithComma().length
+                    return calculateTransformedOffset(text.length,offset)
+                }
+
+                override fun transformedToOriginal(offset: Int): Int {
+                    return calculateOriginalOffset(text.length,offset)
+                }
+
+                private fun calculateOriginalOffset(length: Int, offset: Int): Int {
+                    if(text.isEmpty()){
+                        return 0
+                    }
+                    var count = 0
+                    for(i in 0 .. offset){
+                        if(text[i]==','){
+                            ++count
+                        }
+                    }
+                    return offset - count
+                }
+
+                private fun calculateTransformedOffset(length: Int, offset: Int): Int {
+                    if(length<4){
+                        return offset
+                    }
+                    var found = -1
+                    for(i in text.indices){
+                        if(text[i]!=','){
+                            ++found
+                            if(found==offset-1){
+                                return i
+                            }
+                        }
+                    }
+                    return 0
+                }
+            }
+        )
+    }
+}
+
+fun Long?.formatWithComma(): String {
+    if(this==null){
+        return ""
+    }
+    else {
+        return NumberFormat.getNumberInstance(Locale.US).format(this)
+    }
 }

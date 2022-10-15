@@ -46,7 +46,9 @@ fun SplitPageContent() {
             progress = progress,
             start = SplitPageStartConstraint(dep),
             end = SplitPageEndConstraint(dep),
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+            ,
         ) {
             CollapsibleContents(
                 progress = progress,

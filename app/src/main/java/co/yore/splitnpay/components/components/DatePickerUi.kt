@@ -35,8 +35,8 @@ import co.yore.splitnpay.locals.localDesignWidth
 import co.yore.splitnpay.snapper.ExperimentalSnapperApi
 import co.yore.splitnpay.snapper.rememberLazyListSnapperLayoutInfo
 import co.yore.splitnpay.snapper.rememberSnapperFlingBehavior
+import java.lang.Math.abs
 import java.util.*
-import kotlin.math.abs
 
 object Kal{
     data class DateDifference(
@@ -888,25 +888,10 @@ fun YearsList(
         verticalArrangement = Arrangement.spacedBy(config.verticalItemSpacing.dep()),
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
+            .fadingEdge()
             .padding(horizontal = config.horizontalPadding.dep())
             .fillMaxWidth()
-            .height(config.height.dep())
-            /*.drawWithContent {
-                val colors = listOf(config.fadeColor, Color.Transparent)
-                val colors1 = listOf(Color.Transparent, config.fadeColor)
-                drawContent()
-                drawRect(
-                    brush = Brush.verticalGradient(colors, endY = config.fadeY),
-                )
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        colors1,
-                        startY = size.height - config.fadeY,
-                        endY = size.height
-                    ),
-                )
-            }*/
-            .fadingEdge(),
+            .height(config.height.dep()),
         contentPadding = PaddingValues(vertical = config.verticalContentPadding.dep())
     ) {
         items(yearsList){ it ->
@@ -934,23 +919,23 @@ fun YearItem(
     val yearString by remember {
         mutableStateOf(year.toString())
     }
-    val virtuallySelected by remember {
+    val virtuallySelected by remember(selected) {
         derivedStateOf {
-            return@derivedStateOf selected || isPressed
+            selected || isPressed
         }
     }
-    val backgroundColor by remember {
+    val backgroundColor by remember(virtuallySelected) {
         derivedStateOf {
-            return@derivedStateOf if
-                    (virtuallySelected) config.selectedBackgroundColor
+            if (virtuallySelected)
+                config.selectedBackgroundColor
             else
                 config.unselectedBackgroundColor
         }
     }
-    val color by remember {
+    val color by remember(selected) {
         derivedStateOf {
-            return@derivedStateOf if
-                    (selected) config.selectedColor
+            if
+                (selected) config.selectedColor
             else
                 config.unselectedColor
         }
@@ -1138,6 +1123,7 @@ fun MonthDayPicker(
                                 .firstOrNull { it.index == i }
                                 ?: return@derivedStateOf 0.5f
                             (1f - minOf(1f, abs(currentItemInfo.offset).toFloat() / halfRowWidth) * 0.5f)
+
                         }
                     }
                     LaunchedEffect(key1 = opacity){
@@ -1181,12 +1167,12 @@ fun WeekDayUI(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .alpha(weekDayUIData.opacity)
             .width((weekDayUIData.boxSize).dep())
             .fillMaxHeight()
             .clickable {
                 onClick()
             }
+            .alpha(weekDayUIData.opacity)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

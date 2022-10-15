@@ -1,6 +1,7 @@
 package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -278,7 +279,7 @@ fun GroupChatScreen(
     notifier: NotificationService = notifier(),
     sheetHandler: SheetHandler = localSheetHandler(),
     searching: Boolean = boolState(key = DataIds.search).value,
-    sheet: Sheets = tState<Sheets>(key = DataIds.sheets).value
+    sheet: Sheets = tState<Sheets>(key = DataIds.sheets).value,
 ) {
     val sheetState = sheetHandler.handle()
     val scope = rememberCoroutineScope()

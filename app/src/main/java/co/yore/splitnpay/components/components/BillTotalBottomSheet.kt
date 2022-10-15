@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -26,11 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import co.yore.splitnpay.R
@@ -57,6 +61,7 @@ fun BillTotalBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .safeDrawingPadding()
             .padding(
                 start = 32.dep(),
                 end = 30.dep()
@@ -98,7 +103,19 @@ fun BillTotalBottomSheet(
                 },
                 contentDescription = "",
                 leadingIcon = painterResource(id = R.drawable.ic_rupees),
-                placeHolderText = stringResource(R.string.amount)
+                placeHolderText = stringResource(R.string.amount),
+                singleLine = true,
+                maxLines = 1,
+                keyboardType = KeyboardType.Number,
+                visualTransformation = NumberCommaTransformation(),
+                textStyle = TextStyle(
+                    color = Color(0xff243257),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sep()
+                ),
+                interceptor = {
+                    it.replace("^0+".toRegex(),"0")
+                }
             )
         }
 
@@ -237,7 +254,20 @@ fun BillTotalBottomSheet(
                 contentDescription = "Continue button"
             )
         }
+        Box(
+            modifier = Modifier.keyboardHeight()
+        ){
+
+        }
     }
+}
+
+@Composable
+fun Modifier.keyboardHeight(
+    keyboardHeight: Int = co.yore.splitnpay.keyboardHeight()
+): Modifier{
+    return this
+        .then(Modifier.height(with(LocalDensity.current){keyboardHeight.toDp()}))
 }
 ////////////////////////////////
 @OptIn(ExperimentalMaterialApi::class)
@@ -248,6 +278,12 @@ fun CustomTextField_wangst(
     leadingIcon: Painter,
     placeHolderText: String,
     contentDescription: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    maxLines: Int = Int.MAX_VALUE,
+    singleLine: Boolean = false,
+    textStyle: TextStyle = TextStyle.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    interceptor: ((String)->String)? = null,
     config: CustomTextFieldConfiguration = CustomTextFieldConfiguration()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -262,7 +298,15 @@ fun CustomTextField_wangst(
 
     BasicTextField(
         value = text,
-        onValueChange = { change(it) },
+        onValueChange = {
+            if(interceptor==null){
+                change(it)
+            }
+            else{
+                change(interceptor(it))
+            }
+        },
+        textStyle = textStyle,
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
             .fillMaxSize()
@@ -273,6 +317,12 @@ fun CustomTextField_wangst(
                 colors = colors
             ),
         interactionSource = interactionSource,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+        ),
+        maxLines = maxLines,
+        singleLine = singleLine,
+        visualTransformation = visualTransformation
     ) { innerTextField ->
         TextFieldDefaults.TextFieldDecorationBox(
             value = text,
@@ -297,7 +347,9 @@ fun CustomTextField_wangst(
                 )
             },
             leadingIcon = {
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         modifier = Modifier
                             .padding(start = 18.dep())
@@ -306,7 +358,7 @@ fun CustomTextField_wangst(
                         ,
                         painter = leadingIcon,
                         tint = config.iconColor,
-                        contentDescription = "people icon"
+                        contentDescription = "people icon",
                     )
                     config.dividerStartPadding.sx()
                     Divider(
