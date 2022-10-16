@@ -111,13 +111,12 @@ class SplitReviewViewModel(
                 }
             }
             DataIds.selectPaidByMeberClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    withContext(Dispatchers.Main) {
-                        val index = _paidList.indexOf(arg)
-                        _paidList[index] =
-                            _paidList[index].copy(isSelected = !_paidList[index].isSelected)
-                    }
+                val index = _paidList.indexOf(arg)
+                if(index==-1){
+                    return@NotificationService
                 }
+                _paidList[index] =
+                    _paidList[index].copy(isSelected = !_paidList[index].isSelected)
             }
             DataIds.editBillAmountClick -> {
 
@@ -132,9 +131,7 @@ class SplitReviewViewModel(
 
             }
             DataIds.confirmSplitClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("group_chat_screen")
-                }
+
             }
             DataIds.scanClick -> {
 

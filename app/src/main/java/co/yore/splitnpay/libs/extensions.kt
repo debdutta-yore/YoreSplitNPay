@@ -25,7 +25,6 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
-import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.DataIds
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -444,10 +443,7 @@ fun Int.numberToWords(): String {
     }
 
     // TODO: search better approach for .replace("Indian ","")
-    return convert(this@numberToWords) + " " + localCurrency.current.replace(
-        "Indian ",
-        ""
-    )
+    return convert(this@numberToWords) + " " + "Rupees"
 }
 
 

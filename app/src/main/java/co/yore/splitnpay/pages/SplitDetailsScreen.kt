@@ -250,7 +250,7 @@ fun SplitDetailsScreen(
                         decNumberTextColor = DarkBlue,
                         decNumberFontSize = 14f,
                         isTrailingTextEnabled = true,
-                        trailingText = " " + localCurrency.current,
+                        trailingText = " INR",
                         trailingTextFontSize = 21f,
                         trailingTextTextColor = DarkBlue,
                         trailingTextFontWeight = FontWeight.Bold
@@ -294,7 +294,7 @@ fun SplitDetailsScreen(
                     enabled = true,
                     placeholder = {
                         FontFamilyText(
-                            text = "Business trip",
+                            text = stringResource(id = R.string.description),
                             fontSize = 13.sep(),
                             color = GreyBorder
                         )
@@ -733,7 +733,7 @@ fun TopBarWithIcon_1t9xbo(
             Spacer(modifier = Modifier.width(8.dep()))
             Icon(
                 modifier = Modifier
-                    .size((config.iconSize+20).dep())
+                    .size((config.iconSize + 20).dep())
                     .clip(CircleShape)
                     .clickable {
                         onClick()
@@ -759,7 +759,7 @@ fun TopBarWithIcon_1t9xbo(
                         .align(Alignment.CenterVertically)
                         .size(32.dep())
                         .clip(CircleShape)
-                        .clickable{
+                        .clickable {
                             iconClick()
                         }
                         .padding(7.dep()),
@@ -997,7 +997,7 @@ fun CategorySelectorCard_owv32g(
                 shape = RoundedCornerShape(50.dep())
             )
             .clip(shape = RoundedCornerShape(50.dep()))
-            .clickable{
+            .clickable {
                 notifier.notify(DataIds.confirmSplitClick)
             }
     ) {
@@ -1050,7 +1050,7 @@ fun DateSelectorCard_5b6qhm(
                 shape = RoundedCornerShape(50.dep())
             )
             .clip(shape = RoundedCornerShape(50.dep()))
-            .clickable{
+            .clickable {
                 notifier.notify(DataIds.dateClick)
             }
     ) {
@@ -1099,6 +1099,7 @@ fun DashedBorderIconButtonWithText_13ppr3(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
             .size(59.dep())
+            .clip(RoundedCornerShape(config.borderCorner.dep()))
             .clickable {
                 onClick()
             }

@@ -11,7 +11,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSimple
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.Dp
@@ -163,7 +162,7 @@ fun Modifier.dashedBorder(width: Dp, brush: Brush, shape: Shape, on: Dp, off: Dp
                                 }
                                 // Clip rect to ensure the stroke does not extend the bounds
                                 // of the composable.
-                                clipRect {
+                                /*clipRect {
                                     // Draw a hairline stroke to cover up non-anti-aliased pixels
                                     // generated from the clip
                                     if (isSimpleRoundRect) {
@@ -190,7 +189,7 @@ fun Modifier.dashedBorder(width: Dp, brush: Brush, shape: Shape, on: Dp, off: Dp
                                             )
                                         )
                                     }
-                                }
+                                }*/
                             } else {
                                 // Rectangular border fast path
                                 val strokeWidth = stroke.width
