@@ -375,41 +375,11 @@ class NumberCommaTransformation : VisualTransformation {
             text = AnnotatedString(text.text.toLongOrNull().formatWithComma()),
             offsetMapping = object : OffsetMapping {
                 override fun originalToTransformed(offset: Int): Int {
-                    //return text.text.toLongOrNull().formatWithComma().length
-                    return calculateTransformedOffset(text.length,offset)
+                    return text.text.toLongOrNull().formatWithComma().length
                 }
 
                 override fun transformedToOriginal(offset: Int): Int {
-                    return calculateOriginalOffset(text.length,offset)
-                }
-
-                private fun calculateOriginalOffset(length: Int, offset: Int): Int {
-                    if(text.isEmpty()){
-                        return 0
-                    }
-                    var count = 0
-                    for(i in 0 .. offset){
-                        if(text[i]==','){
-                            ++count
-                        }
-                    }
-                    return offset - count
-                }
-
-                private fun calculateTransformedOffset(length: Int, offset: Int): Int {
-                    if(length<4){
-                        return offset
-                    }
-                    var found = -1
-                    for(i in text.indices){
-                        if(text[i]!=','){
-                            ++found
-                            if(found==offset-1){
-                                return i
-                            }
-                        }
-                    }
-                    return 0
+                    return text.length
                 }
             }
         )

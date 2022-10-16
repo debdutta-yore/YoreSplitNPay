@@ -1,11 +1,16 @@
 package co.yore.splitnpay.pages
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -27,9 +32,21 @@ data class CustomButtonConfiguration(
 fun CustomButton_3egxtx(
     config: CustomButtonConfiguration = CustomButtonConfiguration(),
     text: String,
+    enabled: Boolean,
     onClick: () -> Unit,
     contentDescription: String
 ) {
+    val backgroundColor by remember(enabled) {
+        derivedStateOf {
+            if(enabled){
+                config.buttonColor
+            }
+            else{
+                Color(0xff839BB9)
+            }
+        }
+    }
+    val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor)
     Button(
         modifier = Modifier
             .fillMaxSize()
@@ -37,7 +54,7 @@ fun CustomButton_3egxtx(
         onClick = { onClick() },
         shape = RoundedCornerShape(config.cornerRadius.dep()),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = config.buttonColor
+            backgroundColor = animatedBackgroundColor
         )
     ) {
         FontFamilyText(

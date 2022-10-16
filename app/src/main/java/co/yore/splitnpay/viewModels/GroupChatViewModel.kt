@@ -243,6 +243,7 @@ class GroupChatViewModel(
     private val search = mutableStateOf(false)
     private val groupChatTab = mutableStateOf(GroupChatTab.All)
     private val _sheets = mutableStateOf<Sheets>(Sheets.None)
+    private val canProceedWithBillTotal = mutableStateOf(false)
 
     /////////////////////////////////////////
     private val _categories = mutableStateListOf<Category>()
@@ -444,7 +445,8 @@ class GroupChatViewModel(
             DataIds.isAddCategoryEnabled to _isAddCategoryEnabled,
             DataIds.addCategoryName to _addCategoryName,
             ///////////////
-            DataIds.sheets to _sheets
+            DataIds.sheets to _sheets,
+            DataIds.canProceedWithBillTotal to canProceedWithBillTotal
         )
         //////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {

@@ -5,6 +5,9 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -22,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -56,6 +58,7 @@ fun BillTotalBottomSheet(
     billTotalAmount: String = stringState(key = DataIds.billTotalAmount).value,
     billTotalDescription: String = stringState(key = DataIds.billTotalDescription).value,
     renamePressed: Int = intState(key = DataIds.renamePressed).value,
+    canProceed: Boolean = boolState(key = DataIds.canProceedWithBillTotal).value,
     notifier: NotificationService = notifier()
 ) {
     Column(
@@ -111,7 +114,7 @@ fun BillTotalBottomSheet(
                 textStyle = TextStyle(
                     color = Color(0xff243257),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sep()
+                    fontSize = 20.sep(),
                 ),
                 interceptor = {
                     it.replace("^0+".toRegex(),"0")
@@ -137,7 +140,9 @@ fun BillTotalBottomSheet(
                 },
                 contentDescription = "",
                 leadingIcon = painterResource(id = R.drawable.ic_description),
-                placeHolderText = stringResource(R.string.add_description)
+                placeHolderText = stringResource(R.string.add_description),
+                singleLine = true,
+                maxLines = 1
             )
         }
 
@@ -149,14 +154,16 @@ fun BillTotalBottomSheet(
             fontWeight = FontWeight.Bold,
         )
 
-        Row(
+        LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 20.dep()),
-            verticalAlignment = CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(
+                    top = 20.dep()
+                ),
+            columns = GridCells.Fixed(5),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            categories.forEachIndexed { index, item ->
+            itemsIndexed(categories) { index, item ->
                 CategoryItem(
                     category = item,
                     onClick = {
@@ -173,41 +180,44 @@ fun BillTotalBottomSheet(
                     selectorItemContentDescription = ""
                 )
             }
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = CenterHorizontally
-            ) {
-                Box(
-                    modifier = Modifier
-                        .height(70.dep()),
-                    contentAlignment = Center
+            item {
+
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = CenterHorizontally
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(45.dep())
-                            .background(
-                                color = Grayish,
-                                shape = CircleShape
-                            )
-                            .clickable {
-                                notifier.notify(DataIds.openAllCategories)
-                            }
+                            .height(70.dep()),
+                        contentAlignment = Center
                     ) {
-                        Icon(
+                        Box(
                             modifier = Modifier
-                                .align(Center),
-                            painter = painterResource(id = R.drawable.ic_next),
-                            contentDescription = "Next",
-                            tint = Color.Unspecified
-                        )
+                                .size(45.dep())
+                                .background(
+                                    color = Grayish,
+                                    shape = CircleShape
+                                )
+                                .clickable {
+                                    notifier.notify(DataIds.openAllCategories)
+                                }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .align(Center),
+                                painter = painterResource(id = R.drawable.ic_next),
+                                contentDescription = "Next",
+                                tint = Color.Unspecified
+                            )
+                        }
                     }
-                }
 
-                FontFamilyText(
-                    text = stringResource(id = R.string.others),
-                    color = DarkBlue,
-                    fontSize = 11.sep(),
-                )
+                    FontFamilyText(
+                        text = stringResource(id = R.string.others),
+                        color = DarkBlue,
+                        fontSize = 11.sep(),
+                    )
+                }
             }
         }
 
@@ -251,7 +261,8 @@ fun BillTotalBottomSheet(
                 onClick = {
                     notifier.notify(DataIds.billTotalSetClick)
                 },
-                contentDescription = "Continue button"
+                contentDescription = "Continue button",
+                enabled = canProceed
             )
         }
         Box(
@@ -322,7 +333,7 @@ fun CustomTextField_wangst(
         ),
         maxLines = maxLines,
         singleLine = singleLine,
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
     ) { innerTextField ->
         TextFieldDefaults.TextFieldDecorationBox(
             value = text,
