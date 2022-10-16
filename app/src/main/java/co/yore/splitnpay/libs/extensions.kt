@@ -25,6 +25,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
+import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.DataIds
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -69,7 +70,7 @@ fun Float.splitted(): FloatSplitted {
 }
 
 var formatter = DecimalFormat("#,###")
-fun Long.formatComma():String = formatter.format(this)
+fun Number.formatComma():String = formatter.format(this)
 
 fun Modifier.fadingEdge(
     startingColor: Color = Color.White,
@@ -394,3 +395,59 @@ fun Long?.formatWithComma(): String {
         return NumberFormat.getNumberInstance(Locale.US).format(this)
     }
 }
+
+@Composable
+fun Int.numberToWords(): String {
+    val units = arrayOf(
+        "", "One", "Two", "Three", "Four",
+        "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
+        "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+        "Eighteen", "Nineteen"
+    )
+
+    val tens = arrayOf(
+        "",  // 0
+        "",  // 1
+        "Twenty",  // 2
+        "Thirty",  // 3
+        "Forty",  // 4
+        "Fifty",  // 5
+        "Sixty",  // 6
+        "Seventy",  // 7
+        "Eighty",  // 8
+        "Ninety" // 9
+    )
+
+    fun convert(n: Int): String {
+        if (n < 0) {
+            return "Minus " + convert(-n)
+        }
+        if (n < 20) {
+            return units.get(n)
+        }
+        if (n < 100) {
+            return tens.get(n / 10) + (if (n % 10 != 0) " " else "") + units.get(n % 10)
+        }
+        if (n < 1000) {
+            return units.get(n / 100) + " Hundred" + (if (n % 100 != 0) " " else "") + convert(n % 100)
+        }
+        if (n < 100000) {
+            return convert(n / 1000) + " Thousand" + (if (n % 10000 != 0) " " else "") + convert(
+                n % 1000
+            )
+        }
+        return if (n < 10000000) {
+            convert(n / 100000) + " Lakh" + (if (n % 100000 != 0) " " else "") + convert(n % 100000)
+        } else convert(n / 10000000) + " Crore" + (if (n % 10000000 != 0) " " else "") + convert(
+            n % 10000000
+        )
+    }
+
+    // TODO: search better approach for .replace("Indian ","")
+    return convert(this@numberToWords) + " " + localCurrency.current.replace(
+        "Indian ",
+        ""
+    )
+}
+
+

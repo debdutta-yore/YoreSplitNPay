@@ -43,7 +43,8 @@ fun AllCategoriesBottomSheet(
     addCategoryName: String = stringState(key = DataIds.addCategoryName).value,
 //    sheetState: ModalBottomSheetState,
 //    coroutineScope: CoroutineScope
-    notifier: NotificationService = notifier()
+    notifier: NotificationService = notifier(),
+    canProceed: Boolean = boolState(key = DataIds.capProceedWithCategory).value
 ) {
     Column(
         modifier = Modifier
@@ -228,41 +229,6 @@ fun AllCategoriesBottomSheet(
                 )
             }
         }
-        /*AnimatedVisibility(
-            visible = isAddCategoryEnabled,
-            enter = fadeIn(tween(700)) + slideInVertically(tween(700)) {
-                it
-            },
-            exit = fadeOut(tween(700)) + slideOutVertically(tween(700)) {
-                it
-            }
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(
-                        top = 10.dep(),
-                        start = 31.dep(),
-                        end = 31.dep()
-                    )
-                    .background(
-                        color = LightGrey2,
-                        shape = RoundedCornerShape(8.dep())
-                    )
-                    .clip(RoundedCornerShape(8.dep()))
-                    .height(52.dep())
-                    .fillMaxWidth()
-            ) {
-                CustomTextField_wangst(
-                    text = addCategoryName,
-                    change = {
-                        notifier.notify(DataIds.addCategoryName, it)
-                    },
-                    contentDescription = "",
-                    leadingIcon = painterResource(id = R.drawable.ic_description),
-                    placeHolderText = "Custom category name"
-                )
-            }
-        }*/
 
         Box(
             modifier = Modifier
@@ -282,7 +248,8 @@ fun AllCategoriesBottomSheet(
 //                        sheetState.show()
 //                    }
                 },
-                contentDescription = "Continue button"
+                contentDescription = "Continue button",
+                enabled = canProceed
             )
         }
     }

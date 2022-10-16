@@ -1,14 +1,10 @@
 package co.yore.splitnpay.pages
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -32,11 +28,11 @@ data class CustomButtonConfiguration(
 fun CustomButton_3egxtx(
     config: CustomButtonConfiguration = CustomButtonConfiguration(),
     text: String,
-    enabled: Boolean,
+    enabled: Boolean = true,
     onClick: () -> Unit,
     contentDescription: String
 ) {
-    val backgroundColor by remember(enabled) {
+    /*val backgroundColor by remember(enabled) {
         derivedStateOf {
             if(enabled){
                 config.buttonColor
@@ -46,22 +42,26 @@ fun CustomButton_3egxtx(
             }
         }
     }
-    val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor)
+    val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor)*/
     Button(
+        enabled = enabled,
         modifier = Modifier
             .fillMaxSize()
             .semantics { this.contentDescription = contentDescription },
         onClick = { onClick() },
         shape = RoundedCornerShape(config.cornerRadius.dep()),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = animatedBackgroundColor
+            backgroundColor = config.buttonColor,
+            disabledBackgroundColor = Color(0xff839BB9),
+            disabledContentColor = config.fontColor,
+            contentColor = config.fontColor
         )
     ) {
         FontFamilyText(
             text = text,
             fontSize = config.fontSize.sep(),
             fontWeight = config.fontWeight,
-            color = config.fontColor
+            //color = config.fontColor
         )
     }
 }

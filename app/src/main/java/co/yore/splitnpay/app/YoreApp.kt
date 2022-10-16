@@ -14,7 +14,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
     @Composable
     fun YoreApp() {
         val navController = rememberAnimatedNavController()
-        AnimatedNavHost(navController, startDestination = "split_page") {
+        AnimatedNavHost(navController, startDestination = "split_review_page") {
             yoreComposable(
                 "split_page"
             ){
@@ -67,6 +67,26 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
                     wvm = viewModel<ManageViewModel>()
                 ) {
                     GroupManagePage()
+                }
+            }
+
+            yoreComposable("group_manage") {
+                YorePage(
+                    navController = navController,
+                    suffix = "group_manage",
+                    wvm = viewModel<ManageViewModel>()
+                ) {
+                    GroupManagePage()
+                }
+            }
+
+            yoreComposable("split_review_page") {
+                YorePage(
+                    navController = navController,
+                    suffix = "split_review_page",
+                    wvm = viewModel<SplitReviewViewModel>()
+                ) {
+                    SplitDetailsScreen()
                 }
             }
         }

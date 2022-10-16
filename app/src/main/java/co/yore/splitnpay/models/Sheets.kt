@@ -6,4 +6,5 @@ enum class Sheets {
     BillTotalAndCategories,
     CategoriesEdit,
     SettleSummaryManage,
+    DatePicker,
 }

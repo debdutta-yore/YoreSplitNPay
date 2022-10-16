@@ -1,7 +1,6 @@
 package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -63,10 +62,10 @@ import co.yore.splitnpay.components.configuration.SplitTabItemConfiguration
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Sheets
-import co.yore.splitnpay.object_box.Contact_.id
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.*
 import coil.compose.AsyncImage
@@ -294,6 +293,7 @@ fun GroupChatScreen(
                     Sheets.BillTotalAndCategories -> BillTotalBottomSheet()
                     Sheets.CategoriesEdit -> AllCategoriesBottomSheet()
                     Sheets.SettleSummaryManage -> SettleSummaryManageSheet()
+                    Sheets.DatePicker -> ExpenseDatePickerSheet()
                     else-> Text("")
                 }
             }
@@ -447,6 +447,121 @@ fun GroupChatScreen(
             }
         }
     }
+}
+
+@Composable
+fun ExpenseDatePickerSheet(
+    yoreDatePickerData: YoreDatePickerData = tState<YoreDatePickerData>(key = DataIds.yoreDatePickerData).value,
+    displayDate: String = stringState(key = DataIds.displayDate).value,
+    canProceed: Boolean = boolState(key = DataIds.canProceedWithDate).value,
+    notifier: NotificationService = notifier()
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ){
+        21.sy()
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50.dep()))
+                .height(2.dep())
+                .width(19.dep())
+                .background(LightBlue5)
+                .align(Alignment.CenterHorizontally)
+        )
+        13.sy()
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 43.dep())
+                .fillMaxWidth()
+        ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Icon(
+                    painter = painterResource(id = R.drawable.date_32),
+                    contentDescription = "date_picker",
+                    modifier = Modifier.size(16.dep()),
+                    tint = Color.Unspecified
+                )
+                8.sx()
+                RobotoText(
+                    text = stringResource(id = R.string.select_expense_date),
+                    fontSize = 18.sep(),
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xff243257)
+                )
+            }
+            7.sy()
+            RobotoText(
+                text = stringResource(id = R.string.expense_date_instruction),
+                color = Color(0xff8498AB),
+                fontSize = 12.sep(),
+                modifier = Modifier.padding(start = 24.dep())
+            )
+        }
+        20.sy()
+        Divider(
+            modifier = Modifier
+                .padding(7.dep())
+                .fillMaxWidth()
+        )
+        YoreDatePicker(
+            yoreDatePickerData = yoreDatePickerData,
+            onYearClick = {
+                notifier.notify(DataIds.year,it)
+            },
+            onMonthClick = {
+                notifier.notify(DataIds.month,it)
+            },
+            onDaySelect = {
+                notifier.notify(DataIds.day,it)
+            }
+        ) {
+
+        }
+        25.sy()
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 31.dep())
+                .fillMaxWidth()
+                .height(46.dep())
+                .clip(RoundedCornerShape(5.dep()))
+                .background(Color(0xffF4F7FB))
+                .padding(horizontal = 19.dep()),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            RobotoText(
+                text = stringResource(id = R.string.dates_colon_space),
+                color = Color(0xff677C91),
+                fontSize = 12.sep()
+            )
+            RobotoText(
+                text = displayDate,
+                color = Color.Black,
+                fontSize = 12.sep()
+            )
+        }
+        18.sy()
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 30.dep())
+                .height(47.dep())
+        ) {
+            CustomButton_3egxtx(
+                text = stringResource(id = R.string.continue1),
+                onClick = {
+                    notifier.notify(DataIds.billTotalContinueClick)
+                },
+                contentDescription = "Continue button",
+                enabled = canProceed
+            )
+        }
+        20.sy()
+    }
+
 }
 
 @Composable

@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.R
+import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.GroupChatTab
@@ -244,6 +245,10 @@ class GroupChatViewModel(
     private val groupChatTab = mutableStateOf(GroupChatTab.All)
     private val _sheets = mutableStateOf<Sheets>(Sheets.None)
     private val canProceedWithBillTotal = mutableStateOf(false)
+    private val capProceedWithCategory = mutableStateOf(false)
+    private val displayDate = mutableStateOf("")
+    private val canProceedWithDate = mutableStateOf(false)
+    private val yoreDatePickerData = mutableStateOf(YoreDatePickerData())
 
     /////////////////////////////////////////
     private val _categories = mutableStateListOf<Category>()
@@ -261,6 +266,18 @@ class GroupChatViewModel(
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
+            DataIds.year->{
+                yoreDatePickerData.value = yoreDatePickerData.value.copy(selectedYear = arg as? Int?:return@NotificationService)
+                onDateChange()
+            }
+            DataIds.month->{
+                yoreDatePickerData.value = yoreDatePickerData.value.copy(selectedMonth = arg as? Int?:return@NotificationService)
+                onDateChange()
+            }
+            DataIds.day->{
+                yoreDatePickerData.value = yoreDatePickerData.value.copy(selectedDay = arg as? Int?:return@NotificationService)
+                onDateChange()
+            }
             DataIds.settleSummaryManage->{
                 _sheets.value = Sheets.SettleSummaryManage
                 sheetHandler.state {
@@ -392,6 +409,11 @@ class GroupChatViewModel(
             }
             DataIds.billTotalAmount -> {
                 _billTotalAmount.value = (arg as? String) ?: ""
+                canProceedWithBillTotal.value = try {
+                    _billTotalAmount.value.toInt()>0
+                } catch (_: Exception) {
+                    false
+                }
             }
             DataIds.billTotalDescription -> {
                 _billTotalDescription.value = (arg as? String) ?: ""
@@ -402,10 +424,8 @@ class GroupChatViewModel(
             DataIds.openAllCategories -> {
                 _sheets.value = Sheets.CategoriesEdit
             }
-            DataIds.billTotalSetClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    //todo navigate to next screen
-                }
+            DataIds.billTotalContinueClick -> {
+                _sheets.value = Sheets.DatePicker
             }
             DataIds.isAddCategoryEnabled -> {
                 _isAddCategoryEnabled.value = !_isAddCategoryEnabled.value
@@ -414,6 +434,45 @@ class GroupChatViewModel(
                 _addCategoryName.value = (arg as? String) ?: ""
             }
         }
+    }
+
+    private fun onDateChange() {
+        val y = yoreDatePickerData.value.selectedYear
+        val m = yoreDatePickerData.value.selectedMonth
+        val d = yoreDatePickerData.value.selectedDay
+        if(d != null && m != null){
+            displayDate.value = displayableDate(d,m,y)
+            canProceedWithDate.value = true
+        }
+        else{
+            displayDate.value = ""
+            canProceedWithDate.value = false
+        }
+    }
+
+    private fun displayableDate(d: Int, m: Int, y: Int): String {
+        val ordinal = when(d%10){
+            1-> "st"
+            2-> "nd"
+            3-> "rd"
+            else-> "th"
+        }
+        val month = when(m){
+            1-> "Jan"
+            2-> "Feb"
+            3-> "Mar"
+            4-> "Apr"
+            5-> "May"
+            6-> "Jun"
+            7-> "Jul"
+            8-> "Aug"
+            9-> "Sep"
+            10-> "Oct"
+            11-> "Nov"
+            12-> "Dec"
+            else-> ""
+        }
+        return "$d$ordinal $month, $y"
     }
     /////////////////////////////////////////
 
@@ -446,7 +505,11 @@ class GroupChatViewModel(
             DataIds.addCategoryName to _addCategoryName,
             ///////////////
             DataIds.sheets to _sheets,
-            DataIds.canProceedWithBillTotal to canProceedWithBillTotal
+            DataIds.canProceedWithBillTotal to canProceedWithBillTotal,
+            DataIds.capProceedWithCategory to capProceedWithCategory,
+            DataIds.displayDate to displayDate,
+            DataIds.canProceedWithDate to canProceedWithDate,
+            DataIds.yoreDatePickerData to yoreDatePickerData,
         )
         //////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {

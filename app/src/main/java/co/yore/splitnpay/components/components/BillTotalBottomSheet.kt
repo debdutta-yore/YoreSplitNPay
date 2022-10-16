@@ -117,7 +117,7 @@ fun BillTotalBottomSheet(
                     fontSize = 20.sep(),
                 ),
                 interceptor = {
-                    it.replace("^0+".toRegex(),"0")
+                    it.replace("^0+".toRegex(),"").take(14)
                 }
             )
         }
@@ -259,7 +259,7 @@ fun BillTotalBottomSheet(
             CustomButton_3egxtx(
                 text = stringResource(id = R.string.continue1),
                 onClick = {
-                    notifier.notify(DataIds.billTotalSetClick)
+                    notifier.notify(DataIds.billTotalContinueClick)
                 },
                 contentDescription = "Continue button",
                 enabled = canProceed
