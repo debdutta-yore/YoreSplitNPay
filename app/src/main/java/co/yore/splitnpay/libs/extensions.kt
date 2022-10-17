@@ -15,9 +15,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -30,13 +33,14 @@ import androidx.navigation.NavGraphBuilder
 import co.yore.splitnpay.models.DataIds
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 object YoreAmountFormatter{
-    val formatter = DecimalFormat("#,##,###")
+    val formatter = DecimalFormat("#,###")
 }
 
 data class FloatSplitted(
@@ -378,6 +382,78 @@ class AmountOrMessageVisualTransformation : VisualTransformation {
         )
     }
 }
+class AmountStyle(private var sp: TextUnit) : VisualTransformation {
+    var out = ""
+    var whole = ""
+    override fun filter(text: AnnotatedString): TransformedText {
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                return when (offset) {
+                    whole.length + 1 -> out.length + 1
+                    whole.length + 2 -> out.length + 2
+                    whole.length + 3 -> out.length + 3
+                    else -> {
+                        val rightOffset = whole.lastIndex - offset
+                        val commasToTheRight = rightOffset / 3
+                        out.lastIndex - rightOffset - commasToTheRight
+                    }
+                }
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                return when (offset) {
+                    out.length+1->whole.length+1
+                    out.length+2->whole.length+2
+                    out.length+3->whole.length+3
+                    else -> {
+                        val totalCommas = ((whole.length - 1) / 3).coerceAtLeast(0)
+                        val rightOffset = out.length - offset
+                        val commasToTheRight = rightOffset / 4
+                        offset - (totalCommas - commasToTheRight)
+                    }
+                }
+            }
+        }
+        return TransformedText(
+            buildAnnotatedStringWithColors(text.toString()),
+            offsetMapping
+        )
+    }
+
+    private fun buildAnnotatedStringWithColors(text:String): AnnotatedString{
+        val builder = AnnotatedString.Builder()
+        val parts = text.split(".")
+        val wholeInt = parts[0].toBigDecimal()
+        whole = parts[0]
+        out = YoreAmountFormatter.formatter.format(wholeInt)
+        val dec = parts[1].toInt()
+        val color = if(wholeInt+dec.toBigDecimal()> BigDecimal(0)){
+            Color(0xff243257)
+        }
+        else{
+            Color(0xff8C93A2)
+        }
+        builder.withStyle(
+            SpanStyle(
+                color = color,
+                fontSize = 14*sp,
+                fontWeight = FontWeight.Bold
+            )
+        ){
+            append(out)
+        }
+        builder.withStyle(
+            SpanStyle(
+                color = color,
+                fontSize = 12*sp
+            )
+        ){
+            append(".")
+            append(parts[1])
+        }
+        return builder.toAnnotatedString()
+    }
+}
 
 // format long to 123,456,789,9
 class NumberCommaTransformation : VisualTransformation {
@@ -393,6 +469,28 @@ class NumberCommaTransformation : VisualTransformation {
                     return text.length
                 }
             }
+        )
+    }
+}
+class NumberCommaTransformation1 : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val out = text.text.toLongOrNull().formatWithComma()
+        return TransformedText(
+            text = AnnotatedString(text.text.toLongOrNull().formatWithComma()),
+            offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                val rightOffset = text.lastIndex - offset
+                val commasToTheRight = rightOffset / 3
+                return out.lastIndex - rightOffset - commasToTheRight
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                val totalCommas = ((text.length - 1) / 3).coerceAtLeast(0)
+                val rightOffset = out.length - offset
+                val commasToTheRight = rightOffset / 4
+                return (offset - (totalCommas - commasToTheRight))
+            }
+        }
         )
     }
 }
