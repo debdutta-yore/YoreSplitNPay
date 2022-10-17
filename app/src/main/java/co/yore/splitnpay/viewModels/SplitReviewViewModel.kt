@@ -6,83 +6,54 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.TransactionType
-import co.yore.splitnpay.pages.Transaction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 interface SplitReviewRepository {
-    suspend fun getPaidByMembers(): List<Transaction>
-    suspend fun getAdjustSplit(): List<Transaction>
+    suspend fun getPaidByMembers(): List<MemberPayment>
 }
 class SplitReviewMock : SplitReviewRepository {
-    private val adjustedList = listOf<Transaction>(
-        Transaction(
-            name = "You",
-            imageUrl = "",
-            mobileNumber = "9563376942",
-            amount = 0f,
-            TransactionType.Paid
-        ),
-        Transaction(
-            name = "Manisha Roy",
-            imageUrl = "",
-            mobileNumber = "9563376942",
-            amount = 3000.1f,
-            TransactionType.Paid
-        ),
-        Transaction(
-            name = "Sushil Roy",
-            imageUrl = "",
-            mobileNumber = "9563376942",
-            amount = 3000f,
-            TransactionType.Paid
-        ),
-        Transaction(
-            name = "Sanjana Ray",
-            imageUrl = "",
-            mobileNumber = "9563376942",
-            amount = 2500f,
-            TransactionType.Paid
-        ),
-    )
-    private val paidList = listOf<Transaction>(
-        Transaction(
-            name = "You",
-            mobileNumber = "9563376942",
-            amount = 5000f,
-            transactionType = TransactionType.Paid
-        ),
-        Transaction(
-            name = "Manisha Roy",
-            mobileNumber = "9563376942",
-            amount = 5000f,
-            transactionType = TransactionType.Paid
-        ),
-        Transaction(
-            name = "Sushil Roy",
-            mobileNumber = "9563376942",
-            amount = 0f,
-            transactionType = TransactionType.Unspecified
-        ),
-        Transaction(
-            name = "Sanjanaa Ray",
-            mobileNumber = "9563376942",
-            amount = 0f,
-            transactionType = TransactionType.Unspecified
-        ),
-    )
-
-    override suspend fun getPaidByMembers(): List<Transaction> {
-        return paidList
-    }
-
-    override suspend fun getAdjustSplit(): List<Transaction> {
-        return adjustedList
+    override suspend fun getPaidByMembers(): List<MemberPayment> {
+        return listOf(
+            MemberPayment(
+                "You",
+                "8967114927",
+                image = "https://i.pravatar.cc/100"
+            ),
+            MemberPayment(
+                "Manisha Roy",
+                "9456321025",
+                image = "https://i.pravatar.cc/100"
+            ),
+            MemberPayment(
+                "Sushil Roy",
+                "9746310862",
+                image = "https://i.pravatar.cc/100"
+            ),
+            MemberPayment(
+                "Sanjana Roy",
+                "8319764035",
+                image = "https://i.pravatar.cc/100"
+            ),
+            MemberPayment(
+                "Ankita Roy",
+                "7614563289",
+                image = "https://i.pravatar.cc/100"
+            ),
+        )
     }
 
 }
+
+data class MemberPayment(
+    val name: String,
+    val mobile: String,
+    val image: Any?,
+    val paid: Float = 0f,
+    val toPay: Float = 0f,
+)
+
 class SplitReviewViewModel(
     private val repo: SplitReviewRepository = SplitReviewMock()
 ) : ViewModel(), WirelessViewModelInterface {
@@ -92,8 +63,7 @@ class SplitReviewViewModel(
     override val resultingActivityHandler = ResultingActivityHandler()
 
     //////////////////////////////////////////
-    private val _adjustedList = mutableStateListOf<Transaction>()
-    private val _paidList = mutableStateListOf<Transaction>()
+    private val _members = mutableStateListOf<MemberPayment>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("Office buddies")
     private val _billTotal = mutableStateOf(10000f)
@@ -111,12 +81,12 @@ class SplitReviewViewModel(
                 }
             }
             DataIds.selectPaidByMeberClick -> {
-                val index = _paidList.indexOf(arg)
+                /*val index = _paidList.indexOf(arg as? MemberPayment?:return@NotificationService)
                 if(index==-1){
                     return@NotificationService
-                }
-                _paidList[index] =
-                    _paidList[index].copy(isSelected = !_paidList[index].isSelected)
+                }*/
+                /*_paidList[index] =
+                    _paidList[index].copy(isSelected = !_paidList[index].isSelected)*/
             }
             DataIds.editBillAmountClick -> {
 
@@ -147,8 +117,8 @@ class SplitReviewViewModel(
         resolver.addAll(
             DataIds.statusBarColor to _statusBarColor,
             DataIds.groupName to _groupName,
-            DataIds.paidList to _paidList,
-            DataIds.adjustedList to _adjustedList,
+            DataIds.paidList to _members,
+            DataIds.adjustedList to _members,
             DataIds.billTotal to _billTotal,
             DataIds.subCategoryText to _subCategoryText,
             DataIds.categoryText to _categoryText,
@@ -158,11 +128,8 @@ class SplitReviewViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _paidList.addAll(
+                _members.addAll(
                     repo.getPaidByMembers()
-                )
-                _adjustedList.addAll(
-                    repo.getAdjustSplit()
                 )
             }
         }

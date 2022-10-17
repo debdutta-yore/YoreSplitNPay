@@ -19,7 +19,9 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -118,6 +120,15 @@ operator fun Dp.times(number: Number): Dp {
 operator fun Number.times(dp: Dp): Dp {
     return (this.toFloat()*dp.value).dp
 }
+
+//34*1.dep() and 1.dep()*34 can be achieved by the following extensions
+operator fun TextUnit.times(number: Number): TextUnit {
+    return (this.value*number.toFloat()).sp
+}
+operator fun Number.times(sp: TextUnit): TextUnit {
+    return (this.toFloat()*sp.value).sp
+}
+
 fun Color.Companion.blend(
     color1: Color,
     color2: Color,

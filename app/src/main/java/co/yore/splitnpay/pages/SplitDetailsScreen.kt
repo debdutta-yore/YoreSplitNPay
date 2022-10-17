@@ -1,7 +1,8 @@
 package co.yore.splitnpay.pages
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -59,6 +60,8 @@ import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.TransactionType
 import co.yore.splitnpay.ui.theme.*
+import co.yore.splitnpay.viewModels.MemberPayment
+import co.yore.splitnpay.viewModels.MembersMock.transaction
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rudra.yoresplitbill.common.dashedBorder
@@ -98,12 +101,14 @@ fun SplitTypeRowItem_yxqp10(
     val optionColor = animateColorAsState(
         targetValue =
         if (selected) config.selectedOptionBackground
-        else config.unSelectedOptionBackground
+        else config.unSelectedOptionBackground,
+        animationSpec = tween(500)
     )
     val optionTextColor = animateColorAsState(
         targetValue =
         if (selected) config.selectedOptionTextColor
-        else config.unSelectedOptionTextColor
+        else config.unSelectedOptionTextColor,
+        animationSpec = tween(500)
     )
 
     Box(
@@ -115,7 +120,7 @@ fun SplitTypeRowItem_yxqp10(
             ) {
                 onClick()
             }
-            .clip(RoundedCornerShape(13.5.dep()))
+            .clip(CircleShape)
             .background(
                 color = optionColor.value
             )
@@ -134,11 +139,11 @@ fun SplitTypeRowItem_yxqp10(
         )
     }
 }
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SplitDetailsScreen(
-    paidList: List<Transaction> = listState(key = DataIds.paidList),
-    adjustList: List<Transaction> = listState(key = DataIds.adjustedList),
+    paidList: List<MemberPayment> = listState(key = DataIds.paidList),
+    adjustList: List<MemberPayment> = listState(key = DataIds.adjustedList),
     billTotal: Float = floatState(key = DataIds.billTotal).value,
     subCategoryText: String = stringState(key = DataIds.subCategoryText).value,
     categoryText: String = stringState(key = DataIds.categoryText).value,
@@ -364,25 +369,15 @@ fun SplitDetailsScreen(
                 divider = { TabRowDefaults.Divider(color = Color.Transparent) },
             ) {
                 tabsList.forEachIndexed { index, text ->
-                    val selected = selectedTabIndex == index
-                    Text(
-                        modifier = Modifier
-                            .clickable(
-                                interactionSource = MutableInteractionSource(),
-                                indication = null
-                            ) {
-                                selectedTabIndex = index
-                            }
-                            .padding(0.dep()),
-                        text = text,
-                        fontSize = 21f.sep(),
-                        color = if (selected) DarkBlue else LightBlue3,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    TabItemUI(selectedTabIndex,index,text){
+                        selectedTabIndex = index
+                    }
                 }
             }
             22.sy()
-            AnimatedVisibility(visible = selectedTabIndex == 1) {
+            AnimatedVisibility(
+                visible = selectedTabIndex == 1,
+            ) {
                 LazyRow(
                     modifier = Modifier
                         .padding(horizontal = 33.dep()),
@@ -415,7 +410,7 @@ fun SplitDetailsScreen(
                             18f.dep()
                         )
                     ) {
-                        itemsIndexed(paidList) { index, item ->
+                        itemsIndexed(adjustList) { index, item ->
                             SplitAdjustItem_eugo18(
                                 item,
                                 isAmountEditable.value,
@@ -456,7 +451,7 @@ fun SplitDetailsScreen(
                         modifier = Modifier,
                         verticalArrangement = Arrangement.spacedBy(18f.dep())
                     ) {
-                        itemsIndexed(adjustList) { index, item ->
+                        itemsIndexed(paidList) { index, item ->
                             SplitPaidByItem_z0nkzc(item)
                         }
                         item {
@@ -506,11 +501,44 @@ fun SplitDetailsScreen(
 
     }
 }
+
+@Composable
+fun TabItemUI(
+    selectedTabIndex: Int,
+    index: Int,
+    text: String,
+    onSelected: (Int)->Unit,
+) {
+    val color by remember(selectedTabIndex,index) {
+        derivedStateOf {
+            if (selectedTabIndex == index) DarkBlue else LightBlue3
+        }
+    }
+    val animatedColor by animateColorAsState(
+        targetValue = color,
+        animationSpec = tween(500)
+    )
+    Text(
+        modifier = Modifier
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
+                onSelected(index)
+            }
+            .padding(0.dep()),
+        text = text,
+        fontSize = 21f.sep(),
+        color = animatedColor,
+        fontWeight = FontWeight.Bold,
+    )
+}
+
 data class SplitAdjustItemConfiguration(
     val horizontalRowPadding: Float = 32f,
     val borderColor: Color = LightBlue1,
     val imageSize: Float = 49f,
-    val borderStroke: Float = 2f,
+    val borderStroke: Float = 3f,
     val placeholder: Int = R.drawable.personactionbar,
     val contentScale: ContentScale = ContentScale.Crop,
     val nameFontSize: Float = 12f,
@@ -520,7 +548,7 @@ data class SplitAdjustItemConfiguration(
 )
 @Composable
 fun SplitAdjustItem_eugo18(
-    transaction: Transaction,
+    memberPayment: MemberPayment,
     isEditable: Boolean,
     config: SplitAdjustItemConfiguration = SplitAdjustItemConfiguration(),
     contentDescription:String
@@ -543,10 +571,11 @@ fun SplitAdjustItem_eugo18(
                         config.borderStroke.dep(),
                         color = config.borderColor,
                         shape = CircleShape
-                    ),
+                    )
+                    .padding(config.borderStroke.dep()),
                 model = ImageRequest.Builder(LocalContext.current)
                     //TODO - update using friend.imageUrl
-                    .data("https://i.pravatar.cc/300?" + transaction.name)
+                    .data("https://i.pravatar.cc/300?" + memberPayment.name)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(R.drawable.personactionbar),
@@ -559,18 +588,18 @@ fun SplitAdjustItem_eugo18(
             modifier = Modifier
                 .padding(top = 7.dep())) {
             FontFamilyText(
-                text = transaction.name,
+                text = memberPayment.name,
                 fontSize = config.nameFontSize.sep(),
                 color = config.nameTextColor
             )
             FontFamilyText(
-                text = transaction.mobileNumber,
+                text = memberPayment.mobile,
                 fontSize = config.phoneNumberFontSize.sep(),
                 color = config.phoneNumberTextColor
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        SplitAdjustAmount_ppv64u(transaction.amount, isEditable)
+        SplitAdjustAmount_ppv64u(memberPayment.toPay, isEditable)
     }
 }
 val WhitishGreen = Color(0xFFF2FFFD)
@@ -622,18 +651,19 @@ data class SplitPaidByItemConfiguration(
     val phoneNumberFontSize: Float = 11f,
     val phoneNumberTextColor: Color = LightBlue5
 )
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SplitPaidByItem_z0nkzc(
-    transaction: Transaction,
+    memberPayment: MemberPayment,
     config: SplitPaidByItemConfiguration = SplitPaidByItemConfiguration(),
     notifier: NotificationService = notifier()
 ) {
-//    val (selected, onSelected) = remember { mutableStateOf(false) }
-    val selected by remember {
+    val selected = false
+    /*val selected by remember(transaction.isSelected) {
         derivedStateOf {
             transaction.isSelected
         }
-    }
+    }*/
 
     Row(
         modifier = Modifier
@@ -646,31 +676,47 @@ fun SplitPaidByItem_z0nkzc(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() } // This is mandatory
                 ) {
-                    // action
-//                    onSelected(selected.not())
                     notifier.notify(DataIds.selectPaidByMeberClick, transaction)
                 },
             contentAlignment = Alignment.TopEnd
         ) {
+            val borderStroke by remember(selected) {
+                derivedStateOf {
+                    if (selected) config.selectedBorderStroke else config.unSelectedBorderStroke
+                }
+            }
+            val animatedBorderStroke by animateFloatAsState(targetValue = borderStroke)
+            val borderColor by remember(selected) {
+                derivedStateOf {
+                    if (selected) config.selectedBorderColor else config.unSelectedBorderColor
+                }
+            }
+            val animatedBorderColor by animateColorAsState(targetValue = borderColor)
             AsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
                     .fillMaxSize()
                     .border(
-                        width = if (selected) config.selectedBorderStroke.dep() else config.unSelectedBorderStroke.dep(),
-                        color = if (selected) config.selectedBorderColor else config.unSelectedBorderColor,
+                        width = animatedBorderStroke.dep(),
+                        color = animatedBorderColor,
                         shape = CircleShape
-                    ),
+                    )
+                    .clip(CircleShape)
+                    .padding(animatedBorderStroke.dep()),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://i.pravatar.cc/300?" + transaction.name)
+                    .data("https://i.pravatar.cc/300?")
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(config.placeholder),
-                contentScale = config.contentScale,
+                contentScale = ContentScale.Crop,
                 contentDescription = "ProfileImage"
             )
 
-            if (selected) {
+            androidx.compose.animation.AnimatedVisibility (
+                selected,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
                 Image(
                     painter = painterResource(R.drawable.ic_tickmark),
                     contentDescription = "tick mark"
@@ -682,12 +728,12 @@ fun SplitPaidByItem_z0nkzc(
 
         Column(modifier = Modifier.padding(top = 7.dep())) {
             FontFamilyText(
-                text = transaction.name,
+                text = memberPayment.name,
                 fontSize = config.nameFontSize.sep(),
                 color = config.nameTextColor
             )
             FontFamilyText(
-                text = transaction.mobileNumber,
+                text = memberPayment.mobile,
                 fontSize = config.phoneNumberFontSize.sep(),
                 color = config.phoneNumberTextColor
             )
@@ -695,7 +741,7 @@ fun SplitPaidByItem_z0nkzc(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        SplitAdjustAmount_ppv64u(transaction.amount, isAmountEditable = false)
+        SplitAdjustAmount_ppv64u(memberPayment.toPay, isAmountEditable = false)
     }
 }
 @Composable
