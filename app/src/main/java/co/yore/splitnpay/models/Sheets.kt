@@ -7,4 +7,5 @@ enum class Sheets {
     CategoriesEdit,
     SettleSummaryManage,
     DatePicker,
+    ImagePicker,
 }

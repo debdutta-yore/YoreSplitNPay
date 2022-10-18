@@ -1,10 +1,17 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    billTotalBottomSheetModel,
+    categoryEditClick,
+    receipt,
+    adjustRemaining,
+    adjustByAmount,
+    selectedListOption,
+    paidRemaining,
     memberPaymentCheck,
     paidByAmount,
     categoryClick,
-    selectPaidByMeberClick,
+    selectPaidByMemberClick,
     receiptClick,
     dateClick,
     dateText,

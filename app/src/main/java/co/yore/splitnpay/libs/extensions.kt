@@ -41,6 +41,7 @@ import java.util.concurrent.ThreadLocalRandom
 
 object YoreAmountFormatter{
     val formatter = DecimalFormat("#,###")
+    val decFormatter = DecimalFormat("#,##,###.##")
 }
 
 data class FloatSplitted(
@@ -472,7 +473,7 @@ class NumberCommaTransformation : VisualTransformation {
         )
     }
 }
-class NumberCommaTransformation1 : VisualTransformation {
+class ThousandsTransformer : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val out = text.text.toLongOrNull().formatWithComma()
         return TransformedText(

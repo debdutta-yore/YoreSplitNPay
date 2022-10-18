@@ -18,10 +18,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TextFieldDefaults.indicatorLine
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -49,6 +46,50 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
+
+interface BottomSheetModel{
+    val resolver : Resolver
+    val notifier : NotificationService
+
+    @Composable
+    fun provide(
+        content: @Composable () -> Unit
+    ){
+        CompositionLocalProvider(
+            LocalResolver provides resolver,
+            LocalNotificationService provides notifier
+        ) {
+            content()
+        }
+    }
+}
+
+class BillTotalBottomSheetModel: BottomSheetModel{
+    private val _resolver = Resolver()
+    private val _notifier = NotificationService{id,arg->
+        when(id){
+
+        }
+    }
+    override val resolver get() = _resolver
+    override val notifier get() = _notifier
+    ///////////////
+    private val _categories = mutableStateListOf<Category>()
+    private val _billTotalAmount = mutableStateOf("")
+    private val _billTotalDescription = mutableStateOf("")
+    private val _renamePressed = mutableStateOf(-1)
+    private val canProceedWithBillTotal = mutableStateOf(false)
+
+    init {
+        _resolver.addAll(
+            DataIds.categories to _categories,
+            DataIds.billTotalAmount to _billTotalAmount,
+            DataIds.billTotalDescription to _billTotalDescription,
+            DataIds.renamePressed to _renamePressed,
+            DataIds.canProceedWithBillTotal to canProceedWithBillTotal,
+        )
+    }
+}
 
 val LightGrey2 = Color(0xffF8F8F8)
 val Grayish = Color(0xffF5F5F5)
@@ -110,7 +151,7 @@ fun BillTotalBottomSheet(
                 singleLine = true,
                 maxLines = 1,
                 keyboardType = KeyboardType.Number,
-                visualTransformation = NumberCommaTransformation(),
+                visualTransformation = ThousandsTransformer(),
                 textStyle = TextStyle(
                     color = Color(0xff243257),
                     fontWeight = FontWeight.Bold,
@@ -198,6 +239,7 @@ fun BillTotalBottomSheet(
                                     color = Grayish,
                                     shape = CircleShape
                                 )
+                                .clip(CircleShape)
                                 .clickable {
                                     notifier.notify(DataIds.openAllCategories)
                                 }

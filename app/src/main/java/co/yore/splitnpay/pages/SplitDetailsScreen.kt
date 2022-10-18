@@ -52,15 +52,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.AmountField
-import co.yore.splitnpay.components.components.LightBlue3
-import co.yore.splitnpay.components.components.coloredShadowDp
+import co.yore.splitnpay.components.PhotoSelectionBottomSheet
+import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.configuration.TopbarWithIconConfiguration
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.models.Store
 import co.yore.splitnpay.models.TransactionType
 import co.yore.splitnpay.ui.theme.*
@@ -70,6 +70,37 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rudra.yoresplitbill.common.dashedBorder
 import kotlinx.coroutines.launch
+
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SplitDetailsScreen(
+    sheetHandler: SheetHandler = localSheetHandler(),
+    sheets: Sheets = tState<Sheets>(key = DataIds.sheets).value,
+    billTotalBottomSheetModel: BillTotalBottomSheetModel = t(DataIds.billTotalBottomSheetModel)
+) {
+    val state = sheetHandler.handle()
+    ModalBottomSheetLayout(
+        sheetState = state,
+        sheetContent = {
+            when(sheets){
+                Sheets.ImagePicker-> PhotoSelectionBottomSheet()
+                Sheets.BillTotalAndCategories-> billTotalBottomSheetModel.provide {
+                    BillTotalBottomSheet()
+                }
+                else->Text("")
+            }
+        },
+        sheetShape = RoundedCornerShape(
+            topStart = 25f.dep(),
+            topEnd = 25f.dep()
+        ),
+        scrimColor = Color(0x8C243257)
+    ) {
+        SplitDetailsPage()
+    }
+}
 
 data class Transaction(
     val name: String,
@@ -145,13 +176,18 @@ fun SplitTypeRowItem_yxqp10(
 }
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
-fun SplitDetailsScreen(
+fun SplitDetailsPage(
     paidList: List<MemberPayment> = listState(key = DataIds.paidList),
     adjustList: List<MemberPayment> = listState(key = DataIds.adjustedList),
     billTotal: Float = floatState(key = DataIds.billTotal).value,
+    selectedTabIndex: Int = intState(key = DataIds.selectedTabIndex).value,
+    selectedListOption: Int = intState(key = DataIds.selectedListOption).value,
     subCategoryText: String = stringState(key = DataIds.subCategoryText).value,
     categoryText: String = stringState(key = DataIds.categoryText).value,
     numberOfGroupMembers: Int = intState(key = DataIds.numberOfGroupMembers).value,
+    paidRemaining: Double = doubleState(key = DataIds.paidRemaining).value,
+    adjustRemaining: Double = doubleState(key = DataIds.adjustRemaining).value,
+    receipt: Any? = tState<Any?>(key = DataIds.receipt).value,
     notifier: NotificationService = notifier()
 ) {
     val numberOfFriends = "$numberOfGroupMembers friends"
@@ -161,11 +197,9 @@ fun SplitDetailsScreen(
     }
 
     //val splitListOptionsList = listOf("Equal", "Unequal", "Ratio", "Percentage")
-    val splitListOptionsList = SplitListOptions.values()
-    val selectedListOption = remember { mutableStateOf(0) }
+    val splitListOptionsList = remember{ SplitListOptions.values() }
     val isAmountEditable = remember { mutableStateOf(false) }
     val tabsList = listOf(stringResource(R.string.paid_by), stringResource(R.string.adjust_split))
-    var selectedTabIndex by remember { mutableStateOf(0) }
     val listState = rememberLazyListState()
 
     Box {
@@ -350,7 +384,7 @@ fun SplitDetailsScreen(
                 23.sx()
                 DashedBorderIconButtonWithText_13ppr3(
                     text = stringResource(R.string.receipt),
-                    image = R.drawable.ic_receipt,
+                    image = receipt,
                     contentDescription = "Dashed Receipt button",
                     onClick = {
                         notifier.notify(DataIds.receiptClick)
@@ -374,7 +408,7 @@ fun SplitDetailsScreen(
             ) {
                 tabsList.forEachIndexed { index, text ->
                     TabItemUI(selectedTabIndex,index,text){
-                        selectedTabIndex = index
+                        notifier.notify(DataIds.selectedTabIndex,it)
                     }
                 }
             }
@@ -388,12 +422,12 @@ fun SplitDetailsScreen(
                     horizontalArrangement = Arrangement.spacedBy(10f.dep())
                 ) {
                     itemsIndexed(splitListOptionsList) { index, item ->
-                        val selected = selectedListOption.value == index
+                        val selected = selectedListOption == index
                         SplitTypeRowItem_yxqp10(
                             item = item.name,
                             selected = selected,
                             onClick = {
-                                selectedListOption.value = index
+                                notifier.notify(DataIds.selectedListOption,index)
                             },
                             contentDescription = "Split Type item"
                         )
@@ -401,12 +435,27 @@ fun SplitDetailsScreen(
                 }
             }
             24.sy()
-            isAmountEditable.value = selectedListOption.value == 1
+            isAmountEditable.value = selectedListOption == 1
 
             Box(
                 modifier = Modifier
             ) {
                 if (selectedTabIndex == 1) {
+                    val editWidths = remember {
+                        mutableStateMapOf<Int,Int>()
+                    }
+                    val maxEditWidth by remember {
+                        derivedStateOf {
+                            if(editWidths.isNotEmpty()){
+                                editWidths.maxBy {
+                                    it.value
+                                }.value
+                            }
+                            else{
+                                0
+                            }
+                        }
+                    }
                     LazyColumn(
                         state = listState,
                         modifier = Modifier,
@@ -415,18 +464,25 @@ fun SplitDetailsScreen(
                         )
                     ) {
                         itemsIndexed(adjustList) { index, item ->
-                            SplitAdjustItem_eugo18(
+                            SplitMemberPaymentItem_z0nkzc(
                                 item,
-                                isAmountEditable.value,
-                                contentDescription = "Split adjust item"
+                                adjustable = true,
+                                editable = selectedListOption == 1,
+                                onEditWidth = {
+                                    editWidths[index] = it
+                                },
+                                maxEditWidth = maxEditWidth,
+                                notificationId = DataIds.adjustByAmount
                             )
                         }
                         item {
                             Column() {
-                                SplitMembersRemainingBox(
-                                    remainingFriends.value,
-                                    contentDescription = "Split member box"
-                                )
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Center
+                                ){
+                                    PaidMessage(adjustRemaining)
+                                }
                                 18.sy()
                                 Box(
                                     modifier = Modifier
@@ -476,13 +532,22 @@ fun SplitDetailsScreen(
                                 item.id
                             }
                         ) { index, item ->
-                            SplitPaidByItem_z0nkzc(
+                            SplitMemberPaymentItem_z0nkzc(
                                 item,
                                 onEditWidth = {
                                     editWidths[index] = it
                                 },
-                                maxEditWidth = maxEditWidth
+                                maxEditWidth = maxEditWidth,
+                                notificationId = DataIds.paidByAmount
                             )
+                        }
+                        item{
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Center
+                            ){
+                                PaidMessage(paidRemaining)
+                            }
                         }
                         item {
                             18.sy()
@@ -496,6 +561,7 @@ fun SplitDetailsScreen(
                                     )
                             ) {
                                 CustomButton_3egxtx(
+                                    enabled = paidRemaining==0.0,
                                     text = "Confirm and Split",
                                     onClick = {
                                         notifier.notify(DataIds.confirmSplitClick)
@@ -530,6 +596,78 @@ fun SplitDetailsScreen(
 
 
     }
+}
+
+@Composable
+fun PaidMessage(remaining: Double) {
+    val backgroundColor by remember(remaining) {
+        derivedStateOf {
+            if(remaining==0.0){
+                Color(0xffF2FFFD)
+            }
+            else if(remaining>0f){
+                Color(0xFFFFE2D3)
+            }
+            else if(remaining<0f){
+                Color(0xffFFEFF4)
+            }
+            else{
+                Color.Transparent
+            }
+        }
+    }
+    val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor)
+    val message by remember(remaining) {
+        derivedStateOf {
+            if(remaining==0.0){
+                "0 Remaining"
+            }
+            else if(remaining>0f){
+                "₹ ${YoreAmountFormatter.decFormatter.format(remaining)} Remaining"
+            }
+            else if(remaining<0f){
+                "₹ ${YoreAmountFormatter.decFormatter.format(-remaining)} Exceeded"
+            }
+            else{
+                ""
+            }
+        }
+    }
+    val color by remember(remaining) {
+        derivedStateOf {
+            if(remaining==0.0){
+                Color(0xff37D8CF)
+            }
+            else if(remaining>0f){
+                Color(0xFFFF5700)
+            }
+            else if(remaining<0f){
+                Color(0xffFF4077)
+            }
+            else{
+                Color.Transparent
+            }
+        }
+    }
+    val animatedColor by animateColorAsState(targetValue = color)
+    Box(
+        modifier = Modifier
+            .animateContentSize()
+            .height(34.dep())
+            .clip(CircleShape)
+            .background(animatedBackgroundColor)
+            .padding(horizontal = 10.dep()),
+        contentAlignment = Center
+    ){
+        Text(
+            text = message,
+
+            color = animatedColor,
+            fontSize = 12.sep(),
+            fontFamily = robotoFonts
+        )
+    }
+
 }
 
 @Composable
@@ -683,16 +821,19 @@ data class SplitPaidByItemConfiguration(
 )
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SplitPaidByItem_z0nkzc(
+fun SplitMemberPaymentItem_z0nkzc(
     memberPayment: MemberPayment,
+    adjustable: Boolean = false,
+    editable: Boolean = false,
     config: SplitPaidByItemConfiguration = SplitPaidByItemConfiguration(),
     maxEditWidth: Int? = null,
     onEditWidth: (Int)->Unit = {},
+    notificationId: Any,
     notifier: NotificationService = notifier()
 ) {
-    val selected by remember(memberPayment.selected) {
+    val selected by remember(memberPayment.selected,adjustable) {
         derivedStateOf {
-            memberPayment.selected
+            memberPayment.selected && !adjustable
         }
     }
 
@@ -707,7 +848,7 @@ fun SplitPaidByItem_z0nkzc(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() } // This is mandatory
                 ) {
-                    notifier.notify(DataIds.selectPaidByMeberClick, transaction)
+                    notifier.notify(DataIds.selectPaidByMemberClick, transaction)
                 },
             contentAlignment = Alignment.TopEnd
         ) {
@@ -734,7 +875,9 @@ fun SplitPaidByItem_z0nkzc(
                     )
                     .clip(CircleShape)
                     .clickable {
-                        notifier.notify(DataIds.memberPaymentCheck, memberPayment)
+                        if (!adjustable) {
+                            notifier.notify(DataIds.memberPaymentCheck, memberPayment)
+                        }
                     }
                     .padding(animatedBorderStroke.dep()),
                 model = ImageRequest.Builder(LocalContext.current)
@@ -783,7 +926,7 @@ fun SplitPaidByItem_z0nkzc(
         var endPaddingPx by remember {
             mutableStateOf(0)
         }
-        LaunchedEffect(key1 = maxEditWidth){
+        LaunchedEffect(key1 = maxEditWidth, key2 = currentEditWidth){
             maxEditWidth?.let {
                 endPaddingPx = if(it>currentEditWidth){
                     it - currentEditWidth
@@ -799,13 +942,12 @@ fun SplitPaidByItem_z0nkzc(
             .fillMaxWidth()
             .height(10.dep())
             .weight(1f)
-            .background(Color.Red)
         )
         AmountField(
-            amount = memberPayment.paid,
-            enabled = selected,
+            amount = if(adjustable) memberPayment.toPay else memberPayment.paid,
+            enabled = selected||editable,
             modifier = Modifier
-
+                .animateContentSize()
                 .widthIn(min = 69.dep())
                 .onGloballyPositioned {
                     currentEditWidth = it.size.width
@@ -813,7 +955,7 @@ fun SplitPaidByItem_z0nkzc(
                 }
         ){
             notifier.notify(
-                DataIds.paidByAmount,
+                notificationId,
                 Store()
                     .putAll(
                         "member" to memberPayment,
@@ -822,9 +964,9 @@ fun SplitPaidByItem_z0nkzc(
         }
         Box(
             modifier = Modifier
+                .animateContentSize()
                 .width((endPaddingPx / density).dp)
                 .height(10.dep())
-                .background(Color.Green)
         ){
 
         }
@@ -1130,7 +1272,7 @@ fun CategorySelectorCard_owv32g(
             )
             .clip(shape = RoundedCornerShape(50.dep()))
             .clickable {
-                notifier.notify(DataIds.confirmSplitClick)
+                notifier.notify(DataIds.categoryEditClick)
             }
     ) {
         Icon(
@@ -1222,7 +1364,7 @@ data class DashedBorderIconButtonConfiguration(
 @Composable
 fun DashedBorderIconButtonWithText_13ppr3(
     text: String,
-    image: Int,
+    image: Any?,
     onClick: () -> Unit,
     config: DashedBorderIconButtonConfiguration = DashedBorderIconButtonConfiguration(),
     contentDescription:String
@@ -1243,25 +1385,37 @@ fun DashedBorderIconButtonWithText_13ppr3(
                 off = config.borderCorner.dep()
             ),
     ) {
-        14.sy()
-        Icon(
-            modifier = Modifier
-                .width(config.iconWidth.dep())
-                .height(config.iconHeight.dep())
-                .align(CenterHorizontally),
-            painter = painterResource(image),
-            contentDescription = "receipt",
-            tint = Color.Unspecified
-        )
-        10.sy()
-        FontFamilyText(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            text = text,
-            fontSize = config.fontSize.sep(),
-            color = config.textColor
-        )
-        5.sy()
+        if(image==null){
+            14.sy()
+            Icon(
+                modifier = Modifier
+                    .width(config.iconWidth.dep())
+                    .height(config.iconHeight.dep())
+                    .align(CenterHorizontally),
+                painter = painterResource(R.drawable.ic_receipt),
+                contentDescription = "receipt",
+                tint = Color.Unspecified
+            )
+            10.sy()
+            FontFamilyText(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+                text = text,
+                fontSize = config.fontSize.sep(),
+                color = config.textColor
+            )
+            5.sy()
+        }
+        else{
+            AsyncImage(
+                model = image,
+                contentDescription = "receipt_image",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(config.borderCorner.dep())),
+                contentScale = ContentScale.Crop
+            )
+        }
     }
 }
 data class SplitAdjustAmountConfiguration(

@@ -87,3 +87,13 @@ class ResultingActivityHandler {
         }
     }
 }
+/*
+* 1. power navigation
+* 2. permission handler
+* 3. resulting activity handler
+* 4. sheet handler
+* 5. back handler
+* 6. status bar color
+* 7. resolver
+* 8. notifier
+* */

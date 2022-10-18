@@ -243,7 +243,7 @@ class GroupChatViewModel(
     private val searchText = mutableStateOf("")
     private val search = mutableStateOf(false)
     private val groupChatTab = mutableStateOf(GroupChatTab.All)
-    private val _sheets = mutableStateOf<Sheets>(Sheets.None)
+    private val _sheets = mutableStateOf(Sheets.None)
     private val canProceedWithBillTotal = mutableStateOf(false)
     private val capProceedWithCategory = mutableStateOf(false)
     private val displayDate = mutableStateOf("")
@@ -513,10 +513,10 @@ class GroupChatViewModel(
         )
         //////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {
-            val members = repo.getCategories()
+            val categoriesList = repo.getCategories()
             withContext(Dispatchers.Main) {
                 _categories.addAll(
-                    members
+                    categoriesList
                 )
             }
         }
