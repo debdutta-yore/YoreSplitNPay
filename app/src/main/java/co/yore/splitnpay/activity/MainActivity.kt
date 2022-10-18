@@ -10,11 +10,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.*
 import androidx.constraintlayout.compose.*
-import co.yore.splitnpay.components.components.AmountField
+import co.yore.splitnpay.app.YoreApp
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.localKeyboardHeight
 import co.yore.splitnpay.locals.localDesignWidth
@@ -49,31 +48,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
-                        //YoreApp()
-                        /*Box(
-                            contentAlignment = Alignment.Center
-                        ){
-                            var text by remember {
-                                mutableStateOf("0")
-                            }
-                            TextField(
-                                value = text,
-                                onValueChange = {
-                                    text = it
-                                },
-                                visualTransformation = NumberCommaTransformation1()
-                            )
-                        }*/
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
-                            var amount by remember {
-                                mutableStateOf(0.0)
-                            }
-                            AmountField(amount) {
-                                amount = it
-                            }
-                        }
+                        YoreApp()
                     }
                 }
             }

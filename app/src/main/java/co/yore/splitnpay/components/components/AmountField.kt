@@ -71,6 +71,8 @@ fun Double.amount(): Amount {
 @Composable
 fun AmountField(
     amount: Double,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onChange: (Double) -> Unit
 ) {
     val sep = 1.sep()
@@ -90,7 +92,9 @@ fun AmountField(
     }
     val animatedColor by animateColorAsState(targetValue = color)
     BasicTextField(
+        enabled = enabled,
         value = text,
+        modifier = Modifier.width(IntrinsicSize.Min),
         onValueChange = { it ->
             if(it.isEmpty()){
                 return@BasicTextField
@@ -109,8 +113,7 @@ fun AmountField(
         ),
         decorationBox = {
             Row(
-                modifier = Modifier
-                    .widthIn(69.dep())
+                modifier = modifier
                     .height(33.dep())
                     .clip(RoundedCornerShape(8.dep()))
                     .background(Color(0xffF9F9F9))
@@ -126,6 +129,8 @@ fun AmountField(
                 4.sx()
                 it()
             }
-        }
+        },
+        singleLine = true,
+        maxLines = 1
     )
 }

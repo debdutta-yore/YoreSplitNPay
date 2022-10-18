@@ -1,6 +1,8 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    memberPaymentCheck,
+    paidByAmount,
     categoryClick,
     selectPaidByMeberClick,
     receiptClick,

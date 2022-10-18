@@ -29,7 +29,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,10 +49,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.AmountField
 import co.yore.splitnpay.components.components.LightBlue3
-import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.components.components.coloredShadowDp
 import co.yore.splitnpay.components.configuration.TopbarWithIconConfiguration
 import co.yore.splitnpay.demos.sx
@@ -58,6 +61,7 @@ import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.Store
 import co.yore.splitnpay.models.TransactionType
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.MemberPayment
@@ -446,13 +450,39 @@ fun SplitDetailsScreen(
                         }
                     }
                 } else {
+                    val editWidths = remember {
+                        mutableStateMapOf<Int,Int>()
+                    }
+                    val maxEditWidth by remember {
+                        derivedStateOf {
+                            if(editWidths.isNotEmpty()){
+                                editWidths.maxBy {
+                                    it.value
+                                }.value
+                            }
+                            else{
+                                0
+                            }
+                        }
+                    }
                     LazyColumn(
                         state = listState,
                         modifier = Modifier,
                         verticalArrangement = Arrangement.spacedBy(18f.dep())
                     ) {
-                        itemsIndexed(paidList) { index, item ->
-                            SplitPaidByItem_z0nkzc(item)
+                        itemsIndexed(
+                            paidList,
+                            key = {index, item ->
+                                item.id
+                            }
+                        ) { index, item ->
+                            SplitPaidByItem_z0nkzc(
+                                item,
+                                onEditWidth = {
+                                    editWidths[index] = it
+                                },
+                                maxEditWidth = maxEditWidth
+                            )
                         }
                         item {
                             18.sy()
@@ -656,14 +686,15 @@ data class SplitPaidByItemConfiguration(
 fun SplitPaidByItem_z0nkzc(
     memberPayment: MemberPayment,
     config: SplitPaidByItemConfiguration = SplitPaidByItemConfiguration(),
+    maxEditWidth: Int? = null,
+    onEditWidth: (Int)->Unit = {},
     notifier: NotificationService = notifier()
 ) {
-    val selected = false
-    /*val selected by remember(transaction.isSelected) {
+    val selected by remember(memberPayment.selected) {
         derivedStateOf {
-            transaction.isSelected
+            memberPayment.selected
         }
-    }*/
+    }
 
     Row(
         modifier = Modifier
@@ -702,6 +733,9 @@ fun SplitPaidByItem_z0nkzc(
                         shape = CircleShape
                     )
                     .clip(CircleShape)
+                    .clickable {
+                        notifier.notify(DataIds.memberPaymentCheck, memberPayment)
+                    }
                     .padding(animatedBorderStroke.dep()),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data("https://i.pravatar.cc/300?")
@@ -739,9 +773,61 @@ fun SplitPaidByItem_z0nkzc(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
 
-        SplitAdjustAmount_ppv64u(memberPayment.toPay, isAmountEditable = false)
+
+        //SplitAdjustAmount_ppv64u(memberPayment.toPay, isAmountEditable = false)
+        var currentEditWidth by remember {
+            mutableStateOf(0)
+        }
+        val density = LocalDensity.current.density
+        var endPaddingPx by remember {
+            mutableStateOf(0)
+        }
+        LaunchedEffect(key1 = maxEditWidth){
+            maxEditWidth?.let {
+                endPaddingPx = if(it>currentEditWidth){
+                    it - currentEditWidth
+                } else{
+                    0
+                }
+            }
+            if(maxEditWidth==null){
+                endPaddingPx = 0
+            }
+        }
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(10.dep())
+            .weight(1f)
+            .background(Color.Red)
+        )
+        AmountField(
+            amount = memberPayment.paid,
+            enabled = selected,
+            modifier = Modifier
+
+                .widthIn(min = 69.dep())
+                .onGloballyPositioned {
+                    currentEditWidth = it.size.width
+                    onEditWidth(currentEditWidth)
+                }
+        ){
+            notifier.notify(
+                DataIds.paidByAmount,
+                Store()
+                    .putAll(
+                        "member" to memberPayment,
+                        "amount" to it
+                    ))
+        }
+        Box(
+            modifier = Modifier
+                .width((endPaddingPx / density).dp)
+                .height(10.dep())
+                .background(Color.Green)
+        ){
+
+        }
     }
 }
 @Composable
@@ -1199,14 +1285,14 @@ val GreyShade = Color(0xff8C93A2)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SplitAdjustAmount_ppv64u(
-    amount: Float,
+    amount: Double,
     isAmountEditable: Boolean,
     config: SplitAdjustAmountConfiguration = SplitAdjustAmountConfiguration()
 ) {
     val textColor = remember {
         derivedStateOf {
             if(!isAmountEditable){
-                if (amount != 0f) config.textColor else GreyShade
+                if (amount != 0.0) config.textColor else GreyShade
             } else config.textColor
         }
     }
