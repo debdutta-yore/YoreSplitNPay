@@ -78,7 +78,25 @@ class SplitReviewViewModel(
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
     /////////////
-    private val billTotalBottomSheetModel = BillTotalBottomSheetModel()
+    private val billTotalBottomSheetModel = BillTotalBottomSheetModel(
+        object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
+            override suspend fun getCategories(): List<Category> {
+                return groupRepo.getCategories()
+            }
+
+            override suspend fun getBillTotalAmount(): String {
+                return _billTotal.value.toInt().toString()
+            }
+
+            override suspend fun getDescription(): String {
+                return ""
+            }
+
+            override fun openAllCategories() {
+
+            }
+        }
+    )
     //////////////
     @OptIn(ExperimentalMaterialApi::class)
     override val sheetHandler = SheetHandler(
@@ -128,6 +146,9 @@ class SplitReviewViewModel(
     //////////////////////////////////////////
     override val notifier = NotificationService { id, arg ->
         when (id) {
+            "${DataIds.back}split_review_page"->{
+                billTotalBottomSheetModel.onBack()
+            }
             DataIds.categoryEditClick->{
                 openBillTotalBottomSheet()
             }

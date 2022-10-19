@@ -86,9 +86,7 @@ fun SplitDetailsScreen(
         sheetContent = {
             when(sheets){
                 Sheets.ImagePicker-> PhotoSelectionBottomSheet()
-                Sheets.BillTotalAndCategories-> billTotalBottomSheetModel.provide {
-                    BillTotalBottomSheet()
-                }
+                Sheets.BillTotalAndCategories-> billTotalBottomSheetModel.provide { BillTotalBottomSheet() }
                 else->Text("")
             }
         },

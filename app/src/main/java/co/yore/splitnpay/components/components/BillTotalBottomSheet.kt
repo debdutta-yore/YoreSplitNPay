@@ -1,7 +1,10 @@
 package co.yore.splitnpay.components.components
 
+import android.provider.ContactsContract.Data
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -23,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -46,15 +50,24 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
+import coil.compose.AsyncImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 interface BottomSheetModel{
     val resolver : Resolver
     val notifier : NotificationService
 
+    fun initialize()
+
     @Composable
     fun provide(
         content: @Composable () -> Unit
     ){
+        LaunchedEffect(key1 = Unit){
+            initialize()
+        }
         CompositionLocalProvider(
             LocalResolver provides resolver,
             LocalNotificationService provides notifier
@@ -62,23 +75,71 @@ interface BottomSheetModel{
             content()
         }
     }
+
+    fun onBack()
 }
 
-class BillTotalBottomSheetModel: BottomSheetModel{
+class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback): BottomSheetModel{
+    interface BillTotalBottomSheetModelCallback{
+        suspend fun getCategories(): List<Category>
+        suspend fun getBillTotalAmount(): String
+        suspend fun getDescription(): String
+        fun openAllCategories()
+    }
     private val _resolver = Resolver()
     private val _notifier = NotificationService{id,arg->
         when(id){
+            DataIds.billTotalAmount->{
+                _billTotalAmount.value = arg as? String?:return@NotificationService
+            }
+            DataIds.billTotalDescription->{
+                _billTotalDescription.value = arg as? String?:return@NotificationService
+            }
+            DataIds.categorySelectionClick->{
+                for(i in 0 until _categories.size){
+                    _categories[i] =
+                        _categories[i].copy(isSelected = false)
+                }
+                val index = arg as? Int?:return@NotificationService
+                _categories[index] =
+                    _categories[index].copy(isSelected = true)
+                val category = _categories[index]
+                categoryName.value = category.name
+                categoryPlaceholder.value = category.name
+                categoryImage.value = category.icon
+            }
+            DataIds.openAllCategories->{
 
+            }
+            DataIds.renamePressed->{
+                _renamePressed.value = arg as? Int?:-1
+            }
         }
     }
     override val resolver get() = _resolver
     override val notifier get() = _notifier
+    ////////////////
+    override fun initialize(){
+        CoroutineScope(Dispatchers.IO).launch {
+            _categories.addAll(callback.getCategories())
+            _billTotalAmount.value = callback.getBillTotalAmount()
+            _billTotalDescription.value = callback.getDescription()
+        }
+    }
+
+    override fun onBack() {
+        _renamePressed.value = -1
+    }
+
     ///////////////
     private val _categories = mutableStateListOf<Category>()
     private val _billTotalAmount = mutableStateOf("")
     private val _billTotalDescription = mutableStateOf("")
     private val _renamePressed = mutableStateOf(-1)
     private val canProceedWithBillTotal = mutableStateOf(false)
+    private val categoryImage = mutableStateOf<Any?>(null)
+    private val categoryName = mutableStateOf<String>("")
+    private val categoryPlaceholder = mutableStateOf<String>("")
 
     init {
         _resolver.addAll(
@@ -87,6 +148,9 @@ class BillTotalBottomSheetModel: BottomSheetModel{
             DataIds.billTotalDescription to _billTotalDescription,
             DataIds.renamePressed to _renamePressed,
             DataIds.canProceedWithBillTotal to canProceedWithBillTotal,
+            DataIds.categoryName to categoryName,
+            DataIds.categoryPlaceholder to categoryPlaceholder,
+            DataIds.categoryImage to categoryImage,
         )
     }
 }
@@ -100,6 +164,9 @@ fun BillTotalBottomSheet(
     billTotalDescription: String = stringState(key = DataIds.billTotalDescription).value,
     renamePressed: Int = intState(key = DataIds.renamePressed).value,
     canProceed: Boolean = boolState(key = DataIds.canProceedWithBillTotal).value,
+    categoryName: String = stringState(key = DataIds.categoryName).value,
+    categoryPlaceholder: String = stringState(key = DataIds.categoryPlaceholder).value,
+    categoryImage: Any? = tState<Any?>(key = DataIds.categoryImage).value,
     notifier: NotificationService = notifier()
 ) {
     Column(
@@ -146,7 +213,7 @@ fun BillTotalBottomSheet(
                     notifier.notify(DataIds.billTotalAmount, it)
                 },
                 contentDescription = "",
-                leadingIcon = painterResource(id = R.drawable.ic_rupees),
+                leadingIcon = R.drawable.ic_rupees,
                 placeHolderText = stringResource(R.string.amount),
                 singleLine = true,
                 maxLines = 1,
@@ -180,7 +247,7 @@ fun BillTotalBottomSheet(
                     notifier.notify(DataIds.billTotalDescription, it)
                 },
                 contentDescription = "",
-                leadingIcon = painterResource(id = R.drawable.ic_description),
+                leadingIcon = R.drawable.ic_description,
                 placeHolderText = stringResource(R.string.add_description),
                 singleLine = true,
                 maxLines = 1
@@ -215,7 +282,6 @@ fun BillTotalBottomSheet(
                     },
                     onLongTap = {
                         notifier.notify(DataIds.renamePressed, index)
-                        notifier.notify(DataIds.categorySelectionClick, index)
                     },
                     contentDescription = "",
                     selectorItemContentDescription = ""
@@ -263,7 +329,7 @@ fun BillTotalBottomSheet(
             }
         }
 
-        AnimatedVisibility(visible = renamePressed != -1) {
+        /*AnimatedVisibility(visible = renamePressed != -1) {
             Box(
                 modifier = Modifier
                     .padding(top = 18.dep())
@@ -275,17 +341,73 @@ fun BillTotalBottomSheet(
                     .height(52.dep())
                     .fillMaxWidth(),
             ) {
+                //if(renamePressed > -1){
+                    CustomTextField_wangst(
+                        text = categories[0].name,
+                        change = {
+                            notifier.notify(DataIds.billTotalAmount, it)
+                        },
+                        contentDescription = "",
+                        leadingIcon = painterResource(id = categories[0].icon as Int),
+                        placeHolderText = categories[0].name
+                    )
+                //}
+            }
+        }*/
+
+        ////////////////
+        var visible by remember {
+            mutableStateOf(false)
+        }
+        val alpha by remember(renamePressed) {
+            derivedStateOf {
+                if(renamePressed > -1){
+                    visible = true
+                    1f
+                }
+                else{
+                    0f
+                }
+            }
+        }
+        val animatedAlpha by animateFloatAsState(
+            targetValue = alpha,
+            animationSpec = tween(700),
+            finishedListener = {
+                if(it==0f){
+                    visible = false
+                }
+            }
+        )
+        Box(
+            modifier = Modifier
+                .padding(
+                    top = 10.dep(),
+                    start = 31.dep(),
+                    end = 31.dep()
+                )
+                .background(
+                    color = LightGrey2,
+                    shape = RoundedCornerShape(8.dep())
+                )
+                .clip(RoundedCornerShape(8.dep()))
+                .height((animatedAlpha * 52).dep())
+                .alpha(animatedAlpha)
+                .fillMaxWidth()
+        ) {
+            if(visible){
                 CustomTextField_wangst(
-                    text = categories[renamePressed].name,
+                    text = categoryName,
                     change = {
-                        notifier.notify(DataIds.billTotalAmount, it)
+                        notifier.notify(DataIds.addCategoryName, it)
                     },
                     contentDescription = "",
-                    leadingIcon = painterResource(id = categories[renamePressed].icon as Int),
-                    placeHolderText = categories[renamePressed].name
+                    leadingIcon = categoryImage,
+                    placeHolderText = categoryPlaceholder
                 )
             }
         }
+        ////////////////
 
         if (renamePressed != -1) {
             12.sy()
@@ -328,7 +450,7 @@ fun Modifier.keyboardHeight(
 fun CustomTextField_wangst(
     text: String,
     change: (String) -> Unit,
-    leadingIcon: Painter,
+    leadingIcon: Any?,
     placeHolderText: String,
     contentDescription: String,
     keyboardType: KeyboardType = KeyboardType.Text,
@@ -403,7 +525,7 @@ fun CustomTextField_wangst(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
+                    /*Icon(
                         modifier = Modifier
                             .padding(start = 18.dep())
 //                            .width(config.leadingIconWidth.dep())
@@ -412,6 +534,13 @@ fun CustomTextField_wangst(
                         painter = leadingIcon,
                         tint = config.iconColor,
                         contentDescription = "people icon",
+                    )*/
+                    AsyncImage(
+                        model = leadingIcon,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(start = 18.dep())
+                            .size(18.33.dep())
                     )
                     config.dividerStartPadding.sx()
                     Divider(

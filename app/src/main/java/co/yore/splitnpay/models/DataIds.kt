@@ -1,6 +1,9 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    categoryImage,
+    categoryPlaceholder,
+    categoryName,
     billTotalBottomSheetModel,
     categoryEditClick,
     receipt,
