@@ -512,7 +512,7 @@ class GroupChatViewModel(
             ///////////////
             DataIds.sheets to _sheets,
             DataIds.canProceedWithBillTotal to canProceedWithBillTotal,
-            DataIds.capProceedWithCategory to capProceedWithCategory,
+            DataIds.canProceedWithCategory to capProceedWithCategory,
             DataIds.displayDate to displayDate,
             DataIds.canProceedWithDate to canProceedWithDate,
             DataIds.yoreDatePickerData to yoreDatePickerData,

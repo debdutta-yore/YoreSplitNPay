@@ -34,6 +34,98 @@ import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.pages.LightBlue1
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class AllCategoriesBottomSheetModel(val callback: Callback): BottomSheetModel{
+    interface Callback{
+        suspend fun getCategories(): List<Category>
+        fun onCategoryAddContinue(name: String)
+        fun onCategorySelectedContinue(category: Category)
+    }
+    private val _resolver = Resolver()
+    private val _notifier = NotificationService { id, arg ->
+        when(id){
+            DataIds.categoryEditSelectionClick->{
+                for(i in 0 until _allCategories.size){
+                    _allCategories[i] =
+                        _allCategories[i].copy(isSelected = false)
+                }
+                val index = arg as? Int?:return@NotificationService
+                _allCategories[index] =
+                    _allCategories[index].copy(isSelected = true)
+                updateCanProceed()
+            }
+            DataIds.isAddCategoryEnabled->{
+                _addCategoryName.value = ""
+                _isAddCategoryEnabled.value = !_isAddCategoryEnabled.value
+                updateCanProceed()
+            }
+            DataIds.addCategoryName->{
+                _addCategoryName.value = arg as? String?:return@NotificationService
+                updateCanProceed()
+            }
+            DataIds.allCategoriesContinue->{
+                if(_isAddCategoryEnabled.value){
+                    callback.onCategoryAddContinue(_addCategoryName.value)
+                }
+                else{
+                    callback.onCategorySelectedContinue(_allCategories.first { it.isSelected })
+                }
+            }
+        }
+    }
+
+    private fun updateCanProceed(){
+        if(_isAddCategoryEnabled.value){
+            canProceedWithCategory.value = _addCategoryName.value.isNotEmpty()
+        }
+        else{
+            canProceedWithCategory.value = _allCategories.count { it.isSelected } == 1
+        }
+    }
+
+    private val _allCategories = mutableStateListOf<Category>()
+    private val _isAddCategoryEnabled = mutableStateOf(false)
+    private val _addCategoryName = mutableStateOf("")
+    private val canProceedWithCategory = mutableStateOf(false)
+
+    override val resolver = _resolver
+    override val notifier = _notifier
+
+    override fun initialize() {
+        clear()
+        CoroutineScope(Dispatchers.IO).launch {
+            val categories = callback.getCategories()
+            withContext(Dispatchers.Main){
+                _allCategories.addAll(categories)
+            }
+            updateCanProceed()
+        }
+    }
+
+    override fun clear() {
+        _allCategories.clear()
+        _isAddCategoryEnabled.value = false
+        _addCategoryName.value = ""
+        canProceedWithCategory.value = false
+    }
+
+    override fun onBack() {
+
+    }
+
+    init {
+        _resolver.addAll(
+            DataIds.allCategories to _allCategories,
+            DataIds.isAddCategoryEnabled to _isAddCategoryEnabled,
+            DataIds.addCategoryName to _addCategoryName,
+            DataIds.canProceedWithCategory to canProceedWithCategory,
+        )
+    }
+}
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -41,10 +133,8 @@ fun AllCategoriesBottomSheet(
     categories: List<Category> = listState(key = DataIds.allCategories),
     isAddCategoryEnabled: Boolean = boolState(key = DataIds.isAddCategoryEnabled).value,
     addCategoryName: String = stringState(key = DataIds.addCategoryName).value,
-//    sheetState: ModalBottomSheetState,
-//    coroutineScope: CoroutineScope
     notifier: NotificationService = notifier(),
-    canProceed: Boolean = boolState(key = DataIds.capProceedWithCategory).value
+    canProceed: Boolean = boolState(key = DataIds.canProceedWithCategory).value
 ) {
     Column(
         modifier = Modifier
@@ -224,7 +314,7 @@ fun AllCategoriesBottomSheet(
                         notifier.notify(DataIds.addCategoryName, it)
                     },
                     contentDescription = "",
-                    leadingIcon = painterResource(id = R.drawable.ic_description),
+                    leadingIcon = R.drawable.ic_description,
                     placeHolderText = "Custom category name"
                 )
             }
@@ -244,13 +334,17 @@ fun AllCategoriesBottomSheet(
             CustomButton_3egxtx(
                 text = stringResource(id = R.string.continue1),
                 onClick = {
-//                    coroutineScope.launch {
-//                        sheetState.show()
-//                    }
+                    notifier.notify(DataIds.allCategoriesContinue)
                 },
                 contentDescription = "Continue button",
                 enabled = canProceed
             )
+        }
+
+        Box(
+            modifier = Modifier.keyboardHeight()
+        ){
+
         }
     }
 }

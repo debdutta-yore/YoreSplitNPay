@@ -1,6 +1,7 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    allCategoriesContinue,
     deleteReceipt,
     category,
     categoryImage,
@@ -34,7 +35,7 @@ enum class DataIds {
     yoreDatePickerData,
     canProceedWithDate,
     displayDate,
-    capProceedWithCategory,
+    canProceedWithCategory,
     canProceedWithBillTotal,
     deleteGroupClick,
     leaveGroupClick,

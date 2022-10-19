@@ -73,22 +73,42 @@ import kotlinx.coroutines.launch
 
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SplitDetailsScreen(
     sheetHandler: SheetHandler = localSheetHandler(),
     sheets: Sheets = tState<Sheets>(key = DataIds.sheets).value,
-    billTotalBottomSheetModel: BillTotalBottomSheetModel = t(DataIds.billTotalBottomSheetModel)
+    billTotalBottomSheetModel: BillTotalBottomSheetModel = t(DataIds.billTotalBottomSheetModel),
+    allCategoriesBottomSheetModel: AllCategoriesBottomSheetModel = t(DataIds.allCategories)
 ) {
     val state = sheetHandler.handle()
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
-            when(sheets){
-                Sheets.ImagePicker-> PhotoSelectionBottomSheet()
-                Sheets.BillTotalAndCategories-> billTotalBottomSheetModel.provide { BillTotalBottomSheet() }
-                else->Text("")
+            AnimatedContent(
+                targetState = sheets,
+                transitionSpec = {
+                    fadeIn(
+                        animationSpec = tween(500, delayMillis = 90)
+                    ) +
+                    scaleIn(
+                        initialScale = 0.92f,
+                        animationSpec = tween(500, delayMillis = 90)
+                    ) with
+                    fadeOut(
+                        animationSpec = tween(500)
+                    )
+                }
+            ) {
+                when(it){
+                    Sheets.ImagePicker-> PhotoSelectionBottomSheet()
+                    Sheets.BillTotalAndCategories-> billTotalBottomSheetModel.provide { BillTotalBottomSheet() }
+                    Sheets.CategoriesEdit-> allCategoriesBottomSheetModel.provide { AllCategoriesBottomSheet() }
+                    Sheets.DatePicker -> ExpenseDatePickerSheet()
+                    else->Text("")
+                }
             }
+
         },
         sheetShape = RoundedCornerShape(
             topStart = 25f.dep(),
@@ -181,19 +201,16 @@ fun SplitDetailsPage(
     selectedTabIndex: Int = intState(key = DataIds.selectedTabIndex).value,
     selectedListOption: Int = intState(key = DataIds.selectedListOption).value,
     subCategoryText: String = stringState(key = DataIds.subCategoryText).value,
-    numberOfGroupMembers: Int = intState(key = DataIds.numberOfGroupMembers).value,
     paidRemaining: Double = doubleState(key = DataIds.paidRemaining).value,
     adjustRemaining: Double = doubleState(key = DataIds.adjustRemaining).value,
     receipt: Any? = tState<Any?>(key = DataIds.receipt).value,
     notifier: NotificationService = notifier()
 ) {
-    val numberOfFriends = "$numberOfGroupMembers friends"
-
-    val remainingFriends = remember {
-        mutableStateOf(0)
+    val numberOfFriends by remember(paidList.size) {
+        derivedStateOf {
+            "${paidList.size} friends"
+        }
     }
-
-    //val splitListOptionsList = listOf("Equal", "Unequal", "Ratio", "Percentage")
     val splitListOptionsList = remember{ SplitListOptions.values() }
     val isAmountEditable = remember { mutableStateOf(false) }
     val tabsList = listOf(stringResource(R.string.paid_by), stringResource(R.string.adjust_split))

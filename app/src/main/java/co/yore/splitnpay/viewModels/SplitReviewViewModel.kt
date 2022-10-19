@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.components.components.AllCategoriesBottomSheetModel
 import co.yore.splitnpay.components.components.BillTotalBottomSheetModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Category
@@ -79,10 +80,36 @@ class SplitReviewViewModel(
     override val resultingActivityHandler = ResultingActivityHandler()
     /////////////
     @OptIn(ExperimentalMaterialApi::class)
+    private val allCategoriesBottomSheetModel = AllCategoriesBottomSheetModel(
+        object: AllCategoriesBottomSheetModel.Callback{
+            override suspend fun getCategories(): List<Category> {
+                val categories = groupRepo.getAllCategories().toMutableList()
+                val index = categories.indexOfFirst { it.id == category.value.id }
+                if(index!=-1){
+                    categories[index] = categories[index].copy(isSelected = true)
+                }
+                return categories
+            }
+
+            override fun onCategoryAddContinue(name: String) {
+                sheetHandler.state {
+                    hide()
+                }
+            }
+
+            override fun onCategorySelectedContinue(category: Category) {
+                sheetHandler.state {
+                    hide()
+                }
+                this@SplitReviewViewModel.category.value = category
+            }
+        }
+    )
+    @OptIn(ExperimentalMaterialApi::class)
     private val billTotalBottomSheetModel = BillTotalBottomSheetModel(
         object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
             override suspend fun getCategories(): List<Category> {
-                val categories = groupRepo.getCategories().toMutableList()
+                val categories = groupRepo.getAllCategories().toMutableList()
                 val index = categories.indexOfFirst { it.id == category.value.id }
                 if(index!=-1){
                     categories[index] = categories[index].copy(isSelected = true)
@@ -99,7 +126,7 @@ class SplitReviewViewModel(
             }
 
             override fun openAllCategories() {
-
+                sheets.value = Sheets.CategoriesEdit
             }
 
             override fun close() {
@@ -159,7 +186,6 @@ class SplitReviewViewModel(
     private val _subCategoryText = mutableStateOf("")
     private val _categoryText = mutableStateOf("Trip")
     private val _dateText = mutableStateOf("7th June, 2022")
-    private val _numberOfGroupMembers = mutableStateOf(5)
     private val paidRemaining = mutableStateOf(0.0)
     private val adjustRemaining = mutableStateOf(0.0)
     private val selectedTabIndex = mutableStateOf(0)
@@ -379,7 +405,6 @@ class SplitReviewViewModel(
             DataIds.subCategoryText to _subCategoryText,
             DataIds.categoryText to _categoryText,
             DataIds.dateText to _dateText,
-            DataIds.numberOfGroupMembers to _numberOfGroupMembers,
             DataIds.paidRemaining to paidRemaining,
             DataIds.adjustRemaining to adjustRemaining,
             DataIds.selectedTabIndex to selectedTabIndex,
@@ -387,11 +412,12 @@ class SplitReviewViewModel(
             DataIds.receipt to receipt,
             DataIds.sheets to sheets,
             DataIds.category to category,
+            DataIds.allCategories to allCategoriesBottomSheetModel,
             //////////////////////////////
             DataIds.statusBarColor to _statusBarColor,
             /////////////
             DataIds.canProceedWithBillTotal to DataIds.canProceedWithBillTotal,
-            DataIds.capProceedWithCategory to DataIds.capProceedWithCategory,
+            DataIds.canProceedWithCategory to DataIds.canProceedWithCategory,
             DataIds.billTotalBottomSheetModel to billTotalBottomSheetModel,
         )
         viewModelScope.launch(Dispatchers.IO) {

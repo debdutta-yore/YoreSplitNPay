@@ -3,6 +3,7 @@ package co.yore.splitnpay.components.components
 import android.provider.ContactsContract.Data
 import android.util.Log
 import androidx.compose.animation.*
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -50,6 +51,7 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.keyboardHeight
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.DataIds
@@ -61,30 +63,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-interface BottomSheetModel{
-    val resolver : Resolver
-    val notifier : NotificationService
 
-    fun initialize()
-    fun clear()
-
-    @Composable
-    fun provide(
-        content: @Composable () -> Unit
-    ){
-        LaunchedEffect(key1 = Unit){
-            initialize()
-        }
-        CompositionLocalProvider(
-            LocalResolver provides resolver,
-            LocalNotificationService provides notifier
-        ) {
-            content()
-        }
-    }
-
-    fun onBack()
-}
 
 class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback): BottomSheetModel{
     interface BillTotalBottomSheetModelCallback{
@@ -109,6 +88,7 @@ class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback)
         when(id){
             DataIds.billTotalAmount->{
                 _billTotalAmount.value = arg as? String?:return@NotificationService
+                updateCanProceed()
             }
             DataIds.billTotalDescription->{
                 _billTotalDescription.value = arg as? String?:return@NotificationService
@@ -121,9 +101,10 @@ class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback)
                 val index = arg as? Int?:return@NotificationService
                 _categories[index] =
                     _categories[index].copy(isSelected = true)
+                updateCanProceed()
             }
             DataIds.openAllCategories->{
-
+                callback.openAllCategories()
             }
             DataIds.renamePressed->{
                 canProceedWithBillTotal.value = false
@@ -159,6 +140,7 @@ class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback)
         }
         else{
             canProceedWithBillTotal.value = _billTotalAmount.value.isNotEmpty()
+                    && _categories.count { it.isSelected } == 1
         }
     }
     override val resolver get() = _resolver
@@ -233,7 +215,6 @@ fun BillTotalBottomSheet(
     categoryImage: Any? = tState<Any?>(key = DataIds.categoryImage).value,
     notifier: NotificationService = notifier()
 ) {
-    val scrollSate = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -335,7 +316,7 @@ fun BillTotalBottomSheet(
             columns = GridCells.Fixed(5),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            itemsIndexed(categories) { index, item ->
+            itemsIndexed(categories.take(4)) { index, item ->
                 CategoryItem(
                     category = item,
                     onClick = {
@@ -397,13 +378,18 @@ fun BillTotalBottomSheet(
         var visible by remember {
             mutableStateOf(false)
         }
+        var height by remember {
+            mutableStateOf(0)
+        }
         val alpha by remember(renamePressed) {
             derivedStateOf {
                 if(renamePressed > -1){
                     visible = true
+                    height = 52
                     1f
                 }
                 else{
+                    height = 0
                     0f
                 }
             }
@@ -429,7 +415,10 @@ fun BillTotalBottomSheet(
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
-                .height((animatedAlpha * 52).dep())
+                .animateContentSize(
+                    animationSpec = tween(700)
+                )
+                .height(height/*(animatedAlpha * 52)*/.dep())
                 .alpha(animatedAlpha)
                 .fillMaxWidth()
         ) {
@@ -467,17 +456,36 @@ fun BillTotalBottomSheet(
                 enabled = canProceed
             )
         }
-        val height = with(LocalDensity.current){
-            LocalConfiguration.current.screenHeightDp*this.density
+        /*val screenHeight = with(LocalDensity.current){
+            LocalConfiguration.current.screenHeightDp*density
         }
+        val keyboardHeight = keyboardHeight()
+        var y by remember {
+            mutableStateOf(0f)
+        }
+        var h by remember {
+            mutableStateOf(0)
+        }
+        val height by remember(screenHeight,keyboardHeight,y) {
+            derivedStateOf {
+                val expectedY = screenHeight - keyboardHeight
+                val dif = y - expectedY
+                Log.d("fdjlfjdlfd2","$screenHeight,$keyboardHeight,$y,$h,${h - dif}")
+                h - dif
+            }
+        }*/
+        val density = LocalDensity.current.density
         Box(
             modifier = Modifier
                 .keyboardHeight()
-                .width(10.dep())
-                .background(Color.Red)
-                .onGloballyPositioned {
-                    Log.d("fldjfldkdfff","${it.positionInWindow().y+it.size.height-height}")
-                }
+                //.height((height/density).dp)
+                //.width(10.dep())
+                //.background(Color.Red)
+                /*.onGloballyPositioned {
+                    y = it.positionInWindow().y
+                    h = it.size.height
+                    Log.d("fdjlfjdlfd1","$screenHeight,$keyboardHeight,$y,$h")
+                }*/
         ){
 
         }
@@ -578,7 +586,7 @@ fun CustomTextField_wangst(
                         modifier = Modifier
                             .padding(start = 18.dep())
                             .size(18.33.dep()),
-                        contentScale = ContentScale.FillBounds
+                        contentScale = ContentScale.Fit
                     )
                     config.dividerStartPadding.sx()
                     Divider(

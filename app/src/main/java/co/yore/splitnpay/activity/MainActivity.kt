@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
             val keypadHeight = screenHeight - r.bottom
             Log.d("ffdjflfd","$keypadHeight")
             minBottomHeight = min(minBottomHeight, keypadHeight)
-            bottomHeight.value = keypadHeight// - minBottomHeight
+            bottomHeight.value = keypadHeight - minBottomHeight
         }
         setContent {
             YoreSplitNPayTheme {
