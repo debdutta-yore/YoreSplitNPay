@@ -1,6 +1,7 @@
 package co.yore.splitnpay.components.components
 
 import android.provider.ContactsContract.Data
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
@@ -30,6 +31,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
@@ -60,6 +66,7 @@ interface BottomSheetModel{
     val notifier : NotificationService
 
     fun initialize()
+    fun clear()
 
     @Composable
     fun provide(
@@ -85,6 +92,17 @@ class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback)
         suspend fun getBillTotalAmount(): String
         suspend fun getDescription(): String
         fun openAllCategories()
+        fun close()
+        fun onContinue(
+            billTotal: String,
+            billDescription: String,
+            category: Category
+        )
+
+        fun onRenameContinue(
+            category: Category,
+            name: String
+        )
     }
     private val _resolver = Resolver()
     private val _notifier = NotificationService{id,arg->
@@ -103,32 +121,78 @@ class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback)
                 val index = arg as? Int?:return@NotificationService
                 _categories[index] =
                     _categories[index].copy(isSelected = true)
-                val category = _categories[index]
-                categoryName.value = category.name
-                categoryPlaceholder.value = category.name
-                categoryImage.value = category.icon
             }
             DataIds.openAllCategories->{
 
             }
             DataIds.renamePressed->{
-                _renamePressed.value = arg as? Int?:-1
+                canProceedWithBillTotal.value = false
+                _renamePressed.value = arg as? Int?:return@NotificationService
+                val category = _categories[arg as? Int?:return@NotificationService]
+                categoryName.value = category.name
+                categoryPlaceholder.value = category.name
+                categoryImage.value = category.icon
             }
+            DataIds.categoryName->{
+                categoryName.value = arg as? String?:return@NotificationService
+                updateCanProceed()
+            }
+            DataIds.canProceedWithBillTotal->{
+                if(_renamePressed.value==-1){
+                    callback.onContinue(
+                        _billTotalAmount.value,
+                        _billTotalDescription.value,
+                        _categories.first { it.isSelected }
+                    )
+                }
+                else{
+                    callback.onRenameContinue(_categories.first { it.isSelected }, categoryName.value)
+                }
+            }
+        }
+    }
+
+    private fun updateCanProceed(){
+        if(_renamePressed.value!=-1){
+            canProceedWithBillTotal.value = _categories[_renamePressed.value].name!=categoryName.value
+                    && categoryName.value.isNotEmpty()
+        }
+        else{
+            canProceedWithBillTotal.value = _billTotalAmount.value.isNotEmpty()
         }
     }
     override val resolver get() = _resolver
     override val notifier get() = _notifier
     ////////////////
     override fun initialize(){
+        clear()
         CoroutineScope(Dispatchers.IO).launch {
             _categories.addAll(callback.getCategories())
             _billTotalAmount.value = callback.getBillTotalAmount()
             _billTotalDescription.value = callback.getDescription()
+            updateCanProceed()
         }
     }
 
-    override fun onBack() {
+    override fun clear() {
+        _categories.clear()
+        _billTotalAmount.value = ""
+        _billTotalDescription.value = ""
         _renamePressed.value = -1
+        canProceedWithBillTotal.value = false
+        categoryImage.value = null
+        categoryName.value = ""
+        categoryPlaceholder.value = ""
+    }
+
+    override fun onBack() {
+        if(_renamePressed.value!=-1){
+            _renamePressed.value = -1
+        }
+        else{
+            clear()
+            callback.close()
+        }
     }
 
     ///////////////
@@ -169,10 +233,10 @@ fun BillTotalBottomSheet(
     categoryImage: Any? = tState<Any?>(key = DataIds.categoryImage).value,
     notifier: NotificationService = notifier()
 ) {
+    val scrollSate = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .safeDrawingPadding()
             .padding(
                 start = 32.dep(),
                 end = 30.dep()
@@ -275,7 +339,7 @@ fun BillTotalBottomSheet(
                 CategoryItem(
                     category = item,
                     onClick = {
-                        if (renamePressed != index && renamePressed != -1) {
+                        if (renamePressed != -1) {
                             notifier.notify(DataIds.renamePressed, index)
                         }
                         notifier.notify(DataIds.categorySelectionClick, index)
@@ -329,32 +393,6 @@ fun BillTotalBottomSheet(
             }
         }
 
-        /*AnimatedVisibility(visible = renamePressed != -1) {
-            Box(
-                modifier = Modifier
-                    .padding(top = 18.dep())
-                    .background(
-                        color = LightGrey2,
-                        shape = RoundedCornerShape(8.dep())
-                    )
-                    .clip(RoundedCornerShape(8.dep()))
-                    .height(52.dep())
-                    .fillMaxWidth(),
-            ) {
-                //if(renamePressed > -1){
-                    CustomTextField_wangst(
-                        text = categories[0].name,
-                        change = {
-                            notifier.notify(DataIds.billTotalAmount, it)
-                        },
-                        contentDescription = "",
-                        leadingIcon = painterResource(id = categories[0].icon as Int),
-                        placeHolderText = categories[0].name
-                    )
-                //}
-            }
-        }*/
-
         ////////////////
         var visible by remember {
             mutableStateOf(false)
@@ -383,8 +421,8 @@ fun BillTotalBottomSheet(
             modifier = Modifier
                 .padding(
                     top = 10.dep(),
-                    start = 31.dep(),
-                    end = 31.dep()
+                    //start = 31.dep(),
+                    //end = 31.dep()
                 )
                 .background(
                     color = LightGrey2,
@@ -399,7 +437,7 @@ fun BillTotalBottomSheet(
                 CustomTextField_wangst(
                     text = categoryName,
                     change = {
-                        notifier.notify(DataIds.addCategoryName, it)
+                        notifier.notify(DataIds.categoryName, it)
                     },
                     contentDescription = "",
                     leadingIcon = categoryImage,
@@ -423,14 +461,23 @@ fun BillTotalBottomSheet(
             CustomButton_3egxtx(
                 text = stringResource(id = R.string.continue1),
                 onClick = {
-                    notifier.notify(DataIds.billTotalContinueClick)
+                    notifier.notify(DataIds.canProceedWithBillTotal)
                 },
                 contentDescription = "Continue button",
                 enabled = canProceed
             )
         }
+        val height = with(LocalDensity.current){
+            LocalConfiguration.current.screenHeightDp*this.density
+        }
         Box(
-            modifier = Modifier.keyboardHeight()
+            modifier = Modifier
+                .keyboardHeight()
+                .width(10.dep())
+                .background(Color.Red)
+                .onGloballyPositioned {
+                    Log.d("fldjfldkdfff","${it.positionInWindow().y+it.size.height-height}")
+                }
         ){
 
         }
@@ -504,8 +551,8 @@ fun CustomTextField_wangst(
             innerTextField = innerTextField,
             interactionSource = interactionSource,
             contentPadding = PaddingValues(
-                start = config.contentStartPadding.dep(),
-                top = config.contentTopPadding.dep(),
+                //start = config.contentStartPadding.dep(),
+                //top = config.contentTopPadding.dep(),
                 bottom = config.contentBottomPadding.dep()
             ),
             singleLine = true,
@@ -525,22 +572,13 @@ fun CustomTextField_wangst(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    /*Icon(
-                        modifier = Modifier
-                            .padding(start = 18.dep())
-//                            .width(config.leadingIconWidth.dep())
-//                            .height(config.leadingIconHeight.dep())
-                        ,
-                        painter = leadingIcon,
-                        tint = config.iconColor,
-                        contentDescription = "people icon",
-                    )*/
                     AsyncImage(
                         model = leadingIcon,
                         contentDescription = "",
                         modifier = Modifier
                             .padding(start = 18.dep())
-                            .size(18.33.dep())
+                            .size(18.33.dep()),
+                        contentScale = ContentScale.FillBounds
                     )
                     config.dividerStartPadding.sx()
                     Divider(

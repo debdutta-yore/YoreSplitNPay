@@ -18,5 +18,5 @@ data class BillTransaction(
     val bank: Bank = Bank(),
     val from: Friend = Friend(name = "Rudra", mobileNumber = "99999999999", imageUrl = "https://i.pravatar.cc/300"),
     val to: Friend = Friend(name = "Rudra", mobileNumber = "99999999999", imageUrl = "https://i.pravatar.cc/300"),
-    val category: Category = Category(name = "Travel", color = 0L, icon = R.drawable.travel)
+    val category: Category = Category(id = 0, name = "Travel", color = 0L, icon = R.drawable.travel)
 )

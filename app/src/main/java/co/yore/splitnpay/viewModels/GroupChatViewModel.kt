@@ -66,37 +66,43 @@ class GroupsMock : GroupRepository {
     var categoryList  =
         listOf(
             Category(
+                id = 0,
                 name = "Food",
                 0xFF1A79E5,
                 R.drawable.ic_food,
-                isSelected = true
             ),
             Category(
+                id = 1,
                 name = "Trip",
                 0xFFFF4077,
                 R.drawable.ic_trip
             ),
             Category(
+                id = 2,
                 name = "Rent",
                 0xFFF6CC00,
                 R.drawable.ic_rent
             ),
             Category(
+                id = 3,
                 name = "Party",
                 0xFF37D8CF,
                 R.drawable.ic_party
             ),
             Category(
+                id = 4,
                 name = "Medical",
                 0xFF37D8CF,
                 R.drawable.ic_medical
             ),
             Category(
+                id = 5,
                 name = "Emi",
                 0xFFF6CC00,
                 R.drawable.ic_emi
             ),
             Category(
+                id = 6,
                 name = "Bills",
                 0xFFFF4077,
                 R.drawable.ic_bills

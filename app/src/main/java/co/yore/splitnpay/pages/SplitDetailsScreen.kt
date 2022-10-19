@@ -20,11 +20,14 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
@@ -59,10 +62,7 @@ import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.Sheets
-import co.yore.splitnpay.models.Store
-import co.yore.splitnpay.models.TransactionType
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.MemberPayment
 import co.yore.splitnpay.viewModels.MembersMock.transaction
@@ -181,7 +181,6 @@ fun SplitDetailsPage(
     selectedTabIndex: Int = intState(key = DataIds.selectedTabIndex).value,
     selectedListOption: Int = intState(key = DataIds.selectedListOption).value,
     subCategoryText: String = stringState(key = DataIds.subCategoryText).value,
-    categoryText: String = stringState(key = DataIds.categoryText).value,
     numberOfGroupMembers: Int = intState(key = DataIds.numberOfGroupMembers).value,
     paidRemaining: Double = doubleState(key = DataIds.paidRemaining).value,
     adjustRemaining: Double = doubleState(key = DataIds.adjustRemaining).value,
@@ -362,7 +361,6 @@ fun SplitDetailsPage(
                     )
                     12.sy()
                     CategorySelectorCard_owv32g(
-                        text = categoryText,
                         contentDescription = "Category Selector"
                     )
                 }
@@ -384,10 +382,12 @@ fun SplitDetailsPage(
                     text = stringResource(R.string.receipt),
                     image = receipt,
                     contentDescription = "Dashed Receipt button",
-                    onClick = {
-                        notifier.notify(DataIds.receiptClick)
+                    onDelete = {
+                        notifier.notify(DataIds.deleteReceipt)
                     }
-                )
+                ) {
+                    notifier.notify(DataIds.receiptClick)
+                }
             }
             43.sy()
             TabRow(
@@ -414,25 +414,29 @@ fun SplitDetailsPage(
             AnimatedVisibility(
                 visible = selectedTabIndex == 1,
             ) {
-                LazyRow(
-                    modifier = Modifier
-                        .padding(horizontal = 33.dep()),
-                    horizontalArrangement = Arrangement.spacedBy(10f.dep())
-                ) {
-                    itemsIndexed(splitListOptionsList) { index, item ->
-                        val selected = selectedListOption == index
-                        SplitTypeRowItem_yxqp10(
-                            item = item.name,
-                            selected = selected,
-                            onClick = {
-                                notifier.notify(DataIds.selectedListOption,index)
-                            },
-                            contentDescription = "Split Type item"
-                        )
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    LazyRow(
+                        modifier = Modifier
+                            .padding(horizontal = 33.dep()),
+                        horizontalArrangement = Arrangement.spacedBy(10f.dep())
+                    ) {
+                        itemsIndexed(splitListOptionsList) { index, item ->
+                            val selected = selectedListOption == index
+                            SplitTypeRowItem_yxqp10(
+                                item = item.name,
+                                selected = selected,
+                                onClick = {
+                                    notifier.notify(DataIds.selectedListOption,index)
+                                },
+                                contentDescription = "Split Type item"
+                            )
+                        }
                     }
+                    24.sy()
                 }
             }
-            24.sy()
             isAmountEditable.value = selectedListOption == 1
 
             Box(
@@ -456,7 +460,7 @@ fun SplitDetailsPage(
                     }
                     LazyColumn(
                         state = listState,
-                        modifier = Modifier,
+                        modifier = Modifier.fadingEdge(),
                         verticalArrangement = Arrangement.spacedBy(
                             18f.dep()
                         )
@@ -496,7 +500,8 @@ fun SplitDetailsPage(
                                         onClick = {
                                             notifier.notify(DataIds.confirmSplitClick)
                                         },
-                                        contentDescription = "Confirm button"
+                                        contentDescription = "Confirm button",
+                                        enabled = paidRemaining==0.0 && adjustRemaining==0.0
                                     )
                                 }
                                 18.sy()
@@ -521,8 +526,9 @@ fun SplitDetailsPage(
                     }
                     LazyColumn(
                         state = listState,
-                        modifier = Modifier,
-                        verticalArrangement = Arrangement.spacedBy(18f.dep())
+                        modifier = Modifier.fadingEdge(),
+                        verticalArrangement = Arrangement.spacedBy(18f.dep()),
+                        contentPadding = PaddingValues(top = 8.dep())
                     ) {
                         itemsIndexed(
                             paidList,
@@ -559,7 +565,7 @@ fun SplitDetailsPage(
                                     )
                             ) {
                                 CustomButton_3egxtx(
-                                    enabled = paidRemaining==0.0,
+                                    enabled = paidRemaining==0.0 && adjustRemaining==0.0,
                                     text = "Confirm and Split",
                                     onClick = {
                                         notifier.notify(DataIds.confirmSplitClick)
@@ -1254,9 +1260,9 @@ data class CategorySelectorCardConfiguration(
 )
 @Composable
 fun CategorySelectorCard_owv32g(
-    text: String,
     notifier: NotificationService = notifier(),
     config: CategorySelectorCardConfiguration = CategorySelectorCardConfiguration(),
+    category: Category = tState<Category>(key = DataIds.category).value,
     contentDescription: String
 ) {
     Row(
@@ -1273,7 +1279,7 @@ fun CategorySelectorCard_owv32g(
                 notifier.notify(DataIds.categoryEditClick)
             }
     ) {
-        Icon(
+        /*Icon(
             modifier = Modifier
                 .padding(
                     top = config.iconTopPadding.dep(),
@@ -1283,11 +1289,21 @@ fun CategorySelectorCard_owv32g(
             painter = painterResource(id = config.icon),
             contentDescription = "trip icon",
             tint = Color.Unspecified
+        )*/
+        AsyncImage(
+            model = category.icon,
+            contentDescription = "trip icon",
+            modifier = Modifier
+                .padding(
+                    top = config.iconTopPadding.dep(),
+                    bottom = config.iconBottomPadding.dep(),
+                    start = config.iconStartPadding.dep()
+                ),
         )
         config.iconTextSpacer.sx()
         FontFamilyText(
             modifier = Modifier.align(Alignment.CenterVertically),
-            text = text,
+            text = category.name,
             fontSize = config.fontSize.sep(),
             color = config.textColor,
             fontWeight = config.fontWeight
@@ -1363,9 +1379,10 @@ data class DashedBorderIconButtonConfiguration(
 fun DashedBorderIconButtonWithText_13ppr3(
     text: String,
     image: Any?,
-    onClick: () -> Unit,
     config: DashedBorderIconButtonConfiguration = DashedBorderIconButtonConfiguration(),
-    contentDescription:String
+    contentDescription:String,
+    onDelete: ()->Unit,
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -1405,14 +1422,33 @@ fun DashedBorderIconButtonWithText_13ppr3(
             5.sy()
         }
         else{
-            AsyncImage(
-                model = image,
-                contentDescription = "receipt_image",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(config.borderCorner.dep())),
-                contentScale = ContentScale.Crop
-            )
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ){
+                AsyncImage(
+                    model = image,
+                    contentDescription = "receipt_image",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(config.borderCorner.dep())),
+                    contentScale = ContentScale.Crop
+                )
+                IconButton(
+                    onClick = {
+                        onDelete()
+                    },
+                    modifier = Modifier
+                        .size(16.dep())
+                        .clip(CircleShape)
+                        .alpha(0.3f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "delete",
+                        tint = Color.Red
+                    )
+                }
+            }
         }
     }
 }

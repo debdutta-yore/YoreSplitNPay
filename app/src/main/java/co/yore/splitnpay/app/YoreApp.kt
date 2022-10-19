@@ -75,7 +75,6 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
                     suffix = "split_review_page",
                     wvm = viewModel<SplitReviewViewModel>()
                 ) {
-                    //SplitDetailsPage()
                     SplitDetailsScreen()
                 }
             }

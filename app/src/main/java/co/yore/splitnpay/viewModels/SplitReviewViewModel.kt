@@ -78,10 +78,16 @@ class SplitReviewViewModel(
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
     /////////////
+    @OptIn(ExperimentalMaterialApi::class)
     private val billTotalBottomSheetModel = BillTotalBottomSheetModel(
         object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
             override suspend fun getCategories(): List<Category> {
-                return groupRepo.getCategories()
+                val categories = groupRepo.getCategories().toMutableList()
+                val index = categories.indexOfFirst { it.id == category.value.id }
+                if(index!=-1){
+                    categories[index] = categories[index].copy(isSelected = true)
+                }
+                return categories
             }
 
             override suspend fun getBillTotalAmount(): String {
@@ -89,14 +95,47 @@ class SplitReviewViewModel(
             }
 
             override suspend fun getDescription(): String {
-                return ""
+                return _subCategoryText.value
             }
 
             override fun openAllCategories() {
 
             }
+
+            override fun close() {
+                sheetHandler.state {
+                    hide()
+                }
+            }
+
+            override fun onContinue(
+                billTotal: String,
+                billDescription: String,
+                category: Category
+            ) {
+                sheetHandler.state {
+                    hide()
+                }
+                _billTotal.value = billTotal.toDouble()
+                onBillTotalChanged()
+                this@SplitReviewViewModel.category.value = category
+                _subCategoryText.value = billDescription
+            }
+
+            override fun onRenameContinue(
+                category: Category,
+                name: String
+            ) {
+
+            }
         }
     )
+
+    private fun onBillTotalChanged() {
+        updateAsSelectedListOption()
+        updateAsMemberSelection()
+    }
+
     //////////////
     @OptIn(ExperimentalMaterialApi::class)
     override val sheetHandler = SheetHandler(
@@ -127,27 +166,21 @@ class SplitReviewViewModel(
     private val selectedListOption = mutableStateOf(0)
     private val receipt = mutableStateOf<Any?>(null)
     private val sheets = mutableStateOf(Sheets.None)
+    private val category = mutableStateOf(Category.blank)
     ///////////////////
     /////////////////////////////////////////
-    private val _categories = mutableStateListOf<Category>()
-    //private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
-    private val _billTotalAmount = mutableStateOf("")
-    private val _billTotalDescription = mutableStateOf("")
-    private val _renamePressed = mutableStateOf(-1)
-
-    //////////////////////////////////////////
-    private val _allCategories = mutableStateListOf<Category>()
-    private val _isAddCategoryEnabled = mutableStateOf(false)
-    private val _addCategoryName = mutableStateOf("")
-    /////////////////////////
-    private val canProceedWithBillTotal = mutableStateOf(false)
-    private val capProceedWithCategory = mutableStateOf(false)
 
     //////////////////////////////////////////
     override val notifier = NotificationService { id, arg ->
         when (id) {
+            DataIds.deleteReceipt->{
+                receipt.value = null
+            }
             "${DataIds.back}split_review_page"->{
-                billTotalBottomSheetModel.onBack()
+                when(sheets.value){
+                    Sheets.BillTotalAndCategories -> billTotalBottomSheetModel.onBack()
+                    else->pageBack()
+                }
             }
             DataIds.categoryEditClick->{
                 openBillTotalBottomSheet()
@@ -160,14 +193,7 @@ class SplitReviewViewModel(
             }
             DataIds.selectedListOption->{
                 selectedListOption.value = arg as? Int?:return@NotificationService
-                if(selectedListOption.value==0){
-                    val memberCount = _members.size
-                    val contribute = _billTotal.value/memberCount
-                    for(i in 0 until memberCount){
-                        _members[i] = _members[i].copy(toPay = contribute)
-                    }
-                    adjustRemaining.value = 0.0
-                }
+                updateAsSelectedListOption()
             }
             DataIds.memberPaymentCheck->{
                 val index = _members.indexOf(arg as? MemberPayment)
@@ -177,27 +203,8 @@ class SplitReviewViewModel(
                 val member = _members[index]
                 val selected = !member.selected
                 _members[index] = member.copy(selected = selected)
-                val selectedCount = _members.count {
-                    it.selected
-                }
-                val contribute = (if(selectedCount==0){
-                    0f
-                }
-                else{
-                    (_billTotal.value/selectedCount)
-                }).toDouble()
-                val count = _members.size
-                for(i in 0 until count){
-                    val _member = _members[i]
-                    val _selected = _member.selected
-                    if(_selected){
-                        _members[i] = _member.copy(paid = contribute)
-                    }
-                    else{
-                        _members[i] = _member.copy(paid = 0.0)
-                    }
-                }
-                paidRemaining.value = if(contribute==0.0) _billTotal.value else 0.0
+                ///
+                updateAsMemberSelection()
             }
             DataIds.paidByAmount->{
                 if(arg !is Store){
@@ -241,7 +248,7 @@ class SplitReviewViewModel(
                     _paidList[index].copy(isSelected = !_paidList[index].isSelected)*/
             }
             DataIds.editBillAmountClick -> {
-
+                openBillTotalBottomSheet()
             }
             DataIds.categoryClick -> {
 
@@ -261,27 +268,50 @@ class SplitReviewViewModel(
             DataIds.subCategoryText -> {
                 _subCategoryText.value = (arg as? String) ?: ""
             }
-            DataIds.billTotalAmount->{
-                _billTotalAmount.value = arg as? String?:return@NotificationService
+        }
+    }
+
+    private fun updateAsMemberSelection() {
+        val selectedCount = _members.count {
+            it.selected
+        }
+        val contribute = (if(selectedCount==0){
+            0f
+        }
+        else{
+            (_billTotal.value/selectedCount)
+        }).toDouble()
+        val count = _members.size
+        for(i in 0 until count){
+            val _member = _members[i]
+            val _selected = _member.selected
+            if(_selected){
+                _members[i] = _member.copy(paid = contribute)
             }
-            DataIds.billTotalDescription->{
-                _billTotalDescription.value = arg as? String?:return@NotificationService
-            }
-            DataIds.categorySelectionClick->{
-                for(i in 0 until _categories.size){
-                    _categories[i] =
-                        _categories[i].copy(isSelected = false)
-                }
-                val index = arg as Int
-                _categories[index] =
-                    _categories[index].copy(isSelected = !_categories[index].isSelected)
+            else{
+                _members[i] = _member.copy(paid = 0.0)
             }
         }
+        paidRemaining.value = if(contribute==0.0) _billTotal.value else 0.0
+    }
+
+    private fun updateAsSelectedListOption() {
+        if(selectedListOption.value==0){
+            val memberCount = _members.size
+            val contribute = _billTotal.value/memberCount
+            for(i in 0 until memberCount){
+                _members[i] = _members[i].copy(toPay = contribute)
+            }
+            adjustRemaining.value = 0.0
+        }
+    }
+
+    private fun pageBack() {
+
     }
 
     @OptIn(ExperimentalMaterialApi::class)
     private fun openBillTotalBottomSheet() {
-        _billTotalAmount.value = _billTotal.value.toInt().toString()
         sheets.value = Sheets.BillTotalAndCategories
         sheetHandler.state {
             show()
@@ -356,29 +386,21 @@ class SplitReviewViewModel(
             DataIds.selectedListOption to selectedListOption,
             DataIds.receipt to receipt,
             DataIds.sheets to sheets,
+            DataIds.category to category,
             //////////////////////////////
-            DataIds.categories to _categories,
             DataIds.statusBarColor to _statusBarColor,
-            DataIds.billTotalAmount to _billTotalAmount,
-            DataIds.billTotalDescription to _billTotalDescription,
-            DataIds.renamePressed to _renamePressed,
-            ////////////
-            DataIds.allCategories to _allCategories,
-            DataIds.isAddCategoryEnabled to _isAddCategoryEnabled,
-            DataIds.addCategoryName to _addCategoryName,
             /////////////
-            DataIds.canProceedWithBillTotal to canProceedWithBillTotal,
-            DataIds.capProceedWithCategory to capProceedWithCategory,
+            DataIds.canProceedWithBillTotal to DataIds.canProceedWithBillTotal,
+            DataIds.capProceedWithCategory to DataIds.capProceedWithCategory,
             DataIds.billTotalBottomSheetModel to billTotalBottomSheetModel,
         )
         viewModelScope.launch(Dispatchers.IO) {
-            val categoriesList = groupRepo.getCategories()
-            withContext(Dispatchers.Main) {
-                _categories.addAll(
-                    categoriesList
-                )
+            val categories = groupRepo.getCategories()
+            withContext(Dispatchers.Main){
+                category.value = categories.first()
             }
         }
+
         paidRemaining.value = _billTotal.value
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
