@@ -53,4 +53,13 @@
     <string name="split_details">Split Details</string>
     <string name="remaining">Remaining</string>
     <string name="description">Description</string>
+    <string name="you">You</string>
+    <string name="will_receive_nothing">will receive nothing</string>
+    <string name="nobody_indebted">Nobody is indebted to this person</string>
+    <string name="remind">Remind</string>
+    <string name="settle_up">Settle up</string>
+    <string name="total_you_will_get">Total you’ll get</string>
+    <string name="have_already_paid">" have already paid!"</string>
+    <string name="dont_owe_anything">" don’t owe anything to anyone"</string>
+    <string name="total_you_will_pay">Total you’ll pay</string>
 </resources>

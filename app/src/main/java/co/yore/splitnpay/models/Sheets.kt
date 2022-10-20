@@ -8,4 +8,5 @@ enum class Sheets {
     SettleSummaryManage,
     DatePicker,
     ImagePicker,
+    Settle,
 }

@@ -13,7 +13,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
     @Composable
     fun YoreApp() {
         val navController = rememberAnimatedNavController()
-        AnimatedNavHost(navController, startDestination = "split_review_page") {
+        AnimatedNavHost(navController, startDestination = "group_chat_page") {
             yoreComposable(
                 "split_page"
             ){

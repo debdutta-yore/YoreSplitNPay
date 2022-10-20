@@ -137,8 +137,12 @@ fun sheetMap(): Map<Sheets, BottomSheetModel>{
 fun sheeting(): Sheeting{
     return LocalSheeting.current
 }
-class Sheeting(
-    private val sheetMap: Map<Sheets,BottomSheetModel> = emptyMap()
+
+class Sheeting @OptIn(ExperimentalMaterialApi::class) constructor(
+    private val skipHalfExpanded: Boolean = true,
+    private val sheetMap: Map<Sheets,BottomSheetModel> = emptyMap(),
+    private val onVisibilityChanged: (Boolean)->Unit = {},
+    confirmStateChange: (ModalBottomSheetValue)->Boolean = {true}
 ){
     private val _sheets = mutableStateOf(Sheets.None)
     val sheets get() = _sheets
@@ -147,6 +151,23 @@ class Sheeting(
     @Composable
     operator fun get(sheet: Sheets){
         return sheetMap[sheet].elseLet(elseBlock = { Text("") }) { it() }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    private val _sheetHandler = SheetHandler(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = skipHalfExpanded,
+        confirmStateChange = confirmStateChange,
+        onVisibilityChange = onVisibilityChanged
+    )
+    val sheetHandler get() = _sheetHandler
+    @OptIn(ExperimentalMaterialApi::class)
+    fun hide(){
+        sheetHandler.state { hide() }
+    }
+    @OptIn(ExperimentalMaterialApi::class)
+    fun show(){
+        sheetHandler.state { show() }
     }
 }
 
@@ -157,15 +178,7 @@ interface WirelessViewModelInterface{
     val permissionHandler: PermissionHandler
     val resultingActivityHandler: ResultingActivityHandler
     val sheeting: Sheeting get() = Sheeting()
-
-    @OptIn(ExperimentalMaterialApi::class)
-    val sheetHandler: SheetHandler
-    get() = SheetHandler(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmStateChange = { false },
-        onVisibilityChange = {}
-    )
+    val mySheeting get() = sheeting
     companion object{
         const val startupNotification = -10000
     }
@@ -190,7 +203,7 @@ fun YorePage(
     CompositionLocalProvider(
         LocalResolver provides wvm.resolver,
         LocalNotificationService provides wvm.notifier,
-        LocalSheetHandler provides wvm.sheetHandler,
+        LocalSheetHandler provides wvm.sheeting.sheetHandler,
         LocalSheeting provides wvm.sheeting
     ) {
         StatusBarColorControl()

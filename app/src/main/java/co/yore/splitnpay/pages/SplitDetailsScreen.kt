@@ -90,12 +90,9 @@ public inline fun <T, R> T?.elseLet(elseBlock: () -> R, block: (T) -> R): R {
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SplitDetailsScreen(
-    sheetHandler: SheetHandler = localSheetHandler(),
-    /*sheets: Sheets = tState<Sheets>(key = DataIds.sheets).value,
-    sheetMap: Map<Sheets,BottomSheetModel> = sheetMap()*/
     sheeting: Sheeting = sheeting()
 ) {
-    val state = sheetHandler.handle()
+    val state = sheeting.sheetHandler.handle()
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
@@ -115,15 +112,7 @@ fun SplitDetailsScreen(
                 }
             ) {
                 sheeting[it]
-                /*when(it){
-                    Sheets.ImagePicker-> photoSelectionBottomSheetModel()
-                    Sheets.BillTotalAndCategories-> billTotalBottomSheetModel()
-                    Sheets.CategoriesEdit-> allCategoriesBottomSheetModel()
-                    Sheets.DatePicker -> expenseDatePickerBottomSheetModel()
-                    else->Text("")
-                }*/
             }
-
         },
         sheetShape = RoundedCornerShape(
             topStart = 25f.dep(),

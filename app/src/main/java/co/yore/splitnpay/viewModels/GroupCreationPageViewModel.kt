@@ -2,18 +2,20 @@ package co.yore.splitnpay.viewModels
 
 import android.Manifest
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -23,17 +25,35 @@ class GroupCreationPageViewModel(
     private val contacts = mutableStateListOf<ContactData>()
     private val profileImage = mutableStateOf<Any?>(null)
     @OptIn(ExperimentalMaterialApi::class)
-    override val sheetHandler = SheetHandler(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmStateChange = {
-            true
-        }
-    )
     override val resultingActivityHandler = ResultingActivityHandler()
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
+    @OptIn(ExperimentalMaterialApi::class)
+    override val sheeting = Sheeting(
+        sheetMap = mapOf(
+            Sheets.ImagePicker to PhotoSelectionBottomSheetModel(
+                object: PhotoSelectionBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun onContinue(arg: Any?) {
+                        mySheeting.hide()
+                        handleCameraOrGallery(arg as? String?:return)
+                    }
+                }
+            )
+        ),
+        onVisibilityChanged = {
+            if(!it){
+                mySheeting.sheets.value = Sheets.None
+            }
+        },
+        confirmStateChange = {
+            true
+        }
+    )
 
     //////////////////////////////////////////
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
@@ -63,9 +83,7 @@ class GroupCreationPageViewModel(
                 }
             }
             DataIds.pickImage->{
-                sheetHandler.state {
-                    show()
-                }
+                mySheeting.show()
             }
             DataIds.groupName->{
                 _groupName.value = (arg as? String)?:""
@@ -118,9 +136,7 @@ class GroupCreationPageViewModel(
 
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
     private fun capturePicture() {
-        sheetHandler.state {
-            hide()
-        }
+        mySheeting.hide()
         viewModelScope.launch {
             val p = Manifest.permission.CAMERA
             val state = permissionHandler.check(p)
@@ -138,9 +154,7 @@ class GroupCreationPageViewModel(
 
     @OptIn(ExperimentalMaterialApi::class)
     private fun takePicture() {
-        sheetHandler.state {
-            hide()
-        }
+        mySheeting.hide()
         viewModelScope.launch {
             val uri = resultingActivityHandler.getContent("image/*")
             profileImage.value = uri

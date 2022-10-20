@@ -12,6 +12,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
@@ -19,11 +20,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
@@ -37,10 +40,105 @@ import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.viewModels.SingleItem
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+class MemberFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
+    interface Callback{
+        fun scope(): CoroutineScope
+        suspend fun getMembers(): List<SingleItem>
+        fun onContinue(index: Int)
+        fun selectedIndex(): Int
+    }
+
+    private val _resolver = Resolver()
+    private var selectedIndex = -1
+    private val _notifier = NotificationService{id,arg->
+        when(id){
+            DataIds.filterMember->{
+                updateAsSelected(arg)
+            }
+            DataIds.filterDone->{
+                callback.onContinue(selectedIndex)
+            }
+        }
+    }
+
+    private fun updateAsSelected(arg: Any?) {
+        if(selectedIndex>-1){
+            members[selectedIndex] = members[selectedIndex].copy(isSelected = false)
+        }
+        if(arg is SingleItem){
+            val index = members.indexOf(arg)
+            if(index > -1){
+                val current = members[index]
+                val selected = !current.isSelected
+                if(selected){
+                    selectedIndex = index
+                }
+                else{
+                    selectedIndex = -1
+                }
+                members[index] = current.copy(isSelected = selected)
+            }
+            else{
+                selectedIndex = -1
+            }
+        }
+        else{
+            selectedIndex = -1
+        }
+    }
+
+    //////////////
+    override val resolver = _resolver
+    override val notifier = _notifier
+    override val scope get() = callback.scope()
+
+    @Composable
+    override fun Content() {
+        MemberFilterBottomSheet()
+    }
+
+    override fun initialize() {
+        clear()
+        scope.launch(Dispatchers.IO) {
+            val m = callback.getMembers()
+            withContext(Dispatchers.Main){
+                members.addAll(m)
+                selectedIndex = callback.selectedIndex()
+
+
+                if(selectedIndex > -1){
+                    val current = members[selectedIndex]
+                    members[selectedIndex] = current.copy(isSelected = true)
+                }
+            }
+        }
+    }
+
+    override fun clear() {
+        members.clear()
+        selectedIndex = -1
+    }
+
+    override fun onBack() {
+
+    }
+    ////////////////
+    private val members = mutableStateListOf<SingleItem>()
+    ////////////////
+    init {
+        _resolver.addAll(
+            DataIds.membersForFiltering to members
+        )
+    }
+}
 
 @Composable
-fun FilterBottomSheet(
+fun MemberFilterBottomSheet(
     list: List<SingleItem> = listState(key = DataIds.membersForFiltering),
     notifier: NotificationService = notifier()
 ) {
@@ -68,9 +166,11 @@ fun FilterBottomSheet(
             lineHeight = 19.sep()
         )
         25.sy()
+        val screenHeight = LocalConfiguration.current.screenHeightDp
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(max = (screenHeight*0.6).dp)
                 .fadingEdge(),
             verticalArrangement = Arrangement.spacedBy(18.dep())
         ) {

@@ -54,7 +54,6 @@ import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.Item
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
 import co.yore.splitnpay.components.configuration.GroupMemberProfilePicsConfiguration
@@ -276,26 +275,26 @@ fun GroupChatScreen(
     groupImageString: String = stringState(key = DataIds.groupImage).value,
     searchText: String = stringState(key = DataIds.searchText).value,
     notifier: NotificationService = notifier(),
-    sheetHandler: SheetHandler = localSheetHandler(),
     searching: Boolean = boolState(key = DataIds.search).value,
-    sheet: Sheets = tState<Sheets>(key = DataIds.sheets).value,
+    sheeting: Sheeting = co.yore.splitnpay.libs.sheeting()
 ) {
-    val sheetState = sheetHandler.handle()
+    val sheetState = sheeting.sheetHandler.handle()
     val scope = rememberCoroutineScope()
     val dep = 1.dep()
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            AnimatedContent(targetState = sheet) {
-                when(it){
+            AnimatedContent(targetState = sheeting.sheets.value) {
+                /*when(it){
                     Sheets.MemberFilter->FilterBottomSheet()
                     Sheets.BillTotalAndCategories -> BillTotalBottomSheet()
                     Sheets.CategoriesEdit -> AllCategoriesBottomSheet()
                     Sheets.SettleSummaryManage -> SettleSummaryManageSheet()
                     Sheets.DatePicker -> ExpenseDatePickerSheet()
                     else-> Text("")
-                }
+                }*/
+                sheeting[it]
             }
         },
         scrimColor = Color(0x8C243257),
@@ -451,71 +450,7 @@ fun GroupChatScreen(
 
 
 
-@Composable
-fun SettleSummaryManageSheet(
-    notifier: NotificationService = notifier()
-) {
-    val itemList = remember {
-        listOf(
-            Item(id = 0, R.drawable.rupee, "Settle"),
-            Item(id = 1, R.drawable.summary, "Summary"),
-            Item(id = 2, R.drawable.manage, "Manage")
-        )
-    }
 
-    val listState = rememberLazyListState()
-    var selectedIndex by remember { mutableStateOf(-1) }
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Icon(
-            modifier = Modifier
-                .padding(top = 21f.dep()),
-            tint = Color.Unspecified,
-            painter = painterResource(id = R.drawable.ic_sheet_holder),
-            contentDescription = "sheet holder"
-        )
-
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .padding(top = 24f.dep())
-                .fillMaxWidth(),
-            contentPadding = PaddingValues(bottom = 20.dep())
-        )
-        {
-            itemsIndexed(items = itemList)
-            { index, _ ->
-
-                co.yore.splitnpay.components.SingleItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onPress = {
-                                    selectedIndex = itemList[index].id
-                                },
-                                onTap = {
-                                    notifier.notify(DataIds.cameraOrGallery, itemList[index].name)
-                                },
-                                onDoubleTap = { },
-                                onLongPress = { }
-                            )
-                        },
-                    icon = painterResource(itemList[index].icon),
-                    text = itemList[index].name,
-                    isSelected = itemList[index].id == selectedIndex
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun ContentUI(

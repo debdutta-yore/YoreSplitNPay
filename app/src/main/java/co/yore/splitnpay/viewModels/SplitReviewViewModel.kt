@@ -2,7 +2,6 @@ package co.yore.splitnpay.viewModels
 
 import android.Manifest
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -82,166 +81,145 @@ class SplitReviewViewModel(
     private val groupRepo: GroupRepository = GroupsMock()
 ) : ViewModel(), WirelessViewModelInterface {
     @OptIn(ExperimentalMaterialApi::class)
-    override val sheetHandler = SheetHandler(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmStateChange = {
-            true
-        },
-        onVisibilityChange = {
-            if(!it){
-                mySheeting().sheets.value = Sheets.None
-            }
-        }
-    )
+
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
-    /////////
     @OptIn(ExperimentalMaterialApi::class)
-    private val photoSelectionBottomSheetModel = PhotoSelectionBottomSheetModel(
-        object: PhotoSelectionBottomSheetModel.Callback{
-            override fun scope(): CoroutineScope {
-                return viewModelScope
-            }
+    override val sheeting = Sheeting(
+        sheetMap = mapOf(
+            Sheets.ImagePicker to PhotoSelectionBottomSheetModel(
+                object: PhotoSelectionBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
 
-            override fun onContinue(arg: Any?) {
-                sheetHandler.state { hide() }
-                handleCameraOrGallery(arg as? String?:return)
+                    override fun onContinue(arg: Any?) {
+                        mySheeting.hide()
+                        handleCameraOrGallery(arg as? String?:return)
+                    }
+                }
+            ),
+            Sheets.BillTotalAndCategories to BillTotalBottomSheetModel(
+                object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
+                    override suspend fun getCategories(): List<Category> {
+                        val categories = groupRepo.getAllCategories().toMutableList()
+                        val index = categories.indexOfFirst { it.id == category.value.id }
+                        if(index!=-1){
+                            categories[index] = categories[index].copy(isSelected = true)
+                        }
+                        return categories
+                    }
+
+                    override suspend fun getBillTotalAmount(): String {
+                        return _billTotal.value.toInt().toString()
+                    }
+
+                    override suspend fun getDescription(): String {
+                        return _subCategoryText.value
+                    }
+
+                    override fun openAllCategories() {
+                        mySheeting.sheets.value = Sheets.CategoriesEdit
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override fun onContinue(
+                        billTotal: String,
+                        billDescription: String,
+                        category: Category
+                    ) {
+                        mySheeting.hide()
+                        _billTotal.value = billTotal.toDouble()
+                        onBillTotalChanged()
+                        this@SplitReviewViewModel.category.value = category
+                        _subCategoryText.value = billDescription
+                    }
+
+                    override fun onRenameContinue(
+                        category: Category,
+                        name: String
+                    ) {
+
+                    }
+
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+                }
+            ),
+            Sheets.CategoriesEdit to AllCategoriesBottomSheetModel(
+                object: AllCategoriesBottomSheetModel.Callback{
+                    override suspend fun getCategories(): List<Category> {
+                        val categories = groupRepo.getAllCategories().toMutableList()
+                        val index = categories.indexOfFirst { it.id == category.value.id }
+                        if(index!=-1){
+                            categories[index] = categories[index].copy(isSelected = true)
+                        }
+                        return categories
+                    }
+
+                    override fun onCategoryAddContinue(name: String) {
+                        mySheeting.hide()
+                    }
+
+                    override fun onCategorySelectedContinue(category: Category) {
+                        mySheeting.hide()
+                        this@SplitReviewViewModel.category.value = category
+                    }
+
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+                }
+            ),
+            Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
+                object: ExpenseDatePickerBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun getDatePickerData(): YoreDatePickerData {
+                        return YoreDatePickerData(
+                            selectedDay = date.value.day,
+                            selectedMonth = date.value.month,
+                            selectedYear = date.value.year
+                        )
+                    }
+
+                    override fun onContinue(
+                        selectedDay: Int,
+                        selectedMonth: Int,
+                        selectedYear: Int
+                    ) {
+                        mySheeting.hide()
+                        date.value = Kal.Date(selectedDay,selectedMonth,selectedYear)
+                        _dateText.value = displayableDate(
+                            date.value.day,
+                            date.value.month,
+                            date.value.year
+                        )
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+                }
+            )
+        ),
+        onVisibilityChanged = {
+            if(!it){
+                mySheeting.sheets.value = Sheets.None
             }
+        },
+        confirmStateChange = {
+            true
         }
     )
-    @OptIn(ExperimentalMaterialApi::class)
-    private val billTotalBottomSheetModel = BillTotalBottomSheetModel(
-        object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
-            override suspend fun getCategories(): List<Category> {
-                val categories = groupRepo.getAllCategories().toMutableList()
-                val index = categories.indexOfFirst { it.id == category.value.id }
-                if(index!=-1){
-                    categories[index] = categories[index].copy(isSelected = true)
-                }
-                return categories
-            }
-
-            override suspend fun getBillTotalAmount(): String {
-                return _billTotal.value.toInt().toString()
-            }
-
-            override suspend fun getDescription(): String {
-                return _subCategoryText.value
-            }
-
-            override fun openAllCategories() {
-                mySheeting().sheets.value = Sheets.CategoriesEdit
-            }
-
-            override fun close() {
-                sheetHandler.state {
-                    hide()
-                }
-            }
-
-            override fun onContinue(
-                billTotal: String,
-                billDescription: String,
-                category: Category
-            ) {
-                sheetHandler.state {
-                    hide()
-                }
-                _billTotal.value = billTotal.toDouble()
-                onBillTotalChanged()
-                this@SplitReviewViewModel.category.value = category
-                _subCategoryText.value = billDescription
-            }
-
-            override fun onRenameContinue(
-                category: Category,
-                name: String
-            ) {
-
-            }
-
-            override fun scope(): CoroutineScope {
-                return viewModelScope
-            }
-        }
-    )
-    @OptIn(ExperimentalMaterialApi::class)
-    private val allCategoriesBottomSheetModel = AllCategoriesBottomSheetModel(
-        object: AllCategoriesBottomSheetModel.Callback{
-            override suspend fun getCategories(): List<Category> {
-                val categories = groupRepo.getAllCategories().toMutableList()
-                val index = categories.indexOfFirst { it.id == category.value.id }
-                if(index!=-1){
-                    categories[index] = categories[index].copy(isSelected = true)
-                }
-                return categories
-            }
-
-            override fun onCategoryAddContinue(name: String) {
-                sheetHandler.state {
-                    hide()
-                }
-            }
-
-            override fun onCategorySelectedContinue(category: Category) {
-                sheetHandler.state {
-                    hide()
-                }
-                this@SplitReviewViewModel.category.value = category
-            }
-
-            override fun scope(): CoroutineScope {
-                return viewModelScope
-            }
-        }
-    )
-    @OptIn(ExperimentalMaterialApi::class)
-    private val datePickerBottomSheetModel = ExpenseDatePickerBottomSheetModel(
-        object: ExpenseDatePickerBottomSheetModel.Callback{
-            override fun scope(): CoroutineScope {
-                return viewModelScope
-            }
-
-            override fun getDatePickerData(): YoreDatePickerData {
-                return YoreDatePickerData(
-                    selectedDay = date.value.day,
-                    selectedMonth = date.value.month,
-                    selectedYear = date.value.year
-                )
-            }
-
-            override fun onContinue(
-                selectedDay: Int,
-                selectedMonth: Int,
-                selectedYear: Int
-            ) {
-                sheetHandler.state {
-                    hide()
-                }
-                date.value = Kal.Date(selectedDay,selectedMonth,selectedYear)
-                _dateText.value = displayableDate(
-                    date.value.day,
-                    date.value.month,
-                    date.value.year
-                )
-            }
-
-            override fun close() {
-                sheetHandler.state { hide() }
-            }
-        }
-    )
-    @OptIn(ExperimentalMaterialApi::class)
-    override val sheeting = Sheeting(mapOf(
-        Sheets.ImagePicker to photoSelectionBottomSheetModel,
-        Sheets.BillTotalAndCategories to billTotalBottomSheetModel,
-        Sheets.CategoriesEdit to allCategoriesBottomSheetModel,
-        Sheets.DatePicker to datePickerBottomSheetModel
-    ))
-    fun mySheeting(): Sheeting = sheeting
     private fun onBillTotalChanged() {
         updateAsSelectedListOption()
         updateAsMemberSelection()
@@ -277,9 +255,9 @@ class SplitReviewViewModel(
                 receipt.value = null
             }
             "${DataIds.back}split_review_page"->{
-                when(mySheeting().sheets.value){
-                    Sheets.BillTotalAndCategories -> mySheeting().model(Sheets.BillTotalAndCategories)?.onBack()
-                    Sheets.DatePicker -> mySheeting().model(Sheets.DatePicker)?.onBack()
+                when(mySheeting.sheets.value){
+                    Sheets.BillTotalAndCategories -> mySheeting.model(Sheets.BillTotalAndCategories)?.onBack()
+                    Sheets.DatePicker -> mySheeting.model(Sheets.DatePicker)?.onBack()
                     else->pageBack()
                 }
             }
@@ -352,10 +330,8 @@ class SplitReviewViewModel(
 
             }
             DataIds.dateClick -> {
-                mySheeting().sheets.value = Sheets.DatePicker
-                sheetHandler.state {
-                    show()
-                }
+                mySheeting.sheets.value = Sheets.DatePicker
+                mySheeting.show()
             }
             DataIds.receiptClick -> {
                 showCameraOrGallery()
@@ -413,18 +389,14 @@ class SplitReviewViewModel(
 
     @OptIn(ExperimentalMaterialApi::class)
     private fun openBillTotalBottomSheet() {
-        mySheeting().sheets.value = Sheets.BillTotalAndCategories
-        sheetHandler.state {
-            show()
-        }
+        mySheeting.sheets.value = Sheets.BillTotalAndCategories
+        mySheeting.show()
     }
 
     @OptIn(ExperimentalMaterialApi::class)
     private fun showCameraOrGallery() {
-        mySheeting().sheets.value = Sheets.ImagePicker
-        sheetHandler.state {
-            show()
-        }
+        mySheeting.sheets.value = Sheets.ImagePicker
+        mySheeting.show()
     }
 
     private fun handleCameraOrGallery(arg: String) {
@@ -440,9 +412,7 @@ class SplitReviewViewModel(
 
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
     private fun capturePicture() {
-        sheetHandler.state {
-            hide()
-        }
+        mySheeting.hide()
         viewModelScope.launch {
             val p = Manifest.permission.CAMERA
             val state = permissionHandler.check(p)
@@ -457,12 +427,8 @@ class SplitReviewViewModel(
             }
         }
     }
-
-    @OptIn(ExperimentalMaterialApi::class)
     private fun takePicture() {
-        sheetHandler.state {
-            hide()
-        }
+        mySheeting.hide()
         viewModelScope.launch {
             val uri = resultingActivityHandler.getContent("image/*")
             receipt.value = uri

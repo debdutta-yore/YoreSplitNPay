@@ -1,33 +1,27 @@
-package co.yore.splitnpay.components
+package co.yore.splitnpay.components.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.BottomSheetModel
+import co.yore.splitnpay.libs.NotificationService
+import co.yore.splitnpay.libs.Resolver
+import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.Item
 import kotlinx.coroutines.CoroutineScope
 
-class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
+
+class SettleSummaryManageBottomSheetModel(val callback: Callback): BottomSheetModel {
     interface Callback{
         fun scope(): CoroutineScope
         fun onContinue(arg: Any?)
@@ -35,7 +29,7 @@ class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
     private val _resolver = Resolver()
     private val _notifier = NotificationService{id,arg->
         when(id){
-            DataIds.cameraOrGallery->{
+            DataIds.settleSummaryManage->{
                 callback.onContinue(arg)
             }
         }
@@ -46,7 +40,7 @@ class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
     override val scope get() = callback.scope()
     @Composable
     override fun Content() {
-        PhotoSelectionBottomSheet()
+        SettleSummaryManageSheet()
     }
 
     override fun initialize() {
@@ -63,16 +57,15 @@ class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
     /////////////////////////
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PhotoSelectionBottomSheet(
-    notifier: NotificationService = notifier()
+fun SettleSummaryManageSheet(
+    notifier: NotificationService = co.yore.splitnpay.libs.notifier()
 ) {
-
     val itemList = remember {
         listOf(
-            Item(id = 0, R.drawable.ic_camera_blue, "Camera"),
-            Item(id = 1, R.drawable.ic_gallery_blue, "Gallery")
+            co.yore.splitnpay.models.Item(id = 0, R.drawable.rupee, "Settle"),
+            co.yore.splitnpay.models.Item(id = 1, R.drawable.summary, "Summary"),
+            co.yore.splitnpay.models.Item(id = 2, R.drawable.manage, "Manage")
         )
     }
 
@@ -83,13 +76,13 @@ fun PhotoSelectionBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height((231f - 46f).dep()),
+            .wrapContentHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Icon(
             modifier = Modifier
-                .padding(top = 20f.dep()),
+                .padding(top = 21f.dep()),
             tint = Color.Unspecified,
             painter = painterResource(id = R.drawable.ic_sheet_holder),
             contentDescription = "sheet holder"
@@ -99,13 +92,14 @@ fun PhotoSelectionBottomSheet(
             state = listState,
             modifier = Modifier
                 .padding(top = 24f.dep())
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(bottom = 20.dep())
         )
         {
             itemsIndexed(items = itemList)
             { index, _ ->
 
-                SingleItem(
+                co.yore.splitnpay.components.SingleItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .pointerInput(Unit) {
@@ -114,7 +108,7 @@ fun PhotoSelectionBottomSheet(
                                     selectedIndex = itemList[index].id
                                 },
                                 onTap = {
-                                    notifier.notify(DataIds.cameraOrGallery, itemList[index].name)
+                                    notifier.notify(DataIds.settleSummaryManage, itemList[index].name)
                                 },
                                 onDoubleTap = { },
                                 onLongPress = { }
@@ -124,66 +118,6 @@ fun PhotoSelectionBottomSheet(
                     text = itemList[index].name,
                     isSelected = itemList[index].id == selectedIndex
                 )
-            }
-        }
-    }
-}
-
-
-@Composable
-fun SingleItem(
-    modifier: Modifier = Modifier,
-    icon: Painter, text: String,
-    isSelected: Boolean = false
-) {
-    Row(
-        modifier = modifier
-            .background(
-                if (isSelected)
-                    Color(237, 245, 255) else Color.White
-            )
-            .padding(start = 31f.dep())
-            .fillMaxWidth()
-            .height(49f.dep())
-            ,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Icon(
-                modifier = Modifier.size(18.dp),
-                tint = Color(26, 121, 229),
-                painter = icon, contentDescription = "selected photo icon"
-            )
-            Spacer(modifier = Modifier.width(15f.dep()))
-            Text(
-                text = text,
-                color = Color(36, 50, 87),
-                fontSize = 14.sp,
-                fontWeight = FontWeight(700)
-            )
-        }
-
-        if (isSelected) {
-            Box(
-                modifier = Modifier
-                    .height(49.dep())
-                    .width(16.dep())
-                    .offset(x = 8.dep())
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 6.dep(),
-                            bottomStart = 6.dep()
-                        )
-                    )
-                    .background(Color(0xff1A79E5))
-            ){
-
             }
         }
     }

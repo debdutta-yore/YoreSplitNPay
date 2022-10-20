@@ -27,9 +27,9 @@ import co.yore.splitnpay.ui.theme.robotoFonts
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GroupCreationScreen(
-    sheetHandler: SheetHandler = localSheetHandler()
+    sheeting: Sheeting = sheeting()
 ) {
-    val state = sheetHandler.handle()
+    val state = sheeting.sheetHandler.handle()
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
@@ -43,11 +43,6 @@ fun GroupCreationScreen(
     ) {
         GroupCreationPageContent()
     }
-}
-
-@Composable
-fun NoUi() {
-    Text("")
 }
 
 @Composable

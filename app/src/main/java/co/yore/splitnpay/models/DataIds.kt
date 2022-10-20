@@ -1,6 +1,15 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    willPaySettleClick,
+    willGetSettleClick,
+    willGetPayTab,
+    settlePayTotal,
+    settleGetTotal,
+    isWillPayTransactionSelected,
+    isWillGetTransactionSelected,
+    selectSettlePayMembers,
+    selectSettleGetMembers,
     photoSelectionBottomSheetModel,
     expenseDateContinue,
     expenseDatePickerBottomSheetModel,

@@ -2,22 +2,86 @@ package co.yore.splitnpay.viewModels
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.YoreDatePickerData
+import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.pages.GroupChatTab
+import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.viewModels.MembersMock.transaction
+import com.rudra.yoresplitbill.ui.split.groupchat.settle.SettleBottomSheetModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+interface SettleRepository {
+    suspend fun getWillGet(): List<Transaction>
+    suspend fun getWillPay(): List<Transaction>
+}
 
+class SettleRepositoryImpl: SettleRepository {
+    private val getList = listOf(
+        Transaction(
+            name = "You",
+            imageUrl = "https://i.pravatar.cc/300",
+            mobileNumber = "9563376942",
+            amount = 3000f,
+            transactionType = TransactionType.Paid
+        ),
+        Transaction(
+            name = "Sushil Roy",
+            imageUrl = "https://i.pravatar.cc/300",
+            mobileNumber = "9563376942",
+            amount = 1000f,
+            transactionType = TransactionType.Paid
+        ),
+        Transaction(
+            name = "Manisha Roy",
+            imageUrl = "https://i.pravatar.cc/300",
+            mobileNumber = "9563376942",
+            amount = 500f,
+            transactionType = TransactionType.Unspecified
+        ),
+        Transaction(
+            name = "Sanjanaa Ray",
+            imageUrl = "https://i.pravatar.cc/300",
+            mobileNumber = "9563376942",
+            amount = 0f,
+            transactionType = TransactionType.Unspecified
+        )
+    )
+
+    private val payList = listOf(
+        Transaction(
+            name = "You",
+            imageUrl = "https://i.pravatar.cc/300",
+            mobileNumber = "9563376942",
+            amount = 3000f,
+            transactionType = TransactionType.Paid
+        ),
+        Transaction(
+            name = "Sushil Roy",
+            imageUrl = "https://i.pravatar.cc/300",
+            mobileNumber = "9563376942",
+            amount = 100000f,
+            transactionType = TransactionType.Paid
+        )
+    )
+
+    override suspend fun getWillGet(): List<Transaction> {
+        return getList
+    }
+
+    override suspend fun getWillPay(): List<Transaction> {
+        return payList
+    }
+}
 object MembersMock {
     val transaction = BillTransaction(
         transactionType = TransactionType.Received,
@@ -46,6 +110,7 @@ interface GroupRepository {
     suspend fun getCategories(): List<Category>
     suspend fun getAllCategories(): List<Category>
     suspend fun getBillTransactions(number: Int): List<BillTransaction>
+    suspend fun members(): List<SingleItem>
 }
 
 class GroupsMock : GroupRepository {
@@ -116,6 +181,46 @@ class GroupsMock : GroupRepository {
     override suspend fun getAllCategories(): List<Category> {
         return categoryList
     }
+
+    override suspend fun members(): List<SingleItem>{
+        return listOf(
+            SingleItem(
+                id = 1,
+                profilePic = R.drawable.ic_profilepic1,
+                userName = "You",
+                mobileNo = "9563376942",
+                isSelected = false
+            ),
+            SingleItem(
+                id = 2,
+                profilePic = R.drawable.ic_profilepic1,
+                userName = "Manisha Roy",
+                mobileNo = "9563376942",
+                isSelected = false
+            ),
+            SingleItem(
+                id = 3,
+                profilePic = R.drawable.ic_profilepic1,
+                userName = "Sushil Roy",
+                mobileNo = "9563376942",
+                isSelected = false
+            ),
+            SingleItem(
+                id = 4,
+                profilePic = R.drawable.ic_profilepic1,
+                userName = "Sanjana Ray",
+                mobileNo = "9563376942",
+                isSelected = false
+            ),
+            SingleItem(
+                id = 5,
+                profilePic = R.drawable.ic_profilepic1,
+                userName = "Ankita Ray",
+                mobileNo = "9563376942",
+                isSelected = false
+            ),
+        )
+    }
 }
 
 data class GroupCreationEvent(
@@ -162,71 +267,177 @@ data class SingleItem(
 )
 
 class GroupChatViewModel(
-    private val repo: GroupRepository = GroupsMock()
+    private val repo: GroupRepository = GroupsMock(),
+    private val settleRepository: SettleRepository = SettleRepositoryImpl(),
 ) : ViewModel(), WirelessViewModelInterface {
-    val list = listOf(
-        SingleItem(
-            id = 1,
-            profilePic = R.drawable.ic_profilepic1,
-            userName = "You",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-        SingleItem(
-            id = 2,
-            profilePic = R.drawable.ic_profilepic1,
-            userName = "Manisha Roy",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-        SingleItem(
-            id = 3,
-            profilePic = R.drawable.ic_profilepic1,
-            userName = "Sushil Roy",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-        SingleItem(
-            id = 4,
-            profilePic = R.drawable.ic_profilepic1,
-            userName = "Sanjana Ray",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-        SingleItem(
-            id = 5,
-            profilePic = R.drawable.ic_profilepic1,
-            userName = "Ankita Ray",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-    )
+
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
 
-    @OptIn(ExperimentalMaterialApi::class)
-    override val sheetHandler = SheetHandler(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
+    private val selectedMember = mutableStateOf<Int>(-1)
+
+    override val sheeting = Sheeting(
+        sheetMap = mapOf(
+            Sheets.BillTotalAndCategories to BillTotalBottomSheetModel(
+                object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
+                    override suspend fun getCategories(): List<Category> {
+                        val categories = repo.getAllCategories().toMutableList()
+                        categories[0] = categories[0].copy(isSelected = true)
+                        return categories
+                    }
+
+                    override suspend fun getBillTotalAmount(): String {
+                        return ""
+                    }
+
+                    override suspend fun getDescription(): String {
+                        return ""
+                    }
+
+                    override fun openAllCategories() {
+                        mySheeting.sheets.value = Sheets.CategoriesEdit
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override fun onContinue(
+                        billTotal: String,
+                        billDescription: String,
+                        category: Category
+                    ) {
+                        mySheeting.sheets.value = Sheets.DatePicker
+                    }
+
+                    override fun onRenameContinue(
+                        category: Category,
+                        name: String
+                    ) {
+
+                    }
+
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+                }
+            ),
+            Sheets.SettleSummaryManage to SettleSummaryManageBottomSheetModel(
+                object: SettleSummaryManageBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun onContinue(arg: Any?) {
+                        mySheeting.hide()
+                        when(arg){
+                            "Manage"->navigation.scope { navHostController, lifecycleOwner, toaster ->
+                                navHostController.navigate("group_manage")
+                            }
+                        }
+                    }
+                }
+            ),
+            Sheets.MemberFilter to MemberFilterBottomSheetModel(
+                object: MemberFilterBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override suspend fun getMembers(): List<SingleItem> {
+                        return repo.members()
+                    }
+
+                    override fun onContinue(index: Int) {
+                        selectedMember.value = index
+                        mySheeting.hide()
+                    }
+
+                    override fun selectedIndex(): Int {
+                        return selectedMember.value
+                    }
+
+                }
+            ),
+            Sheets.CategoriesEdit to AllCategoriesBottomSheetModel(
+                object: AllCategoriesBottomSheetModel.Callback{
+                    override suspend fun getCategories(): List<Category> {
+                        val categories = repo.getAllCategories().toMutableList()
+                        categories[0] = categories[0].copy(isSelected = true)
+                        return categories
+                    }
+
+                    override fun onCategoryAddContinue(name: String) {
+                        mySheeting.hide()
+                    }
+
+                    override fun onCategorySelectedContinue(category: Category) {
+                        mySheeting.sheets.value = Sheets.DatePicker
+                    }
+
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+                }
+            ),
+            Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
+                object: ExpenseDatePickerBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun getDatePickerData(): YoreDatePickerData {
+                        return YoreDatePickerData()
+                    }
+
+                    override fun onContinue(
+                        selectedDay: Int,
+                        selectedMonth: Int,
+                        selectedYear: Int
+                    ) {
+                        mySheeting.hide()
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+                }
+            ),
+            Sheets.Settle to SettleBottomSheetModel(
+                object: SettleBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override suspend fun getGetStat(): List<Transaction> {
+                        return settleRepository.getWillGet()
+                    }
+
+                    override suspend fun getPayStat(): List<Transaction> {
+                        return settleRepository.getWillPay()
+                    }
+                }
+            )
+        ),
+        onVisibilityChanged = {
+            onSheetVisibilityChange(it)
+        },
         confirmStateChange = {
             confirmSheetStateChange()
-        },
-        onVisibilityChange = {
-            onSheetVisibilityChange(it)
         }
     )
 
     fun onSheetVisibilityChange(visible: Boolean){
         if(!visible){
-            _sheets.value = Sheets.None
+            mySheeting.sheets.value = Sheets.None
         }
     }
 
     @OptIn(ExperimentalMaterialApi::class)
     private fun confirmSheetStateChange(): Boolean {
-        if(_sheets.value==Sheets.MemberFilter){
+        if(mySheeting.sheets.value==Sheets.MemberFilter){
             return false
         }
         return true
@@ -244,58 +455,23 @@ class GroupChatViewModel(
     private val _filteredMemberName = mutableStateOf("Manisha Roy")
     private val _chatMessage = mutableStateOf("")
     private val _searchText = mutableStateOf("")
-    private val _list = mutableStateListOf<SingleItem>()
     private val _typingMembers = mutableStateListOf<Any?>()
     private val searchText = mutableStateOf("")
     private val search = mutableStateOf(false)
     private val groupChatTab = mutableStateOf(GroupChatTab.All)
-    private val _sheets = mutableStateOf(Sheets.None)
-    private val canProceedWithBillTotal = mutableStateOf(false)
-    private val capProceedWithCategory = mutableStateOf(false)
-    /////////////////
-    private val displayDate = mutableStateOf("")
-    private val canProceedWithDate = mutableStateOf(false)
-    private val yoreDatePickerData = mutableStateOf(YoreDatePickerData())
 
     /////////////////////////////////////////
-    private val _categories = mutableStateListOf<Category>()
-    //private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
-    private val _billTotalAmount = mutableStateOf("")
-    private val _billTotalDescription = mutableStateOf("")
-    private val _renamePressed = mutableStateOf(-1)
-
-    //////////////////////////////////////////
-    private val _allCategories = mutableStateListOf<Category>()
-    private val _isAddCategoryEnabled = mutableStateOf(false)
-    private val _addCategoryName = mutableStateOf("")
     //////////////////////////////////////////
     private var prevSelectedIndex = -1
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
-            DataIds.year->{
-                yoreDatePickerData.value = yoreDatePickerData.value.copy(selectedYear = arg as? Int?:return@NotificationService)
-                onDateChange()
-            }
-            DataIds.month->{
-                yoreDatePickerData.value = yoreDatePickerData.value.copy(selectedMonth = arg as? Int?:return@NotificationService)
-                onDateChange()
-            }
-            DataIds.day->{
-                yoreDatePickerData.value = yoreDatePickerData.value.copy(selectedDay = arg as? Int?:return@NotificationService)
-                onDateChange()
-            }
             DataIds.settleSummaryManage->{
-                _sheets.value = Sheets.SettleSummaryManage
-                sheetHandler.state {
-                    show()
-                }
+                mySheeting.sheets.value = Sheets.SettleSummaryManage
+                mySheeting.show()
             }
             "${DataIds.back}group_chat_page"->{
-                sheetHandler.state {
-                    this.isVisible
-                    hide()
-                }
+                mySheeting.hide()
             }
             DataIds.searchTextInput->{
                 searchText.value = arg as? String?:return@NotificationService
@@ -308,29 +484,13 @@ class GroupChatViewModel(
                 _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
             }
             DataIds.filterDone->{
-                sheetHandler.state {
-                    hide()
-                }
+                mySheeting.hide()
             }
             DataIds.split->{
-                _sheets.value = Sheets.BillTotalAndCategories
-                sheetHandler.state {
-                    show()
-                }
+                mySheeting.sheets.value = Sheets.BillTotalAndCategories
+                mySheeting.show()
             }
-            DataIds.filterMember->{
-                if(prevSelectedIndex>-1){
-                    _list[prevSelectedIndex] = _list[prevSelectedIndex].copy(isSelected = false)
-                }
-                if(arg is SingleItem){
-                    val index = _list.indexOf(arg)
-                    if(index > -1){
-                        val current = _list[index]
-                        prevSelectedIndex = index
-                        _list[index] = current.copy(isSelected = !current.isSelected)
-                    }
-                }
-            }
+
             WirelessViewModelInterface.startupNotification -> {
                 _statusBarColor.value = StatusBarColor(
                     color = StatusBarGreen,
@@ -355,15 +515,12 @@ class GroupChatViewModel(
                 _groupAmount.value = (arg as? Float) ?: 0f
             }
             DataIds.filter -> {
-                _sheets.value = Sheets.MemberFilter
-                sheetHandler.state {
-                    show()
-                }
+                mySheeting.sheets.value = Sheets.MemberFilter
+                mySheeting.show()
             }
             DataIds.settleClick -> {
-                /*navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("settle_sheet")
-                }*/
+                mySheeting.sheets.value = Sheets.Settle
+                mySheeting.show()
             }
             DataIds.summaryClick -> {
                 /*navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -388,99 +545,17 @@ class GroupChatViewModel(
                 }*/
             }
             ////////
-            DataIds.categorySelectionClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    withContext(Dispatchers.Main) {
-                        for(i in 0 until _categories.size){
-                            _categories[i] =
-                                _categories[i].copy(isSelected = false)
-                        }
-                        val index = arg as Int
-                        _categories[index] =
-                            _categories[index].copy(isSelected = !_categories[index].isSelected)
-                    }
-                }
-            }
-            DataIds.categoryEditSelectionClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    withContext(Dispatchers.Main) {
-                        for(i in 0 until _allCategories.size){
-                            _allCategories[i] =
-                                _allCategories[i].copy(isSelected = false)
-                        }
-                        val index = arg as Int
-                        _allCategories[index] =
-                            _allCategories[index].copy(isSelected = !_allCategories[index].isSelected)
-                    }
-                }
-            }
-            DataIds.billTotalAmount -> {
-                _billTotalAmount.value = (arg as? String) ?: ""
-                canProceedWithBillTotal.value = try {
-                    _billTotalAmount.value.toInt()>0
-                } catch (_: Exception) {
-                    false
-                }
-            }
-            DataIds.billTotalDescription -> {
-                _billTotalDescription.value = (arg as? String) ?: ""
-            }
-            DataIds.renamePressed -> {
-                _renamePressed.value = (arg as? Int) ?: -1
-            }
+
             DataIds.openAllCategories -> {
-                _sheets.value = Sheets.CategoriesEdit
+                mySheeting.sheets.value = Sheets.CategoriesEdit
             }
             DataIds.billTotalContinueClick -> {
-                _sheets.value = Sheets.DatePicker
-            }
-            DataIds.isAddCategoryEnabled -> {
-                _isAddCategoryEnabled.value = !_isAddCategoryEnabled.value
-            }
-            DataIds.addCategoryName -> {
-                _addCategoryName.value = (arg as? String) ?: ""
+                mySheeting.sheets.value = Sheets.DatePicker
             }
         }
     }
 
-    private fun onDateChange() {
-        val y = yoreDatePickerData.value.selectedYear
-        val m = yoreDatePickerData.value.selectedMonth
-        val d = yoreDatePickerData.value.selectedDay
-        if(d != null && m != null){
-            displayDate.value = displayableDate(d,m,y)
-            canProceedWithDate.value = true
-        }
-        else{
-            displayDate.value = ""
-            canProceedWithDate.value = false
-        }
-    }
 
-    private fun displayableDate(d: Int, m: Int, y: Int): String {
-        val ordinal = when(d%10){
-            1-> "st"
-            2-> "nd"
-            3-> "rd"
-            else-> "th"
-        }
-        val month = when(m){
-            1-> "Jan"
-            2-> "Feb"
-            3-> "Mar"
-            4-> "Apr"
-            5-> "May"
-            6-> "Jun"
-            7-> "Jul"
-            8-> "Aug"
-            9-> "Sep"
-            10-> "Oct"
-            11-> "Nov"
-            12-> "Dec"
-            else-> ""
-        }
-        return "$d$ordinal $month, $y"
-    }
     /////////////////////////////////////////
 
     init {
@@ -496,53 +571,24 @@ class GroupChatViewModel(
             DataIds.filteredMemberImage to _filteredMemberImage,
             DataIds.chatMessage to _chatMessage,
             DataIds.searchText to _searchText,
-            DataIds.membersForFiltering to _list,
             DataIds.typingMembers to _typingMembers,
             DataIds.search to search,
             DataIds.groupChantTab to groupChatTab,
             ////////
-            DataIds.categories to _categories,
             DataIds.statusBarColor to _statusBarColor,
-            DataIds.billTotalAmount to _billTotalAmount,
-            DataIds.billTotalDescription to _billTotalDescription,
-            DataIds.renamePressed to _renamePressed,
-            ////////////
-            DataIds.allCategories to _allCategories,
-            DataIds.isAddCategoryEnabled to _isAddCategoryEnabled,
-            DataIds.addCategoryName to _addCategoryName,
             ///////////////
-            DataIds.sheets to _sheets,
-            DataIds.canProceedWithBillTotal to canProceedWithBillTotal,
-            DataIds.canProceedWithCategory to capProceedWithCategory,
-            DataIds.displayDate to displayDate,
-            DataIds.canProceedWithDate to canProceedWithDate,
-            DataIds.yoreDatePickerData to yoreDatePickerData,
+            DataIds.canProceedWithBillTotal to DataIds.canProceedWithBillTotal,
+            DataIds.displayDate to DataIds.displayDate,
+            DataIds.canProceedWithDate to DataIds.canProceedWithDate,
+            DataIds.yoreDatePickerData to DataIds.yoreDatePickerData,
         )
         //////////////////////////////////////
-        viewModelScope.launch(Dispatchers.IO) {
-            val categoriesList = repo.getCategories()
-            withContext(Dispatchers.Main) {
-                _categories.addAll(
-                    categoriesList
-                )
-            }
-        }
 
         _statusBarColor.value = StatusBarColor(
             color = StatusBarGreen,
             darkIcons = true
         )
-        ///////////////////////////////////////
-        viewModelScope.launch(Dispatchers.IO) {
-            val members = repo.getAllCategories()
-            withContext(Dispatchers.Main) {
-                _allCategories.addAll(
-                    members
-                )
-            }
-        }
         //////////////////////////////////////
-        _list.addAll(list)
         viewModelScope.launch(Dispatchers.IO) {
             val billTransactions = repo.getBillTransactions()
             withContext(Dispatchers.Main) {
