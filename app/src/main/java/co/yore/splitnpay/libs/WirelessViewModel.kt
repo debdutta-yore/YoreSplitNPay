@@ -2,12 +2,15 @@ package co.yore.splitnpay.libs
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
+import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.pages.BackHandle
+import co.yore.splitnpay.pages.elseLet
 
 class Resolver{
     private val _map: MutableMap<Any,Any?> = mutableMapOf()
@@ -123,12 +126,38 @@ fun notifier(): NotificationService {
     return LocalNotificationService.current
 }
 
+val LocalSheetMap = compositionLocalOf { mapOf<Sheets,BottomSheetModel>() }
+val LocalSheeting = compositionLocalOf { Sheeting() }
+
+@Composable
+fun sheetMap(): Map<Sheets, BottomSheetModel>{
+    return LocalSheetMap.current
+}
+@Composable
+fun sheeting(): Sheeting{
+    return LocalSheeting.current
+}
+class Sheeting(
+    private val sheetMap: Map<Sheets,BottomSheetModel> = emptyMap()
+){
+    private val _sheets = mutableStateOf(Sheets.None)
+    val sheets get() = _sheets
+    val map get() = sheetMap
+    fun model(sheet: Sheets) = sheetMap[sheet]
+    @Composable
+    operator fun get(sheet: Sheets){
+        return sheetMap[sheet].elseLet(elseBlock = { Text("") }) { it() }
+    }
+}
+
 interface WirelessViewModelInterface{
     val resolver: Resolver
     val notifier: NotificationService
     val navigation: MutableState<UIScope?>
     val permissionHandler: PermissionHandler
     val resultingActivityHandler: ResultingActivityHandler
+    val sheeting: Sheeting get() = Sheeting()
+
     @OptIn(ExperimentalMaterialApi::class)
     val sheetHandler: SheetHandler
     get() = SheetHandler(
@@ -161,7 +190,8 @@ fun YorePage(
     CompositionLocalProvider(
         LocalResolver provides wvm.resolver,
         LocalNotificationService provides wvm.notifier,
-        LocalSheetHandler provides wvm.sheetHandler
+        LocalSheetHandler provides wvm.sheetHandler,
+        LocalSheeting provides wvm.sheeting
     ) {
         StatusBarColorControl()
         content()

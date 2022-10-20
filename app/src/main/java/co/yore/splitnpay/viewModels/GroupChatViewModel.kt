@@ -252,6 +252,7 @@ class GroupChatViewModel(
     private val _sheets = mutableStateOf(Sheets.None)
     private val canProceedWithBillTotal = mutableStateOf(false)
     private val capProceedWithCategory = mutableStateOf(false)
+    /////////////////
     private val displayDate = mutableStateOf("")
     private val canProceedWithDate = mutableStateOf(false)
     private val yoreDatePickerData = mutableStateOf(YoreDatePickerData())

@@ -39,11 +39,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AllCategoriesBottomSheetModel(val callback: Callback): BottomSheetModel{
+class AllCategoriesBottomSheetModel(
+    val callback: Callback
+): BottomSheetModel{
     interface Callback{
         suspend fun getCategories(): List<Category>
         fun onCategoryAddContinue(name: String)
         fun onCategorySelectedContinue(category: Category)
+        fun scope(): CoroutineScope
     }
     private val _resolver = Resolver()
     private val _notifier = NotificationService { id, arg ->
@@ -94,10 +97,15 @@ class AllCategoriesBottomSheetModel(val callback: Callback): BottomSheetModel{
 
     override val resolver = _resolver
     override val notifier = _notifier
+    override val scope get() = callback.scope()
+    @Composable
+    override fun Content() {
+        AllCategoriesBottomSheet()
+    }
 
     override fun initialize() {
         clear()
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch(Dispatchers.IO) {
             val categories = callback.getCategories()
             withContext(Dispatchers.Main){
                 _allCategories.addAll(categories)

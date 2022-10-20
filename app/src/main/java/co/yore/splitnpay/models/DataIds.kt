@@ -1,6 +1,9 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    photoSelectionBottomSheetModel,
+    expenseDateContinue,
+    expenseDatePickerBottomSheetModel,
     allCategoriesContinue,
     deleteReceipt,
     category,

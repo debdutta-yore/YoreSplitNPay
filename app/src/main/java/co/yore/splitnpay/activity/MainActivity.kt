@@ -3,7 +3,6 @@ package co.yore.splitnpay.activity
 import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,7 +34,6 @@ class MainActivity : ComponentActivity() {
             contentView.getWindowVisibleDisplayFrame(r)
             val screenHeight = contentView.rootView.height
             val keypadHeight = screenHeight - r.bottom
-            Log.d("ffdjflfd","$keypadHeight")
             minBottomHeight = min(minBottomHeight, keypadHeight)
             bottomHeight.value = keypadHeight - minBottomHeight
         }

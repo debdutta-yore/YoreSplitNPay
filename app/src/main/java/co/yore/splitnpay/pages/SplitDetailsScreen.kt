@@ -55,7 +55,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.PhotoSelectionBottomSheet
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.configuration.TopbarWithIconConfiguration
 import co.yore.splitnpay.demos.sx
@@ -70,23 +69,38 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rudra.yoresplitbill.common.dashedBorder
 import kotlinx.coroutines.launch
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
+@OptIn(ExperimentalContracts::class)
+public inline fun <T, R> T?.elseLet(elseBlock: () -> R, block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return if(this==null){
+        elseBlock()
+    }
+    else{
+        block(this)
+    }
 
+}
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SplitDetailsScreen(
     sheetHandler: SheetHandler = localSheetHandler(),
-    sheets: Sheets = tState<Sheets>(key = DataIds.sheets).value,
-    billTotalBottomSheetModel: BillTotalBottomSheetModel = t(DataIds.billTotalBottomSheetModel),
-    allCategoriesBottomSheetModel: AllCategoriesBottomSheetModel = t(DataIds.allCategories)
+    /*sheets: Sheets = tState<Sheets>(key = DataIds.sheets).value,
+    sheetMap: Map<Sheets,BottomSheetModel> = sheetMap()*/
+    sheeting: Sheeting = sheeting()
 ) {
     val state = sheetHandler.handle()
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
             AnimatedContent(
-                targetState = sheets,
+                targetState = sheeting.sheets.value,
                 transitionSpec = {
                     fadeIn(
                         animationSpec = tween(500, delayMillis = 90)
@@ -100,13 +114,14 @@ fun SplitDetailsScreen(
                     )
                 }
             ) {
-                when(it){
-                    Sheets.ImagePicker-> PhotoSelectionBottomSheet()
-                    Sheets.BillTotalAndCategories-> billTotalBottomSheetModel.provide { BillTotalBottomSheet() }
-                    Sheets.CategoriesEdit-> allCategoriesBottomSheetModel.provide { AllCategoriesBottomSheet() }
-                    Sheets.DatePicker -> ExpenseDatePickerSheet()
+                sheeting[it]
+                /*when(it){
+                    Sheets.ImagePicker-> photoSelectionBottomSheetModel()
+                    Sheets.BillTotalAndCategories-> billTotalBottomSheetModel()
+                    Sheets.CategoriesEdit-> allCategoriesBottomSheetModel()
+                    Sheets.DatePicker -> expenseDatePickerBottomSheetModel()
                     else->Text("")
-                }
+                }*/
             }
 
         },

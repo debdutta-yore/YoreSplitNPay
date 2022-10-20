@@ -65,7 +65,9 @@ import kotlinx.coroutines.launch
 
 
 
-class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback): BottomSheetModel{
+class BillTotalBottomSheetModel(
+    val callback: BillTotalBottomSheetModelCallback
+): BottomSheetModel{
     interface BillTotalBottomSheetModelCallback{
         suspend fun getCategories(): List<Category>
         suspend fun getBillTotalAmount(): String
@@ -82,6 +84,8 @@ class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback)
             category: Category,
             name: String
         )
+
+        fun scope(): CoroutineScope
     }
     private val _resolver = Resolver()
     private val _notifier = NotificationService{id,arg->
@@ -145,10 +149,16 @@ class BillTotalBottomSheetModel(val callback: BillTotalBottomSheetModelCallback)
     }
     override val resolver get() = _resolver
     override val notifier get() = _notifier
+    override val scope get() = callback.scope()
+    @Composable
+    override fun Content() {
+        BillTotalBottomSheet()
+    }
+
     ////////////////
     override fun initialize(){
         clear()
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch(Dispatchers.IO) {
             _categories.addAll(callback.getCategories())
             _billTotalAmount.value = callback.getBillTotalAmount()
             _billTotalDescription.value = callback.getDescription()

@@ -22,10 +22,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.libs.NotificationService
-import co.yore.splitnpay.libs.dep
-import co.yore.splitnpay.libs.notifier
+import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
+import kotlinx.coroutines.CoroutineScope
+
+class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
+    interface Callback{
+        fun scope(): CoroutineScope
+        fun onContinue(arg: Any?)
+    }
+    private val _resolver = Resolver()
+    private val _notifier = NotificationService{id,arg->
+        when(id){
+            DataIds.cameraOrGallery->{
+                callback.onContinue(arg)
+            }
+        }
+    }
+    //////////////////
+    override val resolver = _resolver
+    override val notifier = _notifier
+    override val scope get() = callback.scope()
+    @Composable
+    override fun Content() {
+        PhotoSelectionBottomSheet()
+    }
+
+    override fun initialize() {
+
+    }
+
+    override fun clear() {
+
+    }
+
+    override fun onBack() {
+
+    }
+    /////////////////////////
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
