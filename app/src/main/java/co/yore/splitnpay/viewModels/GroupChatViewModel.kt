@@ -9,13 +9,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
+import co.yore.splitnpay.components.components.Friend
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.BillTransaction
+import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.pages.GroupChatTab
 import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.viewModels.MembersMock.transaction
-import com.rudra.yoresplitbill.ui.split.groupchat.settle.SettleBottomSheetModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -276,12 +278,12 @@ class GroupChatViewModel(
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
 
-    private val selectedMember = mutableStateOf<Int>(-1)
+    private val selectedMember = mutableStateOf(-1)
 
     override val sheeting = Sheeting(
         sheetMap = mapOf(
-            Sheets.BillTotalAndCategories to BillTotalBottomSheetModel(
-                object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
+            Sheets.BillTotalAndCategories to BillTotalAndCategoryBottomSheetModel(
+                object: BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
                     override suspend fun getCategories(): List<Category> {
                         val categories = repo.getAllCategories().toMutableList()
                         categories[0] = categories[0].copy(isSelected = true)
@@ -418,6 +420,101 @@ class GroupChatViewModel(
                     override suspend fun getPayStat(): List<Transaction> {
                         return settleRepository.getWillPay()
                     }
+
+                    override fun onGetContinue(transaction: Transaction) {
+                        mySheeting.sheets.value = Sheets.SettlePaymentMethod
+                    }
+
+                    override fun onPayContinue(transaction: Transaction) {
+                        mySheeting.sheets.value = Sheets.SettlePaymentMethod
+                    }
+                }
+            ),
+            Sheets.SettlePaymentMethod to SettlePaymentMethodBottomSheetModel(
+                object: SettlePaymentMethodBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override suspend fun getUpis(): List<Upi> {
+                        return listOf(
+                            Upi("UPI-1","fdfldf@ljl","SBI","User1",Color(0xff008523),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                        )
+                    }
+
+                    override suspend fun cashPaymentMobileNumber(): String {
+                        return "8967114927"
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override fun onAddContinue(upiId: String) {
+                        mySheeting.hide()
+                    }
+
+                    override fun onContinue(upiId: String) {
+                        mySheeting.sheets.value = Sheets.PaymentReview
+                    }
+                }
+            ),
+            Sheets.PaymentReview to PaymentReviewBottomSheetModel(
+                object: PaymentReviewBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun transaction(): TransactionReview {
+                        return TransactionReview(
+                            transactionType = TransactionType.Paid,
+                            paymentMethod = "UPI",
+                            amount = 10000f,
+                            from = Friend(
+                                name = "Rudra Dev",
+                                mobileNumber = "7896230125",
+                                accountNumber = "AC-123",
+                                accountType = AccountType.Current,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                bank = Bank(
+                                    name = "SBI",
+                                    imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/SBI-logo.svg/500px-SBI-logo.svg.png?20200329171950"
+                                ),
+                                isSelected = true,
+                                hasRead = false
+                            ),
+                            to = Friend(
+                                name = "Deb Pan",
+                                mobileNumber = "8954102365",
+                                accountNumber = "AC-124",
+                                accountType = AccountType.Current,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                bank = Bank(
+                                    name = "Axis",
+                                    imageUrl = "https://is3-ssl.mzstatic.com/image/thumb/Purple112/v4/8f/77/e9/8f77e9ee-9cc9-a308-eeda-7b4cbbcdeda6/AppIcon-0-0-1x_U007emarketing-0-0-0-8-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/146x0w.webp"
+                                ),
+                                isSelected = true,
+                                hasRead = false
+                            ),
+                            category = co.yore.splitnpay.components.components.Category(
+                                name = "Category",
+                                color = 0xffff0000,
+                                icon = R.drawable.travel,
+                            )
+                        )
+                    }
+
+                    override fun onChangeReceiver() {
+                        mySheeting.sheets.value = Sheets.SettlePaymentMethod
+                    }
                 }
             )
         ),
@@ -471,7 +568,11 @@ class GroupChatViewModel(
                 mySheeting.show()
             }
             "${DataIds.back}group_chat_page"->{
-                mySheeting.hide()
+                when(mySheeting.sheets.value){
+                    Sheets.SettlePaymentMethod->mySheeting.map[Sheets.SettlePaymentMethod]?.onBack()
+                    else->mySheeting.hide()
+                }
+
             }
             DataIds.searchTextInput->{
                 searchText.value = arg as? String?:return@NotificationService

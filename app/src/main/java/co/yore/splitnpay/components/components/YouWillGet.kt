@@ -1,5 +1,7 @@
 package com.rudra.yoresplitbill.ui.split.groupchat.settle
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -39,6 +40,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rudra.yoresplitbill.ui.split.group.splitsummary.TotalCard_6re10h
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun YouWillGet(
     userName: String,
@@ -87,7 +89,7 @@ fun YouWillGet(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = (screenHeight*0.6).dp)
+                    .heightIn(max = (screenHeight * 0.6).dp)
                     .fadingEdge(),
                 contentPadding = PaddingValues(vertical = 8.dep())
             ){
@@ -113,40 +115,57 @@ fun YouWillGet(
                 }
             }*/
 
-            if (isWillGetTransactionSelected) {
-                29.sy()
-                FontFamilyText(
-                    modifier = Modifier.align(CenterHorizontally),
-                    color = Bluish,
-                    text = stringResource(R.string.remind),
-                    fontSize = 16.sep()
-                )
-                14.sy()
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 11.dep())
-                        .fillMaxWidth()
-                        .height(config.bottomHeight.dep())
-                ) {
-                    CustomButton_3egxtx(
-                        config = CustomButtonConfiguration(),
-                        text = stringResource(R.string.settle_up),
-                        onClick = {
-                            notifier.notify(DataIds.willGetSettleClick)
-                        },
-                        contentDescription = "SettleUpButton"
-                    )
+            AnimatedContent(
+                targetState =isWillGetTransactionSelected,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(500, delayMillis = 90)) +
+                            scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
+                            fadeOut(animationSpec = tween(500))
                 }
-            } else {
-                20.sy()
-                TotalCard_6re10h(
-                    text = stringResource(R.string.total_you_will_get),
-                    amount = total,
-                    contentDescription = "YouWillGet",
-                    borderColor = LightGreen3,
-                    backgroundColor = WhitishGreen
-                )
-                24.sy()
+            ) {
+                if (it) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        29.sy()
+                        FontFamilyText(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = Bluish,
+                            text = stringResource(R.string.remind),
+                            fontSize = 16.sep()
+                        )
+                        14.sy()
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = 11.dep())
+                                .fillMaxWidth()
+                                .height(config.bottomHeight.dep())
+                        ) {
+                            CustomButton_3egxtx(
+                                config = CustomButtonConfiguration(),
+                                text = stringResource(R.string.settle_up),
+                                onClick = {
+                                    notifier.notify(DataIds.willGetSettleClick)
+                                },
+                                contentDescription = "SettleUpButton"
+                            )
+                        }
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        20.sy()
+                        TotalCard_6re10h(
+                            text = stringResource(R.string.total_you_will_get),
+                            amount = total,
+                            contentDescription = "YouWillGet",
+                            borderColor = LightGreen3,
+                            backgroundColor = WhitishGreen
+                        )
+                        24.sy()
+                    }
+                }
             }
         }
     }

@@ -263,7 +263,14 @@ data class ContactSearchBarConfiguration(
     val dividerRightSpace: Float = 15f,
     val color: Color = Color(0xffBCBCBC),
     val startPadding: Float = 72f
-)
+){
+    companion object{
+        val upi = ContactSearchBarConfiguration(
+            height = 52f,
+            searchIconId = R.drawable.ic_upi
+        )
+    }
+}
 
 data class GroupProfileImageConfiguration(
     val imageSize: Float = 45f,

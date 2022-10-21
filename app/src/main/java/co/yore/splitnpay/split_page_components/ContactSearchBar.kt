@@ -27,17 +27,19 @@ import co.yore.splitnpay.models.DataIds
 
 @Composable
 fun ContactSearchBar(
+    modifier: Modifier = Modifier,
     config: ContactSearchBarConfiguration = ContactSearchBarConfiguration(),
     contentDescription: String,
     text: String = stringState(DataIds.textInput).value,
+    placeholder: Int = R.string.search_groups_or_contacts,
     notifier: NotificationService = notifier()
 ) {
     Box(
         contentAlignment = Alignment.CenterStart,
-        modifier = Modifier
+        modifier = modifier
             .semantics {
                 this.contentDescription = contentDescription
-            }
+            },
     ) {
         TextField(
             modifier = Modifier
@@ -88,7 +90,7 @@ fun ContactSearchBar(
             exit = fadeOut()
         ) {
             Text(
-                text = stringResource(R.string.search_groups_or_contacts),
+                text = stringResource(placeholder),
                 fontSize = config.fontSize.sep(),
                 color = config.color,
                 textAlign = TextAlign.Start,

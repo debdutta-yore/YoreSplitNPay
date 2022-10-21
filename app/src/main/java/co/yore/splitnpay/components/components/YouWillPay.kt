@@ -1,12 +1,13 @@
-package com.rudra.yoresplitbill.ui.split.groupchat.settle
+package co.yore.splitnpay.components.components
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -29,7 +30,9 @@ import co.yore.splitnpay.ui.theme.LightBlue4
 import co.yore.splitnpay.ui.theme.LightRedButton
 import co.yore.splitnpay.ui.theme.Pink
 import com.rudra.yoresplitbill.ui.split.group.splitsummary.TotalCard_6re10h
+import com.rudra.yoresplitbill.ui.split.groupchat.settle.YouWillGetSingleItem_080weu
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun YouWillPay_m6awbp(
     list: List<Transaction>,
@@ -79,7 +82,7 @@ fun YouWillPay_m6awbp(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .widthIn(max = (screenHeight*0.6f).dp)
+                    .widthIn(max = (screenHeight * 0.6f).dp)
                     .fadingEdge()
             ){
                 itemsIndexed(list){index, item ->
@@ -94,54 +97,58 @@ fun YouWillPay_m6awbp(
                         config.gapBetweenTwoRow.sy()
                 }
             }
-            /*Column(modifier = Modifier.fillMaxWidth()) {
-                list.forEachIndexed { index, item ->
-                    YouWillGetSingleItem_080weu(
-                        contentDescription = "YouWillGetSingleItem",
-                        transaction = item,
-                        onClick = {
-                            notifier.notify(DataIds.selectSettlePayMembers, index)
+            AnimatedContent(
+                targetState = isWillPayTransactionSelected,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(500, delayMillis = 90)) +
+                            scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
+                            fadeOut(animationSpec = tween(500))
+                }
+            ) {
+                if (it) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        29.sy()
+                        FontFamilyText(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = Bluish,
+                            text = stringResource(R.string.remind),
+                            fontSize = 16.sep()
+                        )
+                        14.sy()
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = 11.dep())
+                                .fillMaxWidth()
+                                .height(config.bottomHeight.dep())
+                        ) {
+                            CustomButton_3egxtx(
+                                config = CustomButtonConfiguration(),
+                                text = stringResource(R.string.settle_up),
+                                onClick = {
+                                    notifier.notify(DataIds.willPaySettleClick)
+                                },
+                                contentDescription = "SettleUpButton"
+                            )
                         }
-                    )
-                    if (index != list.lastIndex)
-                        config.gapBetweenTwoRow.sy()
+                    }
                 }
-            }*/
-            if (isWillPayTransactionSelected) {
-                29.sy()
-                FontFamilyText(
-                    modifier = Modifier.align(CenterHorizontally),
-                    color = Bluish,
-                    text = stringResource(R.string.remind),
-                    fontSize = 16.sep()
-                )
-                14.sy()
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 11.dep())
-                        .fillMaxWidth()
-                        .height(config.bottomHeight.dep())
-                ) {
-                    CustomButton_3egxtx(
-                        config = CustomButtonConfiguration(),
-                        text = stringResource(R.string.settle_up),
-                        onClick = {
-                            notifier.notify(DataIds.willPaySettleClick)
-                        },
-                        contentDescription = "SettleUpButton"
-                    )
+                else {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        20.sy()
+                        TotalCard_6re10h(
+                            text = stringResource(R.string.total_you_will_pay),
+                            amount = total,
+                            contentDescription = "YouWillGet",
+                            borderColor = Pink,
+                            backgroundColor = LightRedButton
+                        )
+                        24.sy()
+                    }
                 }
-            }
-            else {
-                20.sy()
-                TotalCard_6re10h(
-                    text = stringResource(R.string.total_you_will_pay),
-                    amount = total,
-                    contentDescription = "YouWillGet",
-                    borderColor = Pink,
-                    backgroundColor = LightRedButton
-                )
-                24.sy()
             }
         }
     }

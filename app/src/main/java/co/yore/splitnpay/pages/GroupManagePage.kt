@@ -2,6 +2,7 @@ package co.yore.splitnpay.pages
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -591,7 +592,8 @@ fun SingleSetting(
                 onClick = {
                     onClick()
                 }
-            ).padding(horizontal = 23.dep()),
+            )
+            .padding(horizontal = 23.dep()),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -1284,13 +1286,25 @@ fun SelectorIcon_ulkel8(
     onClick: () -> Unit,
     contentDescription: String
 ) {
+    val color by remember(selected) {
+        derivedStateOf{
+            if (selected) config.iconColor else Color.White
+        }
+    }
+    val animatedColor by animateColorAsState(targetValue = color, animationSpec = tween(500))
+    val stroke by remember(selected) {
+        derivedStateOf{
+            if (selected) 0f else 1f
+        }
+    }
+    val animatedStroke by animateFloatAsState(targetValue = stroke, animationSpec = tween(500))
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dep()))
             .size(config.iconSize.dep())
-            .background(if (selected) config.iconColor else Color.White)
+            .background(animatedColor)
             .border(
-                if (selected) 0.dep() else 1.dep(),
+                animatedStroke.dep(),
                 color = config.iconColor,
                 shape = RoundedCornerShape(10.dep())
             )

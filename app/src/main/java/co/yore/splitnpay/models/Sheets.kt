@@ -9,4 +9,6 @@ enum class Sheets {
     DatePicker,
     ImagePicker,
     Settle,
+    SettlePaymentMethod,
+    PaymentReview
 }

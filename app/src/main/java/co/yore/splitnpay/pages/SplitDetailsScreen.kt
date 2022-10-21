@@ -62,6 +62,7 @@ import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.MemberPayment
 import co.yore.splitnpay.viewModels.MembersMock.transaction

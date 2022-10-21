@@ -1,4 +1,4 @@
-package com.rudra.yoresplitbill.ui.split.groupchat.settle
+package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -17,7 +17,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.LightBlue3
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
@@ -25,6 +24,7 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.ui.theme.DarkBlue
+import com.rudra.yoresplitbill.ui.split.groupchat.settle.YouWillGet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +35,8 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
         fun scope(): CoroutineScope
         suspend fun getGetStat(): List<Transaction>
         suspend fun getPayStat(): List<Transaction>
-
+        fun onGetContinue(transaction: Transaction)
+        fun onPayContinue(transaction: Transaction)
     }
     private val _resolver = Resolver()
     private var getSelectedIndex = -1
@@ -48,7 +49,6 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
             DataIds.selectSettleGetMembers -> {
                 val index = arg as Int
                 val item = _willGet[index]
-                item.apply {  }
                 val selected = !item.isSelected
                 if(getSelectedIndex>-1){
                     _willGet[getSelectedIndex] = _willGet[getSelectedIndex].copy(isSelected = false)
@@ -77,6 +77,12 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
                 }
                 _isWillPayTransactionSelected.value = _willPay.any { it.isSelected }
             }
+            DataIds.willGetSettleClick->{
+                callback.onGetContinue(_willGet[getSelectedIndex])
+            }
+            DataIds.willPaySettleClick->{
+                callback.onPayContinue(_willPay[paySelectedIndex])
+            }
         }
     }
     ////////////
@@ -97,6 +103,8 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
             withContext(Dispatchers.Main){
                 _willGet.addAll(willGet)
                 _willPay.addAll(willPay)
+                _settleGetTotal.value = _willGet.sumOf { it.amount.toDouble() }.toFloat()
+                _settlePayTotal.value = _willPay.sumOf { it.amount.toDouble() }.toFloat()
             }
         }
     }
@@ -108,6 +116,9 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
         paySelectedIndex = -1
         _isWillGetTransactionSelected.value = false
         _isWillPayTransactionSelected.value = false
+        _settleGetTotal.value = 0f
+        _settlePayTotal.value = 0f
+        _willGetPayTab.value = SettleBottomSheetTabs.YouWillGet
     }
 
     override fun onBack() {
@@ -118,7 +129,7 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
     private val _willPay = mutableStateListOf<Transaction>()
     private val _isWillGetTransactionSelected = mutableStateOf(false)
     private val _isWillPayTransactionSelected = mutableStateOf(false)
-    private val _settleGetTotal = mutableStateOf(4500f)
+    private val _settleGetTotal = mutableStateOf(0f)
     private val _settlePayTotal = mutableStateOf(0f)
     private val _willGetPayTab = mutableStateOf(SettleBottomSheetTabs.YouWillGet)
     ////////////////

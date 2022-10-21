@@ -1,6 +1,20 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    paymentReviewChangeClick,
+    paymentReviewEditAmountClick,
+    paymentReviewContinueClick,
+    paymentReviewSubCategory,
+    paymentReviewTransaction,
+    upiAdding,
+    editUpiId,
+    settleCashUpiContinueClick,
+    addUpiClick,
+    selectedSettleOption,
+    selectedUpiArrowOffset,
+    selectedUpiId,
+    cashPaymentMobileNumber,
+    upiIds,
     willPaySettleClick,
     willGetSettleClick,
     willGetPayTab,

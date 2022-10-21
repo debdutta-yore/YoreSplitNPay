@@ -1,9 +1,6 @@
 package co.yore.splitnpay.components.components
 
-import android.provider.ContactsContract.Data
-import android.util.Log
 import androidx.compose.animation.*
-import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -31,11 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,12 +40,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
-import co.yore.splitnpay.keyboardHeight
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.DataIds
@@ -65,7 +57,7 @@ import kotlinx.coroutines.launch
 
 
 
-class BillTotalBottomSheetModel(
+class BillTotalAndCategoryBottomSheetModel(
     val callback: BillTotalBottomSheetModelCallback
 ): BottomSheetModel{
     interface BillTotalBottomSheetModelCallback{
@@ -524,7 +516,8 @@ fun CustomTextField_wangst(
     textStyle: TextStyle = TextStyle.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interceptor: ((String)->String)? = null,
-    config: CustomTextFieldConfiguration = CustomTextFieldConfiguration()
+    config: CustomTextFieldConfiguration = CustomTextFieldConfiguration(),
+    iconTint: Color = Color.Unspecified
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val colors = TextFieldDefaults.textFieldColors(
@@ -596,7 +589,8 @@ fun CustomTextField_wangst(
                         modifier = Modifier
                             .padding(start = 18.dep())
                             .size(18.33.dep()),
-                        contentScale = ContentScale.Fit
+                        contentScale = ContentScale.Fit,
+                        colorFilter = ColorFilter.tint(iconTint)
                     )
                     config.dividerStartPadding.sx()
                     Divider(

@@ -62,4 +62,15 @@
     <string name="have_already_paid">" have already paid!"</string>
     <string name="dont_owe_anything">" don’t owe anything to anyone"</string>
     <string name="total_you_will_pay">Total you’ll pay</string>
+    <string name="settle_as_cash">Settle as Cash payment</string>
+    <string name="settle_via_upi">Settle via UPI ID</string>
+    <string name="add_upi_id">Add UPI ID</string>
+    <string name="settle_confirm_note">*Please confirm all the above details are correct
+                        \n Fund will be received according to the UPI/account details
+                        \n provided.</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="change">Change</string>
+    <string name="note">Note</string>
 </resources>

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.components.components.AllCategoriesBottomSheetModel
-import co.yore.splitnpay.components.components.BillTotalBottomSheetModel
+import co.yore.splitnpay.components.components.BillTotalAndCategoryBottomSheetModel
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
@@ -101,8 +101,8 @@ class SplitReviewViewModel(
                     }
                 }
             ),
-            Sheets.BillTotalAndCategories to BillTotalBottomSheetModel(
-                object: BillTotalBottomSheetModel.BillTotalBottomSheetModelCallback{
+            Sheets.BillTotalAndCategories to BillTotalAndCategoryBottomSheetModel(
+                object: BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
                     override suspend fun getCategories(): List<Category> {
                         val categories = groupRepo.getAllCategories().toMutableList()
                         val index = categories.indexOfFirst { it.id == category.value.id }
