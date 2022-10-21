@@ -45,6 +45,7 @@ class PaymentReviewBottomSheetModel(
         fun scope(): CoroutineScope
         fun transaction(): TransactionReview
         fun onChangeReceiver()
+        fun onChangeAmount()
     }
     //////////////////
     private val _resolver = Resolver()
@@ -55,6 +56,9 @@ class PaymentReviewBottomSheetModel(
             }
             DataIds.paymentReviewChangeClick->{
                 callback.onChangeReceiver()
+            }
+            DataIds.paymentReviewEditAmountClick->{
+                callback.onChangeAmount()
             }
         }
     }

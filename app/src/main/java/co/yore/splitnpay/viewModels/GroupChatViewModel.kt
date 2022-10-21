@@ -515,6 +515,34 @@ class GroupChatViewModel(
                     override fun onChangeReceiver() {
                         mySheeting.sheets.value = Sheets.SettlePaymentMethod
                     }
+
+                    override fun onChangeAmount() {
+                        mySheeting.sheets.value = Sheets.BillTotal
+                    }
+                }
+            ),
+            Sheets.BillTotal to BillTotalBottomSheetModel(
+                object: BillTotalBottomSheetModel.Callback{
+                    override suspend fun getBillTotalAmount(): String {
+                        return ""
+                    }
+
+                    override suspend fun getDescription(): String {
+                        return ""
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override fun onContinue(billTotal: String, billDescription: String) {
+                        mySheeting.sheets.value = Sheets.PaymentReview
+                    }
+
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
                 }
             )
         ),

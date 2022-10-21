@@ -10,5 +10,6 @@ enum class Sheets {
     ImagePicker,
     Settle,
     SettlePaymentMethod,
-    PaymentReview
+    PaymentReview,
+    BillTotal
 }

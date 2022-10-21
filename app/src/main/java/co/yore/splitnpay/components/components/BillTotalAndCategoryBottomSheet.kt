@@ -144,7 +144,7 @@ class BillTotalAndCategoryBottomSheetModel(
     override val scope get() = callback.scope()
     @Composable
     override fun Content() {
-        BillTotalBottomSheet()
+        BillTotalAndCategoryBottomSheet()
     }
 
     ////////////////
@@ -206,7 +206,7 @@ class BillTotalAndCategoryBottomSheetModel(
 val LightGrey2 = Color(0xffF8F8F8)
 val Grayish = Color(0xffF5F5F5)
 @Composable
-fun BillTotalBottomSheet(
+fun BillTotalAndCategoryBottomSheet(
     categories: List<Category> = listState(key = DataIds.categories),
     billTotalAmount: String = stringState(key = DataIds.billTotalAmount).value,
     billTotalDescription: String = stringState(key = DataIds.billTotalDescription).value,
@@ -273,7 +273,8 @@ fun BillTotalBottomSheet(
                 ),
                 interceptor = {
                     it.replace("^0+".toRegex(),"").take(14)
-                }
+                },
+                iconTint = Color(0xff656565)
             )
         }
 
@@ -297,7 +298,8 @@ fun BillTotalBottomSheet(
                 leadingIcon = R.drawable.ic_description,
                 placeHolderText = stringResource(R.string.add_description),
                 singleLine = true,
-                maxLines = 1
+                maxLines = 1,
+                iconTint = Color(0xff656565)
             )
         }
 
