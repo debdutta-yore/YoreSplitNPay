@@ -4,9 +4,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.components.components.DeleteAlertSheetModel
+import co.yore.splitnpay.components.components.SuccessUndoSheetModel
+import co.yore.splitnpay.components.components.UnsettledMembersAlertSheetModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.pages.Member
+import co.yore.splitnpay.pages.SettleOptions
+import co.yore.splitnpay.pages.SingleSettledOrUnsettledMember
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -76,16 +83,167 @@ class ManageViewModel(
     private val _groupCreationDate = mutableStateOf("9th May, 2022")
     private val _groupNotificationSwitch = mutableStateOf(false)
     private val _groupImage = mutableStateOf<Any?>("https://picsum.photos/200/300")
+    override val sheeting = Sheeting(
+        sheetMap = mapOf(
+            Sheets.UnsettledMembersAlert to UnsettledMembersAlertSheetModel(
+                object: UnsettledMembersAlertSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
 
+                    override suspend fun members(): List<SingleSettledOrUnsettledMember> {
+                        return listOf(
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            ),
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            ),
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            ),
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            ),
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            ),
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            ),
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            ),
+                        )
+                    }
+
+                    override fun onContinue() {
+                        mySheeting.sheets.value = Sheets.ConfirmDelete
+                    }
+                }
+            ),
+            Sheets.ConfirmDelete to DeleteAlertSheetModel(
+                object: DeleteAlertSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun message(): String {
+                        return "Are you sure, you want to delete this group?"
+                    }
+
+                    override fun onDelete() {
+                        mySheeting.change(Sheets.SuccessUndo)
+                    }
+
+                    override fun onCancel() {
+                        mySheeting.hide()
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+                }
+            ),
+            Sheets.SuccessUndo to SuccessUndoSheetModel(
+                object: SuccessUndoSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun undo() {
+                        mySheeting.hide()
+                    }
+
+                    override fun timerEnded() {
+                        mySheeting.hide()
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override fun message(): String {
+                        return "Group deleted successfully"
+                    }
+
+                    override fun timeMillis(): Int {
+                        return 60*1000
+                    }
+                }
+            )
+        ),
+        onVisibilityChanged = {
+            if(!it){
+                mySheeting.sheets.value = Sheets.None
+            }
+        }
+    )
     //////////////////////////////////////////
     override val notifier = NotificationService { id, arg ->
         when (id) {
             WirelessViewModelInterface.startupNotification -> {
                 setUpStatusBarColor()
             }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+            "${DataIds.back}group_manage" -> {
+                when(mySheeting.sheets.value){
+                    Sheets.None->{
+                        navigation.scope { navHostController, lifecycleOwner, toaster ->
+                            navHostController.popBackStack()
+                        }
+                    }
+                    else->{
+                        mySheeting.map[mySheeting.sheets.value]?.onBack()
+                    }
                 }
             }
             DataIds.groupNotificationSwitch -> {
@@ -101,7 +259,8 @@ class ManageViewModel(
                 //TODO: click
             }
             DataIds.deleteGroupClick -> {
-                //TODO: open bottom sheet
+                mySheeting.sheets.value = Sheets.UnsettledMembersAlert
+                mySheeting.show()
             }
             DataIds.selectMemberClick -> {
                 onSelectMemberClick(arg)

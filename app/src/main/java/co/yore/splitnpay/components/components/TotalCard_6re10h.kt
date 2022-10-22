@@ -1,4 +1,4 @@
-package com.rudra.yoresplitbill.ui.split.group.splitsummary
+package co.yore.splitnpay.components.components
 
 
 import androidx.compose.foundation.background
@@ -14,7 +14,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.ui.theme.CyanLight

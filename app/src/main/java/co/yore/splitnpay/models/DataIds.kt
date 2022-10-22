@@ -1,6 +1,19 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    settledMembers,
+    timerEnded,
+    undo,
+    timeMillis,
+    timerStarted,
+    cancel,
+    delete,
+    message,
+    deleteAnywayClick,
+    splitIndividuallyClick,
+    settledUnsettledContinueClick,
+    selectUnsettledMembers,
+    unsettledMembers,
     paymentReviewChangeClick,
     paymentReviewEditAmountClick,
     paymentReviewContinueClick,

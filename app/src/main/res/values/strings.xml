@@ -14,7 +14,7 @@
     <string name="Manage">Manage</string>
     <string name="you_created_group">You created the group</string>
     <string name="bill_total">Bill total</string>
-    <string name="paid">paid</string>
+    <string name="paid">Paid</string>
     <string name="received">Received</string>
     <string name="you_received">You Received</string>
     <string name="you_paid">You Paid</string>
@@ -73,4 +73,13 @@
     <string name="to">To</string>
     <string name="change">Change</string>
     <string name="note">Note</string>
+    <string name="unsettled_members">Unsettled Members</string>
+    <string name="get">Get</string>
+    <string name="split_individually">Split Individually</string>
+    <string name="delete_anyway">Delete anyway</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="undo">Undo</string>
+    <string name="settled_members">Settled Members</string>
+    <string name="unsettled_memebers">Unsettled Members</string>
 </resources>

@@ -68,7 +68,7 @@ import co.yore.splitnpay.viewModels.MemberPayment
 import co.yore.splitnpay.viewModels.MembersMock.transaction
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.rudra.yoresplitbill.common.dashedBorder
+import co.yore.splitnpay.libs.dashedBorder
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -88,6 +88,8 @@ public inline fun <T, R> T?.elseLet(elseBlock: () -> R, block: (T) -> R): R {
 
 }
 
+
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SplitDetailsScreen(
@@ -97,23 +99,7 @@ fun SplitDetailsScreen(
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
-            AnimatedContent(
-                targetState = sheeting.sheets.value,
-                transitionSpec = {
-                    fadeIn(
-                        animationSpec = tween(500, delayMillis = 90)
-                    ) +
-                    scaleIn(
-                        initialScale = 0.92f,
-                        animationSpec = tween(500, delayMillis = 90)
-                    ) with
-                    fadeOut(
-                        animationSpec = tween(500)
-                    )
-                }
-            ) {
-                sheeting[it]
-            }
+            sheeting.sheetContent()
         },
         sheetShape = RoundedCornerShape(
             topStart = 25f.dep(),

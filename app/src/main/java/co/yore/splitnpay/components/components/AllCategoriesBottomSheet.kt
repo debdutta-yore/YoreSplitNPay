@@ -2,6 +2,7 @@ package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
@@ -146,6 +148,8 @@ fun AllCategoriesBottomSheet(
 ) {
     Column(
         modifier = Modifier
+            .animateContentSize()
+            .ModalBottomSheetAdjustWithIme()
             .fillMaxWidth()
     ) {
         20.sy()
@@ -206,6 +210,7 @@ fun AllCategoriesBottomSheet(
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(max = 420.dp)
                 .padding(
                     start = 65.dep(),
                     end = 58.dep(),
@@ -323,7 +328,8 @@ fun AllCategoriesBottomSheet(
                     },
                     contentDescription = "",
                     leadingIcon = R.drawable.ic_description,
-                    placeHolderText = "Custom category name"
+                    placeHolderText = "Custom category name",
+                    iconTint = Color(0xff656565)
                 )
             }
         }
@@ -347,12 +353,6 @@ fun AllCategoriesBottomSheet(
                 contentDescription = "Continue button",
                 enabled = canProceed
             )
-        }
-
-        Box(
-            modifier = Modifier.keyboardHeight()
-        ){
-
         }
     }
 }

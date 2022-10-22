@@ -286,14 +286,6 @@ fun GroupChatScreen(
         sheetState = sheetState,
         sheetContent = {
             AnimatedContent(targetState = sheeting.sheets.value) {
-                /*when(it){
-                    Sheets.MemberFilter->FilterBottomSheet()
-                    Sheets.BillTotalAndCategories -> BillTotalBottomSheet()
-                    Sheets.CategoriesEdit -> AllCategoriesBottomSheet()
-                    Sheets.SettleSummaryManage -> SettleSummaryManageSheet()
-                    Sheets.DatePicker -> ExpenseDatePickerSheet()
-                    else-> Text("")
-                }*/
                 sheeting[it]
             }
         },

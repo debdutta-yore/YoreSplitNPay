@@ -11,5 +11,8 @@ enum class Sheets {
     Settle,
     SettlePaymentMethod,
     PaymentReview,
-    BillTotal
+    BillTotal,
+    UnsettledMembersAlert,
+    ConfirmDelete,
+    SuccessUndo
 }

@@ -29,8 +29,6 @@ import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.LightBlue4
 import co.yore.splitnpay.ui.theme.LightRedButton
 import co.yore.splitnpay.ui.theme.Pink
-import com.rudra.yoresplitbill.ui.split.group.splitsummary.TotalCard_6re10h
-import com.rudra.yoresplitbill.ui.split.groupchat.settle.YouWillGetSingleItem_080weu
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

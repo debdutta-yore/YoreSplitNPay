@@ -2,81 +2,76 @@ package co.yore.splitnpay.app
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.viewModels.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
+
+@OptIn(ExperimentalAnimationApi::class)
+inline fun <reified T: ViewModel>NavGraphBuilder.YoreScreen(
+    navController: NavHostController,
+    route: String,
+    crossinline content: @Composable ()->Unit
+){
+    yoreComposable(
+        route
+    ){
+        YorePage(
+            navController,
+            suffix = route,
+            wvm = viewModel<T>() as? WirelessViewModelInterface?:return@yoreComposable
+        ) {
+            content()
+        }
+    }
+}
+
 @OptIn(ExperimentalAnimationApi::class)
     @Composable
     fun YoreApp() {
         val navController = rememberAnimatedNavController()
-        AnimatedNavHost(navController, startDestination = "group_chat_page") {
-            yoreComposable(
-                "split_page"
-            ){
-                YorePage(
-                    navController,
-                    suffix = "split_page",
-                    wvm = viewModel<SplitPageViewModel>()
-                ) {
-                    SplitPage()
-                }
+        AnimatedNavHost(navController, startDestination = "split_page") {
+            YoreScreen<SplitPageViewModel>(
+                navController = navController,
+                route = "split_page"
+            ) {
+                SplitPage()
             }
-            yoreComposable(
-                "split_with_page",
-            ){
-                YorePage(
-                    navController,
-                    suffix = "split_with_page",
-                    wvm = viewModel<MemberSelectionPageViewModel>()
-                ) {
-                    MemberSelectionPage_g5024t()
-                }
+            YoreScreen<MemberSelectionPageViewModel>(
+                navController = navController,
+                route = "split_with_page"
+            ) {
+                MemberSelectionPage_g5024t()
             }
-
-            yoreComposable(
-                "group_creation"
-            ){
-                YorePage(
-                    navController,
-                    suffix = "group_creation",
-                    wvm = viewModel<GroupCreationPageViewModel>()
-                ) {
-                    GroupCreationScreen()
-                }
+            YoreScreen<GroupCreationPageViewModel>(
+                navController = navController,
+                route = "group_creation"
+            ) {
+                GroupCreationScreen()
             }
-
-            yoreComposable("group_chat_page") {
-                YorePage(
-                    navController = navController,
-                    suffix = "group_chat_page",
-                    wvm = viewModel<GroupChatViewModel>()
-                ) {
-                    GroupChatScreen()
-                }
+            YoreScreen<GroupChatViewModel>(
+                navController = navController,
+                route = "group_chat_page"
+            ) {
+                GroupChatScreen()
             }
-
-            yoreComposable("group_manage") {
-                YorePage(
-                    navController = navController,
-                    suffix = "group_manage",
-                    wvm = viewModel<ManageViewModel>()
-                ) {
-                    GroupManagePage()
-                }
+            YoreScreen<ManageViewModel>(
+                navController = navController,
+                route = "group_manage"
+            ) {
+                GroupManagePage()
             }
-
-            yoreComposable("split_review_page") {
-                YorePage(
-                    navController = navController,
-                    suffix = "split_review_page",
-                    wvm = viewModel<SplitReviewViewModel>()
-                ) {
-                    SplitDetailsScreen()
-                }
+            YoreScreen<SplitReviewViewModel>(
+                navController = navController,
+                route = "split_review_page"
+            ) {
+                SplitDetailsScreen()
             }
         }
     }

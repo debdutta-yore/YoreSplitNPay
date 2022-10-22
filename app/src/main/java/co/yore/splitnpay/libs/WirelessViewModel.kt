@@ -1,11 +1,17 @@
 package co.yore.splitnpay.libs
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import co.yore.splitnpay.models.Sheets
@@ -138,6 +144,36 @@ fun sheeting(): Sheeting{
     return LocalSheeting.current
 }
 
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun Sheeting.sheetContent(){
+    val animDuration = remember{ 1000 }
+    Box(
+        modifier = Modifier
+            .animateContentSize()
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ){
+        AnimatedContent(
+            targetState = this@sheetContent.sheets.value,
+            transitionSpec = {
+                fadeIn(
+                    animationSpec = tween(animDuration)
+                ) +
+                        scaleIn(
+                            initialScale = 1f,
+                            animationSpec = tween(animDuration)
+                        ) with
+                        fadeOut(
+                            animationSpec = tween(animDuration)
+                        )
+            }
+        ) {
+            this@sheetContent[it]
+        }
+    }
+}
+
 class Sheeting @OptIn(ExperimentalMaterialApi::class) constructor(
     private val skipHalfExpanded: Boolean = true,
     private val sheetMap: Map<Sheets,BottomSheetModel> = emptyMap(),
@@ -163,11 +199,19 @@ class Sheeting @OptIn(ExperimentalMaterialApi::class) constructor(
     val sheetHandler get() = _sheetHandler
     @OptIn(ExperimentalMaterialApi::class)
     fun hide(){
-        sheetHandler.state { hide() }
+        sheetHandler.state {
+            hide()
+        }
     }
     @OptIn(ExperimentalMaterialApi::class)
     fun show(){
-        sheetHandler.state { show() }
+        sheetHandler.state {
+            show()
+        }
+    }
+
+    fun change(sheet: Sheets){
+        _sheets.value = sheet
     }
 }
 

@@ -47,7 +47,7 @@ import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightGreen3
 import co.yore.splitnpay.ui.theme.Pink
-import com.rudra.yoresplitbill.common.*
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

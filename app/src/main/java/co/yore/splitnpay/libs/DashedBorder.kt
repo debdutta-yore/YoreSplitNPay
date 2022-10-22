@@ -1,4 +1,4 @@
-package com.rudra.yoresplitbill.common
+package co.yore.splitnpay.libs
 
 
 

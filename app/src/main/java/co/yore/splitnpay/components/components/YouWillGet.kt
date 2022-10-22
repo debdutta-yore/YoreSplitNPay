@@ -1,4 +1,4 @@
-package com.rudra.yoresplitbill.ui.split.groupchat.settle
+package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -38,7 +38,6 @@ import co.yore.splitnpay.ui.theme.LightBlue4
 import co.yore.splitnpay.ui.theme.LightGreen3
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.rudra.yoresplitbill.ui.split.group.splitsummary.TotalCard_6re10h
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -269,7 +268,7 @@ data class YouWillGetConfiguration(
     val bottomPadding: Float = 105f
 )
 
-data class ProfileImageConfiguration(
+/*data class ProfileImageConfiguration(
     val imageSize: Float = 49f,
     val borderStroke: Float = 3f,
     val borderColor: Color = LightBlue1,
@@ -277,7 +276,7 @@ data class ProfileImageConfiguration(
     val imageUrl: String = "https://i.pravatar.cc/300",
     val placeholder: Int = R.drawable.personactionbar,
     val contentScale: ContentScale = ContentScale.Crop
-)
+)*/
 
 @Composable
 fun ProfileImage_2hf7q0(

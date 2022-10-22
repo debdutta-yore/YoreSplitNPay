@@ -24,7 +24,6 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.ui.theme.DarkBlue
-import com.rudra.yoresplitbill.ui.split.groupchat.settle.YouWillGet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

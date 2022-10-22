@@ -1,6 +1,7 @@
 package co.yore.splitnpay.pages
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
@@ -8,12 +9,15 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
@@ -23,20 +27,24 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
@@ -51,6 +59,7 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlin.math.roundToInt
 
 data class Member(
     val id: Int = 0,
@@ -247,18 +256,13 @@ fun GroupManagePage(
     groupCreationDate: String = stringState(key = DataIds.groupCreationDate).value,
     groupImage: Any? = tState<Any?>(key = DataIds.groupImage).value,
     groupMembers: List<Member> = listState(key = DataIds.groupMembers),
-    notifier: NotificationService = notifier()
+    notifier: NotificationService = notifier(),
+    sheeting: Sheeting = sheeting()
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmStateChange = { false }
-    )
-
     ModalBottomSheetLayout(
-        sheetState = sheetState,
+        sheetState = sheeting.sheetHandler.handle(),
         sheetContent = {
-            SettledUnsettledMembersBottomSheet_mxjiuq("")
+            sheeting.sheetContent()
         },
         sheetShape = RoundedCornerShape(
             topStart = 25f.dep(),
@@ -866,17 +870,15 @@ data class UnSettledMembersConfiguration(
 
 @Composable
 fun UnSettledMemberItem(
+    unsettledMembers: List<SingleSettledOrUnsettledMember> = listState(key = DataIds.unsettledMembers),
     contentDescription: String,
+    notifier: NotificationService = notifier(),
     config: UnSettledMembersConfiguration = UnSettledMembersConfiguration()
 ) {
-
-    var selected by remember { mutableStateOf(SettleOptions.SplitIndividual) }
     Column(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
     ) {
-
-
         Column(
             modifier = Modifier
                 .padding(
@@ -885,60 +887,37 @@ fun UnSettledMemberItem(
                 )
                 .fillMaxWidth()
         ) {
-
-            list.forEachIndexed { index, item ->
-
+            unsettledMembers.forEachIndexed { index, item ->
                 SettledOrUnsettledSingleRow_70d834(
                     contentDescription = " SettledOrUnsettledSingleRow",
-                    userName = item.userName,
-                    userPhNo = item.userPhNo,
-                    getAmount = item.getAmount,
-                    paidAMount = item.paidAmount,
-                    isChecked = item.isChecked,
-                    isSettledMember = item.isSettledMember
+                    member = item,
                 ) {
-                    list = list.mapIndexed { j, item ->
-                        if (index == j) {
-                            item.copy(isChecked = !item.isChecked)
-                        } else item
-                    }
-
+                    notifier.notify(DataIds.selectUnsettledMembers, index)
                 }
-                if (index != list.lastIndex)
-                    Spacer(modifier = Modifier.height(config.gapBetweenTwoRow.dep()))
-
-            }
-
-        }
-
-        Spacer(modifier = Modifier.height(config.topPaddingOfRadioButton.dep()))
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-
-            CustomRadioButton_2ofz97(
-                contentDescription = "CustomRadioButton",
-                radioButtonName = "Split Individually",
-                isSelected = selected == SettleOptions.SplitIndividual
-            )
-            {
-                selected = SettleOptions.SplitIndividual
-
-            }
-            Spacer(modifier = Modifier.height(5.dep()))
-            CustomRadioButton_2ofz97(
-                contentDescription = "CustomRadioButton",
-                radioButtonName = "Delete anyway",
-                isSelected = selected == SettleOptions.Delete
-            )
-            {
-                selected = SettleOptions.Delete
+                14.sy()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    CustomRadioButton_2ofz97(
+                        contentDescription = "split individually",
+                        radioButtonName = stringResource(R.string.split_individually),
+                        isSelected = item.selectedSettleOption == SettleOptions.SplitIndividual
+                    ) {
+                        notifier.notify(DataIds.splitIndividuallyClick, index)
+                    }
+                    5.sy()
+                    CustomRadioButton_2ofz97(
+                        contentDescription = "delete any way",
+                        radioButtonName = stringResource(R.string.delete_anyway),
+                        isSelected = item.selectedSettleOption == SettleOptions.DeleteAnyway
+                    ) {
+                        notifier.notify(DataIds.deleteAnywayClick, index)
+                    }
+                }
+                26.sy()
             }
         }
-
-        Spacer(modifier = Modifier.height(config.topPaddingOfButton.dep()))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -949,14 +928,14 @@ fun UnSettledMemberItem(
                 .height(50.dep())
         ) {
             CustomButton_3egxtx(
-                text = "Continue",
-                onClick = { },
+                text = stringResource(id = R.string.continue1),
+                onClick = {
+                    notifier.notify(DataIds.settledUnsettledContinueClick)
+                },
                 contentDescription = "ContinueButton"
             )
         }
-
-        Spacer(modifier = Modifier.height(config.bottomPaddingOfButton.dep()))
-
+        config.bottomPaddingOfButton.sy()
     }
 }
 
@@ -973,7 +952,123 @@ data class CustomRadioButton(
     val unSelectedTextColor: Color = DarkBlue,
     val fontSize: Float = 14f
 )
+////////////////
+private const val RadioAnimationDuration = 700
+private val RadioButtonRippleRadius = 24.dp
+private val RadioButtonPadding = 2.dp
+private val RadioButtonSize = 20.dp
+private val RadioRadius = RadioButtonSize / 2
+private val RadioButtonDotSize = 12.dp
+private val RadioStrokeWidth = 2.dp
+///////
 
+
+private class MinimumTouchTargetModifier(val size: DpSize) : LayoutModifier {
+    override fun MeasureScope.measure(
+        measurable: Measurable,
+        constraints: Constraints
+    ): MeasureResult {
+
+        val placeable = measurable.measure(constraints)
+
+        // Be at least as big as the minimum dimension in both dimensions
+        val width = maxOf(placeable.width, size.width.roundToPx())
+        val height = maxOf(placeable.height, size.height.roundToPx())
+
+        return layout(width, height) {
+            val centerX = ((width - placeable.width) / 2f).roundToInt()
+            val centerY = ((height - placeable.height) / 2f).roundToInt()
+            placeable.place(centerX, centerY)
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        val otherModifier = other as? MinimumTouchTargetModifier ?: return false
+        return size == otherModifier.size
+    }
+
+    override fun hashCode(): Int {
+        return size.hashCode()
+    }
+}
+@OptIn(ExperimentalMaterialApi::class)
+@Suppress("ModifierInspectorInfo")
+fun Modifier.minimumTouchTargetSize(): Modifier = composed(
+    inspectorInfo = debugInspectorInfo {
+        name = "minimumTouchTargetSize"
+        // TODO: b/214589635 - surface this information through the layout inspector in a better way
+        //  - for now just add some information to help developers debug what this size represents.
+        properties["README"] = "Adds outer padding to measure at least 48.dp (default) in " +
+                "size to disambiguate touch interactions if the element would measure smaller"
+    }
+) {
+    if (LocalMinimumTouchTargetEnforcement.current) {
+        // TODO: consider using a hardcoded value of 48.dp instead to avoid inconsistent UI if the
+        // LocalViewConfiguration changes across devices / during runtime.
+        val size = LocalViewConfiguration.current.minimumTouchTargetSize
+        MinimumTouchTargetModifier(size)
+    } else {
+        Modifier
+    }
+}
+///////
+@Composable
+fun MyRadioButton(
+    selected: Boolean,
+    onClick: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    colors: RadioButtonColors = RadioButtonDefaults.colors()
+) {
+    val dotRadius = animateDpAsState(
+        targetValue = if (selected) RadioButtonDotSize / 2 else 0.dp,
+        animationSpec = tween(durationMillis = RadioAnimationDuration)
+    )
+    val radioColor = colors.radioColor(enabled, selected)
+    val selectableModifier =
+        if (onClick != null) {
+            Modifier.selectable(
+                selected = selected,
+                onClick = onClick,
+                enabled = enabled,
+                role = Role.RadioButton,
+                interactionSource = interactionSource,
+                indication = rememberRipple(
+                    bounded = false,
+                    radius = RadioButtonRippleRadius
+                )
+            )
+        } else {
+            Modifier
+        }
+    Canvas(
+        modifier
+            .then(
+                if (onClick != null) {
+                    Modifier.minimumTouchTargetSize()
+                } else {
+                    Modifier
+                }
+            )
+            .then(selectableModifier)
+            .wrapContentSize(Alignment.Center)
+            .padding(RadioButtonPadding)
+            .requiredSize(RadioButtonSize)
+    ) {
+        // Draw the radio button
+        val strokeWidth = RadioStrokeWidth.toPx()
+        drawCircle(
+            radioColor.value,
+            RadioRadius.toPx() - strokeWidth / 2,
+            style = Stroke(strokeWidth)
+        )
+        if (dotRadius.value > 0.dp) {
+            drawCircle(radioColor.value, dotRadius.value.toPx() - strokeWidth / 2, style = Fill)
+        }
+    }
+}
+////////////////
 @Composable
 fun CustomRadioButton_2ofz97(
     contentDescription: String,
@@ -982,22 +1077,60 @@ fun CustomRadioButton_2ofz97(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val animDuration = remember {
+        700
+    }
+    val borderWidth by remember(isSelected) {
+        derivedStateOf {
+            if (isSelected)
+                config.borderWidth
+            else
+                0f
+        }
+    }
+    val animatedBorderWidth by animateFloatAsState(targetValue = borderWidth, tween(animDuration))
+    val borderColor by remember(isSelected) {
+        derivedStateOf{
+            if(isSelected){
+                config.borderColor
+            }
+            else{
+                Color.Transparent
+            }
+        }
+    }
+    val animatedBorderColor by animateColorAsState(targetValue = borderColor, tween(animDuration))
+    val backgroundColor by remember(isSelected) {
+        derivedStateOf {
+            if (isSelected)
+                config.selectedBackGroundColor
+            else
+                config.unSelectedBackGroundColor
+        }
+    }
+    val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor, tween(animDuration))
+    val textColor by remember(isSelected) {
+        derivedStateOf {
+            if (isSelected) config.selectedTextColor
+            else config.unSelectedTextColor
+        }
+    }
+    val animatedTextColor by animateColorAsState(targetValue = textColor, tween(animDuration))
     Box(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
             .fillMaxWidth()
             .height(config.height.dep())
             .clip(RoundedCornerShape(config.cornerRadius.dep()))
-            .background(
-                if (isSelected) config.selectedBackGroundColor
-                else config.unSelectedBackGroundColor
-            )
+            .background(animatedBackgroundColor)
             .border(
-                width = if (isSelected) config.borderWidth.dep()
-                else (-config.borderWidth).dep(),
-                color = config.borderColor,
+                width = animatedBorderWidth.dep(),
+                color = animatedBorderColor,
                 shape = RoundedCornerShape(config.cornerRadius.dep())
             )
+            .clickable {
+                onClick()
+            }
     ) {
         Row(
             modifier = Modifier
@@ -1008,14 +1141,13 @@ fun CustomRadioButton_2ofz97(
                 text = radioButtonName,
                 modifier = Modifier
                     .padding(start = 27.dep()),
-                color = if (isSelected) config.selectedTextColor
-                else config.unSelectedTextColor,
+                color = animatedTextColor,
                 fontSize = config.fontSize.sep()
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            RadioButton(
+            MyRadioButton(
                 selected = isSelected,
                 onClick = onClick,
                 colors = RadioButtonDefaults.colors(
@@ -1032,7 +1164,7 @@ val LightGrayShadow = Color(0xffE6E5E5)
 
 enum class SettleOptions {
     SplitIndividual,
-    Delete
+    DeleteAnyway
 }
 
 data class SettledUnsettledMembersBottomSheet(
@@ -1042,6 +1174,7 @@ data class SettledUnsettledMembersBottomSheet(
 
 ////////////////////////////////
 data class SingleSettledOrUnsettledMember(
+    val selectedSettleOption: SettleOptions = SettleOptions.SplitIndividual,
     val isChecked: Boolean = false,
     val isSettledMember: Boolean,
     val imageUrl: String,
@@ -1051,31 +1184,10 @@ data class SingleSettledOrUnsettledMember(
     val paidAmount: Float
 )
 
-private var list by mutableStateOf(
-    listOf(
-        SingleSettledOrUnsettledMember(
-            isSettledMember = true,
-            imageUrl = "imageUrl",
-            userName = "Manisha Roy",
-            userPhNo = "9563376942",
-            getAmount = 0f,
-            paidAmount = 600f
-        ),
-
-        SingleSettledOrUnsettledMember(
-            isSettledMember = true,
-            imageUrl = "imageUrl",
-            userName = "Sanjana Ray",
-            userPhNo = "9563376942",
-            getAmount = 0f,
-            paidAmount = 600f
-        ),
-    )
-)
-
 @Composable
 fun SettledMembers(
-    contentDescription: String,
+    settledMembers: List<SingleSettledOrUnsettledMember> = listState(key = DataIds.settledMembers),
+    contentDescription: String = "",
     config: SettledMembersConfiguration = SettledMembersConfiguration()
 ) {
 
@@ -1085,31 +1197,15 @@ fun SettledMembers(
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
-            list.forEachIndexed { index, item ->
+            settledMembers.forEachIndexed { index, item ->
 
                 SettledOrUnsettledSingleRow_70d834(
                     contentDescription = " SettledOrUnsettledSingleRow",
-                    userName = item.userName,
-                    userPhNo = item.userPhNo,
-                    getAmount = item.getAmount,
-                    paidAMount = item.paidAmount,
-                    isChecked = item.isChecked,
-                    isSettledMember = item.isSettledMember
-                )
-                {
-                    list = list.mapIndexed { j, item ->
-                        if (index == j) {
-                            item.copy(isChecked = !item.isChecked)
-                        } else item
-                    }
+                    member = item
+                ){
 
                 }
-
-                if (index != list.lastIndex)
-                    Spacer(modifier = Modifier.height(33.dep()))
-
             }
-
         }
 
         Spacer(modifier = Modifier.height(config.topPaddingOfBottom.dep()))
@@ -1142,80 +1238,75 @@ data class SettledMembersConfiguration(
 fun SettledOrUnsettledSingleRow_70d834(
     contentDescription: String,
     config: SettledOrUnsettledSingleRowConfiguration = SettledOrUnsettledSingleRowConfiguration(),
-    userName: String,
-    userPhNo: String,
-    getAmount: Float,
-    paidAMount: Float,
-    isSettledMember: Boolean,
-    isChecked: Boolean,
+    member: SingleSettledOrUnsettledMember,
     onChecked: () -> Unit
 ) {
+
+    val getTextColor = animateColorAsState(targetValue = if (member.isSettledMember) LightBlue5 else LightGreen3)
+    val paidTextColor = animateColorAsState(targetValue = if (member.isSettledMember) Pink else LightBlue5)
+    val getCurrencyColor = animateColorAsState(targetValue = if (member.isSettledMember) DarkBlue else LightGreen3)
+    val payCurrencyColor = animateColorAsState(targetValue = if (member.isSettledMember) Pink else DarkBlue)
+
     Row(
         modifier = Modifier.semantics { this.contentDescription = contentDescription }
     ) {
-
         Row(verticalAlignment = Alignment.CenterVertically) {
-
             SelectorIcon_ulkel8(
                 config = CheckboxConfiguration(
                     iconColor = LightBlue4
                 ),
                 contentDescription = "YouWillGetCheckBox",
-                selected = isChecked,
+                selected = member.isChecked,
                 onClick = onChecked
             )
 
-            Spacer(modifier = Modifier.width(config.gapBetweenSelectorAndProfileImage.dep()))
+            config.gapBetweenSelectorAndProfileImage.sx()
 
             ProfileImage_2hf7q0(
                 contentDescription = "UserProfilePic"
             )
         }
 
-        Spacer(modifier = Modifier.width(config.gapBetweenProfileImageAndUserName.dep()))
+        config.gapBetweenProfileImageAndUserName.sx()
 
         Row(modifier = Modifier.padding(top = 9.dep())) {
-            Column(modifier = Modifier) {
-
+            Column {
                 FontFamilyText(
-                    text = userName,
+                    text = member.userName,
                     fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold,
                     color = DarkBlue
                 )
-                Spacer(modifier = Modifier.height(5.dep()))
+                5.sy()
 
                 FontFamilyText(
-                    text = userPhNo,
+                    text = member.userPhNo,
                     fontSize = 11.sep(),
-                    style = MaterialTheme.typography.h1,
                     color = LightBlue5
                 )
             }
 
-            Spacer(modifier = Modifier.width(24.dep()))
+            24.sx()
 
             Column(modifier = Modifier.fillMaxWidth()) {
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
                     FontFamilyText(
-                        text = "Get",
+                        text = stringResource(R.string.get),
                         fontSize = 11.sep(),
-                        fontWeight = FontWeight(400),
-                        color = if (isSettledMember) LightBlue5 else LightGreen3
+                        color = getTextColor.value
                     )
 
-                    Text(
-                        getAmount.amountAnnotatedString(
-                            currencyFontSize = if (isSettledMember) 9f else 12f,
-                            currencyTextColor = if (isSettledMember) DarkBlue else LightGreen3,
-                            decNumberTextColor = if (isSettledMember) DarkBlue else LightGreen3,
-                            wholeNumberTextColor = if (isSettledMember) DarkBlue else LightGreen3,
-                            wholeNumberFontSize = if (isSettledMember) 10f else 12f,
+                    FontFamilyText(
+                        annotatedString = member.getAmount.amountAnnotatedString(
+                            currencyFontSize = if (member.isSettledMember) 9f else 12f,
+                            currencyTextColor = getCurrencyColor.value,
+                            decNumberTextColor = getCurrencyColor.value,
+                            wholeNumberTextColor = getCurrencyColor.value,
+                            wholeNumberFontSize = if (member.isSettledMember) 10f else 12f,
                             isSpaceBetween = true,
                             wholeNumberFontWeight = FontWeight.Bold,
                             decNumberFontSize = 10f
@@ -1224,7 +1315,7 @@ fun SettledOrUnsettledSingleRow_70d834(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(5.dep()))
+                5.sy()
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -1232,28 +1323,28 @@ fun SettledOrUnsettledSingleRow_70d834(
                 ) {
 
                     FontFamilyText(
-                        text = "Paid",
-                        color = if (isSettledMember) Pink else LightBlue5,
+                        text = stringResource(id = R.string.paid),
+                        color = paidTextColor.value,
                         fontSize = 11.sep(),
                     )
 
-                    Text(
-                        paidAMount.amountAnnotatedString(
-                            currencyFontSize = if (isSettledMember) 12f else 9f,
-                            currencyTextColor = if (isSettledMember) Pink else DarkBlue,
-                            decNumberTextColor = if (isSettledMember) Pink else DarkBlue,
-                            wholeNumberTextColor = if (isSettledMember) Pink else DarkBlue,
+                    FontFamilyText(
+                        annotatedString = member.paidAmount.amountAnnotatedString(
+                            currencyFontSize = if (member.isSettledMember) 12f else 9f,
+                            currencyTextColor = payCurrencyColor.value,
+                            decNumberTextColor = payCurrencyColor.value,
+                            wholeNumberTextColor = payCurrencyColor.value,
                             isSpaceBetween = true,
                             wholeNumberFontWeight = FontWeight.Bold,
-                            wholeNumberFontSize = if (isSettledMember) 12f else 10f,
-                            decNumberFontSize = if (isSettledMember) 10f else 8f,
+                            wholeNumberFontSize = if (member.isSettledMember) 12f else 10f,
+                            decNumberFontSize = if (member.isSettledMember) 10f else 8f,
                         ),
                         color = LightBlue5
                     )
                 }
 
-                if (isSettledMember) {
-                    Spacer(modifier = Modifier.height(8.dep()))
+                if (member.isSettledMember) {
+                    8.sy()
 
                     Box(
                         modifier = Modifier
@@ -1261,11 +1352,10 @@ fun SettledOrUnsettledSingleRow_70d834(
                             .background(color = Whitish6)
                     ) {
                         FontFamilyText(
-                            text = "Settled",
+                            text = stringResource(id = R.string.settled),
                             fontSize = 12.sep(),
                             color = DarkBlue,
                             lineHeight = 14.sep(),
-                            fontWeight = FontWeight(400),
                             modifier = Modifier
                                 .padding(
                                     horizontal = 8.dep(),
