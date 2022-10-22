@@ -191,6 +191,11 @@ fun GroupCreationPageContent(
                 )
             }
             Spacer(modifier = Modifier.height(17.dep()))
+            Box(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            )
         }
     }
 }

@@ -217,7 +217,8 @@ fun BillTotalBottomSheet(
         }
         Box(
             modifier = Modifier
-                .keyboardHeight()
+                .navigationBarsPadding()
+                .imePadding()
         ){
 
         }

@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -14,10 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.TextFieldDefaults.indicatorLine
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
@@ -25,14 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -40,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
@@ -202,9 +205,18 @@ class BillTotalAndCategoryBottomSheetModel(
         )
     }
 }
-
+fun Modifier.maxHeightFactor(
+    factor: Float = 1f
+) = composed(
+    factory = {
+        val screenHeight = LocalConfiguration.current.screenHeightDp
+        Modifier
+            .heightIn(max = (screenHeight*factor).dp)
+    }
+)
 val LightGrey2 = Color(0xffF8F8F8)
 val Grayish = Color(0xffF5F5F5)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BillTotalAndCategoryBottomSheet(
     categories: List<Category> = listState(key = DataIds.categories),
@@ -219,6 +231,8 @@ fun BillTotalAndCategoryBottomSheet(
 ) {
     Column(
         modifier = Modifier
+            .animateContentSize()
+            .ModalBottomSheetAdjustWithIme()
             .fillMaxWidth()
             .padding(
                 start = 32.dep(),
@@ -314,6 +328,7 @@ fun BillTotalAndCategoryBottomSheet(
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(max=192.dp)
                 .padding(
                     top = 20.dep()
                 ),
@@ -434,7 +449,8 @@ fun BillTotalAndCategoryBottomSheet(
                     },
                     contentDescription = "",
                     leadingIcon = categoryImage,
-                    placeHolderText = categoryPlaceholder
+                    placeHolderText = categoryPlaceholder,
+                    iconTint = Color(0xff656565)
                 )
             }
         }
@@ -460,39 +476,13 @@ fun BillTotalAndCategoryBottomSheet(
                 enabled = canProceed
             )
         }
-        /*val screenHeight = with(LocalDensity.current){
-            LocalConfiguration.current.screenHeightDp*density
-        }
-        val keyboardHeight = keyboardHeight()
-        var y by remember {
-            mutableStateOf(0f)
-        }
-        var h by remember {
-            mutableStateOf(0)
-        }
-        val height by remember(screenHeight,keyboardHeight,y) {
-            derivedStateOf {
-                val expectedY = screenHeight - keyboardHeight
-                val dif = y - expectedY
-                Log.d("fdjlfjdlfd2","$screenHeight,$keyboardHeight,$y,$h,${h - dif}")
-                h - dif
-            }
-        }*/
-        val density = LocalDensity.current.density
-        Box(
+        /*Box(
             modifier = Modifier
-                .keyboardHeight()
-                //.height((height/density).dp)
-                //.width(10.dep())
-                //.background(Color.Red)
-                /*.onGloballyPositioned {
-                    y = it.positionInWindow().y
-                    h = it.size.height
-                    Log.d("fdjlfjdlfd1","$screenHeight,$keyboardHeight,$y,$h")
-                }*/
+                .navigationBarsPadding()
+                .imePadding()
         ){
 
-        }
+        }*/
     }
 }
 

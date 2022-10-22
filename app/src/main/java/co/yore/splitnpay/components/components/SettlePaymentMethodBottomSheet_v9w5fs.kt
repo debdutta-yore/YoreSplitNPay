@@ -498,6 +498,13 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
             )
         }
         config.bottomPaddingOfContinueButton.sy()
+        Box(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .imePadding()
+        ){
+
+        }
     }
 }
 

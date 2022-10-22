@@ -1,27 +1,35 @@
 package co.yore.splitnpay.components.components
 
+import android.app.Activity
+import android.util.Log
+import android.view.WindowManager
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import co.yore.splitnpay.R
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
@@ -67,8 +75,16 @@ class PaymentReviewBottomSheetModel(
     override val notifier = _notifier
     override val scope get() = callback.scope()
 
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     override fun Content() {
+        /*val activity = LocalContext.current as Activity
+        DisposableEffect(key1 = Unit) {
+            activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+            onDispose {
+                activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+            }
+        }*/
         PaymentReviewBottomSheet_6vn06v(contentDescription = "")
     }
 
@@ -116,15 +132,14 @@ fun PaymentReviewBottomSheet_6vn06v(
     val isPaid = remember {
         derivedStateOf { transaction?.transactionType == TransactionType.Paid }
     }
-    val tintColor = remember {
-        derivedStateOf { if (isPaid.value) Pink else Bluish }
-    }
     val buttonText = remember {
         derivedStateOf { if (isPaid.value) "Confirm and Pay" else "Confirm and Request" }
     }
     Column(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
+            .animateContentSize()
+            .ModalBottomSheetAdjustWithIme()
             .fillMaxWidth()
     ) {
         config.holderIconTopPadding.sy()
@@ -210,6 +225,13 @@ fun PaymentReviewBottomSheet_6vn06v(
             )
         }
         config.buttonBottomPadding.sy()
+        /*Box(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .imePadding()
+        ){
+
+        }*/
     }
 }
 

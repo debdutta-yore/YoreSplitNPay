@@ -597,8 +597,8 @@ class GroupChatViewModel(
             }
             "${DataIds.back}group_chat_page"->{
                 when(mySheeting.sheets.value){
-                    Sheets.SettlePaymentMethod->mySheeting.map[Sheets.SettlePaymentMethod]?.onBack()
-                    else->mySheeting.hide()
+                    Sheets.None->{}
+                    else->mySheeting.map[mySheeting.sheets.value]?.onBack()
                 }
 
             }

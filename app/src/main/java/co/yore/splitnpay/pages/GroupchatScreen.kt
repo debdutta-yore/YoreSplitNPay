@@ -424,8 +424,6 @@ fun GroupChatScreen(
                                 start = 19.dep()
                             )
                             .fillMaxWidth(),
-                        scope = scope,
-                        sheetState = sheetState
                     )
 
                     Box(
@@ -1566,17 +1564,16 @@ fun GroupChatTabItem_yb6b5a(
 ////////
 val PinkShadow = Color(0x4FFF4077)
 val Blackish = Color(0x1A000000)
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Message(
     modifier: Modifier = Modifier,
-    scope: CoroutineScope,
-    sheetState: ModalBottomSheetState,
     chatMessage: String = stringState(key = DataIds.chatMessage).value,
     notifier: NotificationService = notifier()
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .navigationBarsPadding()
+            .imePadding(),
         verticalAlignment = Alignment.Top,
     ) {
         FloatingActionButton(
