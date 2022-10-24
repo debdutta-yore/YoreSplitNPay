@@ -27,7 +27,7 @@ interface SettleRepository {
     suspend fun getWillPay(): List<Transaction>
 }
 
-class SettleRepositoryImpl: SettleRepository {
+class SettleRepositoryImpl : SettleRepository {
     private val getList = listOf(
         Transaction(
             name = "You",
@@ -119,7 +119,7 @@ class GroupsMock : GroupRepository {
     val groupsList = emptyList<Group>()
     val group = listOf<Group>(
         Group("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f),
-        Group("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f),
+        Group("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f)
     )
 
     override suspend fun getBillTransactions(): List<BillTransaction> {
@@ -129,14 +129,15 @@ class GroupsMock : GroupRepository {
     override suspend fun getBillTransactions(number: Int): List<BillTransaction> {
         return listOf(transaction)
     }
-    //////////////
-    var categoryList  =
+
+    // ////////////
+    var categoryList =
         listOf(
             Category(
                 id = 0,
                 name = "Food",
                 0xFF1A79E5,
-                R.drawable.ic_food,
+                R.drawable.ic_food
             ),
             Category(
                 id = 1,
@@ -173,7 +174,7 @@ class GroupsMock : GroupRepository {
                 name = "Bills",
                 0xFFFF4077,
                 R.drawable.ic_bills
-            ),
+            )
         )
 
     override suspend fun getCategories(): List<Category> {
@@ -220,7 +221,7 @@ class GroupsMock : GroupRepository {
                 userName = "Ankita Ray",
                 mobileNo = "9563376942",
                 isSelected = false
-            ),
+            )
         )
     }
 }
@@ -270,7 +271,7 @@ data class SingleItem(
 
 class GroupChatViewModel(
     private val repo: GroupRepository = GroupsMock(),
-    private val settleRepository: SettleRepository = SettleRepositoryImpl(),
+    private val settleRepository: SettleRepository = SettleRepositoryImpl()
 ) : ViewModel(), WirelessViewModelInterface {
 
     override val resolver = Resolver()
@@ -283,7 +284,7 @@ class GroupChatViewModel(
     override val sheeting = Sheeting(
         sheetMap = mapOf(
             Sheets.BillTotalAndCategories to BillTotalAndCategoryBottomSheetModel(
-                object: BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
+                object : BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
                     override suspend fun getCategories(): List<Category> {
                         val categories = repo.getAllCategories().toMutableList()
                         categories[0] = categories[0].copy(isSelected = true)
@@ -327,15 +328,15 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.SettleSummaryManage to SettleSummaryManageBottomSheetModel(
-                object: SettleSummaryManageBottomSheetModel.Callback{
+                object : SettleSummaryManageBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
 
                     override fun onContinue(arg: Any?) {
                         mySheeting.hide()
-                        when(arg){
-                            "Manage"->navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        when (arg){
+                            "Manage" -> navigation.scope { navHostController, lifecycleOwner, toaster ->
                                 navHostController.navigate("group_manage")
                             }
                         }
@@ -343,7 +344,7 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.MemberFilter to MemberFilterBottomSheetModel(
-                object: MemberFilterBottomSheetModel.Callback{
+                object : MemberFilterBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -364,7 +365,7 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.CategoriesEdit to AllCategoriesBottomSheetModel(
-                object: AllCategoriesBottomSheetModel.Callback{
+                object : AllCategoriesBottomSheetModel.Callback{
                     override suspend fun getCategories(): List<Category> {
                         val categories = repo.getAllCategories().toMutableList()
                         categories[0] = categories[0].copy(isSelected = true)
@@ -385,7 +386,7 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
-                object: ExpenseDatePickerBottomSheetModel.Callback{
+                object : ExpenseDatePickerBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -408,7 +409,7 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.Settle to SettleBottomSheetModel(
-                object: SettleBottomSheetModel.Callback{
+                object : SettleBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -431,22 +432,22 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.SettlePaymentMethod to SettlePaymentMethodBottomSheetModel(
-                object: SettlePaymentMethodBottomSheetModel.Callback{
+                object : SettlePaymentMethodBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
 
                     override suspend fun getUpis(): List<Upi> {
                         return listOf(
-                            Upi("UPI-1","fdfldf@ljl","SBI","User1",Color(0xff008523),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
-                            Upi("UPI-2","fdfldf@ljl1","Axis","User2",Color(0xff186ec4),false),
+                            Upi("UPI-1", "fdfldf@ljl", "SBI", "User1", Color(0xff008523), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false)
                         )
                     }
 
@@ -468,7 +469,7 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.PaymentReview to PaymentReviewBottomSheetModel(
-                object: PaymentReviewBottomSheetModel.Callback{
+                object : PaymentReviewBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -507,7 +508,7 @@ class GroupChatViewModel(
                             category = co.yore.splitnpay.components.components.Category(
                                 name = "Category",
                                 color = 0xffff0000,
-                                icon = R.drawable.travel,
+                                icon = R.drawable.travel
                             )
                         )
                     }
@@ -522,7 +523,7 @@ class GroupChatViewModel(
                 }
             ),
             Sheets.BillTotal to BillTotalBottomSheetModel(
-                object: BillTotalBottomSheetModel.Callback{
+                object : BillTotalBottomSheetModel.Callback{
                     override suspend fun getBillTotalAmount(): String {
                         return ""
                     }
@@ -555,20 +556,20 @@ class GroupChatViewModel(
     )
 
     fun onSheetVisibilityChange(visible: Boolean){
-        if(!visible){
+        if (!visible){
             mySheeting.sheets.value = Sheets.None
         }
     }
 
     @OptIn(ExperimentalMaterialApi::class)
     private fun confirmSheetStateChange(): Boolean {
-        if(mySheeting.sheets.value==Sheets.MemberFilter){
+        if (mySheeting.sheets.value == Sheets.MemberFilter){
             return false
         }
         return true
     }
 
-    //////////////////////////////////////////
+    // ////////////////////////////////////////
     private val _conversations = mutableStateListOf<Conversation>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("Office Buddies")
@@ -585,37 +586,38 @@ class GroupChatViewModel(
     private val search = mutableStateOf(false)
     private val groupChatTab = mutableStateOf(GroupChatTab.All)
 
-    /////////////////////////////////////////
-    //////////////////////////////////////////
+    // ///////////////////////////////////////
+    // ////////////////////////////////////////
     private var prevSelectedIndex = -1
+
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
-            DataIds.settleSummaryManage->{
+            DataIds.settleSummaryManage -> {
                 mySheeting.sheets.value = Sheets.SettleSummaryManage
                 mySheeting.show()
             }
-            "${DataIds.back}group_chat_page"->{
-                when(mySheeting.sheets.value){
-                    Sheets.None->{}
-                    else->mySheeting.map[mySheeting.sheets.value]?.onBack()
+            "${DataIds.back}group_chat_page" -> {
+                when (mySheeting.sheets.value){
+                    Sheets.None -> {}
+                    else -> mySheeting.map[mySheeting.sheets.value]?.onBack()
                 }
 
             }
-            DataIds.searchTextInput->{
-                searchText.value = arg as? String?:return@NotificationService
+            DataIds.searchTextInput -> {
+                searchText.value = arg as? String ?: return@NotificationService
             }
-            DataIds.groupChantTab->{
-                groupChatTab.value = arg as GroupChatTab?:return@NotificationService
+            DataIds.groupChantTab -> {
+                groupChatTab.value = arg as GroupChatTab ?: return@NotificationService
             }
-            DataIds.search->{
+            DataIds.search -> {
                 search.value = true
-                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
+                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9), true)
             }
-            DataIds.filterDone->{
+            DataIds.filterDone -> {
                 mySheeting.hide()
             }
-            DataIds.split->{
+            DataIds.split -> {
                 mySheeting.sheets.value = Sheets.BillTotalAndCategories
                 mySheeting.show()
             }
@@ -627,7 +629,7 @@ class GroupChatViewModel(
                 )
             }
             DataIds.back -> {
-                if(search.value){
+                if (search.value){
                     search.value = false
                     _statusBarColor.value = StatusBarColor(
                         color = StatusBarGreen,
@@ -660,7 +662,7 @@ class GroupChatViewModel(
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.navigate("group_manage")
                 }
-                //_typingMembers.add("https://i.pravatar.cc/100")
+                // _typingMembers.add("https://i.pravatar.cc/100")
             }
             DataIds.chatMessage -> {
                 _chatMessage.value = (arg as? String) ?: ""
@@ -673,7 +675,7 @@ class GroupChatViewModel(
                     navHostController.navigate("split_card_details_screen")
                 }*/
             }
-            ////////
+            // //////
 
             DataIds.openAllCategories -> {
                 mySheeting.sheets.value = Sheets.CategoriesEdit
@@ -684,8 +686,7 @@ class GroupChatViewModel(
         }
     }
 
-
-    /////////////////////////////////////////
+    // ///////////////////////////////////////
 
     init {
         resolver.addAll(
@@ -703,21 +704,21 @@ class GroupChatViewModel(
             DataIds.typingMembers to _typingMembers,
             DataIds.search to search,
             DataIds.groupChantTab to groupChatTab,
-            ////////
+            // //////
             DataIds.statusBarColor to _statusBarColor,
-            ///////////////
+            // /////////////
             DataIds.canProceedWithBillTotal to DataIds.canProceedWithBillTotal,
             DataIds.displayDate to DataIds.displayDate,
             DataIds.canProceedWithDate to DataIds.canProceedWithDate,
-            DataIds.yoreDatePickerData to DataIds.yoreDatePickerData,
+            DataIds.yoreDatePickerData to DataIds.yoreDatePickerData
         )
-        //////////////////////////////////////
+        // ////////////////////////////////////
 
         _statusBarColor.value = StatusBarColor(
             color = StatusBarGreen,
             darkIcons = true
         )
-        //////////////////////////////////////
+        // ////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {
             val billTransactions = repo.getBillTransactions()
             withContext(Dispatchers.Main) {
@@ -726,7 +727,7 @@ class GroupChatViewModel(
                         type = Conversation.Type.MEMBER,
                         data = MemberData(
                             name = "Manisha Roy",
-                            profileImage = "https://i.pravatar.cc/100",
+                            profileImage = "https://i.pravatar.cc/100"
                         )
                     )
                 )
@@ -761,7 +762,7 @@ class GroupChatViewModel(
                                 "https://i.pravatar.cc/100",
                                 "https://i.pravatar.cc/100",
                                 "https://i.pravatar.cc/100",
-                                "https://i.pravatar.cc/100",
+                                "https://i.pravatar.cc/100"
                             ),
                             left = false
                         )
@@ -771,7 +772,7 @@ class GroupChatViewModel(
                     Conversation(
                         type = Conversation.Type.CHAT,
                         data = ChatData(
-                            content = "Hello, guy",
+                            content = "Hello, guy"
                         )
                     )
                 )
@@ -791,4 +792,3 @@ class GroupChatViewModel(
 }
 
 val StatusBarGreen = Color(0xff00CEC3)
-

@@ -22,8 +22,6 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.robotoFonts
 
-
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GroupCreationScreen(

@@ -14,5 +14,6 @@ enum class Sheets {
     BillTotal,
     UnsettledMembersAlert,
     ConfirmDelete,
-    SuccessUndo
+    SuccessUndo,
+    SettledUnsettledMembers
 }

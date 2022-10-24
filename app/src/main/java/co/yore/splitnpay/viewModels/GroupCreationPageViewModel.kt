@@ -21,32 +21,34 @@ import kotlinx.coroutines.launch
 
 class GroupCreationPageViewModel(
     private val repo: Repo = RepoImpl()
-): ViewModel(), WirelessViewModelInterface {
+) : ViewModel(), WirelessViewModelInterface {
     private val contacts = mutableStateListOf<ContactData>()
     private val profileImage = mutableStateOf<Any?>(null)
+
     @OptIn(ExperimentalMaterialApi::class)
     override val resultingActivityHandler = ResultingActivityHandler()
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
+
     @OptIn(ExperimentalMaterialApi::class)
     override val sheeting = Sheeting(
         sheetMap = mapOf(
             Sheets.ImagePicker to PhotoSelectionBottomSheetModel(
-                object: PhotoSelectionBottomSheetModel.Callback{
+                object : PhotoSelectionBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
 
                     override fun onContinue(arg: Any?) {
                         mySheeting.hide()
-                        handleCameraOrGallery(arg as? String?:return)
+                        handleCameraOrGallery(arg as? String ?: return)
                     }
                 }
             )
         ),
         onVisibilityChanged = {
-            if(!it){
+            if (!it){
                 mySheeting.sheets.value = Sheets.None
             }
         },
@@ -55,57 +57,58 @@ class GroupCreationPageViewModel(
         }
     )
 
-    //////////////////////////////////////////
+    // ////////////////////////////////////////
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("")
-    //////////////////////////////////////////
+
+    // ////////////////////////////////////////
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
-    override val notifier = NotificationService{ id, arg->
-        when(id){
-            DataIds.proceed->{
+    override val notifier = NotificationService{ id, arg ->
+        when (id){
+            DataIds.proceed -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack("split_page",false)
+                    navHostController.popBackStack("split_page", false)
                     navHostController.navigate("group_chat_page")
                 }
             }
-            DataIds.deleteAdded->{
-                deleteItem(arg as? ContactData?:return@NotificationService)
+            DataIds.deleteAdded -> {
+                deleteItem(arg as? ContactData ?: return@NotificationService)
             }
-            WirelessViewModelInterface.startupNotification->{
+            WirelessViewModelInterface.startupNotification -> {
                 fetchContacts()
             }
-            DataIds.cameraOrGallery->{
-                handleCameraOrGallery(arg as? String?:return@NotificationService)
+            DataIds.cameraOrGallery -> {
+                handleCameraOrGallery(arg as? String ?: return@NotificationService)
             }
-            DataIds.back->{
+            DataIds.back -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack()
                 }
             }
-            DataIds.pickImage->{
+            DataIds.pickImage -> {
                 mySheeting.show()
             }
-            DataIds.groupName->{
-                _groupName.value = (arg as? String)?:""
+            DataIds.groupName -> {
+                _groupName.value = (arg as? String) ?: ""
             }
         }
     }
 
     private fun deleteItem(contactData: ContactData) {
-        if(contacts.size<3){
+        if (contacts.size < 3){
             return
         }
         val index = contacts.indexOfFirst {
-            it.mobile==contactData.mobile
+            it.mobile == contactData.mobile
         }
-        if(index > -1){
+        if (index > -1){
             contacts.removeAt(index)
         }
         adjustDeletable()
     }
 
     private fun adjustDeletable() {
-        if(contacts.size==2){
+        if (contacts.size == 2){
             try {
                 contacts[0] = contacts[0].copy(deletable = false)
                 contacts[1] = contacts[1].copy(deletable = false)
@@ -124,11 +127,11 @@ class GroupCreationPageViewModel(
     }
 
     private fun handleCameraOrGallery(arg: String) {
-        when(arg){
-            "Camera"->{
+        when (arg){
+            "Camera" -> {
                 capturePicture()
             }
-            "Gallery"->{
+            "Gallery" -> {
                 takePicture()
             }
         }
@@ -140,12 +143,11 @@ class GroupCreationPageViewModel(
         viewModelScope.launch {
             val p = Manifest.permission.CAMERA
             val state = permissionHandler.check(p)
-            if(state?.allPermissionsGranted==true){
+            if (state?.allPermissionsGranted == true){
                 profileImage.value = resultingActivityHandler.takePicturePreview()
-            }
-            else{
+            } else {
                 val result = permissionHandler.request(p)
-                if(result?.get(p)==true){
+                if (result?.get(p) == true){
                     profileImage.value = resultingActivityHandler.takePicturePreview()
                 }
             }
@@ -161,7 +163,7 @@ class GroupCreationPageViewModel(
         }
     }
 
-    /////////////////////////////////////////
+    // ///////////////////////////////////////
     init {
         resolver.addAll(
             DataIds.statusBarColor to _statusBarColor,

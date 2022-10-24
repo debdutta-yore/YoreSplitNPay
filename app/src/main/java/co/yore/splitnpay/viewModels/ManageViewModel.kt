@@ -1,10 +1,14 @@
 package co.yore.splitnpay.viewModels
 
+import android.Manifest
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.components.components.DeleteAlertSheetModel
+import co.yore.splitnpay.components.components.SettledUnsettledMembersBottomSheetModel
 import co.yore.splitnpay.components.components.SuccessUndoSheetModel
 import co.yore.splitnpay.components.components.UnsettledMembersAlertSheetModel
 import co.yore.splitnpay.libs.*
@@ -13,6 +17,7 @@ import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.pages.Member
 import co.yore.splitnpay.pages.SettleOptions
 import co.yore.splitnpay.pages.SingleSettledOrUnsettledMember
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +26,7 @@ import kotlinx.coroutines.withContext
 interface ManageRepository {
     suspend fun getMembers(): List<Member>
 }
-class ManageRepositoryMockImpl: ManageRepository {
+class ManageRepositoryMockImpl : ManageRepository {
     val group = listOf(
         Member(
             id = 1,
@@ -58,7 +63,7 @@ class ManageRepositoryMockImpl: ManageRepository {
             userName = "Ankita Ray",
             mobileNo = "9563376942",
             isSelected = false
-        ),
+        )
     )
 
     override suspend fun getMembers(): List<Member> {
@@ -74,7 +79,8 @@ class ManageViewModel(
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
 
-    //////////////////////////////////////////
+    // ////////////////////////////////////////
+    private val _profileImage = mutableStateOf<Any?>(null)
     private val _groupMembers = mutableStateListOf<Member>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("Office buddies")
@@ -86,7 +92,7 @@ class ManageViewModel(
     override val sheeting = Sheeting(
         sheetMap = mapOf(
             Sheets.UnsettledMembersAlert to UnsettledMembersAlertSheetModel(
-                object: UnsettledMembersAlertSheetModel.Callback{
+                object : UnsettledMembersAlertSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -162,7 +168,7 @@ class ManageViewModel(
                                 userPhNo = "8967114927",
                                 getAmount = 600f,
                                 paidAmount = 0f
-                            ),
+                            )
                         )
                     }
 
@@ -172,7 +178,7 @@ class ManageViewModel(
                 }
             ),
             Sheets.ConfirmDelete to DeleteAlertSheetModel(
-                object: DeleteAlertSheetModel.Callback{
+                object : DeleteAlertSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -195,7 +201,7 @@ class ManageViewModel(
                 }
             ),
             Sheets.SuccessUndo to SuccessUndoSheetModel(
-                object: SuccessUndoSheetModel.Callback{
+                object : SuccessUndoSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -217,31 +223,134 @@ class ManageViewModel(
                     }
 
                     override fun timeMillis(): Int {
-                        return 60*1000
+                        return 60 * 1000
+                    }
+                }
+            ),
+            Sheets.SettledUnsettledMembers to SettledUnsettledMembersBottomSheetModel(
+                object : SettledUnsettledMembersBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override suspend fun settledMembers(): List<SingleSettledOrUnsettledMember> {
+                        return listOf(
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = true,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 600f,
+                                paidAmount = 0f
+                            )
+                        )
+                    }
+
+                    override suspend fun unsettledMembers(): List<SingleSettledOrUnsettledMember> {
+                        return listOf(
+                            SingleSettledOrUnsettledMember(
+                                selectedSettleOption = SettleOptions.SplitIndividual,
+                                isChecked = true,
+                                isSettledMember = false,
+                                imageUrl = "https://i.pravatar.cc/300",
+                                userName = "Sushil Roy",
+                                userPhNo = "8967114927",
+                                getAmount = 0f,
+                                paidAmount = 600f
+                            )
+                        )
+                    }
+
+                    override fun onContinue(
+                        settledMembers: List<SingleSettledOrUnsettledMember>,
+                        unsettledMembers: List<SingleSettledOrUnsettledMember>
+                    ) {
+                        mySheeting.change(Sheets.ConfirmDelete)
+                    }
+
+                }
+            ),
+            Sheets.ImagePicker to PhotoSelectionBottomSheetModel(
+                object : PhotoSelectionBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun onContinue(arg: Any?) {
+                        mySheeting.hide()
+                        handleCameraOrGallery(arg as? String ?: return)
                     }
                 }
             )
         ),
         onVisibilityChanged = {
-            if(!it){
+            if (!it){
                 mySheeting.sheets.value = Sheets.None
             }
         }
     )
-    //////////////////////////////////////////
+
+    private fun handleCameraOrGallery(arg: String) {
+        when (arg){
+            "Camera" -> {
+                capturePicture()
+            }
+            "Gallery" -> {
+                takePicture()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
+    private fun capturePicture() {
+        mySheeting.hide()
+        viewModelScope.launch {
+            val p = Manifest.permission.CAMERA
+            val state = permissionHandler.check(p)
+            if (state?.allPermissionsGranted == true){
+                _groupImage.value = resultingActivityHandler.takePicturePreview()
+            } else {
+                val result = permissionHandler.request(p)
+                if (result?.get(p) == true){
+                    _groupImage.value = resultingActivityHandler.takePicturePreview()
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    private fun takePicture() {
+        mySheeting.hide()
+        viewModelScope.launch {
+            val uri = resultingActivityHandler.getContent("image/*")
+            _groupImage.value = uri
+        }
+    }
+
+    // ////////////////////////////////////////
     override val notifier = NotificationService { id, arg ->
         when (id) {
+            DataIds.pickImage -> {
+                mySheeting.change(Sheets.ImagePicker)
+                mySheeting.show()
+            }
             WirelessViewModelInterface.startupNotification -> {
                 setUpStatusBarColor()
             }
             "${DataIds.back}group_manage" -> {
-                when(mySheeting.sheets.value){
-                    Sheets.None->{
+                when (mySheeting.sheets.value){
+                    Sheets.None -> {
                         navigation.scope { navHostController, lifecycleOwner, toaster ->
                             navHostController.popBackStack()
                         }
                     }
-                    else->{
+                    else -> {
                         mySheeting.map[mySheeting.sheets.value]?.onBack()
                     }
                 }
@@ -250,13 +359,13 @@ class ManageViewModel(
                 _groupNotificationSwitch.value = !_groupNotificationSwitch.value
             }
             DataIds.addMemberClick -> {
-                //TODO: click
+                // TODO: click
             }
             DataIds.inviteViaLinkClick -> {
-                //TODO: click
+                // TODO: click
             }
             DataIds.leaveGroupClick -> {
-                //TODO: click
+                // TODO: click
             }
             DataIds.deleteGroupClick -> {
                 mySheeting.sheets.value = Sheets.UnsettledMembersAlert
@@ -266,7 +375,14 @@ class ManageViewModel(
                 onSelectMemberClick(arg)
             }
             DataIds.deleteMembersClick -> {
-
+                mySheeting.change(Sheets.SettledUnsettledMembers)
+                mySheeting.show()
+                val count = _groupMembers.size
+                for (i in 0 until count){
+                    if (_groupMembers[i].isSelected){
+                        _groupMembers[i] = _groupMembers[i].copy(isSelected = false)
+                    }
+                }
             }
         }
     }
@@ -290,7 +406,7 @@ class ManageViewModel(
         }
     }
 
-    /////////////////////////////////////////
+    // ///////////////////////////////////////
     init {
         setUpResolver()
         populateMembers()
@@ -316,7 +432,7 @@ class ManageViewModel(
             DataIds.groupCreatedBy to _groupCreatedBy,
             DataIds.groupCreationDate to _groupCreationDate,
             DataIds.groupNotificationSwitch to _groupNotificationSwitch,
-            DataIds.groupImage to _groupImage,
+            DataIds.groupImage to _groupImage
         )
     }
 }

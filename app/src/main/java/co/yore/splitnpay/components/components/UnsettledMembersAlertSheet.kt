@@ -25,37 +25,39 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class UnsettledMembersAlertSheetModel(val callback: Callback): BottomSheetModel{
+class UnsettledMembersAlertSheetModel(val callback: Callback) : BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         suspend fun members(): List<SingleSettledOrUnsettledMember>
         fun onContinue()
     }
-    ///////////////
+
+    // /////////////
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.selectUnsettledMembers->{
-                val index = arg as? Int?:return@NotificationService
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.selectUnsettledMembers -> {
+                val index = arg as? Int ?: return@NotificationService
                 val m = _members[index]
                 _members[index] = m.copy(isChecked = !m.isChecked)
             }
-            DataIds.splitIndividuallyClick->{
-                val index = arg as? Int?:return@NotificationService
+            DataIds.splitIndividuallyClick -> {
+                val index = arg as? Int ?: return@NotificationService
                 val m = _members[index]
                 _members[index] = m.copy(selectedSettleOption = SettleOptions.SplitIndividual)
             }
-            DataIds.deleteAnywayClick->{
-                val index = arg as? Int?:return@NotificationService
+            DataIds.deleteAnywayClick -> {
+                val index = arg as? Int ?: return@NotificationService
                 val m = _members[index]
                 _members[index] = m.copy(selectedSettleOption = SettleOptions.DeleteAnyway)
             }
-            DataIds.settledUnsettledContinueClick->{
+            DataIds.settledUnsettledContinueClick -> {
                 callback.onContinue()
             }
         }
     }
-    ///////////////
+
+    // /////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
@@ -82,9 +84,11 @@ class UnsettledMembersAlertSheetModel(val callback: Callback): BottomSheetModel{
     override fun onBack() {
 
     }
-    ///////////
+
+    // /////////
     private val _members = mutableStateListOf<SingleSettledOrUnsettledMember>()
-    //////////
+
+    // ////////
     init {
         _resolver.addAll(
             DataIds.unsettledMembers to _members
@@ -123,24 +127,25 @@ fun UnsettledMembersAlertSheet(
         Box(
             modifier = Modifier
                 .padding(
-                    top = 14.dep(),
+                    top = 14.dep()
                 )
         ) {
             Column(
                 modifier = Modifier
                     .semantics { this.contentDescription = contentDescription }
             ) {
-                LazyColumn(modifier = Modifier
-                    .fillMaxWidth()
-                    .maxHeightFactor(0.7f)
-                    .fadingEdge(),
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .maxHeightFactor(0.7f)
+                        .fadingEdge(),
                     verticalArrangement = Arrangement.spacedBy(26.dep()),
                     contentPadding = PaddingValues(vertical = 12.dep())
                 ){
                     itemsIndexed(unsettledMembers){ index, item ->
                         SettledOrUnsettledSingleRow_70d834(
                             contentDescription = " SettledOrUnsettledSingleRow",
-                            member = item,
+                            member = item
                         ) {
                             notifier.notify(DataIds.selectUnsettledMembers, index)
                         }

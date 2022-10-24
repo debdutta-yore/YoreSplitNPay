@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="KtlintProjectConfiguration">
+    <disabledRules>
+      <list>
+        <option value="curly-spacing" />
+        <option value="no-empty-first-line-in-method-block" />
+        <option value="no-blank-line-before-rbrace" />
+        <option value="no-wildcard-imports" />
+        <option value="filename" />
+        <option value="enum-entry-name-case" />
+      </list>
+    </disabledRules>
+  </component>
+</project>

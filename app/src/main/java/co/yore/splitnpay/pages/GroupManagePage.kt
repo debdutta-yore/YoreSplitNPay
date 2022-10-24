@@ -117,7 +117,7 @@ fun Members(
                             },
                             onLongClick = {
                                 notifier.notify(DataIds.selectMemberClick, item)
-                            },
+                            }
                         ),
                     leadingIcon = currentMember.profilePic,
                     userName = currentMember.userName,
@@ -194,7 +194,7 @@ fun SingleMember(
                         contentScale = ContentScale.Crop
                     )
                 }
-                androidx.compose.animation.AnimatedVisibility (
+                androidx.compose.animation.AnimatedVisibility(
                     isSelected,
                     enter = fadeIn() + scaleIn(),
                     exit = fadeOut() + scaleOut(),
@@ -245,7 +245,9 @@ fun SingleMember(
 
 val SheetScrim = Color(0x8C243257)
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalFoundationApi::class,
     ExperimentalAnimationApi::class
 )
 @Composable
@@ -283,16 +285,16 @@ fun GroupManagePage(
                         .height(165.dep())
                         .clip(
                             RoundedCornerShape(
-                                bottomStart = 48.dep(),
+                                bottomStart = 48.dep()
 
-                                )
+                            )
                         )
                         .background(
                             Color(0xff34cfcf),
                             RoundedCornerShape(
-                                bottomStart = 48.dep(),
+                                bottomStart = 48.dep()
 
-                                )
+                            )
                         )
                 ) {
                     Image(
@@ -312,9 +314,9 @@ fun GroupManagePage(
                         .background(
                             Color.White,
                             RoundedCornerShape(
-                                topEnd = 48.dep(),
+                                topEnd = 48.dep()
 
-                                )
+                            )
                         )
                 ) {
 
@@ -323,13 +325,15 @@ fun GroupManagePage(
 
             Profile(
                 modifier = Modifier
-                    .offset(
-                        x = 238.dep(),
-                        y = 123.dep()
+                    .padding(
+                        start = 238.dep(),
+                        top = 123.dep()
                     )
                     .size(65.dep()),
                 groupImage = groupImage
-            )
+            ){
+                notifier.notify(DataIds.pickImage)
+            }
 
             Column {
                 Row(
@@ -379,7 +383,7 @@ fun GroupManagePage(
                         withStyle(
                             style = SpanStyle(
                                 fontWeight = FontWeight.Bold
-                            ),
+                            )
                         ) {
                             append(groupCreationDate)
                         }
@@ -419,11 +423,11 @@ fun GroupManagePage(
                                 .padding(
                                     start = 18.dep(),
                                     end = 18.dep()
-                                ),
+                                )
                         )
                     }
 
-                    item {
+                    stickyHeader {
                         50.sy()
                     }
 
@@ -449,44 +453,47 @@ fun GroupManagePage(
                     }
 
                     item {
-                        Members(
-                            modifier = Modifier
-                                .padding(
-                                    start = 18.dep(),
-                                    end = 18.dep(),
-                                    bottom = 57.dep()
-                                ),
-                            groupMembers = groupMembers
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ){
+                            Members(
+                                modifier = Modifier
+                                    .padding(
+                                        start = 18.dep(),
+                                        end = 18.dep(),
+                                        bottom = 57.dep()
+                                    ),
+                                groupMembers = groupMembers
+                            )
+                            androidx.compose.animation.AnimatedVisibility(
+                                groupMembers.any { it.isSelected },
+                                modifier = Modifier
+                                    .padding(
+                                        bottom = 126.dep(),
+                                        end = 40.dep()
+                                    )
+                                    .size(47.dep())
+                                    .align(Alignment.BottomEnd),
+                                enter = fadeIn() + scaleIn(),
+                                exit = fadeOut() + scaleOut()
+                            ) {
+                                FloatingActionButton(
+                                    modifier = Modifier
+                                        .size(47.dep()),
+                                    backgroundColor = Pink,
+                                    onClick = {
+                                        notifier.notify(DataIds.deleteMembersClick)
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_delete_white),
+                                        contentDescription = "delete member icon",
+                                        tint = Color.Unspecified
+                                    )
+                                }
+                            }
+                        }
                     }
-                }
-            }
-
-            AnimatedVisibility (
-                groupMembers.any { it.isSelected },
-                modifier = Modifier
-                    .padding(
-                        bottom = 63.dep(),
-                        end = 20.dep()
-                    )
-                    .size(47.dep())
-                    .align(Alignment.BottomEnd),
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut()
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .size(47.dep()),
-                    backgroundColor = Pink,
-                    onClick = {
-                        notifier.notify(DataIds.deleteMembersClick)
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_delete_white),
-                        contentDescription = "delete member icon",
-                        tint = Color.Unspecified
-                    )
                 }
             }
         }
@@ -518,8 +525,8 @@ fun GroupSettingsCard(
                 .padding(
                     top = 41.dep(),
                     bottom = 41.dep()
-                ),
-            //verticalArrangement = Arrangement.spacedBy(40.dep())
+                )
+            // verticalArrangement = Arrangement.spacedBy(40.dep())
         ) {
             SingleSetting(
                 modifier = Modifier.fillMaxWidth(),
@@ -578,12 +585,13 @@ fun GroupSettingsCard(
 @Composable
 fun SingleSetting(
     modifier: Modifier = Modifier,
-    leadingIcon: Painter, text: String,
+    leadingIcon: Painter,
+    text: String,
     trailingIcon: Painter,
     switchable: Boolean = false,
     onClick: () -> Unit,
     notifier: NotificationService = notifier(),
-    groupNotificationSwitch: Boolean = boolState(key = DataIds.groupNotificationSwitch).value,
+    groupNotificationSwitch: Boolean = boolState(key = DataIds.groupNotificationSwitch).value
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -637,7 +645,7 @@ fun SingleSetting(
                     .size(32.dep())
                     .clip(CircleShape)
                     .clickable(
-                        rippleColor = Color(0xff1A79E5),
+                        rippleColor = Color(0xff1A79E5)
                     ) {
 
                     }
@@ -665,17 +673,16 @@ fun CustomSwitch(
     onSwitch: () -> Unit
 ) {
 
-
     val thumbRadius = (height / 2) - gapBetweenThumbAndTrackEdge
 
     // To move thumb, we need to calculate the position (along x axis)
     val animatePosition = animateFloatAsState(
-        targetValue = if (switchON)
+        targetValue = if (switchON) {
             with(LocalDensity.current) { (width - thumbRadius - gapBetweenThumbAndTrackEdge).toPx() }
-        else
+        } else {
             with(LocalDensity.current) { (thumbRadius + gapBetweenThumbAndTrackEdge).toPx() }
+        }
     )
-
 
     Canvas(
         modifier = Modifier
@@ -691,7 +698,6 @@ fun CustomSwitch(
                 )
             }
     ) {
-
 
         val radius = 200f
         drawRoundRect(
@@ -722,6 +728,7 @@ fun CustomSwitch(
 fun Profile(
     modifier: Modifier = Modifier,
     groupImage: Any?,
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -755,10 +762,13 @@ fun Profile(
                     top = 27.droot2.dep()
                 )
                 .size(27.dep())
+                .clip(CircleShape)
                 .background(
-                    White,
-                    CircleShape
-                ),
+                    White
+                )
+                .clickable {
+                    onClick()
+                },
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -773,7 +783,7 @@ fun Profile(
     }
 }
 
-/////////////////////////////
+// ///////////////////////////
 @Composable
 fun SettledUnsettledMembersBottomSheet_mxjiuq(
     contentDescription: String,
@@ -802,7 +812,6 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
         )
 
         Spacer(modifier = Modifier.height(config.holderBottomPadding.dep()))
-
 
         Row(
             modifier = Modifier
@@ -849,7 +858,8 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
                     .height(heightIs)
                     .padding(
                         top = 14.dep(),
-                        start = 23.dep(), end = 21.dep()
+                        start = 23.dep(),
+                        end = 21.dep()
                     )
 
             ) {
@@ -890,7 +900,7 @@ fun UnSettledMemberItem(
             unsettledMembers.forEachIndexed { index, item ->
                 SettledOrUnsettledSingleRow_70d834(
                     contentDescription = " SettledOrUnsettledSingleRow",
-                    member = item,
+                    member = item
                 ) {
                     notifier.notify(DataIds.selectUnsettledMembers, index)
                 }
@@ -952,7 +962,8 @@ data class CustomRadioButton(
     val unSelectedTextColor: Color = DarkBlue,
     val fontSize: Float = 14f
 )
-////////////////
+
+// //////////////
 private const val RadioAnimationDuration = 700
 private val RadioButtonRippleRadius = 24.dp
 private val RadioButtonPadding = 2.dp
@@ -960,8 +971,7 @@ private val RadioButtonSize = 20.dp
 private val RadioRadius = RadioButtonSize / 2
 private val RadioButtonDotSize = 12.dp
 private val RadioStrokeWidth = 2.dp
-///////
-
+// /////
 
 private class MinimumTouchTargetModifier(val size: DpSize) : LayoutModifier {
     override fun MeasureScope.measure(
@@ -991,6 +1001,7 @@ private class MinimumTouchTargetModifier(val size: DpSize) : LayoutModifier {
         return size.hashCode()
     }
 }
+
 @OptIn(ExperimentalMaterialApi::class)
 @Suppress("ModifierInspectorInfo")
 fun Modifier.minimumTouchTargetSize(): Modifier = composed(
@@ -999,7 +1010,7 @@ fun Modifier.minimumTouchTargetSize(): Modifier = composed(
         // TODO: b/214589635 - surface this information through the layout inspector in a better way
         //  - for now just add some information to help developers debug what this size represents.
         properties["README"] = "Adds outer padding to measure at least 48.dp (default) in " +
-                "size to disambiguate touch interactions if the element would measure smaller"
+            "size to disambiguate touch interactions if the element would measure smaller"
     }
 ) {
     if (LocalMinimumTouchTargetEnforcement.current) {
@@ -1011,7 +1022,8 @@ fun Modifier.minimumTouchTargetSize(): Modifier = composed(
         Modifier
     }
 }
-///////
+
+// /////
 @Composable
 fun MyRadioButton(
     selected: Boolean,
@@ -1068,7 +1080,8 @@ fun MyRadioButton(
         }
     }
 }
-////////////////
+
+// //////////////
 @Composable
 fun CustomRadioButton_2ofz97(
     contentDescription: String,
@@ -1082,19 +1095,19 @@ fun CustomRadioButton_2ofz97(
     }
     val borderWidth by remember(isSelected) {
         derivedStateOf {
-            if (isSelected)
+            if (isSelected) {
                 config.borderWidth
-            else
+            } else {
                 0f
+            }
         }
     }
     val animatedBorderWidth by animateFloatAsState(targetValue = borderWidth, tween(animDuration))
     val borderColor by remember(isSelected) {
         derivedStateOf{
-            if(isSelected){
+            if (isSelected){
                 config.borderColor
-            }
-            else{
+            } else {
                 Color.Transparent
             }
         }
@@ -1102,10 +1115,11 @@ fun CustomRadioButton_2ofz97(
     val animatedBorderColor by animateColorAsState(targetValue = borderColor, tween(animDuration))
     val backgroundColor by remember(isSelected) {
         derivedStateOf {
-            if (isSelected)
+            if (isSelected) {
                 config.selectedBackGroundColor
-            else
+            } else {
                 config.unSelectedBackGroundColor
+            }
         }
     }
     val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor, tween(animDuration))
@@ -1172,7 +1186,7 @@ data class SettledUnsettledMembersBottomSheet(
     val holderBottomPadding: Float = 33f
 )
 
-////////////////////////////////
+// //////////////////////////////
 data class SingleSettledOrUnsettledMember(
     val selectedSettleOption: SettleOptions = SettleOptions.SplitIndividual,
     val isChecked: Boolean = false,
@@ -1191,9 +1205,11 @@ fun SettledMembers(
     config: SettledMembersConfiguration = SettledMembersConfiguration()
 ) {
 
-    Column(modifier = Modifier
-        .semantics { this.contentDescription = contentDescription }
-        .fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .semantics { this.contentDescription = contentDescription }
+            .fillMaxWidth()
+    ) {
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -1233,7 +1249,7 @@ data class SettledMembersConfiguration(
     val bottomPaddingOfBottom: Float = 25f
 )
 
-////////////////////////////
+// //////////////////////////
 @Composable
 fun SettledOrUnsettledSingleRow_70d834(
     contentDescription: String,
@@ -1242,13 +1258,15 @@ fun SettledOrUnsettledSingleRow_70d834(
     onChecked: () -> Unit
 ) {
 
-    val getTextColor = animateColorAsState(targetValue = if (member.isSettledMember) LightBlue5 else LightGreen3)
-    val paidTextColor = animateColorAsState(targetValue = if (member.isSettledMember) Pink else LightBlue5)
-    val getCurrencyColor = animateColorAsState(targetValue = if (member.isSettledMember) DarkBlue else LightGreen3)
-    val payCurrencyColor = animateColorAsState(targetValue = if (member.isSettledMember) Pink else DarkBlue)
+    val getTextColor = animateColorAsState(targetValue = if (member.getAmount > 0f) LightGreen3 else LightBlue5)
+    val paidTextColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) Pink else LightBlue5)
+    val getCurrencyColor = animateColorAsState(targetValue = if (member.getAmount > 0f) LightGreen3 else DarkBlue)
+    val payCurrencyColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) Pink else DarkBlue)
 
     Row(
-        modifier = Modifier.semantics { this.contentDescription = contentDescription }
+        modifier = Modifier
+            .semantics { this.contentDescription = contentDescription }
+            .padding(end = 12.dep())
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             SelectorIcon_ulkel8(
@@ -1302,14 +1320,14 @@ fun SettledOrUnsettledSingleRow_70d834(
 
                     FontFamilyText(
                         annotatedString = member.getAmount.amountAnnotatedString(
-                            currencyFontSize = if (member.isSettledMember) 9f else 12f,
+                            currencyFontSize = if (member.getAmount > 0f) 12f else 9f,
                             currencyTextColor = getCurrencyColor.value,
                             decNumberTextColor = getCurrencyColor.value,
                             wholeNumberTextColor = getCurrencyColor.value,
-                            wholeNumberFontSize = if (member.isSettledMember) 10f else 12f,
+                            wholeNumberFontSize = if (member.getAmount > 0f) 12f else 9f,
                             isSpaceBetween = true,
                             wholeNumberFontWeight = FontWeight.Bold,
-                            decNumberFontSize = 10f
+                            decNumberFontSize = 9f
                         ),
                         color = LightBlue5
                     )
@@ -1325,19 +1343,19 @@ fun SettledOrUnsettledSingleRow_70d834(
                     FontFamilyText(
                         text = stringResource(id = R.string.paid),
                         color = paidTextColor.value,
-                        fontSize = 11.sep(),
+                        fontSize = 11.sep()
                     )
 
                     FontFamilyText(
                         annotatedString = member.paidAmount.amountAnnotatedString(
-                            currencyFontSize = if (member.isSettledMember) 12f else 9f,
+                            currencyFontSize = if (member.paidAmount > 0f) 12f else 9f,
                             currencyTextColor = payCurrencyColor.value,
                             decNumberTextColor = payCurrencyColor.value,
                             wholeNumberTextColor = payCurrencyColor.value,
                             isSpaceBetween = true,
                             wholeNumberFontWeight = FontWeight.Bold,
-                            wholeNumberFontSize = if (member.isSettledMember) 12f else 10f,
-                            decNumberFontSize = if (member.isSettledMember) 10f else 8f,
+                            wholeNumberFontSize = if (member.paidAmount > 0f) 12f else 10f,
+                            decNumberFontSize = if (member.paidAmount > 0f) 10f else 9f
                         ),
                         color = LightBlue5
                     )
@@ -1427,7 +1445,7 @@ data class CheckboxConfiguration(
     val icon: Int = R.drawable.ic_checked_right
 )
 
-/////////////////////////
+// ///////////////////////
 @Composable
 fun ProfileImage_2hf7q0(
     config: ProfileImageConfiguration = ProfileImageConfiguration(),

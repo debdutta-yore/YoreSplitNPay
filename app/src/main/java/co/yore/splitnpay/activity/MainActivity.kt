@@ -6,25 +6,24 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.*
-import androidx.constraintlayout.compose.*
 import androidx.core.view.WindowCompat
 import co.yore.splitnpay.app.YoreApp
-import co.yore.splitnpay.components.components.*
-import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.components.components.SettledUnsettledMembersBottomSheet_mxjiuq
 import co.yore.splitnpay.localKeyboardHeight
 import co.yore.splitnpay.locals.localDesignWidth
 import co.yore.splitnpay.pages.SettleOptions
 import co.yore.splitnpay.pages.SingleSettledOrUnsettledMember
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 import java.lang.Integer.min
-
 
 class MainActivity : ComponentActivity() {
     private val bottomHeight = mutableStateOf(0)
@@ -54,16 +53,16 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .systemBarsPadding()
                             .fillMaxSize(),
-                        color = MaterialTheme.colors.background,
+                        color = MaterialTheme.colors.background
                     ) {
-                        //YoreApp()
-                        Box(){
+                        YoreApp()
+                        /*Box() {
                             SettledUnsettledMembersBottomSheet_mxjiuq(
                                 settledMembers = listOf(
                                     SingleSettledOrUnsettledMember(
                                         selectedSettleOption = SettleOptions.SplitIndividual,
                                         isChecked = true,
-                                        isSettledMember = false,
+                                        isSettledMember = true,
                                         imageUrl = "https://i.pravatar.cc/300",
                                         userName = "Sushil Roy",
                                         userPhNo = "8967114927",
@@ -79,21 +78,15 @@ class MainActivity : ComponentActivity() {
                                         imageUrl = "https://i.pravatar.cc/300",
                                         userName = "Sushil Roy",
                                         userPhNo = "8967114927",
-                                        getAmount = 600f,
-                                        paidAmount = 0f
+                                        getAmount = 0f,
+                                        paidAmount = 600f
                                     )
                                 )
                             )
-                        }
+                        }*/
                     }
                 }
             }
         }
     }
 }
-
-
-
-
-
-

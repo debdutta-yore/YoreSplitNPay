@@ -47,14 +47,13 @@ import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightGreen3
 import co.yore.splitnpay.ui.theme.Pink
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettlePaymentMethodBottomSheetModel(val callback: Callback): BottomSheetModel{
-    interface Callback{
+class SettlePaymentMethodBottomSheetModel(val callback: Callback) : BottomSheetModel {
+    interface Callback {
         fun scope(): CoroutineScope
         suspend fun getUpis(): List<Upi>
         suspend fun cashPaymentMobileNumber(): String
@@ -62,15 +61,16 @@ class SettlePaymentMethodBottomSheetModel(val callback: Callback): BottomSheetMo
         fun onAddContinue(upiId: String)
         fun onContinue(upiId: String)
     }
-    /////////////
+
+    // ///////////
     private val _resolver = Resolver()
     private var selectedUpiIdIndex = -1
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.selectedSettleOption->{
-                selectedSettleOption.value = arg as? SettlePaymentOptions?:return@NotificationService
-                if(selectedSettleOption.value==SettlePaymentOptions.Cash){
-                    if(selectedUpiIdIndex!=-1){
+    private val _notifier = NotificationService { id, arg ->
+        when (id) {
+            DataIds.selectedSettleOption -> {
+                selectedSettleOption.value = arg as? SettlePaymentOptions ?: return@NotificationService
+                if (selectedSettleOption.value == SettlePaymentOptions.Cash) {
+                    if (selectedUpiIdIndex != -1) {
                         upiIds[selectedUpiIdIndex] = upiIds[selectedUpiIdIndex].copy(isSelected = false)
                     }
                     selectedUpiIdIndex = -1
@@ -78,44 +78,45 @@ class SettlePaymentMethodBottomSheetModel(val callback: Callback): BottomSheetMo
                     adding.value = false
                 }
             }
-            DataIds.selectedUpiId->{
+            DataIds.selectedUpiId -> {
                 adding.value = false
-                if(selectedUpiIdIndex > -1){
+                if (selectedUpiIdIndex > -1) {
                     upiIds[selectedUpiIdIndex] = upiIds[selectedUpiIdIndex].copy(isSelected = false)
                 }
-                selectedUpiIdIndex = arg as? Int?:return@NotificationService
+                selectedUpiIdIndex = arg as? Int ?: return@NotificationService
                 upiIds[selectedUpiIdIndex] = upiIds[selectedUpiIdIndex].copy(isSelected = true)
                 selectedUpiId.value = upiIds[selectedUpiIdIndex].upiId
             }
-            DataIds.addUpiClick->{
+            DataIds.addUpiClick -> {
                 selectedSettleOption.value = SettlePaymentOptions.Upi
                 adding.value = !adding.value
             }
-            DataIds.editUpiId->{
-                editUpiId.value = arg as? String?:return@NotificationService
+            DataIds.editUpiId -> {
+                editUpiId.value = arg as? String ?: return@NotificationService
             }
-            DataIds.settleCashUpiContinueClick->{
-                if(adding.value){
+            DataIds.settleCashUpiContinueClick -> {
+                if (adding.value) {
                     callback.onAddContinue(editUpiId.value)
-                }
-                else{
+                } else {
                     callback.onContinue(selectedUpiId.value)
                 }
             }
         }
     }
-    ////////////////
+
+    // //////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope = callback.scope()
-    ///////////////////////
+
+    // /////////////////////
     private val adding = mutableStateOf(false)
     private val editUpiId = mutableStateOf("")
     private val upiIds = mutableStateListOf<Upi>()
     private val cashPaymentMobileNumber = mutableStateOf("")
     private val selectedUpiId = mutableStateOf("")
     private val selectedSettleOption = mutableStateOf(SettlePaymentOptions.Cash)
-    ///////////////////////
+    // /////////////////////
 
     @Composable
     override fun Content() {
@@ -127,10 +128,10 @@ class SettlePaymentMethodBottomSheetModel(val callback: Callback): BottomSheetMo
         scope.launch(Dispatchers.IO) {
             val upis = callback.getUpis()
             val mobileNumber = callback.cashPaymentMobileNumber()
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 upiIds.addAll(upis)
                 cashPaymentMobileNumber.value = mobileNumber
-                selectedUpiId.value = upiIds.firstOrNull { it.isSelected }?.upiId?:""
+                selectedUpiId.value = upiIds.firstOrNull { it.isSelected }?.upiId ?: ""
                 selectedUpiIdIndex = upiIds.indexOfFirst { it.isSelected }
             }
         }
@@ -143,14 +144,14 @@ class SettlePaymentMethodBottomSheetModel(val callback: Callback): BottomSheetMo
     }
 
     override fun onBack() {
-        if(adding.value){
+        if (adding.value) {
             adding.value = false
-        }
-        else{
+        } else {
             callback.close()
         }
     }
-    ///////////////
+
+    // /////////////
     init {
         _resolver.addAll(
             DataIds.upiAdding to adding,
@@ -158,7 +159,7 @@ class SettlePaymentMethodBottomSheetModel(val callback: Callback): BottomSheetMo
             DataIds.upiIds to upiIds,
             DataIds.cashPaymentMobileNumber to cashPaymentMobileNumber,
             DataIds.selectedUpiId to selectedUpiId,
-            DataIds.selectedSettleOption to selectedSettleOption,
+            DataIds.selectedSettleOption to selectedSettleOption
         )
     }
 }
@@ -185,21 +186,23 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
 
     val settleCashBackgroundColor = animateColorAsState(
         targetValue =
-        if (isSettleViaCashPaymentSelected)
+        if (isSettleViaCashPaymentSelected) {
             LightBlue1
-        else
+        } else {
             Color.White
+        }
     )
 
     val settleUpiBackgroundColor = animateColorAsState(
         targetValue =
-        if (isSettleViaCashPaymentSelected)
+        if (isSettleViaCashPaymentSelected) {
             Color.White
-        else
+        } else {
             LightBlue1
+        }
     )
 
-    val upiButtonTopPadding = animateDpAsState(targetValue = if (selectedSettleOption==SettlePaymentOptions.Upi) 24.dep() else 0.dep())
+    val upiButtonTopPadding = animateDpAsState(targetValue = if (selectedSettleOption == SettlePaymentOptions.Upi) 24.dep() else 0.dep())
 
     val upiButtonButtonPadding = animateDpAsState(targetValue = if (selectedUpiId.isNotEmpty() || adding) 0.dep() else 36.dep())
 
@@ -265,7 +268,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                         text = mobileNumber,
                         color = LightBlue5,
                         fontSize = 14.sep(),
-                        lineHeight = 16.sep(),
+                        lineHeight = 16.sep()
                     )
                 }
             }
@@ -358,8 +361,8 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                 .height(45.dep()),
             contentPadding = PaddingValues(horizontal = 65.dep()),
             horizontalArrangement = Arrangement.spacedBy(20.dep())
-        ){
-            itemsIndexed(upiIds){index,it->
+        ) {
+            itemsIndexed(upiIds) { index, it ->
                 UpiButton_fuhz6x(
                     upi = it,
                     contentDescription = "upiButton",
@@ -375,7 +378,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                     notifier.notify(DataIds.selectedUpiId, index)
                 }
             }
-            item{
+            item {
                 OutlineButton_hargeg(
                     selected = adding,
                     onClick = {
@@ -386,15 +389,13 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
             }
         }
 
-        val state by remember(adding,selectedUpiId) {
+        val state by remember(adding, selectedUpiId) {
             derivedStateOf {
-                if(adding){
+                if (adding) {
                     2
-                }
-                else if(selectedUpiId.isNotEmpty()){
+                } else if (selectedUpiId.isNotEmpty()) {
                     1
-                }
-                else{
+                } else {
                     0
                 }
             }
@@ -403,16 +404,16 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
             state,
             transitionSpec = {
                 fadeIn(animationSpec = tween(500, delayMillis = 90)) +
-                        scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
-                        fadeOut(animationSpec = tween(500))
+                    scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
+                    fadeOut(animationSpec = tween(500))
             }
         ) { it ->
-            when(it){
-                0->{}
-                1-> {
+            when (it) {
+                0 -> {}
+                1 -> {
                     Column(
                         modifier = Modifier.fillMaxWidth()
-                    ){
+                    ) {
                         val density = LocalDensity.current.density
                         Box(
                             modifier = Modifier
@@ -420,12 +421,11 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                                 .offset(x = (animatedArrowCxx / density).dp - 7.5.dp)
                                 .size(15.dep())
                                 .background(AlabasterSolid, TriangleShape)
-                        ){
-
+                        ) {
                         }
                         Box(
                             modifier = Modifier
-                                //.padding(top = 16.dep())
+                                // .padding(top = 16.dep())
                                 .height(75.dep())
                                 .fillMaxWidth()
                                 .background(color = AlabasterSolid),
@@ -438,9 +438,8 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                             )
                         }
                     }
-
                 }
-                2->{
+                2 -> {
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 31.dep())
@@ -451,12 +450,12 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                             .background(
                                 color = LightGrey2,
                                 shape = RoundedCornerShape(8.dep())
-                            ),
+                            )
                     ) {
                         CustomTextField_wangst(
                             text = editUpiId,
                             change = {
-                                notifier.notify(DataIds.editUpiId,it)
+                                notifier.notify(DataIds.editUpiId, it)
                             },
                             leadingIcon = R.drawable.ic_upi,
                             placeHolderText = stringResource(id = R.string.add_upi_id),
@@ -466,7 +465,6 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                     }
                 }
             }
-
         }
         15.sy()
         val enabled by remember(
@@ -476,9 +474,9 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
             editUpiId
         ) {
             derivedStateOf {
-                selectedSettleOption==SettlePaymentOptions.Cash
-                        || (selectedUpiId.isNotEmpty() && !adding)
-                        || (adding && editUpiId.isNotEmpty())
+                selectedSettleOption == SettlePaymentOptions.Cash ||
+                    (selectedUpiId.isNotEmpty() && !adding) ||
+                    (adding && editUpiId.isNotEmpty())
             }
         }
 
@@ -502,12 +500,10 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
             modifier = Modifier
                 .navigationBarsPadding()
                 .imePadding()
-        ){
-
+        ) {
         }
     }
 }
-
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -515,8 +511,8 @@ fun UpiButton_fuhz6x(
     upi: Upi,
     contentDescription: String,
     config: UpiButtonConfiguration = UpiButtonConfiguration(),
-    onHorizontalCenterChange: (Float)->Unit,
-    onClick: () -> Unit,
+    onHorizontalCenterChange: (Float) -> Unit,
+    onClick: () -> Unit
 ) {
     val borderColor = animateColorAsState(targetValue = if (upi.isSelected) config.borderColor else config.backGroundColor)
     val borderWidth = animateDpAsState(targetValue = if (upi.isSelected) config.borderWidth.dep() else 0.dep())
@@ -556,10 +552,10 @@ fun UpiButton_fuhz6x(
             )
         }
 
-        AnimatedVisibility (
+        AnimatedVisibility(
             upi.isSelected,
-            enter = fadeIn(tween(500))+ scaleIn(tween(500)),
-            exit = fadeOut(tween(500))+ scaleOut(tween(500))
+            enter = fadeIn(tween(500)) + scaleIn(tween(500)),
+            exit = fadeOut(tween(500)) + scaleOut(tween(500))
         ) {
             Box(
                 Modifier
@@ -612,6 +608,7 @@ data class SelectedIconConfiguration(
     val icon: Int = R.drawable.ic_checked_right,
     val iconSize: Float = 7f
 )
+
 @Composable
 fun OutlineButton_hargeg(
     selected: Boolean,
@@ -620,13 +617,13 @@ fun OutlineButton_hargeg(
     config: OutlineButtonConfiguration = OutlineButtonConfiguration()
 ) {
     val color by remember(selected) {
-        derivedStateOf{
-            if(selected) config.borderColor else Color.White
+        derivedStateOf {
+            if (selected) config.borderColor else Color.White
         }
     }
     val tint by remember(selected) {
-        derivedStateOf{
-            if(!selected) config.borderColor else Color.White
+        derivedStateOf {
+            if (!selected) config.borderColor else Color.White
         }
     }
     val animatedColor by animateColorAsState(targetValue = color, tween(500))
@@ -698,7 +695,7 @@ data class SettlePaymentMethodBottomSheetConfiguration(
     val upiRowTopPadding: Float = 21f,
     val bottomPaddingOfContinueButton: Float = 12f
 )
-val AlabasterSolid= Color(0xffFAFAFA)
+val AlabasterSolid = Color(0xffFAFAFA)
 enum class SettlePaymentOptions {
     Cash,
     Upi
