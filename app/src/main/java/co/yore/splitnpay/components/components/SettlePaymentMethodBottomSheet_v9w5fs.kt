@@ -584,7 +584,8 @@ fun SelectedIcon_f9tfi6(
             .semantics { this.contentDescription = contentDescription }
             .size(config.selectedIconSize.dep())
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
-            .border(width = config.borderWidth.dp, color = config.borderColor, shape = config.shape)
+            .border(width = config.borderWidth.dep(), color = config.borderColor, shape = config.shape)
+            .padding(config.borderWidth.dep())
             .clip(config.shape)
             .background(color = config.backGroundColor)
     ) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -17,11 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import co.yore.splitnpay.app.YoreApp
-import co.yore.splitnpay.components.components.SettledUnsettledMembersBottomSheet_mxjiuq
 import co.yore.splitnpay.localKeyboardHeight
 import co.yore.splitnpay.locals.localDesignWidth
-import co.yore.splitnpay.pages.SettleOptions
-import co.yore.splitnpay.pages.SingleSettledOrUnsettledMember
+import co.yore.splitnpay.pages.SplitCardDetailPage
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 import java.lang.Integer.min
 
@@ -56,34 +53,6 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colors.background
                     ) {
                         YoreApp()
-                        /*Box() {
-                            SettledUnsettledMembersBottomSheet_mxjiuq(
-                                settledMembers = listOf(
-                                    SingleSettledOrUnsettledMember(
-                                        selectedSettleOption = SettleOptions.SplitIndividual,
-                                        isChecked = true,
-                                        isSettledMember = true,
-                                        imageUrl = "https://i.pravatar.cc/300",
-                                        userName = "Sushil Roy",
-                                        userPhNo = "8967114927",
-                                        getAmount = 600f,
-                                        paidAmount = 0f
-                                    )
-                                ),
-                                unsettledMembers = listOf(
-                                    SingleSettledOrUnsettledMember(
-                                        selectedSettleOption = SettleOptions.SplitIndividual,
-                                        isChecked = true,
-                                        isSettledMember = false,
-                                        imageUrl = "https://i.pravatar.cc/300",
-                                        userName = "Sushil Roy",
-                                        userPhNo = "8967114927",
-                                        getAmount = 0f,
-                                        paidAmount = 600f
-                                    )
-                                )
-                            )
-                        }*/
                     }
                 }
             }

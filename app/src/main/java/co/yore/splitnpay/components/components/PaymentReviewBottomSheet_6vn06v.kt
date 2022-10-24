@@ -4,7 +4,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import co.yore.splitnpay.R
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -20,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
@@ -37,29 +37,31 @@ import kotlinx.coroutines.withContext
 
 class PaymentReviewBottomSheetModel(
     val callback: Callback
-): BottomSheetModel{
+) : BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         fun transaction(): TransactionReview
         fun onChangeReceiver()
         fun onChangeAmount()
     }
-    //////////////////
+
+    // ////////////////
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.paymentReviewSubCategory->{
-                paymentReviewSubCategory.value = arg as? String?:return@NotificationService
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.paymentReviewSubCategory -> {
+                paymentReviewSubCategory.value = arg as? String ?: return@NotificationService
             }
-            DataIds.paymentReviewChangeClick->{
+            DataIds.paymentReviewChangeClick -> {
                 callback.onChangeReceiver()
             }
-            DataIds.paymentReviewEditAmountClick->{
+            DataIds.paymentReviewEditAmountClick -> {
                 callback.onChangeAmount()
             }
         }
     }
-    ///////////////////
+
+    // /////////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
@@ -93,10 +95,12 @@ class PaymentReviewBottomSheetModel(
     override fun onBack() {
 
     }
-    /////////////////
+
+    // ///////////////
     private val transaction = mutableStateOf<TransactionReview?>(null)
     private val paymentReviewSubCategory = mutableStateOf("")
-    //////////////////
+
+    // ////////////////
     init {
         _resolver.addAll(
             DataIds.paymentReviewTransaction to transaction,
@@ -232,6 +236,7 @@ data class TransactionReview(
     val to: Friend,
     val category: Category
 )
+
 @Composable
 fun AmountSection(
     transaction: TransactionReview,
@@ -478,7 +483,7 @@ fun EditIcon_gx6f1w(
                 shape = CircleShape
             )
             .background(
-                config.backgroundColor,
+                config.backgroundColor
             )
             .clickable(
                 rippleColor = Bluish,
@@ -498,7 +503,7 @@ fun EditIcon_gx6f1w(
             modifier = Modifier.align(Alignment.CenterVertically),
             painter = painterResource(id = icon),
             contentDescription = "edit",
-            tint = Bluish,
+            tint = Bluish
         )
         5.sx()
         FontFamilyText(
@@ -605,13 +610,14 @@ data class PaymentReviewBottomSheetConfiguration(
     val acceptTextBottomPadding: Float = 18f,
     val buttonBottomPadding: Float = 12f
 )
-//////////////////////
-//////////////////////
-//////////////////////
-//////////////////////
-//////////////////////
-//////////////////////
-//////////////////////
+
+// ////////////////////
+// ////////////////////
+// ////////////////////
+// ////////////////////
+// ////////////////////
+// ////////////////////
+// ////////////////////
 val LightGrey3 = Color(0xff989898)
 
 data class Category(
@@ -646,7 +652,7 @@ data class BillTransaction(
     val billTotal: Float, // total transaction amount to settle
     val allPaidReceivedTotal: Float, // total paid/received until now
     val amountLeft: Float, // amount left to complete the bill total
-    val willPayReceive: Float,  // you will received/pay in this transaction
+    val willPayReceive: Float, // you will received/pay in this transaction
     val paidReceived: Float, // paid received in this transaction
     val totalTransactions: Int,
     val completedTransactions: Int,
@@ -657,6 +663,7 @@ data class BillTransaction(
     val to: Friend,
     val category: Category
 )
+
 @Composable
 fun AmountSection(
     transaction: BillTransaction,
@@ -888,7 +895,6 @@ fun FromToPortion(
     }
 }
 
-
 val LightBlue1 = Color(0xffEDF5FF)
 
 @Composable
@@ -901,15 +907,15 @@ fun Number.numberToWords(): String {
     )
 
     val tens = arrayOf(
-        "",  // 0
-        "",  // 1
-        "Twenty",  // 2
-        "Thirty",  // 3
-        "Forty",  // 4
-        "Fifty",  // 5
-        "Sixty",  // 6
-        "Seventy",  // 7
-        "Eighty",  // 8
+        "", // 0
+        "", // 1
+        "Twenty", // 2
+        "Thirty", // 3
+        "Forty", // 4
+        "Fifty", // 5
+        "Sixty", // 6
+        "Seventy", // 7
+        "Eighty", // 8
         "Ninety" // 9
     )
 

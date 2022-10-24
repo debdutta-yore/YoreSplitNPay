@@ -35,7 +35,7 @@ inline fun <reified T : ViewModel>NavGraphBuilder.YoreScreen(
 @Composable
 fun YoreApp() {
     val navController = rememberAnimatedNavController()
-    AnimatedNavHost(navController, startDestination = "split_page") {
+    AnimatedNavHost(navController, startDestination = "split_review_page") {
         YoreScreen<SplitPageViewModel>(
             navController = navController,
             route = "split_page"
@@ -71,6 +71,12 @@ fun YoreApp() {
             route = "split_review_page"
         ) {
             SplitDetailsScreen()
+        }
+        YoreScreen<SplitCardDetailsViewModel>(
+            navController = navController,
+            route = "split_review_page"
+        ) {
+            SplitCardDetailPage()
         }
     }
 }

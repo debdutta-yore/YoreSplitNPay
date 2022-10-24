@@ -14,6 +14,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.Category
+import co.yore.splitnpay.models.TransactionStatus
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.pages.GroupChatTab
 import co.yore.splitnpay.pages.Transaction

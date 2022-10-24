@@ -82,4 +82,34 @@
     <string name="undo">Undo</string>
     <string name="settled_members">Settled Members</string>
     <string name="unsettled_memebers">Unsettled Members</string>
+    <string name="balance">Balance</string>
+    <string name="partially_paid">Partially Paid</string>
+
+
+    <string name="PaidCardDetailsStatus">Status</string>
+    <string name="PaidCardDetailsSplitMethod">Split method</string>
+    <string name="PaidCardDetailsCategories">Categories:</string>
+    <string name="PaidCardDetailsCreatedBy">Created by</string>
+    <string name="PaidCardDetailsCreatedOn">Created on</string>
+    <string name="PaidCardDetailsSplitAmong">Split among</string>
+
+    <string name="YouWillGetDetailsSingleRowPaidText">Paid</string>
+    <string name="YouWillGetDetailsSingleRowGetText">Get</string>
+
+    <string name="YouWillPayDetailsSingleRowDueText">Due</string>
+    <string name="YouWillPayDetailsSingleRowPaidText">Paid</string>
+
+    <string name="YouWillGetDetailsTabRowPendingItem">Pending</string>
+    <string name="YouWillGetDetailsTabRowPartiallyReceivedItem">Partially Received</string>
+    <string name="YouWillGetDetailsTabRowSettledItem">Settled</string>
+    <string name="YouWillPayDetailsTabRowPartiallyPaidItem">Partially Paid</string>
+    <string name="YouWillGetDetailsYouWillGetText">%s Get</string>
+    <string name="YouWillGetDetailsTotalYouWillGet">Total you’ll get</string>
+    <string name="YouWillGetDetailsCr">Cr</string>
+    <string name="YouWillPayDetailsYouWillPayText">You’ll Pay</string>
+    <string name="YouWillPayDetailsTotalYouWillPay">Total you’ll pay</string>
+    <string name="YouWillPayDetailsDr">Dr</string>
+
+    <string name="PaidByCardPaidByText">Paid By</string>
+    <string name="SplitAmongCardPaidByText">Split Among</string>
 </resources>

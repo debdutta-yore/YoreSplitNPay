@@ -10,5 +10,6 @@ enum class TransactionStatus() {
     Started,
     Settled,
     AllSettled,
-    Filtered
+    Filtered,
+
 }

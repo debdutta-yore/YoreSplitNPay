@@ -2,19 +2,19 @@ package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -80,9 +80,10 @@ fun YouWillGet(
             config.bottomPadding.sy()
         }
     } else {
-        Column(modifier = Modifier
-            .semantics { this.contentDescription = contentDescription }
-            .fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .semantics { this.contentDescription = contentDescription }
+                .fillMaxWidth()
         ) {
             val screenHeight = LocalConfiguration.current.screenHeightDp
             LazyColumn(
@@ -92,14 +93,15 @@ fun YouWillGet(
                     .fadingEdge(),
                 contentPadding = PaddingValues(vertical = 8.dep())
             ){
-                itemsIndexed(list){index,item->
+                itemsIndexed(list){index, item ->
                     YouWillGetSingleItem_080weu(
                         contentDescription = "YouWillGetSingleItem",
                         transaction = item,
                         onClick = { notifier.notify(DataIds.selectSettleGetMembers, index) }
                     )
-                    if (index != list.lastIndex)
+                    if (index != list.lastIndex) {
                         config.gapBetweenTwoRow.sy()
+                    }
                 }
             }
             /*Column(modifier = Modifier.fillMaxWidth()) {
@@ -115,11 +117,11 @@ fun YouWillGet(
             }*/
 
             AnimatedContent(
-                targetState =isWillGetTransactionSelected,
+                targetState = isWillGetTransactionSelected,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(500, delayMillis = 90)) +
-                            scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
-                            fadeOut(animationSpec = tween(500))
+                        scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
+                        fadeOut(animationSpec = tween(500))
                 }
             ) {
                 if (it) {
@@ -167,6 +169,55 @@ fun YouWillGet(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun TotalCard_6re10h(
+    contentDescription: String,
+    config: TotalCardConfiguration = TotalCardConfiguration(),
+    text: String,
+    amount: Float,
+    backgroundColor: Color,
+    borderColor: Color
+) {
+    Row(
+        modifier = Modifier
+            .semantics { this.contentDescription = contentDescription }
+            .height(46.dep())
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(config.cornerRadius))
+            .background(color = backgroundColor)
+            .border(
+                width = config.borderRadius.dep(),
+                color = borderColor,
+                shape = RoundedCornerShape(config.cornerRadius.dep())
+            )
+            .padding(horizontal = config.paddingValue.dep()),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        FontFamilyText(
+            text = text,
+            color = DarkBlue,
+            fontSize = 12.sep()
+        )
+        FontFamilyText(
+            annotatedString = amount.amountAnnotatedString(
+                isSpaceBetween = true,
+                currencyTextColor = DarkBlue,
+                currencyFontSize = 11.29f,
+                wholeNumberTextColor = DarkBlue,
+                wholeNumberFontSize = 14f,
+                wholeNumberFontWeight = FontWeight.W600,
+                decNumberTextColor = DarkBlue,
+                decNumberFontSize = 10f,
+                trailingText = " Dr",
+                trailingTextFontSize = 11.29f,
+                trailingTextTextColor = borderColor,
+                isTrailingTextEnabled = true
+            )
+        )
     }
 }
 
