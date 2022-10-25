@@ -1,6 +1,7 @@
 package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,12 +36,14 @@ fun YouWillGetDetailsSingleTabItem_7ozj5w(
     val optionColor = animateColorAsState(
         targetValue =
         if (selected) config.selectedOptionBackground
-        else config.unSelectedOptionBackground
+        else config.unSelectedOptionBackground,
+        tween(700)
     )
     val optionTextColor = animateColorAsState(
         targetValue =
         if (selected) config.selectedOptionTextColor
-        else config.unSelectedOptionTextColor
+        else config.unSelectedOptionTextColor,
+        tween(700)
     )
 
     Box(

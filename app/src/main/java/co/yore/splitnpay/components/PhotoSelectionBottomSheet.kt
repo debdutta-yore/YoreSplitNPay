@@ -31,6 +31,7 @@ class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         fun onContinue(arg: Any?)
+        fun close()
     }
     private val _resolver = Resolver()
     private val _notifier = NotificationService{id,arg->
@@ -58,7 +59,7 @@ class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
     }
 
     override fun onBack() {
-
+        callback.close()
     }
     /////////////////////////
 }

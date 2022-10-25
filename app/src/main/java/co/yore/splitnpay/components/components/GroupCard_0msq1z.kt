@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.CheckBoxIcon_b6qwbf
 import co.yore.splitnpay.components.configuration.*
+import co.yore.splitnpay.components.configuration.ArrowButtonConfiguration
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
@@ -226,9 +227,8 @@ fun GroupCard_0msq1z(
 
                 config.arrowButtonLeftPadding.sx()
 
-
-            if(config.checkable){
-                CheckBoxIcon_b6qwbf(
+            when(config.type){
+                GroupCardConfiguration.Type.CHECKABLE -> CheckBoxIcon_b6qwbf(
                     selected = selected,
                     contentDescription = "",
                     onClick = {
@@ -238,9 +238,7 @@ fun GroupCard_0msq1z(
                         isCheckBoxPressed = it
                     }
                 )
-            }
-            else{
-                ArrowButton_ohezqf(contentDescription = "arrow ",
+                GroupCardConfiguration.Type.ARROW -> ArrowButton_ohezqf(contentDescription = "arrow ",
                     pressed = false,
                     onClicked = {
                         notifier.notify(DataIds.groupCardGo,data)
@@ -248,6 +246,16 @@ fun GroupCard_0msq1z(
                     onPressed = {
                         isCheckBoxPressed = it
                     }
+                )
+                GroupCardConfiguration.Type.GROUP -> ArrowButton_ohezqf(contentDescription = "arrow ",
+                    pressed = false,
+                    onClicked = {
+                        notifier.notify(DataIds.groupCardGo,data)
+                    },
+                    onPressed = {
+                        isCheckBoxPressed = it
+                    },
+                    config = ArrowButtonConfiguration.group
                 )
             }
         }
@@ -322,9 +330,9 @@ fun GroupMemberProfilePics(
                     contentDescription = "SingleGroupMemberProfileImage",
                     image = item,
                     config = if(config.smaller)
-                        SingleGroupMemberProfilePicConfiguration.smaller
+                        co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration.smaller
                     else
-                        SingleGroupMemberProfilePicConfiguration()
+                        co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration()
                 )
             }
         }
@@ -337,9 +345,9 @@ fun GroupMemberProfilePics(
                     member = Member(invisibleImagesCount),
                     contentDescription = "TransparentExtraMemberCount",
                     config = if(config.smaller)
-                        TransparentProfilePicConfiguration.smaller
+                        co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration.smaller
                     else
-                        TransparentProfilePicConfiguration()
+                        co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration()
                 )
             }
         }
@@ -350,7 +358,7 @@ fun GroupMemberProfilePics(
 fun SingleGroupMemberProfilePic(
     image: Any?,
     contentDescription: String,
-    config: SingleGroupMemberProfilePicConfiguration = SingleGroupMemberProfilePicConfiguration()
+    config: co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration = co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration()
 ) {
     AsyncImage(
         model = image,
@@ -423,7 +431,7 @@ data class Member(
 @Composable
 fun TransparentProfilePic_k7ibvr(
     member: Member,
-    config: TransparentProfilePicConfiguration = TransparentProfilePicConfiguration(),
+    config: co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration = co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration(),
     contentDescription: String
 ) {
     Box(

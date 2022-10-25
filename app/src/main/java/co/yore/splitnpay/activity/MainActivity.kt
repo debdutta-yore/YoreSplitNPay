@@ -12,13 +12,26 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import co.yore.splitnpay.app.YoreApp
+import co.yore.splitnpay.components.components.Group
+import co.yore.splitnpay.components.components.Member
+import co.yore.splitnpay.components.components.MemberEx
+import co.yore.splitnpay.libs.LocalResolver
+import co.yore.splitnpay.libs.NotificationService
+import co.yore.splitnpay.libs.Resolver
 import co.yore.splitnpay.localKeyboardHeight
 import co.yore.splitnpay.locals.localDesignWidth
+import co.yore.splitnpay.models.ContactData
+import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.GroupData
+import co.yore.splitnpay.pages.IndividualManagePage
+import co.yore.splitnpay.pages.Members
 import co.yore.splitnpay.pages.SplitCardDetailPage
+import co.yore.splitnpay.pages.membersImages
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 import java.lang.Integer.min
 
@@ -53,6 +66,61 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colors.background
                     ) {
                         YoreApp()
+                        /*CompositionLocalProvider(
+                            LocalResolver provides Resolver().apply {
+                                addAll(
+                                    DataIds.memberName to mutableStateOf("Deb Pan"),
+                                    DataIds.memberMobile to mutableStateOf("7851203695"),
+                                    DataIds.memberImage to mutableStateOf("https://i.pravatar.cc/300"),
+                                    DataIds.memberJoiningDate to mutableStateOf("9th May, 2022"),
+                                    DataIds.groupNotificationSwitch to mutableStateOf("9th May, 2022"),
+                                    DataIds.groupNotificationSwitch to mutableStateOf(false),
+                                    DataIds.groups to mutableStateListOf(
+                                        GroupData(
+                                            id = 0,
+                                            image = "https://i.pravatar.cc/300",
+                                            name = "Tiger",
+                                            members = listOf(
+                                                ContactData(
+                                                    id = 0,
+                                                    image = "https://i.pravatar.cc/300",
+                                                    name = "Sanjana Roy",
+                                                    mobile = "7964210356",
+                                                ),
+                                                ContactData(
+                                                    id = 0,
+                                                    image = "https://i.pravatar.cc/300",
+                                                    name = "Sanjana Roy",
+                                                    mobile = "7964210356",
+                                                ),
+                                                ContactData(
+                                                    id = 0,
+                                                    image = "https://i.pravatar.cc/300",
+                                                    name = "Sanjana Roy",
+                                                    mobile = "7964210356",
+                                                ),
+                                                ContactData(
+                                                    id = 0,
+                                                    image = "https://i.pravatar.cc/300",
+                                                    name = "Sanjana Roy",
+                                                    mobile = "7964210356",
+                                                ),
+                                            ),
+                                            willGet = 1000f,
+                                            willPay = 200f,
+                                        )
+
+                                    ),
+                                )
+                            }
+                        ) {
+                            IndividualManagePage(
+                                notifier = NotificationService{id,arg->
+
+                                },
+                            )
+                        }*/
+
                     }
                 }
             }

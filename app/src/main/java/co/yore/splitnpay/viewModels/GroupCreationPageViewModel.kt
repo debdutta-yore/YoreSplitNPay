@@ -44,6 +44,10 @@ class GroupCreationPageViewModel(
                         mySheeting.hide()
                         handleCameraOrGallery(arg as? String ?: return)
                     }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
                 }
             )
         ),

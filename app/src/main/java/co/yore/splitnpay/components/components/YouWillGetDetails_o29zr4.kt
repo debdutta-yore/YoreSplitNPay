@@ -1,16 +1,32 @@
 package co.yore.splitnpay.components.components
 
+import android.provider.ContactsContract.Data
+import android.util.Log
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
@@ -44,6 +60,8 @@ private val list = listOf(
     )
 )
 
+
+
 @Composable
 fun YouWillGetDetails_o29zr4(
     modifier: Modifier = Modifier,
@@ -51,9 +69,11 @@ fun YouWillGetDetails_o29zr4(
     getMembers: List<MemberWillGetOrPayDetailsSingleRowItem> = listState(key = DataIds.getMembers),
     totalGet: Float = floatState(key = DataIds.totalGet).value,
     contentDescription: String,
-    config: YouWillGetDetailsConfiguration = YouWillGetDetailsConfiguration()
+    config: YouWillGetDetailsConfiguration = YouWillGetDetailsConfiguration(),
+    selectedGetOption: TransactionStatus = tState<TransactionStatus>(key = DataIds.transactionStatus).value,
+    notifier: NotificationService = notifier()
 ) {
-    var selected by remember { mutableStateOf(TransactionStatus.Pending) }
+
 
     Box(
         modifier = modifier
@@ -82,23 +102,32 @@ fun YouWillGetDetails_o29zr4(
             )
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                FontFamilyText(
-                    text = stringResource(config.youWillGetDetailsYouWillGetText, memberName),
+                /*FontFamilyText(
+                    text = stringResource(config.memberWillGetText, memberName),
                     color = config.youWillGetTextFontColor,
                     fontSize = config.youWillGetTextFontSize.sep(),
                     fontWeight = FontWeight.Bold
+                )*/
+
+                TextAnimation(
+                    text = stringResource(config.memberWillGetText, memberName),
+                    color = config.youWillGetTextFontColor,
+                    fontSize = config.youWillGetTextFontSize.sep(),
+                    fontWeight = FontWeight.Bold,
+                    animationSpec = tween(700)
                 )
 
-                config.gapBetweenYouWillGetTextAndTabRow.sx()
+                5.5f.sx()
 
                 YouWillGetDetailsTabRow(
-                    status = selected,
-                    contentDescription = "YouWillGetDetailsTabRow"
+                    status = selectedGetOption,
+                    contentDescription = "YouWillGetDetailsTabRow",
                 )
                 {
-                    selected = it
+                    notifier.notify(DataIds.transactionStatus,it)
                 }
 
             }
@@ -149,33 +178,39 @@ fun YouWillGetDetailsTabRow(
     status: TransactionStatus,
     onClick: (TransactionStatus) -> Unit
 ) {
-    Row(
+    val length = with(LocalDensity.current){5.5.dep().toPx()}
+    LazyRow(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth()
+            .fadingEdge(horizontal = true, length = length),
+        horizontalArrangement = Arrangement.spacedBy(5.dep()),
+        contentPadding = PaddingValues(horizontal = 5.5.dep())
     ) {
-
-        YouWillGetDetailsSingleTabItem_7ozj5w(
-            item = stringResource(config.YouWillGetDetailsTabRowPendingItem),
-            contentDescription = "PendingChip",
-            selected = status == TransactionStatus.Pending,
-            onClick = { onClick(TransactionStatus.Pending) }
-        )
-
-        YouWillGetDetailsSingleTabItem_7ozj5w(
-            item = stringResource(config.YouWillGetDetailsTabRowPartiallyReceivedItem),
-            contentDescription = "PartiallyReceivedChip",
-            selected = status == TransactionStatus.PartiallyReceived,
-            onClick = { onClick(TransactionStatus.PartiallyReceived) }
-        )
-
-        YouWillGetDetailsSingleTabItem_7ozj5w(
-            item = stringResource(config.YouWillGetDetailsTabRowSettledItem),
-            contentDescription = "SettledChip",
-            selected = status == TransactionStatus.Settled,
-            onClick = { onClick(TransactionStatus.Settled) }
-        )
+        item{
+            YouWillGetDetailsSingleTabItem_7ozj5w(
+                item = stringResource(config.YouWillGetDetailsTabRowPendingItem),
+                contentDescription = "PendingChip",
+                selected = status == TransactionStatus.Pending,
+                onClick = { onClick(TransactionStatus.Pending) }
+            )
+        }
+        item{
+            YouWillGetDetailsSingleTabItem_7ozj5w(
+                item = stringResource(config.YouWillGetDetailsTabRowPartiallyReceivedItem),
+                contentDescription = "PartiallyReceivedChip",
+                selected = status == TransactionStatus.PartiallyReceived,
+                onClick = { onClick(TransactionStatus.PartiallyReceived) }
+            )
+        }
+        item{
+            YouWillGetDetailsSingleTabItem_7ozj5w(
+                item = stringResource(config.YouWillGetDetailsTabRowSettledItem),
+                contentDescription = "SettledChip",
+                selected = status == TransactionStatus.Settled,
+                onClick = { onClick(TransactionStatus.Settled) }
+            )
+        }
     }
 }
 
@@ -222,7 +257,8 @@ data class YouWillGetDetailsConfiguration(
     val topPadding: Float = 26f,
     val BottomPadding: Float = 18f,
 
-    val youWillGetDetailsYouWillGetText: Int = R.string.YouWillGetDetailsYouWillGetText,
+    val memberWillGetText: Int = R.string.member_will_get_text,
+    val memberWillPayText: Int = R.string.member_will_pay_text,
     val youWillGetTextFontSize: Float = 16f,
     val youWillGetTextFontColor: Color = DarkBlue,
 
@@ -245,7 +281,7 @@ data class YouWillGetDetailsConfiguration(
 
         val variation1 = YouWillGetDetailsConfiguration(
             lazyColumnHeight = 50f,
-            youWillGetDetailsYouWillGetText = R.string.YouWillPayDetailsYouWillPayText,
+            memberWillGetText = R.string.YouWillPayDetailsYouWillPayText,
             totalCardText = R.string.YouWillPayDetailsTotalYouWillPay,
             totalCardTrailingText = R.string.YouWillPayDetailsDr
         )

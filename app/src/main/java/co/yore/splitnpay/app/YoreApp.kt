@@ -1,7 +1,11 @@
 package co.yore.splitnpay.app
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -35,7 +39,7 @@ inline fun <reified T : ViewModel>NavGraphBuilder.YoreScreen(
 @Composable
 fun YoreApp() {
     val navController = rememberAnimatedNavController()
-    AnimatedNavHost(navController, startDestination = "split_review_page") {
+    AnimatedNavHost(navController, startDestination = "individual_manage_page") {
         YoreScreen<SplitPageViewModel>(
             navController = navController,
             route = "split_page"
@@ -78,5 +82,13 @@ fun YoreApp() {
         ) {
             SplitCardDetailPage()
         }
+        YoreScreen<IndividualManagePageViewModel>(
+            navController = navController,
+            route = "individual_manage_page"
+        ) {
+            IndividualManageScreen()
+        }
     }
 }
+
+

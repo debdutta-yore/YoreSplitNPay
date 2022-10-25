@@ -1,6 +1,23 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    payerName,
+    payeeName,
+    payTotal,
+    getTotal,
+    willPayTransactions,
+    willGetTransactions,
+    members,
+    selectedBalanceExpenseTab,
+    individualBlockUser,
+    individualNotificationSwitch,
+    individualAddToGroup,
+    groupImageClick,
+    memberJoiningDate,
+    memberImage,
+    memberMobile,
+    payTransactionStatus,
+    transactionStatus,
     splitStatusMessage,
     splitAmongMembers,
     totalPay,

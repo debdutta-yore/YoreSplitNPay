@@ -24,7 +24,7 @@ import co.yore.splitnpay.pages.Transaction
 @Composable
 fun SplitAmongCard_pinvzl(
     contentDescription: String,
-    splitAmongMembers: List<Transaction> = listState(key = DataIds.splitAmongMembers),
+    splitAmongMembers: List<MemberTransact> = listState(key = DataIds.splitAmongMembers),
     config: PaidByCardConfiguration = PaidByCardConfiguration(
         PaidByCardPaidByText = R.string.SplitAmongCardPaidByText
     )

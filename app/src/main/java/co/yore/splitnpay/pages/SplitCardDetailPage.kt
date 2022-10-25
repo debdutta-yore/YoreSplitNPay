@@ -1,7 +1,8 @@
 package co.yore.splitnpay.pages
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -133,16 +135,17 @@ fun SplitCardDetailPage(
 @Composable
 fun SplitCardInformations() {
     Box(
-        modifier = Modifier.fillMaxSize()
-            .padding(top = 60.dep())
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 137.dep())
     ){
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .fadingEdge(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(top = 12.dep())
         ){
-            item{
-                89.sy()
-            }
             item(){
                 SplitDetailedCard()
             }
@@ -344,6 +347,7 @@ data class SplitSelectableMember(
     val isSelected: Boolean
 )
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SummarySinglePeople_q6c90m(
     splitSelectableMember: SplitSelectableMember,
@@ -355,7 +359,13 @@ fun SummarySinglePeople_q6c90m(
 
     val borderColor = animateColorAsState(
         targetValue = if (splitSelectableMember.isSelected) config.selectedBorderColor
-        else config.unselectedBorderColor
+        else config.unselectedBorderColor,
+        tween(700)
+    )
+
+    val borderStroke by animateFloatAsState(
+        targetValue = if (splitSelectableMember.isSelected) 2f else 3f,
+        tween(700)
     )
 
     Column(
@@ -369,7 +379,6 @@ fun SummarySinglePeople_q6c90m(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() } // This is mandatory
                 ) {
-//                    onSelected(selected.not())
                     notifier.notify(DataIds.selectBalanceMember, splitSelectableMember)
                 },
             contentAlignment = Alignment.TopEnd
@@ -392,7 +401,7 @@ fun SummarySinglePeople_q6c90m(
                         .size(42.dep())
                         .clip(config.profileImageShape)
                         .border(
-                            width = if (splitSelectableMember.isSelected) 2.57.dep() else 3.dep(),
+                            width = borderStroke.dep(),
                             color = borderColor.value,
                             shape = config.profileImageShape
                         ),
@@ -413,10 +422,12 @@ fun SummarySinglePeople_q6c90m(
                     // .align(Alignment.TopEnd)
                     .size(18.dep())
             ) {
-                Crossfade(targetState = splitSelectableMember.isSelected) { isChecked ->
-                    if (isChecked) {
-                        SelectedIcon_f9tfi6(contentDescription = "SelectedIcon")
-                    }
+                androidx.compose.animation.AnimatedVisibility(
+                    splitSelectableMember.isSelected,
+                    enter = fadeIn(tween(700))+ scaleIn(tween(700)),
+                    exit = fadeOut(tween(700))+ scaleOut(tween(700))
+                ) {
+                    SelectedIcon_f9tfi6(contentDescription = "SelectedIcon")
                 }
             }
         }

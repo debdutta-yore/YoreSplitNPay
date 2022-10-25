@@ -103,7 +103,7 @@
     <string name="YouWillGetDetailsTabRowPartiallyReceivedItem">Partially Received</string>
     <string name="YouWillGetDetailsTabRowSettledItem">Settled</string>
     <string name="YouWillPayDetailsTabRowPartiallyPaidItem">Partially Paid</string>
-    <string name="YouWillGetDetailsYouWillGetText">%s Get</string>
+    <string name="member_will_get_text">%s Get</string>
     <string name="YouWillGetDetailsTotalYouWillGet">Total you’ll get</string>
     <string name="YouWillGetDetailsCr">Cr</string>
     <string name="YouWillPayDetailsYouWillPayText">You’ll Pay</string>
@@ -112,4 +112,13 @@
 
     <string name="PaidByCardPaidByText">Paid By</string>
     <string name="SplitAmongCardPaidByText">Split Among</string>
+    <string name="member_will_pay_text">%s pay</string>
+    <string name="joined_on">Joined on</string>
+    <string name="groups">Groups</string>
+    <string name="expense">Expense</string>
+    <string name="will_get">%s get</string>
+    <string name="total">Total</string>
+    <string name="willpay">% pay</string>
+    <string name="total_receivable">Total Receivable</string>
+    <string name="has_already_paid">" has already paid!"</string>
 </resources>

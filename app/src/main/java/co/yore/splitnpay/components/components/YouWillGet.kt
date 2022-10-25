@@ -331,7 +331,7 @@ data class YouWillGetConfiguration(
 
 @Composable
 fun ProfileImage_2hf7q0(
-    imageUrl: Any,
+    imageUrl: Any?,
     config: ProfileImageConfiguration = ProfileImageConfiguration(),
     contentDescription: String
 ) {

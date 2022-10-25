@@ -52,7 +52,15 @@ data class ArrowButtonConfiguration(
     val iconButtonSize: Float = 28f,
     val iconSize: Float = 11f,
     val iconResource: Int = R.drawable.ic_nextarrow,
-)
+){
+    companion object{
+        val group get() = ArrowButtonConfiguration(
+            iconBackgroundColor = Color(0xff1A79E5),
+            iconResource = R.drawable.ic_add_group,
+            iconSize = 14f
+        )
+    }
+}
 
 data class ProfileImageConfiguration1(
     val imageBorderColor: Color = Color(0xffEDF5FF),
@@ -447,11 +455,17 @@ data class GroupCardConfiguration(
     val cardUnselectedColor: Color = Color.White,
     val borderStroke: Float = 1f,
     val borderColor: Color = Bluish,
-    val checkable: Boolean = false,
+    val type: Type = Type.CHECKABLE,
 ){
+    enum class Type{
+        CHECKABLE,
+        ARROW,
+        GROUP
+    }
     companion object{
-        val checked = GroupCardConfiguration(checkable = true)
-        val unchecked = GroupCardConfiguration(checkable = false)
+        val checked = GroupCardConfiguration(type = Type.CHECKABLE)
+        val unchecked = GroupCardConfiguration(type = Type.ARROW)
+        val GROUP = GroupCardConfiguration(type = Type.GROUP)
     }
 }
 

@@ -1,10 +1,14 @@
 package co.yore.splitnpay.components.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -32,9 +36,10 @@ fun YouWillPayDetails_8jaxv7(
     payMembers: List<MemberWillGetOrPayDetailsSingleRowItem> = listState(key = DataIds.payMembers),
     totalPay: Float = floatState(key = DataIds.totalPay).value,
     contentDescription: String,
-    config: YouWillGetDetailsConfiguration = YouWillGetDetailsConfiguration.variation1
+    config: YouWillGetDetailsConfiguration = YouWillGetDetailsConfiguration.variation1,
+    selectedPayOption: YouWillPayTransactionStatus = tState<YouWillPayTransactionStatus>(key = DataIds.payTransactionStatus).value,
+    notifier: NotificationService = notifier()
 ) {
-    var selected by remember { mutableStateOf(YouWillPayTransactionStatus.Pending) }
 
     Box(
         modifier = modifier
@@ -63,23 +68,32 @@ fun YouWillPayDetails_8jaxv7(
             )
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                FontFamilyText(
-                    text = stringResource(config.youWillGetDetailsYouWillGetText,memberName),
+                /*FontFamilyText(
+                    text = stringResource(config.memberWillPayText, memberName),
                     color = config.youWillGetTextFontColor,
                     fontSize = config.youWillGetTextFontSize.sep(),
                     fontWeight = FontWeight.Bold
+                )*/
+
+                TextAnimation(
+                    text = stringResource(config.memberWillPayText, memberName),
+                    color = config.youWillGetTextFontColor,
+                    fontSize = config.youWillGetTextFontSize.sep(),
+                    fontWeight = FontWeight.Bold,
+                    animationSpec = tween(700)
                 )
 
                 config.gapBetweenYouWillGetTextAndTabRow.sx()
 
                 YouWillPayDetailsTabRow(
-                    status = selected,
+                    status = selectedPayOption,
                     contentDescription = "YouWillPayDetailsTabRow"
                 )
                 {
-                    selected = it
+                    notifier.notify(DataIds.payTransactionStatus,it)
                 }
 
             }
@@ -133,37 +147,43 @@ fun YouWillPayDetailsTabRow(
     status: YouWillPayTransactionStatus,
     onClick: (YouWillPayTransactionStatus) -> Unit
 ) {
-    Row(
+    val length = with(LocalDensity.current){5.5.dep().toPx()}
+    LazyRow(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
-            .fillMaxWidth(),
-        // horizontalArrangement = Arrangement.SpaceBetween,
-        horizontalArrangement = Arrangement.spacedBy(5.dep())
+            .fillMaxWidth()
+            .fadingEdge(horizontal = true, length = length),
+        horizontalArrangement = Arrangement.spacedBy(5.dep()),
+        contentPadding = PaddingValues(horizontal = 5.5.dep())
     ) {
+        item{
+            YouWillGetDetailsSingleTabItem_7ozj5w(
+                item = stringResource(config.YouWillGetDetailsTabRowPendingItem),
+                contentDescription = "PendingChip",
+                selected = status == YouWillPayTransactionStatus.Pending,
+                onClick = { onClick(YouWillPayTransactionStatus.Pending) },
+                config = YouWillGetDetailsSingleTabItemConfiguration.variationOne
+            )
+        }
 
-        YouWillGetDetailsSingleTabItem_7ozj5w(
-            item = stringResource(config.YouWillGetDetailsTabRowPendingItem),
-            contentDescription = "PendingChip",
-            selected = status == YouWillPayTransactionStatus.Pending,
-            onClick = { onClick(YouWillPayTransactionStatus.Pending) },
-            config = YouWillGetDetailsSingleTabItemConfiguration.variationOne
-        )
-
-        YouWillGetDetailsSingleTabItem_7ozj5w(
-            item = stringResource(config.YouWillGetDetailsTabRowPartiallyReceivedItem),
-            contentDescription = "PartiallyPaidChip",
-            selected = status == YouWillPayTransactionStatus.PartiallyPaid,
-            onClick = { onClick(YouWillPayTransactionStatus.PartiallyPaid) },
-            config = YouWillGetDetailsSingleTabItemConfiguration.variationOne
-        )
-
-        YouWillGetDetailsSingleTabItem_7ozj5w(
-            item = stringResource(config.YouWillGetDetailsTabRowSettledItem),
-            contentDescription = "SettledChip",
-            selected = status == YouWillPayTransactionStatus.Settled,
-            onClick = { onClick(YouWillPayTransactionStatus.Settled) },
-            config = YouWillGetDetailsSingleTabItemConfiguration.variationOne
-        )
+        item{
+            YouWillGetDetailsSingleTabItem_7ozj5w(
+                item = stringResource(config.YouWillGetDetailsTabRowPartiallyReceivedItem),
+                contentDescription = "PartiallyPaidChip",
+                selected = status == YouWillPayTransactionStatus.PartiallyPaid,
+                onClick = { onClick(YouWillPayTransactionStatus.PartiallyPaid) },
+                config = YouWillGetDetailsSingleTabItemConfiguration.variationOne
+            )
+        }
+        item{
+            YouWillGetDetailsSingleTabItem_7ozj5w(
+                item = stringResource(config.YouWillGetDetailsTabRowSettledItem),
+                contentDescription = "SettledChip",
+                selected = status == YouWillPayTransactionStatus.Settled,
+                onClick = { onClick(YouWillPayTransactionStatus.Settled) },
+                config = YouWillGetDetailsSingleTabItemConfiguration.variationOne
+            )
+        }
     }
 }
 

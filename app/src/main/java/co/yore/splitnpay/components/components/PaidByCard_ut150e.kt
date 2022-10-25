@@ -51,7 +51,7 @@ private val paidByList = listOf(
 @Composable
 fun PaidByCard_ut150e(
     modifier: Modifier = Modifier,
-    paidList: List<Transaction> = listState(key = DataIds.paidList),
+    paidList: List<MemberTransact> = listState(key = DataIds.paidList),
     contentDescription: String,
     config: PaidByCardConfiguration = PaidByCardConfiguration()
 ) {
@@ -99,7 +99,7 @@ fun PaidByCard_ut150e(
 
                 paidList.forEachIndexed { index, item ->
                     SingleItemYouWillGetCard_3btamv(
-                        transaction = item,
+                        item = item,
                         contentDescription = "SinglePaidByListItem"
                     )
                     if (index != paidList.lastIndex) {
@@ -170,9 +170,15 @@ data class PaidByCardConfiguration(
 )
 
 // ///////////////////
+data class MemberTransact(
+    val name: String,
+    val mobile: String,
+    val image: Any?,
+    val amount: Float,
+)
 @Composable
 fun SingleItemYouWillGetCard_3btamv(
-    transaction: Transaction,
+    item: MemberTransact,
     contentDescription: String,
     config: SingleItemYouWillGetCardConfiguration = SingleItemYouWillGetCardConfiguration()
 ) {
@@ -185,21 +191,21 @@ fun SingleItemYouWillGetCard_3btamv(
     ) {
         Row(verticalAlignment = Alignment.Top) {
             ProfileImage_2hf7q0(
-                imageUrl = transaction.imageUrl,
+                imageUrl = item.image,
                 contentDescription = "",
                 config = ProfileImageConfiguration()
             )
             config.gapBetweenProfileImageAndUserName.sx()
             Column(modifier = Modifier) {
                 FontFamilyText(
-                    text = transaction.name,
+                    text = item.name,
                     fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold,
                     color = DarkBlue
                 )
                 config.gapBetweenPUserNameAndUserPhNo.sx()
                 FontFamilyText(
-                    text = transaction.mobileNumber,
+                    text = item.mobile,
                     fontSize = 11.sep(),
                     color = LightBlue5
                 )
@@ -224,10 +230,10 @@ fun SingleItemYouWillGetCard_3btamv(
             fontWeight = FontWeight.Normal
         )
         val wholeNumber =
-            transaction.amount.splitted().whole
+            item.amount.splitted().whole
         // transaction.amount.toString().substringBefore(".").padStart(2, '0')
         val decimalNumber =
-            transaction.amount.splitted().dec
+            item.amount.splitted().dec
         // transaction.amount.toString().substringAfter(".").padStart(2, '0')
 
         val formattedWholeNoDo = wholeNumber.toLong()

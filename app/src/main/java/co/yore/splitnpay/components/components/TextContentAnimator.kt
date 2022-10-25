@@ -1,5 +1,6 @@
 package co.yore.splitnpay.components.components
 
+import android.util.Log
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
@@ -236,6 +237,7 @@ fun AnimatedTextContent(
     style: TextStyle = LocalTextStyle.current,
     renderer: (AnnotatedString.Builder.(AnimatableTextPart, Float, SpanStyle?)->Unit) = AnimatableTextPart.render
 ){
+    Log.d("fljlffds","$from,$to,$progress")
     val items by remember(from,to,spanStyle) {
         derivedStateOf {
             AnimatableTextPart.diff(from, to, spanStyle, diffSettings)

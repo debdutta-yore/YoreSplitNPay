@@ -18,10 +18,10 @@ import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.pages.BackHandle
 import co.yore.splitnpay.pages.elseLet
 
-class Resolver{
+class Resolver(){
     private val _map: MutableMap<Any,Any?> = mutableMapOf()
     fun <T>get(key: Any): T{
-        return _map[key] as T
+        return _map[key] as? T?:throw java.lang.Exception("Resolver key $key not set")
     }
 
     operator fun set(key: Any, value: Any?){
@@ -212,6 +212,10 @@ class Sheeting @OptIn(ExperimentalMaterialApi::class) constructor(
 
     fun change(sheet: Sheets){
         _sheets.value = sheet
+    }
+
+    fun onBack(){
+        sheetMap[sheets.value]?.onBack()
     }
 }
 
