@@ -66,61 +66,6 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colors.background
                     ) {
                         YoreApp()
-                        /*CompositionLocalProvider(
-                            LocalResolver provides Resolver().apply {
-                                addAll(
-                                    DataIds.memberName to mutableStateOf("Deb Pan"),
-                                    DataIds.memberMobile to mutableStateOf("7851203695"),
-                                    DataIds.memberImage to mutableStateOf("https://i.pravatar.cc/300"),
-                                    DataIds.memberJoiningDate to mutableStateOf("9th May, 2022"),
-                                    DataIds.groupNotificationSwitch to mutableStateOf("9th May, 2022"),
-                                    DataIds.groupNotificationSwitch to mutableStateOf(false),
-                                    DataIds.groups to mutableStateListOf(
-                                        GroupData(
-                                            id = 0,
-                                            image = "https://i.pravatar.cc/300",
-                                            name = "Tiger",
-                                            members = listOf(
-                                                ContactData(
-                                                    id = 0,
-                                                    image = "https://i.pravatar.cc/300",
-                                                    name = "Sanjana Roy",
-                                                    mobile = "7964210356",
-                                                ),
-                                                ContactData(
-                                                    id = 0,
-                                                    image = "https://i.pravatar.cc/300",
-                                                    name = "Sanjana Roy",
-                                                    mobile = "7964210356",
-                                                ),
-                                                ContactData(
-                                                    id = 0,
-                                                    image = "https://i.pravatar.cc/300",
-                                                    name = "Sanjana Roy",
-                                                    mobile = "7964210356",
-                                                ),
-                                                ContactData(
-                                                    id = 0,
-                                                    image = "https://i.pravatar.cc/300",
-                                                    name = "Sanjana Roy",
-                                                    mobile = "7964210356",
-                                                ),
-                                            ),
-                                            willGet = 1000f,
-                                            willPay = 200f,
-                                        )
-
-                                    ),
-                                )
-                            }
-                        ) {
-                            IndividualManagePage(
-                                notifier = NotificationService{id,arg->
-
-                                },
-                            )
-                        }*/
-
                     }
                 }
             }

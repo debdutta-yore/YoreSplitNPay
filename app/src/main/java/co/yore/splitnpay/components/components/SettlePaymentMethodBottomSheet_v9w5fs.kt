@@ -42,7 +42,6 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.pages.LightBlue1
-import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightGreen3
@@ -218,7 +217,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(Color(0xff5A87BB))
                 .align(CenterHorizontally)
         )
         config.bottomPaddingOfHolder.sy()
@@ -266,7 +265,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                     6.sy()
                     FontFamilyText(
                         text = mobileNumber,
-                        color = LightBlue5,
+                        color = Color(0xff5A87BB),
                         fontSize = 14.sep(),
                         lineHeight = 16.sep()
                     )

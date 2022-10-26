@@ -43,7 +43,7 @@ import java.text.DecimalFormat
 fun YouWillGetCard(
     payerName: String,
     total: Float,
-    list: List<Transaction>,
+    list: List<MemberTransact>,
     contentDescription: String,
     config: YouWillGetCardConfiguration = YouWillGetCardConfiguration()
 ) {
@@ -106,7 +106,7 @@ fun YouWillGetCard(
                 ) {
                     TotalCard_6re10h(
                         contentDescription = "TotalYouWillGetCard",
-                        text = stringResource(R.string.total) + stringResource(R.string.willpay, payerName),
+                        text = stringResource(R.string.total) + " " +stringResource(R.string.will_get, payerName),
                         amount = total,
                         borderColor = LightGreen3,
                         backgroundColor = WhitishGreen
@@ -122,7 +122,7 @@ fun YouWillGetCard(
                         start = 33.dep(),
                         top = 26.dep()
                     ),
-                    text = payerName + stringResource(R.string.will_get),
+                    text = stringResource(R.string.will_get, payerName),
                     color = DarkBlue,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
@@ -137,7 +137,7 @@ fun YouWillGetCard(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     FontFamilyText(
-                        text = "$payerName " + stringResource(R.string.will_receive_nothing),
+                        text = stringResource(R.string.will_receive_nothing, payerName),
                         color = LightBlue4,
                         fontSize = 13.sep(),
                         fontWeight = FontWeight.Bold
@@ -174,7 +174,7 @@ fun YouWillGetCard(
 
 @Composable
 fun SingleItemYouWillGetCard_3btamv(
-    transaction: Transaction,
+    transaction: MemberTransact,
     contentDescription: String,
     config: SingleItemYouWillGetCardConfiguration = SingleItemYouWillGetCardConfiguration()
 ) {
@@ -187,7 +187,7 @@ fun SingleItemYouWillGetCard_3btamv(
     ) {
         Row(verticalAlignment = Alignment.Top) {
             ProfileImage_2hf7q0(
-                imageUrl = transaction.imageUrl,
+                imageUrl = transaction.image,
                 contentDescription = "",
                 config = ProfileImageConfiguration()
             )
@@ -201,9 +201,9 @@ fun SingleItemYouWillGetCard_3btamv(
                 )
                 config.gapBetweenPUserNameAndUserPhNo.sx()
                 FontFamilyText(
-                    text = transaction.mobileNumber,
+                    text = transaction.mobile,
                     fontSize = 11.sep(),
-                    color = LightBlue5
+                    color = Color(0xff5A87BB)
                 )
             }
         }

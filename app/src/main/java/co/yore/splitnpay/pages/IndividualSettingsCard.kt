@@ -124,7 +124,7 @@ fun SingleSettingV1(
             36.sx()
             FontFamilyText(
                 text = text,
-                color = LightBlue5,
+                color = Color(0xff5A87BB),
                 fontSize = 14.sep()
             )
         }

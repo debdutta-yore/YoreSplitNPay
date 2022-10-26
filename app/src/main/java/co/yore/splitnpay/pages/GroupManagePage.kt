@@ -218,7 +218,7 @@ fun SingleMember(
                 5.sy()
                 FontFamilyText(
                     text = userPhNo,
-                    color = LightBlue5,
+                    color = Color(0xff5A87BB),
                     fontSize = 11.sep()
                 )
             }
@@ -376,7 +376,7 @@ fun GroupManagePage(
                             top = 146.dep(),
                             start = 16.dep()
                         ),
-                    color = LightBlue5,
+                    color = Color(0xff5A87BB),
                     fontSize = 13.sep(),
                     annotatedString = buildAnnotatedString {
                         append("Created by $groupCreatedBy on ")
@@ -621,7 +621,7 @@ fun SingleSetting(
             36.sx()
             FontFamilyText(
                 text = text,
-                color = LightBlue5,
+                color = Color(0xff5A87BB),
                 fontSize = 14.sep()
             )
         }
@@ -1258,8 +1258,8 @@ fun SettledOrUnsettledSingleRow_70d834(
     onChecked: () -> Unit
 ) {
 
-    val getTextColor = animateColorAsState(targetValue = if (member.getAmount > 0f) LightGreen3 else LightBlue5)
-    val paidTextColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) Pink else LightBlue5)
+    val getTextColor = animateColorAsState(targetValue = if (member.getAmount > 0f) LightGreen3 else Color(0xff5A87BB))
+    val paidTextColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) Pink else Color(0xff5A87BB))
     val getCurrencyColor = animateColorAsState(targetValue = if (member.getAmount > 0f) LightGreen3 else DarkBlue)
     val payCurrencyColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) Pink else DarkBlue)
 
@@ -1300,7 +1300,7 @@ fun SettledOrUnsettledSingleRow_70d834(
                 FontFamilyText(
                     text = member.userPhNo,
                     fontSize = 11.sep(),
-                    color = LightBlue5
+                    color = Color(0xff5A87BB)
                 )
             }
 
@@ -1329,7 +1329,7 @@ fun SettledOrUnsettledSingleRow_70d834(
                             wholeNumberFontWeight = FontWeight.Bold,
                             decNumberFontSize = 9f
                         ),
-                        color = LightBlue5
+                        color = Color(0xff5A87BB)
                     )
                 }
 
@@ -1357,7 +1357,7 @@ fun SettledOrUnsettledSingleRow_70d834(
                             wholeNumberFontSize = if (member.paidAmount > 0f) 12f else 10f,
                             decNumberFontSize = if (member.paidAmount > 0f) 10f else 9f
                         ),
-                        color = LightBlue5
+                        color = Color(0xff5A87BB)
                     )
                 }
 

@@ -39,7 +39,7 @@ inline fun <reified T : ViewModel>NavGraphBuilder.YoreScreen(
 @Composable
 fun YoreApp() {
     val navController = rememberAnimatedNavController()
-    AnimatedNavHost(navController, startDestination = "individual_manage_page") {
+    AnimatedNavHost(navController, startDestination = "individual_chat") {
         YoreScreen<SplitPageViewModel>(
             navController = navController,
             route = "split_page"
@@ -78,7 +78,7 @@ fun YoreApp() {
         }
         YoreScreen<SplitCardDetailsViewModel>(
             navController = navController,
-            route = "split_review_page"
+            route = "split_card_details"
         ) {
             SplitCardDetailPage()
         }
@@ -87,6 +87,24 @@ fun YoreApp() {
             route = "individual_manage_page"
         ) {
             IndividualManageScreen()
+        }
+        YoreScreen<IndividualSummaryViewModel>(
+            navController = navController,
+            route = "individual_summary"
+        ) {
+            IndividualSummary()
+        }
+        YoreScreen<PaymentSuccessViewModel>(
+            navController = navController,
+            route = "payment_success"
+        ) {
+            PaymentSuccessScreen()
+        }
+        YoreScreen<IndividualChatViewModel>(
+            navController = navController,
+            route = "individual_chat"
+        ) {
+            IndividualChatScreen()
         }
     }
 }

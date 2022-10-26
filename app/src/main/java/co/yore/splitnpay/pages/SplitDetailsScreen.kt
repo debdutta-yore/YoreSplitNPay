@@ -724,7 +724,7 @@ data class SplitAdjustItemConfiguration(
     val nameFontSize: Float = 12f,
     val nameTextColor: Color = DarkBlue,
     val phoneNumberFontSize: Float = 11f,
-    val phoneNumberTextColor: Color = LightBlue5
+    val phoneNumberTextColor: Color = Color(0xff5A87BB)
 )
 @Composable
 fun SplitAdjustItem_eugo18(
@@ -829,7 +829,7 @@ data class SplitPaidByItemConfiguration(
     val nameFontSize: Float = 12f,
     val nameTextColor: Color = DarkBlue,
     val phoneNumberFontSize: Float = 11f,
-    val phoneNumberTextColor: Color = LightBlue5
+    val phoneNumberTextColor: Color = Color(0xff5A87BB)
 )
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

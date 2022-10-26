@@ -34,7 +34,6 @@ import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.LightBlue1
-import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.viewModels.SingleItem
@@ -152,7 +151,7 @@ fun MemberFilterBottomSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(Color(0xff5A87BB))
                 .align(Alignment.CenterHorizontally)
         )
         41.sy()
@@ -240,7 +239,7 @@ private fun FilterSingleUser_ffkz81(
 
             FontFamilyText(
                 text = item.mobileNo,
-                color = LightBlue5,
+                color = Color(0xff5A87BB),
                 fontSize = 11.sep(),
                 lineHeight = 13.sep(),
                 letterSpacing = 0.2.sep()

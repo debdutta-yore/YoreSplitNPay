@@ -1,7 +1,9 @@
 package co.yore.splitnpay.viewModels
 
+import android.provider.ContactsContract.Data
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
@@ -67,6 +69,12 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
 
     private val selectedGetOption = mutableStateOf(TransactionStatus.Pending)
     private val selectedPayOption = mutableStateOf(YouWillPayTransactionStatus.Pending)
+    private val statusBarColor = mutableStateOf(
+        StatusBarColor(
+            color = Color(0xff00CEC3),
+            darkIcons = false
+        )
+    )
     ///////////////
     init {
         resolver.addAll(
@@ -87,7 +95,8 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
             DataIds.splitPaidMark to splitPaidMark,
             DataIds.splitTransacted to splitTransacted,
             DataIds.transactionStatus to selectedGetOption,
-            DataIds.payTransactionStatus to selectedPayOption
+            DataIds.payTransactionStatus to selectedPayOption,
+            DataIds.statusBarColor to statusBarColor
         )
 
         splitCardDetailsData.value = SplitCardDetailsData(
@@ -99,7 +108,6 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
             noOfMembers = 5,
             categoryIcon = R.drawable.ic_trip
         )
-
         splitSelectableMembers.addAll(
             listOf(
                 SplitSelectableMember(

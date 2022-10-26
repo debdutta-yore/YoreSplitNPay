@@ -5,12 +5,21 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
@@ -23,6 +32,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.White
+import java.time.Clock.offset
 
 @Composable
 fun SplitSummary() {
@@ -107,24 +117,7 @@ fun BalanceExpenseTabs(
             .background(LightBlue6)
     ) {
         // triangle arrow
-        Box(
-            modifier = Modifier
-                .absoluteOffset(
-                    x = offsetX.value.dep(),
-                    y = 50.dep()
-                )
-                .background(
-                    color = White,
-                    shape = TriangleShape
-                )
-                .border(
-                    color = GreyShadow1,
-                    width = 1.dep(),
-                    shape = TriangleShape
-                )
-                .width(10.dep())
-                .height(6.5.dep())
-        )
+
 
         Divider(
             modifier = Modifier
@@ -176,5 +169,33 @@ fun BalanceExpenseTabs(
                 )
             }
         }
+        val depx = with(LocalDensity.current){1.dep().toPx()}
+        Box(
+            modifier = Modifier
+                .absoluteOffset(
+                    x = offsetX.value.dep(),
+                    y = 50.dep()
+                )
+                .background(
+                    color = White,
+                    shape = TriangleShape
+                )
+                .drawBehind {
+                    drawPath(
+                        Path().apply {
+                            moveTo(0f,size.height)
+                            lineTo(size.width/2f,0f)
+                            lineTo(size.width,size.height)
+                        },
+                        Color(0xffEAEEF3),
+                        style = Stroke(
+                            width = depx,
+                            cap = StrokeCap.Butt
+                        )
+                    )
+                }
+                .width(10.dep())
+                .height(6.5.dep())
+        )
     }
 }

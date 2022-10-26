@@ -57,7 +57,7 @@ fun YouWillPayCard(
                     modifier = Modifier.padding(
                         top = 26.dep()
                     ),
-                    text = payeeName + stringResource(R.string.willpay),
+                    text = stringResource(R.string.willpay,payeeName),
                     color = DarkBlue,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
@@ -74,7 +74,7 @@ fun YouWillPayCard(
                 18.sy()
                 TotalCard_6re10h(
                     contentDescription = "TotalYouWillPayCard",
-                    text = stringResource(R.string.total)  + " $payeeName " + stringResource(R.string.willpay),
+                    text = stringResource(R.string.total)  + " " + stringResource(R.string.willpay,payeeName),
                     amount = 0f,
                     borderColor = Pink,
                     backgroundColor = LightRedButton
@@ -89,7 +89,7 @@ fun YouWillPayCard(
                         top = 26.dep(),
                         start = 32.dep()
                     ),
-                    text = payeeName + stringResource(R.string.willpay),
+                    text = stringResource(R.string.willpay, payeeName),
                     color = DarkBlue,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
@@ -104,7 +104,7 @@ fun YouWillPayCard(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     FontFamilyText(
-                        text = "$payeeName " + if (payeeName == "You") stringResource(R.string.have_already_paid) else stringResource(
+                        text = payeeName + if (payeeName == "You") stringResource(R.string.have_already_paid) else stringResource(
                             R.string.has_already_paid
                         ),
                         color = LightBlue4,
@@ -124,7 +124,7 @@ fun YouWillPayCard(
 
                     TotalCard_6re10h(
                         contentDescription = "TotalYouWillPayCard",
-                        text = stringResource(R.string.total) + " $payeeName " + stringResource(R.string.willpay),
+                        text = stringResource(R.string.total) + " " + stringResource(R.string.willpay,payeeName),
                         amount = total,
                         borderColor = Pink,
                         backgroundColor = LightRedButton
@@ -140,7 +140,7 @@ fun YouWillPayCard(
                         y = 0.dep()
                     )
                     .align(Alignment.Center),
-                painter = painterResource(id = R.drawable.you_will_pay_hand_icon),
+                painter = painterResource(id = R.drawable.pay_hand_padded),
                 tint = Color.Unspecified,
                 contentDescription = "handIcon"
             )

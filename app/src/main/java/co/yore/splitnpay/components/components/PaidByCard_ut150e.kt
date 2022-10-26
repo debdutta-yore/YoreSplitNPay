@@ -26,7 +26,6 @@ import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.TransactionType
-import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.pages.splitted
 import co.yore.splitnpay.ui.theme.DarkBlue
@@ -207,7 +206,7 @@ fun SingleItemYouWillGetCard_3btamv(
                 FontFamilyText(
                     text = item.mobile,
                     fontSize = 11.sep(),
-                    color = LightBlue5
+                    color = Color(0xff5A87BB)
                 )
             }
         }

@@ -54,7 +54,7 @@
     <string name="remaining">Remaining</string>
     <string name="description">Description</string>
     <string name="you">You</string>
-    <string name="will_receive_nothing">will receive nothing</string>
+    <string name="will_receive_nothing">%s will receive nothing</string>
     <string name="nobody_indebted">Nobody is indebted to this person</string>
     <string name="remind">Remind</string>
     <string name="settle_up">Settle up</string>
@@ -116,9 +116,9 @@
     <string name="joined_on">Joined on</string>
     <string name="groups">Groups</string>
     <string name="expense">Expense</string>
-    <string name="will_get">%s get</string>
+    <string name="will_get">%s will get</string>
     <string name="total">Total</string>
-    <string name="willpay">% pay</string>
+    <string name="willpay">%s will pay</string>
     <string name="total_receivable">Total Receivable</string>
     <string name="has_already_paid">" has already paid!"</string>
 </resources>

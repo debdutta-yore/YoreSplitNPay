@@ -27,7 +27,6 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.CustomButtonConfiguration
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
@@ -141,7 +140,7 @@ fun PaymentReviewBottomSheet_6vn06v(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(Color(0xff5A87BB))
                 .align(Alignment.CenterHorizontally)
         )
         config.holderBottomPadding.sy()

@@ -17,7 +17,6 @@ import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.sep
-import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightGreen3
 import co.yore.splitnpay.ui.theme.Pink
@@ -131,12 +130,12 @@ data class YouWillGetDetailsSingleRowConfiguration(
     val userNameTextSize: Float = 12f,
     val userPhNoTextSize: Float = 11f,
     val userNameColor: Color = DarkBlue,
-    val userPhNoTextColor: Color = LightBlue5,
+    val userPhNoTextColor: Color = Color(0xff5A87BB),
 
     val YouWillGetDetailsSingleRowGetText: Int = R.string.YouWillGetDetailsSingleRowGetText,
     val YouWillGetDetailsSingleRowPaidText: Int = R.string.YouWillGetDetailsSingleRowPaidText,
     val getTextColor: Color = LightGreen3,
-    val paidTextColor: Color = LightBlue5,
+    val paidTextColor: Color = Color(0xff5A87BB),
     val getTextFontSize: Float = 11f,
     val paidTextFontSize: Float = 11f,
 
@@ -160,7 +159,7 @@ data class YouWillGetDetailsSingleRowConfiguration(
             YouWillGetDetailsSingleRowGetText = R.string.YouWillPayDetailsSingleRowDueText,
             YouWillGetDetailsSingleRowPaidText = R.string.YouWillPayDetailsSingleRowPaidText,
             getTextColor = Pink,
-            paidTextColor = LightBlue5,
+            paidTextColor = Color(0xff5A87BB),
             currencyTextColorForGetAmount = Pink,
             decNumberTextColorForGetAmount = Pink,
             wholeNumberTextColorForGetAmount = Pink,

@@ -265,7 +265,7 @@ fun YouWillGetSingleItem_080weu(
                     FontFamilyText(
                         text = transaction.mobileNumber,
                         fontSize = 11.sep(),
-                        color = LightBlue5
+                        color = Color(0xff5A87BB)
                     )
                 }
             }

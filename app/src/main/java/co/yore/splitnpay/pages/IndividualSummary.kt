@@ -17,7 +17,7 @@ import co.yore.splitnpay.models.DataIds
 @Composable
 fun IndividualSummary(
     members: List<Transaction> = listState(key = DataIds.members),
-    willGetTransactions: List<Transaction> = listState(key = DataIds.willGetTransactions),
+    willGetTransactions: List<MemberTransact> = listState(key = DataIds.willGetTransactions),
     willPayTransactions: List<MemberTransact> = listState(key = DataIds.willPayTransactions),
     getTotal: Float = floatState(key = DataIds.getTotal).value,
     payTotal: Float = floatState(key = DataIds.payTotal).value,
@@ -39,13 +39,13 @@ fun IndividualSummary(
         ) {
             BalanceExpenseTabs(
                 selectedBalanceExpenseTab,
-                isExpenseTabVisible = true
+                isExpenseTabVisible = false
             )
 
             if (selectedBalanceExpenseTab == 0) {
                 Column {
                     31.sy()
-                    SummarySelectableRow(members)
+                    SplitSelectableMembers()
                     48.sy()
                     Box(
                         modifier = Modifier

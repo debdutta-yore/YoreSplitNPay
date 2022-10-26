@@ -135,7 +135,7 @@ fun ExpenseDatePickerSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(Color(0xff5A87BB))
                 .align(Alignment.CenterHorizontally)
         )
         13.sy()

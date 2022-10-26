@@ -40,7 +40,6 @@ import co.yore.splitnpay.models.TransactionType
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-val LightBlue5 = Color(0xff5A87BB)
 data class BillCardAllConfiguration(
 
     val cardBackground: Color = Color.White,
@@ -101,7 +100,7 @@ data class BillCardAllConfiguration(
 
     val paidReceivedColor: Color = LightBlue4,
     val totalPaidReceivedTextColor: Color = LightBlue4,
-    val cardShadowColor: Color = LightBlue5.copy(0.2f),
+    val cardShadowColor: Color = Color(0xff5A87BB).copy(0.2f),
     val paidSelectedAmountTextColor: Color = Pink,
     val receivedSelectedAmountTextColor: Color = LightGreen3,
     val amountNormalTextColor: Color = DarkBlue,

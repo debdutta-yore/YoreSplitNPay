@@ -130,7 +130,7 @@ fun SummarySinglePeople_q6c90m(
                             .padding(bottom = 42.droot2.dep(), start = 42.droot2.dep())
                             .size(18.dep())
                     ) {
-                        SelectedIcon_f9tfi6(contentDescription = "SelectedIcon")
+                        SelectedIcon_f9tfi61(contentDescription = "SelectedIcon")
                     }
                 }
             }
@@ -152,7 +152,7 @@ fun SummarySinglePeople_q6c90m(
 }
 
 @Composable
-fun SelectedIcon_f9tfi6(
+fun SelectedIcon_f9tfi61(
     config: SelectedIconConfiguration = SelectedIconConfiguration(),
     contentDescription: String
 ) {

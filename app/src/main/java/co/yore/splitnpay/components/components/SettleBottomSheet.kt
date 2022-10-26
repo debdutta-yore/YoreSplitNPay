@@ -21,7 +21,6 @@ import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.LightBlue5
 import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.ui.theme.DarkBlue
 import kotlinx.coroutines.CoroutineScope
@@ -197,7 +196,7 @@ fun YouWillGetPayBottomSheet_al32sa(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(Color(0xff5A87BB))
                 .align(Alignment.CenterHorizontally)
         )
         config.bottomSheetHolderBottomPadding.sy()

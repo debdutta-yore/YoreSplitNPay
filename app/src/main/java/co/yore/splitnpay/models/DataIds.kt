@@ -1,6 +1,11 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    mobile,
+    paymentSuccessButtonClick,
+    paymentSuccessBackText,
+    paymentSuccessButtonText,
+    paymentSuccessMessage,
     payerName,
     payeeName,
     payTotal,

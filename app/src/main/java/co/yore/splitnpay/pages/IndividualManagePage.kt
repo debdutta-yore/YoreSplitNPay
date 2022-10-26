@@ -156,7 +156,7 @@ fun IndividualManagePage(
                         top = 146.dep(),
                         start = 16.dep()
                     ),
-                color = LightBlue5,
+                color = Color(0xff5A87BB),
                 fontSize = 13.sep(),
                 annotatedString = buildAnnotatedString {
                     append(stringResource(R.string.joined_on) + " ")

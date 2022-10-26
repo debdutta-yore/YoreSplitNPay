@@ -21,7 +21,7 @@ import co.yore.splitnpay.pages.elseLet
 class Resolver(){
     private val _map: MutableMap<Any,Any?> = mutableMapOf()
     fun <T>get(key: Any): T{
-        return _map[key] as? T?:throw java.lang.Exception("Resolver key $key not set")
+        return _map[key] as T
     }
 
     operator fun set(key: Any, value: Any?){
