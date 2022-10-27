@@ -17,5 +17,6 @@ enum class Sheets {
     SuccessUndo,
     SettledUnsettledMembers,
     ExpenseFilter,
-    TimeFilter
+    TimeFilter,
+    AdvancedDatePicker
 }

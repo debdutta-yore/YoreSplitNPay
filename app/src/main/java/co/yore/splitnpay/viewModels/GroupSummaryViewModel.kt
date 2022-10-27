@@ -323,23 +323,37 @@ class GroupSummaryViewModel(
                     }
 
                     override fun onOptionSelected(arg: Any?) {
-                        mySheeting.hide()
                         val index = arg as? Int?:return
                         when(index){
                             0->{
+                                mySheeting.hide()
                                 _filterTimeFrame.value = TimeOptionData.Normal("All Time")
                             }
                             1->{
+                                mySheeting.hide()
                                 _filterTimeFrame.value = TimeOptionData.Outlined(lastMonthShort)
                             }
                             2->{
+                                mySheeting.hide()
                                 _filterTimeFrame.value = TimeOptionData.Outlined(thisMonthShort)
                             }
                             3->{
-
+                                mySheeting.change(Sheets.AdvancedDatePicker)
                             }
                         }
 
+                    }
+
+                }
+            ),
+            Sheets.AdvancedDatePicker to DatePickerAdvancedBottomSheetModel(
+                object : DatePickerAdvancedBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
                     }
 
                 }

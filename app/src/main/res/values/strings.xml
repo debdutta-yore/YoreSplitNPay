@@ -128,4 +128,12 @@
     <string name="total_paid">Total Paid</string>
     <string name="number_of_transaction">No. of Transaction</string>
     <string name="number_of_expanses">Number of expenses</string>
+    <string name="select_monthly">Select Monthly</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_month_range">Select Month Range</string>
+    <string name="select_date_range">Select Date Range</string>
+    <string name="show_monthly">Show Monthly</string>
+    <string name="show_weekly">Show Weekly</string>
+    <string name="submit">Submit</string>
+    <string name="dates">Dates</string>
 </resources>

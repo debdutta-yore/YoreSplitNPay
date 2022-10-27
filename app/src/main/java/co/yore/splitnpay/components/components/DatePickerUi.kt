@@ -285,7 +285,7 @@ fun YoreDatePicker(
     LaunchedEffect(key1 = yoreDatePickerData){
         _yoreDatePickerData = yoreDatePickerData
     }
-    Box {
+    /*Box*/Column {
         var yearPicking by remember {
             mutableStateOf(false)
         }
@@ -376,14 +376,14 @@ fun YoreDatePicker(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(24.dep()))
+        //Spacer(modifier = Modifier.height(24.dep()))
         AnimatedVisibility(
             !yearPicking
         ,enter = fadeIn(animationSpec = tween(700)),
         exit = fadeOut(animationSpec = tween(700))
         ) {
             Box(
-                modifier = Modifier.padding(top = 42.dep())
+                //modifier = Modifier.padding(top = 42.dep())
             ){
                 MonthPicker(
                     monthPickerData,
