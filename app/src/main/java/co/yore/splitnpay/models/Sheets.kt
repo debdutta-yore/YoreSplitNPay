@@ -15,5 +15,7 @@ enum class Sheets {
     UnsettledMembersAlert,
     ConfirmDelete,
     SuccessUndo,
-    SettledUnsettledMembers
+    SettledUnsettledMembers,
+    ExpenseFilter,
+    TimeFilter
 }

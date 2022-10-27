@@ -19,12 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.Group
 import co.yore.splitnpay.components.components.GroupCard_0msq1z
-import co.yore.splitnpay.components.components.ManageGroupCard
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.components.configuration.GroupCardConfiguration
-import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.GroupData

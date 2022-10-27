@@ -57,8 +57,6 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.configuration.TopbarWithIconConfiguration
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.*

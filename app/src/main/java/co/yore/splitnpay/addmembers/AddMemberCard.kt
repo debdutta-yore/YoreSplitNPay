@@ -43,7 +43,7 @@ import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.components.configuration.CheckboxConfiguration
 import co.yore.splitnpay.components.configuration.PeopleCardConfiguration
 import co.yore.splitnpay.components.configuration.ProfileImageConfiguration2
-import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.demos.expenseDemo.sx
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData

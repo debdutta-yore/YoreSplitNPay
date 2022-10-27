@@ -51,7 +51,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
-private fun SingleItem(
+fun SingleItem(
     modifier: Modifier = Modifier,
     icon: Painter, text: String,
     isSelected: Boolean = false

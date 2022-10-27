@@ -2,10 +2,10 @@ package co.yore.splitnpay.pages
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -13,9 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -26,13 +24,10 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.LightBlue3
 import co.yore.splitnpay.components.components.TriangleShape
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.White
-import java.time.Clock.offset
 
 @Composable
 fun SplitSummary() {
@@ -105,11 +100,18 @@ fun BalanceExpenseTabs(
             51f
         } else {
             170f
-        }
+        },
+        tween(500)
     )
 
-    val balanceTabColor = animateColorAsState(targetValue = if (selected == 0) DarkBlue else LightBlue3)
-    val expenseTabColor = animateColorAsState(targetValue = if (selected == 1) DarkBlue else LightBlue3)
+    val balanceTabColor = animateColorAsState(
+        targetValue = if (selected == 0) DarkBlue else LightBlue3,
+        tween(500)
+    )
+    val expenseTabColor = animateColorAsState(
+        targetValue = if (selected == 1) DarkBlue else LightBlue3,
+        tween(500)
+    )
 
     Box(
         modifier = Modifier

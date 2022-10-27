@@ -1,4 +1,4 @@
-package co.yore.splitnpay.demos
+package co.yore.splitnpay.demos.expenseDemo
 
 import android.graphics.Paint
 import android.text.TextPaint

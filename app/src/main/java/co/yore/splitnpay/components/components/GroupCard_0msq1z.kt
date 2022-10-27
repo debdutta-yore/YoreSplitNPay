@@ -28,8 +28,8 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.CheckBoxIcon_b6qwbf
 import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.components.configuration.ArrowButtonConfiguration
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.demos.expenseDemo.sx
+import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText

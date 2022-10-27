@@ -121,4 +121,11 @@
     <string name="willpay">%s will pay</string>
     <string name="total_receivable">Total Receivable</string>
     <string name="has_already_paid">" has already paid!"</string>
+    <string name="total_share">Total share</string>
+    <string name="expense_categories">Expense Categories</string>
+    <string name="number_of_expenses">Number of expenses</string>
+    <string name="overtime">Overtime</string>
+    <string name="total_paid">Total Paid</string>
+    <string name="number_of_transaction">No. of Transaction</string>
+    <string name="number_of_expanses">Number of expenses</string>
 </resources>

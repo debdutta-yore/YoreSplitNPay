@@ -13,9 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.demos.expenseDemo.sx
+import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 

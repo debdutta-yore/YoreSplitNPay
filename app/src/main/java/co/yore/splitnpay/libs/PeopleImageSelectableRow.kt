@@ -1,7 +1,7 @@
 package co.yore.splitnpay.libs
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,8 +11,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -32,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.demos.sx
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.pages.SplitSelectableMember
 import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.Greyish2
@@ -42,7 +39,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
-fun SummarySelectableRow(list: List<Transaction>) {
+fun SummarySelectableRow(list: List<SplitSelectableMember>) {
     LazyRow(
         modifier = Modifier.padding(
             start = 24.dep(),
@@ -60,9 +57,10 @@ fun SummarySelectableRow(list: List<Transaction>) {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SummarySinglePeople_q6c90m(
-    transaction: Transaction,
+    transaction: SplitSelectableMember,
     config: SummarySinglePeopleConfig = SummarySinglePeopleConfig(),
     notifier: NotificationService = notifier(),
     contentDescription: String
@@ -71,7 +69,8 @@ fun SummarySinglePeople_q6c90m(
 
     val borderColor = animateColorAsState(
         targetValue = if (transaction.isSelected) config.selectedBorderColor
-        else config.unselectedBorderColor
+        else config.unselectedBorderColor,
+        tween(500)
     )
 
     Column(
@@ -114,7 +113,7 @@ fun SummarySinglePeople_q6c90m(
                         ),
                     model = ImageRequest.Builder(LocalContext.current)
                         //TODO - update using friend.imageUrl
-                        .data(transaction.imageUrl)
+                        .data(transaction.image)
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(config.profileImagePlaceHolder),
@@ -123,15 +122,17 @@ fun SummarySinglePeople_q6c90m(
                 )
             }
 
-            Crossfade(targetState = transaction.isSelected) { isChecked ->
-                if (isChecked) {
-                    Box(
-                        Modifier
-                            .padding(bottom = 42.droot2.dep(), start = 42.droot2.dep())
-                            .size(18.dep())
-                    ) {
-                        SelectedIcon_f9tfi61(contentDescription = "SelectedIcon")
-                    }
+            androidx.compose.animation.AnimatedVisibility(
+                transaction.isSelected,
+                enter = fadeIn(tween(500)) + scaleIn(tween(500)),
+                exit = fadeOut(tween(500)) + scaleOut(tween(500))
+            ) {
+                Box(
+                    Modifier
+                        .padding(bottom = 42.droot2.dep(), start = 42.droot2.dep())
+                        .size(18.dep())
+                ) {
+                    SelectedIcon_f9tfi61(contentDescription = "SelectedIcon")
                 }
             }
         }

@@ -29,10 +29,10 @@ import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.RoundedLinearProgressIndicator
 import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.sx
+import co.yore.splitnpay.libs.sy
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.TransactionStatus

@@ -52,8 +52,8 @@ import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
 import co.yore.splitnpay.components.configuration.GroupMemberProfilePicsConfiguration
 import co.yore.splitnpay.components.configuration.SplitTabItemConfiguration
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.demos.expenseDemo.sx
+import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds

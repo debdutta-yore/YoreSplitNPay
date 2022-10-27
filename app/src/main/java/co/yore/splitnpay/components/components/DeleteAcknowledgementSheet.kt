@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.DarkBlue

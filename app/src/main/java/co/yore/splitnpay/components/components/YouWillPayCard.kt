@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,10 +16,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
-import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.ui.theme.*
 
 @Composable

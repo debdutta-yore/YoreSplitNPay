@@ -33,8 +33,8 @@ import co.yore.splitnpay.components.components.GroupCard_0msq1z
 import co.yore.splitnpay.components.components.SplitPageTabs
 import co.yore.splitnpay.components.components.SplitTabItem_89keto
 import co.yore.splitnpay.components.configuration.*
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.demos.expenseDemo.sx
+import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.ContactData

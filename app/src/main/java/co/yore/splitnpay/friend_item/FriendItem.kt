@@ -21,7 +21,7 @@ import co.yore.splitnpay.components.components.YoreAmount
 import co.yore.splitnpay.components.components.YoreAmountConfiguration
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.components.configuration.FriendItemConfiguration
-import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.demos.expenseDemo.sx
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.splitted

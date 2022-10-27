@@ -19,7 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
-import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.demos.expenseDemo.sx
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 

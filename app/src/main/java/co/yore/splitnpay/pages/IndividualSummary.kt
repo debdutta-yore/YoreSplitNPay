@@ -10,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.MemberTransact
 import co.yore.splitnpay.components.components.YouWillPayCard
-import co.yore.splitnpay.demos.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 

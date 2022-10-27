@@ -76,7 +76,9 @@ fun Float.splitted(): FloatSplitted {
 }
 
 var formatter = DecimalFormat("#,###")
-fun Number.formatComma():String = formatter.format(this)
+fun Number.formatComma():String{
+    return formatter.format(this)
+}
 
 fun Modifier.fadingEdge(
     startingColor: Color = Color.White,

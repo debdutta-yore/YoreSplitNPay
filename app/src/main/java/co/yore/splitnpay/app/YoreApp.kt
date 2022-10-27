@@ -39,7 +39,7 @@ inline fun <reified T : ViewModel>NavGraphBuilder.YoreScreen(
 @Composable
 fun YoreApp() {
     val navController = rememberAnimatedNavController()
-    AnimatedNavHost(navController, startDestination = "individual_chat") {
+    AnimatedNavHost(navController, startDestination = "group_split_summary") {
         YoreScreen<SplitPageViewModel>(
             navController = navController,
             route = "split_page"
@@ -105,6 +105,12 @@ fun YoreApp() {
             route = "individual_chat"
         ) {
             IndividualChatScreen()
+        }
+        YoreScreen<GroupSummaryViewModel>(
+            navController = navController,
+            route = "group_split_summary"
+        ) {
+            GroupSplitSummary()
         }
     }
 }

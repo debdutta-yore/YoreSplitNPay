@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import co.yore.splitnpay.R
-import co.yore.splitnpay.demos.sx
+import co.yore.splitnpay.demos.expenseDemo.sx
 import co.yore.splitnpay.libs.AmountStyle
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep

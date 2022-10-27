@@ -52,8 +52,8 @@ import co.yore.splitnpay.components.components.LightBlue3
 import co.yore.splitnpay.components.components.ProfileImageConfiguration
 import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.demos.sx
-import co.yore.splitnpay.demos.sy
+import co.yore.splitnpay.demos.expenseDemo.sx
+import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
