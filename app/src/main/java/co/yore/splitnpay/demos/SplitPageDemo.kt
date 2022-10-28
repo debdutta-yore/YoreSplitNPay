@@ -17,37 +17,4 @@ import co.yore.splitnpay.libs.notifier
 import co.yore.splitnpay.models.DataIds
 
 
-@Composable
-fun FloatingSplitButton(
-    config: SplitButtonConfiguration = SplitButtonConfiguration(),
-    notifier: NotificationService = notifier()
-) {
-    FloatingActionButton(
-        onClick = {
-            notifier.notify(DataIds.split,null)
-        },
-        backgroundColor = config.backgroundColor,
-        contentColor = config.tint,
-        modifier = Modifier
-            .coloredShadow(
-                color = config.shadowColor,
-                borderRadius = config.shadowBorderRadius.dep(),
-                blurRadius = config.shadowBlurRadius.dep(),
-                spread = config.shadowSpread,
-                offsetX = config.offsetX.dep(),
-                offsetY = config.offsetY.dep(),
-            ),
-        shape = CircleShape,
-        elevation = FloatingActionButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp,
-        )
-    ) {
-        Icon(
-            painter = painterResource(id = config.iconId),
-            "", tint = Color.Unspecified
-        )
-    }
-}
+

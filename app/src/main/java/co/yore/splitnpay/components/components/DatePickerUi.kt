@@ -89,7 +89,7 @@ object Kal{
             return years / 4 - years / 100 + years / 400
         }
 
-        private fun getDifference(dt1: Date, dt2: Date): Int {
+        fun getDifference(dt1: Date, dt2: Date): Int {
             val monthDays = intArrayOf(
                 31, 28, 31, 30, 31, 30,
                 31, 31, 30, 31, 30, 31
@@ -269,7 +269,19 @@ data class YoreDatePickerData(
     val maxDate: Kal.Date? = null,
     val dateSelectable: Boolean = true,
     val yearSwitchable: Boolean = true
-)
+){
+    companion object {
+        fun same(left: YoreDatePickerData, right: YoreDatePickerData): Boolean {
+            return left.selectedDay == right.selectedDay
+                    && left.selectedMonth == right.selectedMonth
+                    && left.selectedYear == right.selectedYear
+                    && left.minDate == right.minDate
+                    && left.maxDate == right.maxDate
+                    && left.dateSelectable == right.dateSelectable
+                    && left.yearSwitchable == right.yearSwitchable
+        }
+    }
+}
 
 @Composable
 fun YoreDatePicker(

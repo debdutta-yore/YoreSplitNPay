@@ -1,15 +1,20 @@
 package co.yore.splitnpay.app
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
+import androidx.navigation.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.viewModels.*
@@ -20,10 +25,14 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 inline fun <reified T : ViewModel>NavGraphBuilder.YoreScreen(
     navController: NavHostController,
     route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
     crossinline content: @Composable () -> Unit
 ){
     yoreComposable(
-        route
+        route,
+        arguments = arguments,
+        deepLinks = deepLinks
     ){
         YorePage(
             navController,
@@ -39,16 +48,38 @@ inline fun <reified T : ViewModel>NavGraphBuilder.YoreScreen(
 @Composable
 fun YoreApp() {
     val navController = rememberAnimatedNavController()
-    AnimatedNavHost(navController, startDestination = "group_split_summary") {
+    AnimatedNavHost(navController, startDestination = "main") {
+        YoreScreen<SplitPageViewModel>(
+            navController = navController,
+            route = "main"
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Button(onClick = {
+                    navController.navigate("split_page")
+                }) {
+                    Text("Split N Pay")
+                }
+            }
+        }
         YoreScreen<SplitPageViewModel>(
             navController = navController,
             route = "split_page"
         ) {
-            SplitPage()
+            SplitScreen()
         }
         YoreScreen<MemberSelectionPageViewModel>(
             navController = navController,
-            route = "split_with_page"
+            route = "split_with_page?split={split}",
+            arguments = listOf(
+                navArgument("split"){
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
         ) {
             MemberSelectionPage_g5024t()
         }

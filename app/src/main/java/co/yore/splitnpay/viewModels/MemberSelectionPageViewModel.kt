@@ -1,5 +1,6 @@
 package co.yore.splitnpay.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +40,7 @@ class MemberSelectionPageViewModel(
     private val addedContacts = mutableStateListOf<ContactData>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupsChecked = mutableStateMapOf<Any,TriState>()
+    private var forSplit = false
     init {
         resolver[DataIds.textInput] = splitWithInput
         resolver[DataIds.groupsAndPeoples] = visibleGroupsAndContacts
@@ -60,6 +62,7 @@ class MemberSelectionPageViewModel(
     private val _notificationService = NotificationService{id,arg->
         when(id){
             WirelessViewModelInterface.startupNotification->{
+                getArguments()
                 purgeContacts()
                 _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
             }
@@ -116,6 +119,13 @@ class MemberSelectionPageViewModel(
                     filter()
                 }
             }
+        }
+    }
+
+    private fun getArguments() {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            val args = navHostController.currentBackStackEntry?.arguments
+            forSplit = args?.getBoolean("split")?:false
         }
     }
 

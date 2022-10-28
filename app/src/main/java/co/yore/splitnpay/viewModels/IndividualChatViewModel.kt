@@ -323,7 +323,7 @@ class IndividualChatViewModel(
     // ////////////////////////////////////////
     private val _conversations = mutableStateListOf<Conversation>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
-    private val _groupName = mutableStateOf("Office Buddies")
+    private val _groupName = mutableStateOf("Sushil Roy")
     private val _groupImage = mutableStateOf("https://i.pravatar.cc/300")
     private val mobile = mutableStateOf("89641203625")
     private val _groupCreationDate = mutableStateOf("May 9th 2022")

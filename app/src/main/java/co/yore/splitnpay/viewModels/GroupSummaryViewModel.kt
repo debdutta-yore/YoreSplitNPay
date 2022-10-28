@@ -308,7 +308,7 @@ class GroupSummaryViewModel(
 
                     override fun onOptionSelected(arg: Any?) {
                         mySheeting.hide()
-                        summaryMode.value = summaryMode.value.next
+                        summaryMode.value = SummaryMode.values()[arg as? Int?:return]
                     }
                 }
             ),
@@ -356,6 +356,10 @@ class GroupSummaryViewModel(
                         mySheeting.hide()
                     }
 
+                    override fun onContinue(result: DatePickerAdvancedBottomSheetModel.Result) {
+                        mySheeting.hide()
+                        _filterTimeFrame.value = TimeOptionData.Normal(result.display())
+                    }
                 }
             )
         )

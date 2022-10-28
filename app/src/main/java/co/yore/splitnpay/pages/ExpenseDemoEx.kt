@@ -14,6 +14,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +47,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.ui.theme.robotoFonts
 import coil.compose.AsyncImage
 import java.text.DecimalFormat
 
@@ -883,6 +885,7 @@ fun TimeOption(
     )
     Row(
         modifier = Modifier
+            .padding(start = 8.dep())
             .animateContentSize(
                 //tween(500)
             )
@@ -925,14 +928,29 @@ fun TimeOption(
             color = Color(0xff243257),
             fontWeight = if(data is TimeOptionData.Outlined) FontWeight.Bold else FontWeight.Normal
         )*/
-        TextAnimation(
-            text = data.text,
-            animate = true,
-            fontSize = if(data is TimeOptionData.Outlined) 14.sep() else 12.sep(),
-            color = Color(0xff243257),
-            fontWeight = if(data is TimeOptionData.Outlined) FontWeight.Bold else FontWeight.Normal,
-            animationSpec = tween(animDuration)
-        )
+        val depx = with(LocalDensity.current){2.dep().toPx()}
+        LazyRow(
+            modifier = Modifier
+                .fadingEdge(
+                    horizontal = true,
+                    length = depx
+                ),
+            contentPadding = PaddingValues(horizontal = 2.dep())
+        ){
+            item{
+                TextAnimation(
+                    text = data.text,
+                    animate = true,
+                    fontFamily = robotoFonts,
+                    fontSize = if(data is TimeOptionData.Outlined) 14.sep() else 12.sep(),
+                    color = Color(0xff243257),
+                    fontWeight = if(data is TimeOptionData.Outlined) FontWeight.Bold else FontWeight.Normal,
+                    animationSpec = tween(animDuration),
+                    maxLines = 1
+                )
+            }
+        }
+
         /*AnimatedVisibility(
             data is TimeOptionData.Outlined,
             enter = fadeIn(tween(animDuration))+ scaleIn(tween(animDuration)),

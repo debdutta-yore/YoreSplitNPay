@@ -1,6 +1,7 @@
 package co.yore.splitnpay.models
 
 enum class DataIds {
+    canSubmit,
     timeFilter,
     expenseFilterOption,
     summaryMode,

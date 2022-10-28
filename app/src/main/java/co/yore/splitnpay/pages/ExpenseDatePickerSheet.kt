@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.YoreDatePicker
 import co.yore.splitnpay.components.components.YoreDatePickerData
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.DataIds
@@ -189,7 +187,7 @@ fun ExpenseDatePickerSheet(
                 notifier.notify(DataIds.day,it)
             }
         ) {
-
+            24.sy()
         }
         25.sy()
         Row(

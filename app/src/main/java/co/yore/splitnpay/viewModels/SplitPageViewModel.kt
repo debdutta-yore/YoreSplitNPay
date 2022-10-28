@@ -5,11 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.SplitPageTabs
+import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.Category
+import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -20,7 +23,8 @@ enum class SplitPageState{
 }
 
 class SplitPageViewModel(
-    private val repo: Repo = RepoImpl()
+    private val repo: Repo = RepoImpl(),
+    private val groupRepo: GroupRepository = GroupsMock(),
 ): ViewModel(), WirelessViewModelInterface {
     override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
@@ -33,8 +37,6 @@ class SplitPageViewModel(
     private val _decimalPay = mutableStateOf("30")
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _ultimateState = mutableStateOf(SplitPageState.PAY)
-    private val _groups = mutableStateListOf<GroupCardData>()
-    private val _peoples = mutableStateListOf<ContactData>()
     private val _willGetActive = mutableStateOf(false)
     private val _willPayActive = mutableStateOf(false)
     private val _input = mutableStateOf("")
@@ -62,19 +64,26 @@ class SplitPageViewModel(
                 //Todo
             }
             DataIds.split ->{
-
+                mySheeting.change(Sheets.BillTotalAndCategories)
+                mySheeting.show()
             }
             DataIds.groupCardGo ->{
-                //Todo
+                gotoGroupPage()
             }
             DataIds.addGroup ->{
                 gotoSplitWithPage()
             }
             DataIds.peopleCardGo ->{
-                //Todo
+                gotoIndividualPage()
             }
             "${DataIds.back}split_page" ->{
-                //Todo
+                when(mySheeting.sheets.value){
+                    Sheets.None->pageBack()
+                    else->mySheeting.onBack()
+                }
+            }
+            DataIds.back->{
+                pageBack()
             }
             DataIds.getCard ->{
                 //Todo
@@ -101,6 +110,124 @@ class SplitPageViewModel(
         }
     }
 
+    override val sheeting = Sheeting(
+        sheetMap = mapOf(
+            Sheets.BillTotalAndCategories to BillTotalAndCategoryBottomSheetModel(
+                object : BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
+                    override suspend fun getCategories(): List<Category> {
+                        val categories = groupRepo.getAllCategories().toMutableList()
+                        categories[0] = categories[0].copy(isSelected = true)
+                        return categories
+                    }
+
+                    override suspend fun getBillTotalAmount(): String {
+                        return ""
+                    }
+
+                    override suspend fun getDescription(): String {
+                        return ""
+                    }
+
+                    override fun openAllCategories() {
+                        mySheeting.sheets.value = Sheets.CategoriesEdit
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override fun onContinue(
+                        billTotal: String,
+                        billDescription: String,
+                        category: Category
+                    ) {
+                        mySheeting.sheets.value = Sheets.DatePicker
+                    }
+
+                    override fun onRenameContinue(
+                        category: Category,
+                        name: String
+                    ) {
+
+                    }
+
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+                }
+            ),
+            Sheets.CategoriesEdit to AllCategoriesBottomSheetModel(
+                object : AllCategoriesBottomSheetModel.Callback{
+                    override suspend fun getCategories(): List<Category> {
+                        val categories = groupRepo.getAllCategories().toMutableList()
+                        categories[0] = categories[0].copy(isSelected = true)
+                        return categories
+                    }
+
+                    override fun onCategoryAddContinue(name: String) {
+                        mySheeting.hide()
+                    }
+
+                    override fun onCategorySelectedContinue(category: Category) {
+                        mySheeting.sheets.value = Sheets.DatePicker
+                    }
+
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+                }
+            ),
+            Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
+                object : ExpenseDatePickerBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun getDatePickerData(): YoreDatePickerData {
+                        return YoreDatePickerData()
+                    }
+
+                    override fun onContinue(
+                        selectedDay: Int,
+                        selectedMonth: Int,
+                        selectedYear: Int
+                    ) {
+                        mySheeting.hide()
+                        selectMembersForSplit()
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+                }
+            ),
+        )
+    )
+
+    private fun selectMembersForSplit() {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.navigate("split_with_page?split=true")
+        }
+    }
+
+    private fun gotoIndividualPage() {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.navigate("individual_chat")
+        }
+    }
+
+    private fun gotoGroupPage() {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.navigate("group_chat_page")
+        }
+    }
+
+    private fun pageBack() {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.popBackStack()
+        }
+    }
+
     private fun gotoSplitWithPage() {
         navigation.scope{ navHostController, lifecycleOwner, toaster ->
             navHostController.navigate("split_with_page")
@@ -119,8 +246,6 @@ class SplitPageViewModel(
             DataIds.wholePay to _wholePay,
             DataIds.decimalPay to _decimalPay,
             DataIds.statusBarColor to _statusBarColor,
-            DataIds.groups to _groups,
-            DataIds.peoples to _peoples,
             DataIds.willGetActive to _willGetActive,
             DataIds.willPayActive to _willPayActive,
             DataIds.textInput to _input,
