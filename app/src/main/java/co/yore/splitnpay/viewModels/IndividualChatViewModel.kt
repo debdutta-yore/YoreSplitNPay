@@ -8,13 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
-import co.yore.splitnpay.components.components.Friend
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
-import co.yore.splitnpay.pages.GroupChatTab
-import co.yore.splitnpay.pages.Transaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -263,7 +260,7 @@ class IndividualChatViewModel(
                                 isSelected = true,
                                 hasRead = false
                             ),
-                            category = co.yore.splitnpay.components.components.Category(
+                            category = Category1(
                                 name = "Category",
                                 color = 0xffff0000,
                                 icon = R.drawable.travel

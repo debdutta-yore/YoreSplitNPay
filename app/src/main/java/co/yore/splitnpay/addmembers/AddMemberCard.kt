@@ -38,23 +38,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.YoreAmount
-import co.yore.splitnpay.components.components.YoreAmountConfiguration
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.components.configuration.CheckboxConfiguration
-import co.yore.splitnpay.components.configuration.PeopleCardConfiguration
-import co.yore.splitnpay.components.configuration.ProfileImageConfiguration2
-import co.yore.splitnpay.demos.expenseDemo.sx
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.ContactData
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.GreyShadow
 import co.yore.splitnpay.ui.theme.robotoFonts
-import co.yore.splitnpay.viewModels.TriState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-
-
 
 
 @Composable

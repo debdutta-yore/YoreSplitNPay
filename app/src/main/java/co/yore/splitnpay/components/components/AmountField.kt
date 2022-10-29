@@ -23,29 +23,18 @@ import co.yore.splitnpay.libs.AmountStyle
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sx
+import co.yore.splitnpay.models.Amount
 import co.yore.splitnpay.ui.theme.robotoFonts
-import java.math.BigDecimal
 import java.math.MathContext
-
-data class Amount(
-    val wholeText: String,
-    val decText: String,
-    val whole: BigDecimal,
-    val dec: Float
-){
-    override fun toString(): String {
-        return "$wholeText.$decText"
-    }
-}
 
 fun String.amount(): Amount {
     val text = this
     val parts = text.split(".")
     var wholeText = parts[0]
-    var decText = parts.getOrNull(1)?:"0"
+    var decText = parts.getOrNull(1) ?: "0"
     val whole = wholeText.toBigDecimal()
     val dec = decText.toFloat()
-    wholeText = whole.toString()//YoreAmountFormatter.formatter.format(whole)
+    wholeText = whole.toString() // YoreAmountFormatter.formatter.format(whole)
     if (decText.length < 2) {
         decText = "${decText}0"
     }
@@ -83,7 +72,7 @@ fun AmountField(
     }
     val color by remember(amount) {
         derivedStateOf {
-            if (amount>0) {
+            if (amount > 0) {
                 Color(0xff243257)
             } else {
                 Color(0xff8C93A2)
@@ -96,11 +85,11 @@ fun AmountField(
         value = text,
         modifier = Modifier.width(IntrinsicSize.Min),
         onValueChange = { it ->
-            if(it.isEmpty()){
+            if (it.isEmpty()){
                 return@BasicTextField
             }
-            if(it.matches("^([+-]?\\d*\\.?\\d*)$".toRegex())){
-                onChange(it.replace(",","").toDouble())
+            if (it.matches("^([+-]?\\d*\\.?\\d*)$".toRegex())){
+                onChange(it.replace(",", "").toDouble())
             }
         },
         textStyle = TextStyle(

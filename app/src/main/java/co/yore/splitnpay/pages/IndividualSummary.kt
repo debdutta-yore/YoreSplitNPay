@@ -8,10 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.MemberTransact
 import co.yore.splitnpay.components.components.YouWillPayCard
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.MemberTransact
+import co.yore.splitnpay.models.Transaction
 
 @Composable
 fun IndividualSummary(
@@ -73,8 +74,7 @@ fun IndividualSummary(
                     }
                     56.sy()
                 }
-            }
-            else if(selectedBalanceExpenseTab == 1) {
+            } else if (selectedBalanceExpenseTab == 1) {
 
             }
         }

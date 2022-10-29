@@ -14,8 +14,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.configuration.ProfileImageConfiguration1
 import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.models.ProfileImageConfiguration1
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 

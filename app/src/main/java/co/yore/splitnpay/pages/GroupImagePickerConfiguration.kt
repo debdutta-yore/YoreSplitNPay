@@ -18,15 +18,12 @@ import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.droot2
+import co.yore.splitnpay.models.GroupImagePickerConfiguration
 import co.yore.splitnpay.ui.theme.DarkBlueShadow
 import co.yore.splitnpay.ui.theme.White
 import coil.compose.AsyncImage
 
-data class GroupImagePickerConfiguration(
-    val imageSize: Float = 68f,
-    val borderStroke: Float = 3f,
-    val borderColor: Color = White
-)
+
 
 @Composable
 fun GroupImagePicker_ncbmdg(

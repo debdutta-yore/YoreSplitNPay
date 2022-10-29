@@ -36,16 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.pages.LightBlue1
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightGreen3
-import co.yore.splitnpay.ui.theme.Pink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -599,16 +596,6 @@ fun SelectedIcon_f9tfi6(
     }
 }
 
-data class SelectedIconConfiguration(
-    val selectedIconSize: Float = 18f,
-    val borderWidth: Float = 1f,
-    val borderColor: Color = Color.White,
-    val shape: Shape = CircleShape,
-    val backGroundColor: Color = Pink,
-    val icon: Int = R.drawable.ic_checked_right,
-    val iconSize: Float = 7f
-)
-
 @Composable
 fun OutlineButton_hargeg(
     selected: Boolean,
@@ -655,51 +642,9 @@ fun OutlineButton_hargeg(
     }
 }
 
-data class Upi(
-    val upiName: String,
-    val upiId: String,
-    val bankName: String,
-    val userName: String,
-    val backGroundColor: Color,
-    val isSelected: Boolean
-)
 
-data class UpiButtonConfiguration(
-    val size: Float = 45f,
-    val shape: Shape = CircleShape,
-    val backGroundColor: Color = LightGreen3,
-    val borderColor: Color = Bluish,
-    val borderWidth: Float = 1f,
-    val textSize: Float = 12f,
-    val textColor: Color = Color.White,
-    val textWeight: FontWeight = FontWeight(400)
-)
-
-data class OutlineButtonConfiguration(
-    val size: Float = 45f,
-    val shape: Shape = CircleShape,
-    val borderColor: Color = Bluish,
-    val borderWidth: Float = 1.1f,
-    val icon: Int = R.drawable.ic_category_blue_plus,
-    val iconTint: Color = Color.Unspecified
-)
-
-data class SettlePaymentMethodBottomSheetConfiguration(
-    val bottomSheetHolderTopPadding: Float = 20f,
-    val bottomSheetHolderTint: Color = Color.Unspecified,
-    val bottomPaddingOfHolder: Float = 22f,
-    val firstRowHeight: Float = 80f,
-    val secondRowHeight: Float = 57f,
-    val selectedBackGroundColor: Color = LightBlue1,
-    val rowStartPadding: Float = 28f,
-    val upiRowTopPadding: Float = 21f,
-    val bottomPaddingOfContinueButton: Float = 12f
-)
 val AlabasterSolid = Color(0xffFAFAFA)
-enum class SettlePaymentOptions {
-    Cash,
-    Upi
-}
+
 val TriangleShape = GenericShape { size, _ ->
     // 1)
     moveTo(size.width / 2f, 0f)

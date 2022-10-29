@@ -31,6 +31,8 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.FloatSplitted
+import co.yore.splitnpay.models.StatusBarColor
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.math.BigDecimal
@@ -44,11 +46,7 @@ object YoreAmountFormatter{
     val decFormatter = DecimalFormat("#,##,###.##")
 }
 
-data class FloatSplitted(
-    val wholeString: String,
-    val decString: String,
-    val whole: Int,
-)
+
 
 fun Float.splitted(): FloatSplitted {
     val text = this.toString()
@@ -230,10 +228,7 @@ fun randomDate(start: Long, end: Long): Long {
         .nextLong(start, end)
 }
 
-data class StatusBarColor(
-    val color: Color,
-    val darkIcons: Boolean = false
-)
+
 
 @Composable
 fun StatusBarColorControl(

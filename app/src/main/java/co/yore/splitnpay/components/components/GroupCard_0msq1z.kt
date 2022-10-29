@@ -27,17 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.CheckBoxIcon_b6qwbf
 import co.yore.splitnpay.components.configuration.*
-import co.yore.splitnpay.components.configuration.ArrowButtonConfiguration
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.GroupData
+import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.ArrowButtonConfiguration.Companion.group
+import co.yore.splitnpay.models.GroupMemberProfilePicsConfiguration.Companion.smaller
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
-import co.yore.splitnpay.viewModels.TriState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -64,16 +61,17 @@ fun GroupCard_0msq1z(
 
     val focused by remember {
         derivedStateOf {
-            (_selected==TriState.CHECKED)||isPressed||isCheckBoxPressed
+            (_selected == TriState.CHECKED) || isPressed || isCheckBoxPressed
         }
     }
 
     val computedBackgroundColor by remember(config) {
         derivedStateOf{
-            if (focused)
+            if (focused) {
                 config.cardBackgroundColor
-            else
+            } else {
                 config.cardUnselectedColor
+            }
         }
     }
     val animatedBackgroundColor by animateColorAsState(
@@ -82,10 +80,11 @@ fun GroupCard_0msq1z(
     )
     val computedBorderStroke by remember(config) {
         derivedStateOf{
-            if (focused)
+            if (focused) {
                 config.borderStroke
-            else
+            } else {
                 0f
+            }
         }
     }
     val animatedBorderStroke by animateFloatAsState(
@@ -94,10 +93,9 @@ fun GroupCard_0msq1z(
     )
     val computedStrokeColor by remember(config) {
         derivedStateOf {
-            if(focused){
+            if (focused){
                 config.borderColor
-            }
-            else{
+            } else {
                 Color.Transparent
             }
         }
@@ -135,7 +133,7 @@ fun GroupCard_0msq1z(
             .background(
                 animatedBackgroundColor,
                 shape = RoundedCornerShape(config.cornerRadius.dep())
-            ),
+            )
     ) {
         Row(
             modifier = Modifier
@@ -147,87 +145,89 @@ fun GroupCard_0msq1z(
             verticalAlignment = CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-                Box(modifier = Modifier.align(CenterVertically)) {
-                    GroupProfileImage_l5sx9n(
-                        imageUrl = data.image,
-                        contentDescription = "GroupProfilePhoto"
-                    )
-                }
+            Box(modifier = Modifier.align(CenterVertically)) {
+                GroupProfileImage_l5sx9n(
+                    imageUrl = data.image,
+                    contentDescription = "GroupProfilePhoto"
+                )
+            }
 
-                config.profileImageRightPadding.sx()
+            config.profileImageRightPadding.sx()
 
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                RobotoText(
+                    text = data.name,
+                    color = DarkBlue,
+                    fontSize = config.groupNameFontSize.sep(),
+                    fontWeight = FontWeight.Bold
+                )
+
+                config.groupNameProfileImagesGap.sy()
+
+                GroupMemberProfilePics(
+                    data.members.map { it.image }
+                )
+            }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+
+            if (data.showGroupBalance){
                 Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier
+                        .padding(vertical = config.groupBalanceTopPadding.dep())
+                        .fillMaxHeight()
                 ) {
                     RobotoText(
-                        text = data.name,
-                        color = DarkBlue,
-                        fontSize = config.groupNameFontSize.sep(),
-                        fontWeight = FontWeight.Bold,
+                        text = stringResource(R.string.group_balance),
+                        color = LightBlue4,
+                        fontSize = config.groupBalanceFontSize.sep()
                     )
 
-                    config.groupNameProfileImagesGap.sy()
-
-                    GroupMemberProfilePics(
-                        data.members.map { it.image }
-                    )
-                }
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f))
-
-                if(data.showGroupBalance){
                     Column(
                         modifier = Modifier
-                            .padding(vertical = config.groupBalanceTopPadding.dep())
+                            .align(Alignment.CenterHorizontally)
+                            .wrapContentWidth()
                             .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.End
                     ) {
-                        RobotoText(
-                            text = stringResource(R.string.group_balance),
-                            color = LightBlue4,
-                            fontSize = config.groupBalanceFontSize.sep(),
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .wrapContentWidth()
-                                .fillMaxHeight(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.End
-                        ) {
-                            if (data.willGet > 0) {
-                                val willGetSplitted by remember(data.willGet) {
-                                    derivedStateOf {
-                                        data.willGet.splitted()
-                                    }
+                        if (data.willGet > 0) {
+                            val willGetSplitted by remember(data.willGet) {
+                                derivedStateOf {
+                                    data.willGet.splitted()
                                 }
-                                YoreAmount(
-                                    config = YoreAmountConfiguration.splitGroupCardGet,
-                                    whole = willGetSplitted.wholeString,
-                                    decimal = willGetSplitted.decString
-                                )
                             }
-                            if (data.willPay > 0) {
-                                val willPaySplitted by remember(data.willPay) {
-                                    derivedStateOf {
-                                        data.willPay.splitted()
-                                    }
+                            YoreAmount(
+                                config = YoreAmountConfiguration.splitGroupCardGet,
+                                whole = willGetSplitted.wholeString,
+                                decimal = willGetSplitted.decString
+                            )
+                        }
+                        if (data.willPay > 0) {
+                            val willPaySplitted by remember(data.willPay) {
+                                derivedStateOf {
+                                    data.willPay.splitted()
                                 }
-                                YoreAmount(
-                                    config = YoreAmountConfiguration.splitGroupCardPay,
-                                    whole = willPaySplitted.wholeString,
-                                    decimal = willPaySplitted.decString
-                                )
                             }
+                            YoreAmount(
+                                config = YoreAmountConfiguration.splitGroupCardPay,
+                                whole = willPaySplitted.wholeString,
+                                decimal = willPaySplitted.decString
+                            )
                         }
                     }
                 }
+            }
 
-                config.arrowButtonLeftPadding.sx()
+            config.arrowButtonLeftPadding.sx()
 
-            when(config.type){
+            when (config.type){
                 GroupCardConfiguration.Type.CHECKABLE -> CheckBoxIcon_b6qwbf(
                     selected = selected,
                     contentDescription = "",
@@ -238,19 +238,21 @@ fun GroupCard_0msq1z(
                         isCheckBoxPressed = it
                     }
                 )
-                GroupCardConfiguration.Type.ARROW -> ArrowButton_ohezqf(contentDescription = "arrow ",
+                GroupCardConfiguration.Type.ARROW -> ArrowButton_ohezqf(
+                    contentDescription = "arrow ",
                     pressed = false,
                     onClicked = {
-                        notifier.notify(DataIds.groupCardGo,data)
+                        notifier.notify(DataIds.groupCardGo, data)
                     },
                     onPressed = {
                         isCheckBoxPressed = it
                     }
                 )
-                GroupCardConfiguration.Type.GROUP -> ArrowButton_ohezqf(contentDescription = "arrow ",
+                GroupCardConfiguration.Type.GROUP -> ArrowButton_ohezqf(
+                    contentDescription = "arrow ",
                     pressed = false,
                     onClicked = {
-                        notifier.notify(DataIds.groupCardGo,data)
+                        notifier.notify(DataIds.groupCardGo, data)
                     },
                     onPressed = {
                         isCheckBoxPressed = it
@@ -303,8 +305,6 @@ fun GroupProfileImage_l5sx9n(
     }
 }
 
-
-
 @Composable
 fun GroupMemberProfilePics(
     images: List<Any?>,
@@ -329,10 +329,11 @@ fun GroupMemberProfilePics(
                 SingleGroupMemberProfilePic(
                     contentDescription = "SingleGroupMemberProfileImage",
                     image = item,
-                    config = if(config.smaller)
-                        co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration.smaller
-                    else
-                        co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration()
+                    config = if (config.smaller) {
+                        SingleGroupMemberProfilePicConfiguration.smaller
+                    } else {
+                        SingleGroupMemberProfilePicConfiguration()
+                    }
                 )
             }
         }
@@ -344,10 +345,11 @@ fun GroupMemberProfilePics(
                 TransparentProfilePic_k7ibvr(
                     member = Member(invisibleImagesCount),
                     contentDescription = "TransparentExtraMemberCount",
-                    config = if(config.smaller)
-                        co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration.smaller
-                    else
-                        co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration()
+                    config = if (config.smaller) {
+                        TransparentProfilePicConfiguration.smaller
+                    } else {
+                        TransparentProfilePicConfiguration()
+                    }
                 )
             }
         }
@@ -358,7 +360,7 @@ fun GroupMemberProfilePics(
 fun SingleGroupMemberProfilePic(
     image: Any?,
     contentDescription: String,
-    config: co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration = co.yore.splitnpay.components.configuration.SingleGroupMemberProfilePicConfiguration()
+    config: SingleGroupMemberProfilePicConfiguration = SingleGroupMemberProfilePicConfiguration()
 ) {
     AsyncImage(
         model = image,
@@ -368,7 +370,7 @@ fun SingleGroupMemberProfilePic(
             .border(
                 BorderStroke(
                     width = config.borderWidth.dep(),
-                    color = config.borderColor,
+                    color = config.borderColor
                 ),
                 shape = CircleShape
             )
@@ -424,14 +426,10 @@ fun ArrowButton_ohezqf(
     }
 }*/
 
-data class Member(
-    val extraMembers: Int = 3,
-)
-
 @Composable
 fun TransparentProfilePic_k7ibvr(
     member: Member,
-    config: co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration = co.yore.splitnpay.components.configuration.TransparentProfilePicConfiguration(),
+    config: TransparentProfilePicConfiguration = TransparentProfilePicConfiguration(),
     contentDescription: String
 ) {
     Box(
@@ -460,12 +458,3 @@ fun TransparentProfilePic_k7ibvr(
         )
     }
 }
-
-
-
-
-
-
-
-
-

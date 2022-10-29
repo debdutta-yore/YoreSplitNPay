@@ -9,22 +9,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
-import co.yore.splitnpay.components.components.DeleteAlertSheetModel
-import co.yore.splitnpay.components.components.SettledUnsettledMembersBottomSheetModel
-import co.yore.splitnpay.components.components.SuccessUndoSheetModel
-import co.yore.splitnpay.components.components.UnsettledMembersAlertSheetModel
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.ContactData
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.GroupData
-import co.yore.splitnpay.models.Sheets
-import co.yore.splitnpay.pages.SettleOptions
-import co.yore.splitnpay.pages.SingleSettledOrUnsettledMember
+import co.yore.splitnpay.models.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class IndividualManagePageViewModel: ViewModel(), WirelessViewModelInterface {
+class IndividualManagePageViewModel : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val sheeting = Sheeting(
@@ -52,19 +43,19 @@ class IndividualManagePageViewModel: ViewModel(), WirelessViewModelInterface {
             }
         }
     )
-    override val notifier = NotificationService{id,arg->
-        Log.d("lflfjdfdf","$id")
-        when(id){
-            "${DataIds.back}individual_manage_page"->{
-                when(mySheeting.sheets.value){
-                    Sheets.None->pageHandleBack()
-                    else->mySheeting.onBack()
+    override val notifier = NotificationService{id, arg ->
+        Log.d("lflfjdfdf", "$id")
+        when (id){
+            "${DataIds.back}individual_manage_page" -> {
+                when (mySheeting.sheets.value){
+                    Sheets.None -> pageHandleBack()
+                    else -> mySheeting.onBack()
                 }
             }
-            DataIds.groupNotificationSwitch->{
+            DataIds.groupNotificationSwitch -> {
                 notificationOn.value = !notificationOn.value
             }
-            DataIds.groupImageClick->{
+            DataIds.groupImageClick -> {
                 mySheeting.change(Sheets.ImagePicker)
                 mySheeting.show()
             }
@@ -86,10 +77,12 @@ class IndividualManagePageViewModel: ViewModel(), WirelessViewModelInterface {
     private val joiningDate = mutableStateOf("9th May, 2022")
     private val notificationOn = mutableStateOf(false)
     private val groups = mutableStateListOf<GroupData>()
-    private val statusBarColor = mutableStateOf(StatusBarColor(
-        color = Color(0xff00CEC3),
-        darkIcons = false
-    ))
+    private val statusBarColor = mutableStateOf(
+        StatusBarColor(
+            color = Color(0xff00CEC3),
+            darkIcons = false
+        )
+    )
     init {
         resolver.addAll(
             DataIds.memberName to name,
@@ -111,29 +104,29 @@ class IndividualManagePageViewModel: ViewModel(), WirelessViewModelInterface {
                             id = 0,
                             image = "https://i.pravatar.cc/300",
                             name = "Sanjana Roy",
-                            mobile = "7964210356",
+                            mobile = "7964210356"
                         ),
                         ContactData(
                             id = 0,
                             image = "https://i.pravatar.cc/300",
                             name = "Sanjana Roy",
-                            mobile = "7964210356",
+                            mobile = "7964210356"
                         ),
                         ContactData(
                             id = 0,
                             image = "https://i.pravatar.cc/300",
                             name = "Sanjana Roy",
-                            mobile = "7964210356",
+                            mobile = "7964210356"
                         ),
                         ContactData(
                             id = 0,
                             image = "https://i.pravatar.cc/300",
                             name = "Sanjana Roy",
-                            mobile = "7964210356",
-                        ),
+                            mobile = "7964210356"
+                        )
                     ),
                     willGet = 1000f,
-                    willPay = 200f,
+                    willPay = 200f
                 )
             )
         )

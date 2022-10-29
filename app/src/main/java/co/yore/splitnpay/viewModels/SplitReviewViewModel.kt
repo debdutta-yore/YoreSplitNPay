@@ -12,10 +12,7 @@ import co.yore.splitnpay.components.components.BillTotalAndCategoryBottomSheetMo
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.Category
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.Sheets
-import co.yore.splitnpay.models.Store
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
@@ -66,15 +63,7 @@ class SplitReviewMock : SplitReviewRepository {
 
 
 
-data class MemberPayment(
-    val id: Any,
-    val name: String,
-    val mobile: String,
-    val image: Any?,
-    val paid: Double = 0.0,
-    val toPay: Double = 0.0,
-    val selected: Boolean = false
-)
+
 
 class SplitReviewViewModel(
     private val repo: SplitReviewRepository = SplitReviewMock(),

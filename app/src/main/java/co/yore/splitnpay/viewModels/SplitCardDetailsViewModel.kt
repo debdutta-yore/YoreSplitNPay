@@ -1,6 +1,5 @@
 package co.yore.splitnpay.viewModels
 
-import android.provider.ContactsContract.Data
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -8,21 +7,17 @@ import androidx.lifecycle.ViewModel
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.SplitSelectableMember
-import co.yore.splitnpay.pages.Transaction
+import co.yore.splitnpay.models.*
 
-
-
-class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
+class SplitCardDetailsViewModel : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
-    override val notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.selectBalanceMember->{
+    override val notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.selectBalanceMember -> {
                 val member = arg as? SplitSelectableMember
                 val index = splitSelectableMembers.indexOf(member)
-                if(index==-1){
+                if (index == -1){
                     return@NotificationService
                 }
                 splitSelectableMembers.forEachUpdate {
@@ -30,13 +25,13 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
                 }
                 splitSelectableMembers[index] = splitSelectableMembers[index].copy(isSelected = true)
                 val name = splitSelectableMembers[index].name
-                selectedMemberName.value = if(name.lowercase()=="you") "$name'll" else "$name will"
+                selectedMemberName.value = if (name.lowercase() == "you") "$name'll" else "$name will"
             }
-            DataIds.transactionStatus->{
-                selectedGetOption.value = arg as? TransactionStatus?:return@NotificationService
+            DataIds.transactionStatus -> {
+                selectedGetOption.value = arg as? TransactionStatus1 ?: return@NotificationService
             }
-            DataIds.payTransactionStatus->{
-                selectedPayOption.value = arg as? YouWillPayTransactionStatus?:return@NotificationService
+            DataIds.payTransactionStatus -> {
+                selectedPayOption.value = arg as? YouWillPayTransactionStatus ?: return@NotificationService
             }
             DataIds.back -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -53,7 +48,8 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
-    ///////////////
+
+    // /////////////
     private val splitNote = mutableStateOf("Business trip")
     private val splitAmount = mutableStateOf(10000f)
 
@@ -78,7 +74,7 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
 
     private val splitAmong = mutableStateListOf<MemberTransact>()
 
-    private val selectedGetOption = mutableStateOf(TransactionStatus.Pending)
+    private val selectedGetOption = mutableStateOf(TransactionStatus1.Pending)
     private val selectedPayOption = mutableStateOf(YouWillPayTransactionStatus.Pending)
     private val statusBarColor = mutableStateOf(
         StatusBarColor(
@@ -86,7 +82,8 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
             darkIcons = false
         )
     )
-    ///////////////
+
+    // /////////////
     init {
         resolver.addAll(
             DataIds.splitNote to splitNote,
@@ -124,33 +121,33 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
                 SplitSelectableMember(
                     name = "You",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = true,
+                    isSelected = true
                 ),
                 SplitSelectableMember(
                     name = "Sushil",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = false,
+                    isSelected = false
                 ),
                 SplitSelectableMember(
                     name = "Manisha",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = false,
+                    isSelected = false
                 ),
                 SplitSelectableMember(
                     name = "Tanisha",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = false,
+                    isSelected = false
                 ),
                 SplitSelectableMember(
                     name = "Sanjana",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = false,
+                    isSelected = false
                 ),
                 SplitSelectableMember(
                     name = "Arvind",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = false,
-                ),
+                    isSelected = false
+                )
             )
         )
         getMembers.addAll(
@@ -168,7 +165,7 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
                     userPhNo = "8953246985",
                     getAmount = 600f,
                     paidAmount = 0f
-                ),
+                )
             )
         )
         payMembers.addAll(
@@ -186,7 +183,7 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
                     userPhNo = "8953246985",
                     getAmount = 600f,
                     paidAmount = 0f
-                ),
+                )
             )
         )
         paidList.addAll(
@@ -202,7 +199,7 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
                     mobile = "9610356210",
                     image = "https://i.pravatar.cc/300",
                     amount = 5000f
-                ),
+                )
             )
         )
         splitAmong.addAll(
@@ -230,7 +227,7 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
                     mobile = "9610356210",
                     image = "https://i.pravatar.cc/300",
                     amount = 5000f
-                ),
+                )
             )
         )
     }

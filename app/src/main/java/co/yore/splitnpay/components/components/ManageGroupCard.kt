@@ -33,36 +33,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.configuration.GroupCardConfiguration
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.sx
+import co.yore.splitnpay.libs.sy
 import co.yore.splitnpay.locals.localCurrency
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-data class Group(
-    val name: String,
-    val imageUrl: String,
-    val creationDate: String,
-    val getWholeBalance: String,
-    val payWholeBalance: String,
-    val getDecBalance: String,
-    val payDecBalance: String,
-    val members: List<MemberEx>
-)
-data class MemberEx(
-    val id: Int = 0,
-    val profilePic: String,
-    val userName: String,
-    val mobileNo: String,
-    val isSelected: Boolean,
-    val isGroupAdmin: Boolean
-)
+
 @Composable
 fun ManageGroupCard(
-    group: Group,
+    group: Group1,
     onClick: () -> Unit,
     config: GroupCardConfiguration = GroupCardConfiguration(),
     contentDescription: String
@@ -451,44 +434,9 @@ fun TransparentProfilePic_k7ibvr(
     }
 }
 
-data class GroupProfileImageConfiguration(
-    val imageSize: Float = 45f,
-    val borderStroke: Float = 2.25f,
-    val borderColor: Color = Color.White,
-    val placeholder: Int = R.drawable.ic_people,
-    val contentScale: ContentScale = ContentScale.Crop,
-    val shadowColor: Color = DarkBlueShadow,
-    val shadowBorderRadius: Float = 50f,
-    val shadowBlurRadius: Float = 4.5f,
-    val shadowOffsetX: Float = 0f,
-    val shadowOffsetY: Float = 2.25f,
-    val shadowSpread: Float = 0f
-)
 
-data class SingleGroupMemberProfilePicConfiguration(
-    val imageSize: Float = 29f,
-    val borderWidth: Float = 1f,
-    val borderColor: Color = Color.White,
-    val placeholder: Int = R.drawable.ic_people,
-    val contentScale: ContentScale = ContentScale.Crop
-)
 
-data class TransparentProfilePicConfiguration(
-    val imageSize: Float = 29f,
-    val backGroundColor: Color = DarkBlue.copy(alpha = 0.65f),
-    val borderWidth: Float = 1f,
-    val borderColor: Color = Color.White,
-    val fontSize: Float = 12f,
-    val fontColor: Color = Color.White,
-    val fontWeight: FontWeight = FontWeight.Bold
-)
 
-data class ArrowButtonConfiguration(
-    val iconBackgroundColor: Color = LightBlue4,
-    val iconPressedColor: Color = Bluish,
-    val iconTint: Color = Color.White,
-    val iconButtonRadius: Float = 9f,
-    val iconButtonSize: Float = 28f,
-    val iconSize: Float = 11f,
-    val iconResource: Int = R.drawable.ic_right_chevron,
-)
+
+
+

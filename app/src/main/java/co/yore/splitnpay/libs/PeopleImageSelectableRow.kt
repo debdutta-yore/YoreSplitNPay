@@ -30,8 +30,9 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.SplitSelectableMember
-import co.yore.splitnpay.pages.Transaction
+import co.yore.splitnpay.models.SelectedIconConfiguration
+import co.yore.splitnpay.models.SplitSelectableMember
+import co.yore.splitnpay.models.SummarySinglePeopleConfig
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.Greyish2
 import co.yore.splitnpay.ui.theme.Pink
@@ -177,27 +178,3 @@ fun SelectedIcon_f9tfi61(
     }
 }
 
-data class SelectedIconConfiguration(
-    val selectedIconSize: Float = 18f,
-    val borderWidth: Float = 1f,
-    val borderColor: Color = Color.White,
-    val shape: Shape = CircleShape,
-    val backGroundColor: Color = Pink,
-    val icon: Int = R.drawable.ic_checked_right,
-    val iconSize: Float = 7f
-)
-
-data class SummarySinglePeopleConfig(
-    val profileImageSize: Float = 42f,
-    val shadowColor: Color = Greyish2,
-    val shadowBorderRadius: Float = 50f,
-    val shadowBlurRadius: Float = 5.63f,
-    val shadowOffsetX: Float = 5.63f,
-    val shadowOffsetY: Float = 0f,
-    val shadowSpread: Float = 0f,
-    val profileImageShape: Shape = CircleShape,
-    val selectedBorderColor: Color = Pink,
-    val unselectedBorderColor: Color = Color.White,
-    val profileImagePlaceHolder: Int = R.drawable.ic_people,
-    val gapBetweenProfileImageAndName: Float = 17f
-)

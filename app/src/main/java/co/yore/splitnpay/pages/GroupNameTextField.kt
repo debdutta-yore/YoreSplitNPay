@@ -21,17 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.models.TextFieldConfiguration
 
-data class TextFieldConfiguration(
-    val cardHeight: Float = 95f,
-    val textFieldBackgroundColor: Color = Color(0xffF8F8F8),
-    val cursorColor: Color = Color.Gray,
-    val cornerRadius: Float = 8f,
-    val hintTextSize: Float = 14f,
-    val hintTextColor: Color = Color(0xffBCBCBC),
-    val textColor: Color = Color(0xff656565),
-    val textSize: Float = 14f,
-)
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable

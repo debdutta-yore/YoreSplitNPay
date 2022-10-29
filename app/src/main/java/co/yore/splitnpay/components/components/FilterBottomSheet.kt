@@ -18,8 +18,6 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,16 +25,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.LightBlue1
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.viewModels.SingleItem
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MemberFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
+class MemberFilterBottomSheetModel(val callback: Callback) : BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         suspend fun getMembers(): List<SingleItem>
@@ -54,44 +47,41 @@ class MemberFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
 
     private val _resolver = Resolver()
     private var selectedIndex = -1
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.filterMember->{
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.filterMember -> {
                 updateAsSelected(arg)
             }
-            DataIds.filterDone->{
+            DataIds.filterDone -> {
                 callback.onContinue(selectedIndex)
             }
         }
     }
 
     private fun updateAsSelected(arg: Any?) {
-        if(selectedIndex>-1){
+        if (selectedIndex > -1){
             members[selectedIndex] = members[selectedIndex].copy(isSelected = false)
         }
-        if(arg is SingleItem){
+        if (arg is SingleItem){
             val index = members.indexOf(arg)
-            if(index > -1){
+            if (index > -1){
                 val current = members[index]
                 val selected = !current.isSelected
-                if(selected){
+                if (selected){
                     selectedIndex = index
-                }
-                else{
+                } else {
                     selectedIndex = -1
                 }
                 members[index] = current.copy(isSelected = selected)
-            }
-            else{
+            } else {
                 selectedIndex = -1
             }
-        }
-        else{
+        } else {
             selectedIndex = -1
         }
     }
 
-    //////////////
+    // ////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
@@ -109,8 +99,7 @@ class MemberFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
                 members.addAll(m)
                 selectedIndex = callback.selectedIndex()
 
-
-                if(selectedIndex > -1){
+                if (selectedIndex > -1){
                     val current = members[selectedIndex]
                     members[selectedIndex] = current.copy(isSelected = true)
                 }
@@ -126,9 +115,11 @@ class MemberFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
     override fun onBack() {
 
     }
-    ////////////////
+
+    // //////////////
     private val members = mutableStateListOf<SingleItem>()
-    ////////////////
+
+    // //////////////
     init {
         _resolver.addAll(
             DataIds.membersForFiltering to members
@@ -169,7 +160,7 @@ fun MemberFilterBottomSheet(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = (screenHeight*0.6).dp)
+                .heightIn(max = (screenHeight * 0.6).dp)
                 .fadingEdge(),
             verticalArrangement = Arrangement.spacedBy(18.dep())
         ) {
@@ -179,7 +170,7 @@ fun MemberFilterBottomSheet(
                     contentDescription = "FilterSingleUser",
                     item = item
                 ) {
-                    notifier.notify(DataIds.filterMember,item)
+                    notifier.notify(DataIds.filterMember, item)
                 }
             }
         }
@@ -213,7 +204,7 @@ private fun FilterSingleUser_ffkz81(
     config: FilterSingleUserConfiguration = FilterSingleUserConfiguration(),
     contentDescription: String,
     item: SingleItem,
-    onSelected: (SingleItem) -> Unit,
+    onSelected: (SingleItem) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -255,7 +246,6 @@ private fun FilterSingleUser_ffkz81(
         )
     }
 }
-
 
 @Composable
 fun SelectorIcon_ulkel8(
@@ -314,25 +304,3 @@ fun ProfileImage_2hf7q0(
         contentDescription = contentDescription
     )
 }
-
-data class CheckboxConfiguration(
-    val iconColor: Color = Bluish,
-    val iconSize: Float = 28f,
-    val icon: Int = R.drawable.ic_checked_right
-)
-
-data class ProfileImageConfiguration(
-    val imageSize: Float = 49f,
-    val borderStroke: Float = 3f,
-    val borderColor: Color = LightBlue1,
-    val shape: Shape = CircleShape,
-    val imageUrl: String = "https://i.pravatar.cc/300",
-    val placeholder: Int = R.drawable.user_dummy4,
-    val contentScale: ContentScale = ContentScale.Crop
-)
-
-data class FilterSingleUserConfiguration(
-    val padding: Float = 0f,
-    val spaceBetweenProfileImageAndUserName: Float = 22f,
-    val spaceBetweenUserNameAndPhoneNo: Float = 5f
-)

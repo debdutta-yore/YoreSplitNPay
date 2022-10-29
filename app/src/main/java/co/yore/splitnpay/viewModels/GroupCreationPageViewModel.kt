@@ -12,6 +12,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Sheets
+import co.yore.splitnpay.models.StatusBarColor
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
 import com.google.accompanist.permissions.ExperimentalPermissionsApi

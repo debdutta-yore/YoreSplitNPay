@@ -2,7 +2,6 @@ package co.yore.splitnpay.pages
 
 import android.graphics.Paint
 import android.text.TextPaint
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -11,7 +10,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,46 +29,23 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localCurrency
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.robotoFonts
 import coil.compose.AsyncImage
 import java.text.DecimalFormat
 
-enum class SummaryMode {
-    CATEGORY,
-    TIME;
 
-    val next: SummaryMode
-        get() {
-            val index = this.ordinal
-            var nextIndex = index + 1
-            val vals = enumValues<SummaryMode>()
-            val count = vals.size
-            nextIndex %= count
-            return vals[nextIndex]
-        }
-}
-
-data class ExpenseChartData(
-    val xAxis: String,
-    val yAxis: Float,
-    val year: Int
-)
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -156,7 +131,7 @@ fun ExpenseDemo(
             }*/
             transitionSpec = {
                 fadeIn(animationSpec = tween(500)) with
-                        fadeOut(animationSpec = tween(500))
+                    fadeOut(animationSpec = tween(500))
             }
         ) {
             when (it) {
@@ -316,7 +291,7 @@ fun ExpenseDemo(
                                                 fontWeight = FontWeight.Bold,
                                                 color = Color(0xff243257),
                                                 modifier = Modifier
-                                                    //.alignBy(FirstBaseline)
+                                                    // .alignBy(FirstBaseline)
                                                     .offset(y = -4.dep())
                                             )
                                             6.sx()
@@ -325,7 +300,7 @@ fun ExpenseDemo(
                                                 fontSize = 11.sep(),
                                                 color = Color(0xff5A87BB),
                                                 modifier = Modifier
-                                                    //.alignBy(FirstBaseline)
+                                                    // .alignBy(FirstBaseline)
                                                     .offset(y = -2.dep())
                                             )
                                         }
@@ -434,7 +409,7 @@ fun ExpenseDemo(
                                     listOf(
                                         "Jan",
                                         "Feb",
-                                        "Mar",
+                                        "Mar"
                                     )
                                 )
                             }
@@ -461,7 +436,7 @@ fun ExpenseDemo(
                                         expenseBarChartList[it].xAxis
                                     },
                                     xLabelCallback = {
-                                        //((it+1)*5000f).toString()
+                                        // ((it+1)*5000f).toString()
                                         ""
                                     },
                                     {
@@ -619,7 +594,7 @@ fun ExpenseDemo(
                                                     RobotoText(
                                                         stringResource(R.string.total_paid),
                                                         fontSize = 12.sep(),
-                                                        color = Color(0xff0A688A),
+                                                        color = Color(0xff0A688A)
                                                     )
                                                     9.sy()
                                                     Row() {
@@ -665,7 +640,7 @@ fun ExpenseDemo(
                                                     myText(
                                                         stringResource(R.string.number_of_transaction),
                                                         12,
-                                                        0xff0a688a,
+                                                        0xff0a688a
                                                     )
                                                     10.sy()
                                                     myText(
@@ -768,7 +743,7 @@ fun ExpenseDemo(
                                                 fontWeight = FontWeight.Bold,
                                                 color = Color(0xff243257),
                                                 modifier = Modifier
-                                                    //.alignBy(FirstBaseline)
+                                                    // .alignBy(FirstBaseline)
                                                     .offset(y = -4.dep())
                                             )
                                             6.sx()
@@ -777,7 +752,7 @@ fun ExpenseDemo(
                                                 fontSize = 11.sep(),
                                                 color = Color(0xff5A87BB),
                                                 modifier = Modifier
-                                                    //.alignBy(FirstBaseline)
+                                                    // .alignBy(FirstBaseline)
                                                     .offset(y = -2.dep())
                                             )
                                         }
@@ -853,15 +828,15 @@ fun ExpenseDemo(
 }
 
 sealed class TimeOptionData(val text: String){
-    class Outlined(val title: String): TimeOptionData(title)
-    class Normal(val title: String): TimeOptionData(title)
+    class Outlined(val title: String) : TimeOptionData(title)
+    class Normal(val title: String) : TimeOptionData(title)
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TimeOption(
     data: TimeOptionData,
-    onClick: ()->Unit
+    onClick: () -> Unit
 ) {
     val animDuration = remember {
         500
@@ -872,11 +847,11 @@ fun TimeOption(
         }
     }
     val borderStroke by animateFloatAsState(
-        targetValue = if(outlined) 1f else -1f,
+        targetValue = if (outlined) 1f else -1f,
         tween(animDuration)
     )
     val borderColor by animateColorAsState(
-        targetValue = if(outlined) Color(0xffB6BABE) else Color.Transparent,
+        targetValue = if (outlined) Color(0xffB6BABE) else Color.Transparent,
         tween(animDuration)
     )
     val paddingOpacity by animateFloatAsState(
@@ -887,7 +862,7 @@ fun TimeOption(
         modifier = Modifier
             .padding(start = 8.dep())
             .animateContentSize(
-                //tween(500)
+                // tween(500)
             )
             .height(30.dep())
             .clip(CircleShape)
@@ -903,7 +878,7 @@ fun TimeOption(
             }
             .padding(
                 start = (paddingOpacity * 21).dep(),
-                end = (paddingOpacity * 12).dep(),
+                end = (paddingOpacity * 12).dep()
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -912,16 +887,16 @@ fun TimeOption(
             enter = fadeIn(tween(animDuration))+ scaleIn(tween(animDuration)),
             exit = fadeOut(tween(animDuration))+ scaleOut(tween(animDuration))
         ) {*/
-            Row(){
-                Icon(
-                    painter = painterResource(id = R.drawable.calendar_1),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(((1f-paddingOpacity) *14).dep())
-                )
-                ((1f-paddingOpacity) *4.62).sx()
-            }
-        //}
+        Row(){
+            Icon(
+                painter = painterResource(id = R.drawable.calendar_1),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(((1f - paddingOpacity) * 14).dep())
+            )
+            ((1f - paddingOpacity) * 4.62).sx()
+        }
+        // }
         /*RobotoText(
             text = data.text,
             fontSize = if(data is TimeOptionData.Outlined) 14.sep() else 12.sep(),
@@ -942,9 +917,9 @@ fun TimeOption(
                     text = data.text,
                     animate = true,
                     fontFamily = robotoFonts,
-                    fontSize = if(data is TimeOptionData.Outlined) 14.sep() else 12.sep(),
+                    fontSize = if (data is TimeOptionData.Outlined) 14.sep() else 12.sep(),
                     color = Color(0xff243257),
-                    fontWeight = if(data is TimeOptionData.Outlined) FontWeight.Bold else FontWeight.Normal,
+                    fontWeight = if (data is TimeOptionData.Outlined) FontWeight.Bold else FontWeight.Normal,
                     animationSpec = tween(animDuration),
                     maxLines = 1
                 )
@@ -956,17 +931,17 @@ fun TimeOption(
             enter = fadeIn(tween(animDuration))+ scaleIn(tween(animDuration)),
             exit = fadeOut(tween(animDuration))+ scaleOut(tween(animDuration))
         ){*/
-            Row(){
-                (paddingOpacity *4.62).sx()
-                Icon(
-                    painter = painterResource(id = R.drawable.down_arrow),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size((paddingOpacity *7).dep()),
-                    tint = Color(0xff243257)
-                )
-            }
-        //}
+        Row(){
+            (paddingOpacity * 4.62).sx()
+            Icon(
+                painter = painterResource(id = R.drawable.down_arrow),
+                contentDescription = "",
+                modifier = Modifier
+                    .size((paddingOpacity * 7).dep()),
+                tint = Color(0xff243257)
+            )
+        }
+        // }
     }
 }
 
@@ -983,7 +958,6 @@ fun Number.sx(color: Color? = null) {
         Spacer(modifier = Modifier.width(this.dep()))
     }
 }*/
-
 
 @Composable
 fun myText(
@@ -1009,42 +983,6 @@ val Any.ensureColor: Color
             else -> Color.Unspecified
         }
     }
-
-data class LabelData(
-    val index: Int,
-    val touchArea: TouchArea?
-)
-
-data class BarGraphData(
-    val xAxisGap: Float,
-    val xValuesCount: Int,
-    val xValueCallback: (Int) -> Float,
-    val xAxisLabelCallback: (Int) -> String,
-    val xLabelCallback: (Int) -> String,
-    val barGraphColorCallback: (Int) -> Color,
-    val maxYAxisValue: Float,
-    val yAxisLabelCount: Int,
-    val yAxisLabelCallback: (Float) -> String,
-    val xAxisLabelColor: (Int) -> Color,
-    val yAxisLabelColor: () -> Color,
-    val axisColor: Color = Color.Gray,
-    val strokeWidth: Float,
-    val axisLabelFontSize: Float,
-    val highlightedBarColor: Color,
-    val highlightedXLabelColor: Color
-)
-
-data class TouchArea(
-    val offset: Offset,
-    val size: Size
-) {
-    fun contains(pos: Offset): Boolean {
-        return pos.x >= offset.x
-                && pos.x <= offset.x + size.width
-                && pos.y >= offset.y
-                && pos.y <= pos.y + size.height
-    }
-}
 
 @Composable
 fun BarGraph(
@@ -1076,12 +1014,14 @@ fun BarGraph(
             }
     ) {
         if (touchAreas.isEmpty()) {
-            touchAreas.addAll(MutableList(data.xValuesCount) {
-                TouchArea(
-                    Offset.Zero,
-                    Size.Zero
-                )
-            })
+            touchAreas.addAll(
+                MutableList(data.xValuesCount) {
+                    TouchArea(
+                        Offset.Zero,
+                        Size.Zero
+                    )
+                }
+            )
         }
         val canvasWidth = size.width
         val canvasHeight = size.height
@@ -1177,12 +1117,15 @@ fun BarGraph(
 val Color.native: Int
     get() {
         return -0x1000000 or
-                ((red * 255.0f + 0.5f).toInt() shl 16) or
-                ((green * 255.0f + 0.5f).toInt() shl 8) or (blue * 255.0f + 0.5f).toInt()
+            ((red * 255.0f + 0.5f).toInt() shl 16) or
+            ((green * 255.0f + 0.5f).toInt() shl 8) or (blue * 255.0f + 0.5f).toInt()
     }
 
 fun DrawScope.myDrawText(
-    text: String, x: Float, y: Float, paint: Paint
+    text: String,
+    x: Float,
+    y: Float,
+    paint: Paint
 ) {
     drawContext.canvas.nativeCanvas.apply {
         drawText(
@@ -1214,7 +1157,7 @@ fun ComposablePreview() {
     ExpenseDemo()
 }
 
-////////////////////////
+// //////////////////////
 sealed interface ClickableItem
 
 sealed class Device(val name: String) {

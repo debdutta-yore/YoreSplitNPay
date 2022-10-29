@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.libs.LocalNotificationService
 import co.yore.splitnpay.libs.NotificationService
 import co.yore.splitnpay.components.components.YoreAmount
-import co.yore.splitnpay.components.components.YoreAmountConfiguration
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.components.configuration.YouWillGetPayArrowButtonConfiguration
-import co.yore.splitnpay.components.configuration.YouWillGetPayCardConfig
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.models.YoreAmountConfiguration
+import co.yore.splitnpay.models.YouWillGetPayArrowButtonConfiguration
+import co.yore.splitnpay.models.YouWillGetPayCardConfig
 import co.yore.splitnpay.ui.theme.robotoFonts
 
 

@@ -21,27 +21,28 @@ import co.yore.splitnpay.components.SingleItem
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Item
-import co.yore.splitnpay.models.SplitMemberItem
 import kotlinx.coroutines.CoroutineScope
 
-class SplitAsChoiceBottomSheetModel(val callback: Callback): BottomSheetModel {
+class SplitAsChoiceBottomSheetModel(val callback: Callback) : BottomSheetModel {
     interface Callback{
         fun scope(): CoroutineScope
         fun onContinue(arg: Any?)
         fun close()
     }
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.cameraOrGallery->{
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.cameraOrGallery -> {
                 callback.onContinue(arg)
             }
         }
     }
-    //////////////////
+
+    // ////////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
+
     @Composable
     override fun Content() {
         SplitAsChoiceBottomSheet()
@@ -58,7 +59,7 @@ class SplitAsChoiceBottomSheetModel(val callback: Callback): BottomSheetModel {
     override fun onBack() {
         callback.close()
     }
-    /////////////////////////
+    // ///////////////////////
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -70,13 +71,12 @@ fun SplitAsChoiceBottomSheet(
     val itemList = remember {
         listOf(
             Item(id = 0, R.drawable.ic_splitasgroup, "Split as Group"),
-            Item(id = 1, R.drawable.ic_splitnongroup, "Split as Non-Group"),
+            Item(id = 1, R.drawable.ic_splitnongroup, "Split as Non-Group")
         )
     }
 
     val listState = rememberLazyListState()
     var selectedIndex by remember { mutableStateOf(-1) }
-
 
     Column(
         modifier = Modifier

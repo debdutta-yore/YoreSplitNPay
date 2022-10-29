@@ -64,7 +64,7 @@ android {
     }
     namespace 'co.yore.splitnpay'
 }
-tasks.register("hello",GreetingTask)
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -108,14 +108,6 @@ dependencies {
     implementation "com.google.accompanist:accompanist-navigation-animation:0.26.4-beta"
 
     implementation "com.google.accompanist:accompanist-permissions:0.26.4-beta"
-}
-
-abstract class GreetingTask extends DefaultTask {
-    @TaskAction
-    def greet() {
-        def ast = astBuilder.buildFromString(CompilePhase.CONVERSION, false, code)
-        println 'hello from GreetingTask'
-    }
 }
 
 apply plugin: 'io.objectbox'

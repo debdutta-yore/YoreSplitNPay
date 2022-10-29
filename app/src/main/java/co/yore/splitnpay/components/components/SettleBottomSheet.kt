@@ -17,18 +17,18 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.Transaction
+import co.yore.splitnpay.models.SettleBottomSheetTabs
+import co.yore.splitnpay.models.Transaction
+import co.yore.splitnpay.models.YouWillGetPayBottomSheetConfiguration
 import co.yore.splitnpay.ui.theme.DarkBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
+class SettleBottomSheetModel(val callback: Callback) : BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         suspend fun getGetStat(): List<Transaction>
@@ -39,8 +39,8 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
     private val _resolver = Resolver()
     private var getSelectedIndex = -1
     private var paySelectedIndex = -1
-    private val _notifier = NotificationService{id,arg->
-        when(id){
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
             DataIds.willGetPayTab -> {
                 _willGetPayTab.value = arg as SettleBottomSheetTabs
             }
@@ -48,13 +48,13 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
                 val index = arg as Int
                 val item = _willGet[index]
                 val selected = !item.isSelected
-                if(getSelectedIndex>-1){
+                if (getSelectedIndex > -1){
                     _willGet[getSelectedIndex] = _willGet[getSelectedIndex].copy(isSelected = false)
                 }
                 _willGet[index] = _willGet[index].copy(isSelected = selected)
-                getSelectedIndex = if(selected){
+                getSelectedIndex = if (selected){
                     index
-                } else{
+                } else {
                     -1
                 }
                 _isWillGetTransactionSelected.value = _willGet.any { it.isSelected }
@@ -62,28 +62,29 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
             DataIds.selectSettlePayMembers -> {
                 val index = arg as Int
                 val item = _willPay[index]
-                item.apply {  }
+                item.apply { }
                 val selected = !item.isSelected
-                if(paySelectedIndex>-1){
+                if (paySelectedIndex > -1){
                     _willPay[paySelectedIndex] = _willPay[paySelectedIndex].copy(isSelected = false)
                 }
                 _willPay[index] = _willPay[index].copy(isSelected = selected)
-                paySelectedIndex = if(selected){
+                paySelectedIndex = if (selected){
                     index
-                } else{
+                } else {
                     -1
                 }
                 _isWillPayTransactionSelected.value = _willPay.any { it.isSelected }
             }
-            DataIds.willGetSettleClick->{
+            DataIds.willGetSettleClick -> {
                 callback.onGetContinue(_willGet[getSelectedIndex])
             }
-            DataIds.willPaySettleClick->{
+            DataIds.willPaySettleClick -> {
                 callback.onPayContinue(_willPay[paySelectedIndex])
             }
         }
     }
-    ////////////
+
+    // //////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
@@ -122,7 +123,8 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
     override fun onBack() {
 
     }
-    /////////////////
+
+    // ///////////////
     private val _willGet = mutableStateListOf<Transaction>()
     private val _willPay = mutableStateListOf<Transaction>()
     private val _isWillGetTransactionSelected = mutableStateOf(false)
@@ -130,7 +132,8 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
     private val _settleGetTotal = mutableStateOf(0f)
     private val _settlePayTotal = mutableStateOf(0f)
     private val _willGetPayTab = mutableStateOf(SettleBottomSheetTabs.YouWillGet)
-    ////////////////
+
+    // //////////////
     init {
         _resolver.addAll(
             DataIds.selectSettleGetMembers to _willGet,
@@ -139,14 +142,9 @@ class SettleBottomSheetModel(val callback: Callback): BottomSheetModel{
             DataIds.isWillPayTransactionSelected to _isWillPayTransactionSelected,
             DataIds.settleGetTotal to _settleGetTotal,
             DataIds.settlePayTotal to _settlePayTotal,
-            DataIds.willGetPayTab to _willGetPayTab,
+            DataIds.willGetPayTab to _willGetPayTab
         )
     }
-}
-
-enum class SettleBottomSheetTabs {
-    YouWillGet,
-    YouWillPay
 }
 
 @Composable
@@ -174,7 +172,7 @@ fun YouWillGetPayBottomSheet_al32sa(
             LightBlue3
         }
     )
-    
+
     val payTabColor = animateColorAsState(
         if (willGetPayTab == SettleBottomSheetTabs.YouWillPay) {
             DarkBlue
@@ -263,15 +261,3 @@ fun YouWillGetPayBottomSheet_al32sa(
         }
     }
 }
-
-data class YouWillGetPayBottomSheetConfiguration(
-    val bottomSheetHolderTopPadding: Float = 20f,
-    val bottomSheetHolderBottomPadding: Float = 41f,
-    val bottomSheetHolderColor: Color = Color.Unspecified,
-    val youWillGetTextStartPadding: Float = 33f,
-    val gapBetweenYouWillPayAndYouWillGet: Float = 47f,
-    val youWillGetBoxTopPadding: Float = 30f,
-    val youWillGetBoxStartPadding: Float = 33f,
-    val youWillGetBoxEndPadding: Float = 31f,
-    val youWillPayBoxTopPadding: Float = 72f
-)

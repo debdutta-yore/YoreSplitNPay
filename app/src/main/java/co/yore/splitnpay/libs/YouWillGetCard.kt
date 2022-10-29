@@ -23,9 +23,11 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.locals.localCurrency
+import co.yore.splitnpay.models.MemberTransact
+import co.yore.splitnpay.models.ProfileImageConfiguration
+import co.yore.splitnpay.models.SingleItemYouWillGetCardConfiguration
+import co.yore.splitnpay.models.YouWillGetCardConfiguration
 import co.yore.splitnpay.pages.WhitishGreen
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.Greyish2
@@ -76,7 +78,7 @@ fun YouWillGetCard(
                         .padding(
                             top = config.lazyColumnTopPadding.dep(),
                             start = config.lazyColumnStartPadding.dep(),
-                            end = config.lazyColumnEndPadding.dep(),
+                            end = config.lazyColumnEndPadding.dep()
                         )
                         .fillMaxWidth()
                 ) {
@@ -85,8 +87,9 @@ fun YouWillGetCard(
                             transaction = transaction,
                             contentDescription = "SingleItem"
                         )
-                        if (index != list.lastIndex)
+                        if (index != list.lastIndex) {
                             18.sy()
+                        }
                     }
                 }
                 config.gapBetweenLazyColumnAndTotalCard.sy()
@@ -100,7 +103,7 @@ fun YouWillGetCard(
                 ) {
                     TotalCard_6re10h(
                         contentDescription = "TotalYouWillGetCard",
-                        text = stringResource(R.string.total) + " " +stringResource(R.string.will_get, payerName),
+                        text = stringResource(R.string.total) + " " + stringResource(R.string.will_get, payerName),
                         amount = total,
                         borderColor = LightGreen3,
                         backgroundColor = WhitishGreen
@@ -108,8 +111,7 @@ fun YouWillGetCard(
                 }
                 config.bottomPadding.sy()
             }
-        }
-        else {
+        } else {
             Column() {
                 FontFamilyText(
                     modifier = Modifier.padding(
@@ -221,20 +223,19 @@ fun SingleItemYouWillGetCard_3btamv(
         )
         val wholeNumber =
             transaction.amount.splitted().whole
-            //transaction.amount.toString().substringBefore(".").padStart(2, '0')
+        // transaction.amount.toString().substringBefore(".").padStart(2, '0')
         val decimalNumber =
             transaction.amount.splitted().decString
-            //transaction.amount.toString().substringAfter(".").padStart(2, '0')
+        // transaction.amount.toString().substringAfter(".").padStart(2, '0')
 
         val formattedWholeNoDo = wholeNumber.toLong()
         val formatter = DecimalFormat("#,###")
         val formattedWholeNo = formattedWholeNoDo.formatDecimalSeparator()
 
-        //TODO: Fix this
+        // TODO: Fix this
         Box(
-            modifier = Modifier
+            modifier = Modifier,
 //                .width(60.dep())
-            ,
             contentAlignment = CenterStart
         ) {
             FontFamilyText(
@@ -261,26 +262,3 @@ fun SingleItemYouWillGetCard_3btamv(
 }
 
 
-data class SingleItemYouWillGetCardConfiguration(
-    val gapBetweenProfileImageAndUserName: Float = 22f,
-    val gapBetweenPUserNameAndUserPhNo: Float = 5f,
-    val gapBetweenUserNameAndAmount: Float = 40f
-)
-
-
-data class YouWillGetCardConfiguration(
-    val shadowColor: Color = Greyish2,
-    val shadowBorderRadius: Float = 15f,
-    val shadowBlurRadius: Float = 33f,
-    val shadowOffsetX: Float = 5.63f,
-    val shadowOffsetY: Float = 7f,
-    val shadowSpread: Float = 0f,
-    val cornerRadius: Float = 15f,
-    val backgroundColor: Color = Color.White,
-    val gapBetweenTextAndLazyColumn: Float = 19f,
-    val gapBetweenLazyColumnAndTotalCard: Float = 34f,
-    val bottomPadding: Float = 27f,
-    val lazyColumnStartPadding: Float = 32f,
-    val lazyColumnTopPadding: Float = 30f,
-    val lazyColumnEndPadding: Float = 30f
-)

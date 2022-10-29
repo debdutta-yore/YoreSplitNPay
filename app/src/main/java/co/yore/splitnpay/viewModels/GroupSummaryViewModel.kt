@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.MemberTransact
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
@@ -16,63 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-enum class DatePickerFromTo {
-    From,
-    To;
 
-    val switch: DatePickerFromTo
-        get() {
-            val index = this.ordinal
-            var nextIndex = index + 1
-            val vals = enumValues<DatePickerFromTo>()
-            val count = vals.size
-            nextIndex %= count
-            return vals[nextIndex]
-        }
-}
-
-enum class DatePickerRange {
-    Date,
-    DateRange;
-
-    val switch: DatePickerRange
-        get() {
-            val index = this.ordinal
-            var nextIndex = index + 1
-            val vals = enumValues<DatePickerRange>()
-            val count = vals.size
-            nextIndex %= count
-            return vals[nextIndex]
-        }
-}
-
-enum class DatePickerOption {
-    Monthly,
-    Weekly;
-
-    val switch: DatePickerOption
-        get() {
-            val index = this.ordinal
-            var nextIndex = index + 1
-            val vals = enumValues<DatePickerOption>()
-            val count = vals.size
-            nextIndex %= count
-            return vals[nextIndex]
-        }
-}
-
-interface DateDisplayData
-object DateDisplayDataNone: DateDisplayData
-
-data class DateDisplayDataDates(
-    val value: String,
-    val duration: String,
-): DateDisplayData
-data class DateDisplayDataMonths(
-    val from: String,
-    val to: String,
-    val duration: String
-): DateDisplayData
 
 class GroupSummaryViewModel(
     private val summaryRepo: GroupSummaryRepository = GroupSummaryRepositoryImpl(),
@@ -82,16 +25,17 @@ class GroupSummaryViewModel(
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     private val _resolver = Resolver()
 
-    ///////
+    // /////
     override val resolver: Resolver
-    get(){
-        val r = _resolver
-        return r
-    }
+        get(){
+            val r = _resolver
+            return r
+        }
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
-    //////////////////////////////////////////
+
+    // ////////////////////////////////////////
     private val _members = mutableStateListOf<SplitSelectableMember>()
     private val _willGetTransactions = mutableStateListOf<MemberTransact>()
     private val _willPayTransactions = mutableStateListOf<MemberTransact>()
@@ -137,48 +81,57 @@ class GroupSummaryViewModel(
 
     private val selectedWeeklyTab = mutableStateOf("Select Date")
     private val selectedMonthlyTab = mutableStateOf("Select Month")
-    private val dateDisplayData = mutableStateOf<DateDisplayData>(DateDisplayDataMonths("ffdfdfljkf","fldfdffkd","flfdfffdjf"))
-    private val years = mutableMapOf<String,Int>()
-    private val months = mutableMapOf<String,Int?>()
-    private val days = mutableMapOf<String,Int?>()
+    private val dateDisplayData = mutableStateOf<DateDisplayData>(
+        DateDisplayDataMonths(
+            "ffdfdfljkf",
+            "fldfdffkd",
+            "flfdfffdjf",
+            error = false
+        )
+    )
+    private val years = mutableMapOf<String, Int>()
+    private val months = mutableMapOf<String, Int?>()
+    private val days = mutableMapOf<String, Int?>()
 
-    //////////////////////////////////////////
+    // ////////////////////////////////////////
     private val combineKey: String
-    get(){
-        val _1st_level_key = _datePickerOption.value.name
-        val _2nd_level_key = if(_datePickerOption.value==DatePickerOption.Monthly)
-            selectedMonthlyTab.value
-        else
-            selectedWeeklyTab.value
-        val _3rd_level_key = if(_2nd_level_key.contains("Range")) _datePickerFromTo.value else "normal"
-        val key = "$_1st_level_key-$_2nd_level_key-$_3rd_level_key"
-        return key
-    }
+        get(){
+            val _1st_level_key = _datePickerOption.value.name
+            val _2nd_level_key = if (_datePickerOption.value == DatePickerOption.Monthly) {
+                selectedMonthlyTab.value
+            } else {
+                selectedWeeklyTab.value
+            }
+            val _3rd_level_key = if (_2nd_level_key.contains("Range")) _datePickerFromTo.value else "normal"
+            val key = "$_1st_level_key-$_2nd_level_key-$_3rd_level_key"
+            return key
+        }
+
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
-            DataIds.year->{
-                years[combineKey] = arg as? Int?:return@NotificationService
+            DataIds.year -> {
+                years[combineKey] = arg as? Int ?: return@NotificationService
                 updateDatePicker()
             }
-            DataIds.month->{
-                months[combineKey] = arg as? Int?:return@NotificationService
+            DataIds.month -> {
+                months[combineKey] = arg as? Int ?: return@NotificationService
                 updateDatePicker()
             }
-            DataIds.day->{
-                val day = arg as? Int?:return@NotificationService
+            DataIds.day -> {
+                val day = arg as? Int ?: return@NotificationService
                 days[combineKey] = day
                 updateDatePicker()
             }
-            DataIds.monthlyTab->{
-                selectedMonthlyTab.value = arg as? String?:return@NotificationService
-                if(selectedMonthlyTab.value == "Select Month Range"){
+            DataIds.monthlyTab -> {
+                selectedMonthlyTab.value = arg as? String ?: return@NotificationService
+                if (selectedMonthlyTab.value == "Select Month Range"){
                     _datePickerFromTo.value = DatePickerFromTo.From
                 }
                 updateDatePicker()
             }
-            DataIds.weeklyTab->{
-                selectedWeeklyTab.value = arg as? String?:return@NotificationService
+            DataIds.weeklyTab -> {
+                selectedWeeklyTab.value = arg as? String ?: return@NotificationService
                 updateDatePicker()
             }
             WirelessViewModelInterface.startupNotification -> {
@@ -201,19 +154,19 @@ class GroupSummaryViewModel(
                 onSelectTabClick(arg)
             }
             DataIds.expenseCategoryItemClick -> {
-                //TODO: Add click event
+                // TODO: Add click event
             }
             DataIds.expenseCategorySearchClick -> {
-                //TODO: Add click event
+                // TODO: Add click event
             }
             DataIds.expenseCategoryFilterClick -> {
-                //TODO: Add click event
+                // TODO: Add click event
             }
             DataIds.expenseTimeMode -> {
                 mySheeting.change(Sheets.TimeFilter)
                 mySheeting.show()
             }
-            DataIds.timeFilterSelectionClick -> {// not inside date picker
+            DataIds.timeFilterSelectionClick -> { // not inside date picker
                 selectItem(arg)
             }
             DataIds.monthlyOrWeekly -> {
@@ -223,7 +176,7 @@ class GroupSummaryViewModel(
             DataIds.datePickerFromTo -> {
                 handleDatePickerFromTo(arg = arg)
             }
-            DataIds.summaryMode->{
+            DataIds.summaryMode -> {
                 mySheeting.change(Sheets.ExpenseFilter)
                 mySheeting.show()
             }
@@ -264,10 +217,10 @@ class GroupSummaryViewModel(
 
     private fun updateDatePicker() {
         val ck = combineKey
-        val year = years.getOrMyDefault(ck,currentYear)
-        val month = months.getOrMyDefault(ck,null)
-        val day = days.getOrMyDefault(ck,null)
-        val showDates = _datePickerOption.value==DatePickerOption.Weekly
+        val year = years.getOrMyDefault(ck, currentYear)
+        val month = months.getOrMyDefault(ck, null)
+        val day = days.getOrMyDefault(ck, null)
+        val showDates = _datePickerOption.value == DatePickerOption.Weekly
         _datePickerData1.value = YoreDatePickerData(
             selectedYear = year,
             selectedMonth = month,
@@ -277,18 +230,18 @@ class GroupSummaryViewModel(
     }
 
     private fun handleDatePickerRange(arg: Any?) {
-        val option  = arg as? DatePickerRange ?: return
+        val option = arg as? DatePickerRange ?: return
         _datePickerDateRange.value = option
     }
 
     private fun handleDatePickerFromTo(arg: Any?) {
-        val option  = if(arg==true) DatePickerFromTo.From else DatePickerFromTo.To
+        val option = if (arg == true) DatePickerFromTo.From else DatePickerFromTo.To
         _datePickerFromTo.value = option
         updateDatePicker()
     }
 
     private fun handleDatePickerOption(arg: Any?) {
-        val option  = arg as? DatePickerOption ?: return
+        val option = arg as? DatePickerOption ?: return
         _datePickerOption.value = option
         updateDatePicker()
     }
@@ -314,7 +267,7 @@ class GroupSummaryViewModel(
 
                     override fun onOptionSelected(arg: Any?) {
                         mySheeting.hide()
-                        summaryMode.value = SummaryMode.values()[arg as? Int?:return]
+                        summaryMode.value = SummaryMode.values()[arg as? Int ?: return]
                     }
                 }
             ),
@@ -329,21 +282,21 @@ class GroupSummaryViewModel(
                     }
 
                     override fun onOptionSelected(arg: Any?) {
-                        val index = arg as? Int?:return
-                        when(index){
-                            0->{
+                        val index = arg as? Int ?: return
+                        when (index){
+                            0 -> {
                                 mySheeting.hide()
                                 _filterTimeFrame.value = TimeOptionData.Normal("All Time")
                             }
-                            1->{
+                            1 -> {
                                 mySheeting.hide()
                                 _filterTimeFrame.value = TimeOptionData.Outlined(lastMonthShort)
                             }
-                            2->{
+                            2 -> {
                                 mySheeting.hide()
                                 _filterTimeFrame.value = TimeOptionData.Outlined(thisMonthShort)
                             }
-                            3->{
+                            3 -> {
                                 mySheeting.change(Sheets.AdvancedDatePicker)
                             }
                         }
@@ -371,44 +324,44 @@ class GroupSummaryViewModel(
         )
     )
     val lastMonthShort: String
-    get(){
-        val thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
-        val lastMonth = if(thisMonth==1) 12 else thisMonth - 1
-        return when(lastMonth){
-            1-> "Jan"
-            2-> "Feb"
-            3-> "Mar"
-            4-> "Apr"
-            5-> "May"
-            6-> "Jun"
-            7-> "Jul"
-            8-> "Aug"
-            9-> "Sep"
-            10-> "Oct"
-            11-> "Nov"
-            12-> "Dec"
-            else-> ""
+        get(){
+            val thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+            val lastMonth = if (thisMonth == 1) 12 else thisMonth - 1
+            return when (lastMonth){
+                1 -> "Jan"
+                2 -> "Feb"
+                3 -> "Mar"
+                4 -> "Apr"
+                5 -> "May"
+                6 -> "Jun"
+                7 -> "Jul"
+                8 -> "Aug"
+                9 -> "Sep"
+                10 -> "Oct"
+                11 -> "Nov"
+                12 -> "Dec"
+                else -> ""
+            }
         }
-    }
     val thisMonthShort: String
-    get(){
-        val thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
-        return when(thisMonth){
-            1-> "Jan"
-            2-> "Feb"
-            3-> "Mar"
-            4-> "Apr"
-            5-> "May"
-            6-> "Jun"
-            7-> "Jul"
-            8-> "Aug"
-            9-> "Sep"
-            10-> "Oct"
-            11-> "Nov"
-            12-> "Dec"
-            else-> ""
+        get(){
+            val thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+            return when (thisMonth){
+                1 -> "Jan"
+                2 -> "Feb"
+                3 -> "Mar"
+                4 -> "Apr"
+                5 -> "May"
+                6 -> "Jun"
+                7 -> "Jul"
+                8 -> "Aug"
+                9 -> "Sep"
+                10 -> "Oct"
+                11 -> "Nov"
+                12 -> "Dec"
+                else -> ""
+            }
         }
-    }
     private fun setUpResolver() {
         _resolver.addAll(
             DataIds.statusBarColor to _statusBarColor,
@@ -451,7 +404,7 @@ class GroupSummaryViewModel(
             DataIds.weeklyTab to selectedWeeklyTab,
             DataIds.monthlyTab to selectedMonthlyTab,
             DataIds.dateDisplayData to dateDisplayData,
-            DataIds.summaryMode to summaryMode,
+            DataIds.summaryMode to summaryMode
         )
     }
 
@@ -572,11 +525,11 @@ class GroupSummaryViewModel(
     }
 }
 
-fun <K,V>Map<K,V>.getOrMyDefault(key: K, defualt: V): V {
+fun <K, V>Map<K, V>.getOrMyDefault(key: K, defualt: V): V {
     return this[key] ?: defualt
 }
 
 val currentYear: Int
-get(){
-    return Calendar.getInstance().get(Calendar.YEAR)
-}
+    get(){
+        return Calendar.getInstance().get(Calendar.YEAR)
+    }

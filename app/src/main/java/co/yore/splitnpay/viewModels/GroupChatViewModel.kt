@@ -1,6 +1,5 @@
 package co.yore.splitnpay.viewModels
 
-import androidx.annotation.DrawableRes
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
-import co.yore.splitnpay.components.components.Friend
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.AccountType
@@ -17,8 +15,6 @@ import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.TransactionStatus
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
-import co.yore.splitnpay.pages.GroupChatTab
-import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.viewModels.MembersMock.transaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -99,7 +95,7 @@ object MembersMock {
         totalTransactions = 5,
         completedTransactions = 5,
         isSingleChat = false,
-        category =  Category(
+        category = Category(
             id = 6,
             name = "Trip",
             color = 0xFFFF4077,
@@ -135,16 +131,9 @@ object MembersMock {
             isSelected = true
         ),
         paymentMethod = "UPI",
-        transactionDate = "9 May 2020",
+        transactionDate = "9 May 2020"
     )
 }
-
-data class Group(
-    val name: String,
-    val imageUrl: String = "",
-    val creationDate: String = "May 9th 2022",
-    val amount: Float
-)
 
 interface GroupRepository {
     suspend fun getBillTransactions(): List<BillTransaction>
@@ -265,53 +254,10 @@ class GroupsMock : GroupRepository {
     }
 }
 
-data class GroupCreationEvent(
-    val creator: String,
-    val groupName: String
-)
-
-data class ChatStatus(
-    val memberImages: List<Any?>,
-    val left: Boolean = true
-)
-
-data class Conversation(
-    val type: Type,
-    val data: Any
-) {
-    enum class Type {
-        TRANSACTION,
-        DATE,
-        CREATION,
-        STATUS,
-        CHAT,
-        MEMBER,
-    }
-}
-
-data class ChatData(
-    val content: Any,
-    val profileImage: Any? = null
-)
-
-data class MemberData(
-    val name: String,
-    val profileImage: Any?
-)
-
-data class SingleItem(
-    val id: Int,
-    @DrawableRes
-    val profilePic: Int,
-    val userName: String,
-    val mobileNo: String,
-    val isSelected: Boolean
-)
-
 class GroupChatViewModel(
     private val repo: GroupRepository = GroupsMock(),
     private val settleRepository: SettleRepository = SettleRepositoryImpl(),
-    private val groupChatRepository: TransactionRepository = GroupChatRepositoryImpl(),
+    private val groupChatRepository: TransactionRepository = GroupChatRepositoryImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
@@ -379,12 +325,12 @@ class GroupChatViewModel(
                             "Manage" -> navigation.scope { navHostController, lifecycleOwner, toaster ->
                                 navHostController.navigate("group_manage")
                             }
-                            "Summary"->{
+                            "Summary" -> {
                                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                                     navHostController.navigate("group_split_summary")
                                 }
                             }
-                            "Settle"->{
+                            "Settle" -> {
                                 mySheeting.sheets.value = Sheets.Settle
                                 mySheeting.show()
                             }
@@ -554,7 +500,7 @@ class GroupChatViewModel(
                                 isSelected = true,
                                 hasRead = false
                             ),
-                            category = co.yore.splitnpay.components.components.Category(
+                            category = Category1(
                                 name = "Category",
                                 color = 0xffff0000,
                                 icon = R.drawable.travel
@@ -680,10 +626,10 @@ class GroupChatViewModel(
             DataIds.back -> {
                 pageBack()
             }
-            "${DataIds.back}group_chat_page"->{
-                when(mySheeting.sheets.value){
+            "${DataIds.back}group_chat_page" -> {
+                when (mySheeting.sheets.value){
                     Sheets.None -> pageBack()
-                    else-> mySheeting.onBack()
+                    else -> mySheeting.onBack()
                 }
             }
             DataIds.groupAmount -> {

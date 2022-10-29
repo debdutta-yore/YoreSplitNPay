@@ -16,66 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.models.TotalCardConfiguration
 import co.yore.splitnpay.ui.theme.*
 
-/*
-@Composable
-fun TotalCard_6re10h(
-    contentDescription: String,
-    config: TotalCardConfiguration = TotalCardConfiguration(),
-    text: String,
-    amount: Float,
-    backgroundColor: Color,
-    borderColor: Color
-) {
-    Row(
-        modifier = Modifier
-            .semantics { this.contentDescription = contentDescription }
-            .height(46.dep())
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(config.cornerRadius))
-            .background(color = backgroundColor)
-            .border(
-                width = config.borderRadius.dep(),
-                color = borderColor,
-                shape = RoundedCornerShape(config.cornerRadius.dep())
-            )
-            .padding(horizontal = config.paddingValue.dep()),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        FontFamilyText(
-            text = text,
-            color = DarkBlue,
-            fontSize = 12.sep()
-        )
-        FontFamilyText(
-            annotatedString = amount.amountAnnotatedString(
-                isSpaceBetween = true,
-                currencyTextColor = DarkBlue,
-                currencyFontSize = 11.29f,
-                wholeNumberTextColor = DarkBlue,
-                wholeNumberFontSize = 14f,
-                wholeNumberFontWeight = FontWeight.W600,
-                decNumberTextColor = DarkBlue,
-                decNumberFontSize = 10f,
-                trailingText = " Dr",
-                trailingTextFontSize = 11.29f,
-                trailingTextTextColor = borderColor,
-                isTrailingTextEnabled = true
-            )
-        )
-    }
-}
-
-data class TotalCardConfiguration(
-    val cornerRadius: Float = 8f,
-    val borderRadius: Float = 1f,
-    val borderColor: Color = LightGreen3,
-    val backgroundColor: Color = CyanLight,
-    val paddingValue: Float = 16f,
-    val DrTextColor: Color = LightGreen3
-)*/
 
 @Composable
 fun TotalCard_6re10h(
@@ -126,31 +69,4 @@ fun TotalCard_6re10h(
     }
 }
 
-data class TotalCardConfiguration(
-    val textFontSize: Float = 12f,
-    val cornerRadius: Float = 8f,
-    val borderRadius: Float = 1f,
-    val borderColor: Color = LightGreen3,
-    val backgroundColor: Color = CyanLight,
-    val paddingValue: Float = 16f,
-    val currencyTextColor: Color = LightGreen3,
-    val wholeNumberTextColor: Color = LightGreen3,
-    val decNumberTextColor: Color = LightGreen3,
-    val trailingTextTextColor: Color = LightGreen3,
-    val currencyFontSize: Float = 11f,
-    val wholeNumberFontSize: Float = 14f,
-    val decNumberFontSize: Float = 10f,
-    val trailingTextFontSize: Float = 11f
-) {
-    companion object {
 
-        val variationOne = TotalCardConfiguration(
-            borderColor = Pink,
-            backgroundColor = LightRedButton,
-            currencyTextColor = Pink,
-            wholeNumberTextColor = Pink,
-            decNumberTextColor = Pink,
-            trailingTextTextColor = Pink
-        )
-    }
-}

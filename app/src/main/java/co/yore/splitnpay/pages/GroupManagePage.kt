@@ -49,32 +49,20 @@ import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.LightBlue3
-import co.yore.splitnpay.components.components.ProfileImageConfiguration
 import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlin.math.roundToInt
 
-data class Member(
-    val id: Int = 0,
-    val profilePic: String,
-    val userName: String,
-    val mobileNo: String,
-    val isSelected: Boolean,
-    val isGroupAdmin: Boolean = false
-)
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Members(
     modifier: Modifier = Modifier,
-    groupMembers: List<Member> = listState(key = DataIds.groupMembers),
+    groupMembers: List<Member1> = listState(key = DataIds.groupMembers),
     notifier: NotificationService = notifier()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -257,7 +245,7 @@ fun GroupManagePage(
     groupCreatedBy: String = stringState(key = DataIds.groupCreatedBy).value,
     groupCreationDate: String = stringState(key = DataIds.groupCreationDate).value,
     groupImage: Any? = tState<Any?>(key = DataIds.groupImage).value,
-    groupMembers: List<Member> = listState(key = DataIds.groupMembers),
+    groupMembers: List<Member1> = listState(key = DataIds.groupMembers),
     notifier: NotificationService = notifier(),
     sheeting: Sheeting = sheeting()
 ) {
@@ -728,7 +716,7 @@ fun CustomSwitch(
 fun Profile(
     modifier: Modifier = Modifier,
     groupImage: Any?,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -871,13 +859,6 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
     }
 }
 
-data class UnSettledMembersConfiguration(
-    val gapBetweenTwoRow: Float = 33f,
-    val topPaddingOfRadioButton: Float = 14f,
-    val topPaddingOfButton: Float = 26f,
-    val bottomPaddingOfButton: Float = 25f
-)
-
 @Composable
 fun UnSettledMemberItem(
     unsettledMembers: List<SingleSettledOrUnsettledMember> = listState(key = DataIds.unsettledMembers),
@@ -950,18 +931,6 @@ fun UnSettledMemberItem(
 }
 
 val Whitish5 = Color(0xFFF8FBFF)
-
-data class CustomRadioButton(
-    val height: Float = 47f,
-    val cornerRadius: Float = 12f,
-    val selectedBackGroundColor: Color = Whitish5,
-    val unSelectedBackGroundColor: Color = Color.White,
-    val borderColor: Color = Bluish,
-    val borderWidth: Float = 1f,
-    val selectedTextColor: Color = Bluish,
-    val unSelectedTextColor: Color = DarkBlue,
-    val fontSize: Float = 14f
-)
 
 // //////////////
 private const val RadioAnimationDuration = 700
@@ -1176,27 +1145,9 @@ fun CustomRadioButton_2ofz97(
 
 val LightGrayShadow = Color(0xffE6E5E5)
 
-enum class SettleOptions {
-    SplitIndividual,
-    DeleteAnyway
-}
 
-data class SettledUnsettledMembersBottomSheet(
-    val holderTopPadding: Float = 20f,
-    val holderBottomPadding: Float = 33f
-)
 
 // //////////////////////////////
-data class SingleSettledOrUnsettledMember(
-    val selectedSettleOption: SettleOptions = SettleOptions.SplitIndividual,
-    val isChecked: Boolean = false,
-    val isSettledMember: Boolean,
-    val imageUrl: String,
-    val userName: String,
-    val userPhNo: String,
-    val getAmount: Float,
-    val paidAmount: Float
-)
 
 @Composable
 fun SettledMembers(
@@ -1242,12 +1193,6 @@ fun SettledMembers(
         Spacer(modifier = Modifier.height(config.bottomPaddingOfBottom.dep()))
     }
 }
-
-data class SettledMembersConfiguration(
-    val gapBetweenTwoRow: Float = 33f,
-    val topPaddingOfBottom: Float = 38f,
-    val bottomPaddingOfBottom: Float = 25f
-)
 
 // //////////////////////////
 @Composable
@@ -1433,17 +1378,6 @@ fun SelectorIcon_ulkel8(
 }
 
 val Whitish6 = Color(0xFFE7EEF6)
-
-data class SettledOrUnsettledSingleRowConfiguration(
-    val gapBetweenSelectorAndProfileImage: Float = 12f,
-    val gapBetweenProfileImageAndUserName: Float = 22f
-)
-
-data class CheckboxConfiguration(
-    val iconColor: Color = Bluish,
-    val iconSize: Float = 28f,
-    val icon: Int = R.drawable.ic_checked_right
-)
 
 // ///////////////////////
 @Composable

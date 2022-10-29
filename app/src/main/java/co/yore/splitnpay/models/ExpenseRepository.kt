@@ -2,7 +2,6 @@ package co.yore.splitnpay.models
 
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.pages.CategoryExpense
-import co.yore.splitnpay.pages.ExpenseChartData
 import co.yore.splitnpay.pages.PieData
 
 interface ExpenseRepository {

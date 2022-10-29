@@ -12,11 +12,7 @@ import co.yore.splitnpay.components.components.SettledUnsettledMembersBottomShee
 import co.yore.splitnpay.components.components.SuccessUndoSheetModel
 import co.yore.splitnpay.components.components.UnsettledMembersAlertSheetModel
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.Sheets
-import co.yore.splitnpay.pages.Member
-import co.yore.splitnpay.pages.SettleOptions
-import co.yore.splitnpay.pages.SingleSettledOrUnsettledMember
+import co.yore.splitnpay.models.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,11 +20,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 interface ManageRepository {
-    suspend fun getMembers(): List<Member>
+    suspend fun getMembers(): List<Member1>
 }
 class ManageRepositoryMockImpl : ManageRepository {
     val group = listOf(
-        Member(
+        Member1(
             id = 1,
             profilePic = "https://i.pravatar.cc/300",
             userName = "You",
@@ -36,28 +32,28 @@ class ManageRepositoryMockImpl : ManageRepository {
             isSelected = false,
             isGroupAdmin = true
         ),
-        Member(
+        Member1(
             id = 2,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Manisha Roy",
             mobileNo = "9563376942",
             isSelected = false
         ),
-        Member(
+        Member1(
             id = 3,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Sushil Roy",
             mobileNo = "9563376942",
             isSelected = false
         ),
-        Member(
+        Member1(
             id = 4,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Sanjana Ray",
             mobileNo = "9563376942",
             isSelected = false
         ),
-        Member(
+        Member1(
             id = 5,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Ankita Ray",
@@ -66,7 +62,7 @@ class ManageRepositoryMockImpl : ManageRepository {
         )
     )
 
-    override suspend fun getMembers(): List<Member> {
+    override suspend fun getMembers(): List<Member1> {
         return group
     }
 
@@ -82,7 +78,7 @@ class ManageViewModel(
 
     // ////////////////////////////////////////
     private val _profileImage = mutableStateOf<Any?>(null)
-    private val _groupMembers = mutableStateListOf<Member>()
+    private val _groupMembers = mutableStateListOf<Member1>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("Office buddies")
     private val _numberOfGroupMembers = mutableStateOf(5)

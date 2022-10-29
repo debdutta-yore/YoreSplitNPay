@@ -9,9 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import co.yore.splitnpay.components.configuration.YouWillGetPayArrowButtonConfiguration
 import co.yore.splitnpay.libs.dep
-
+import co.yore.splitnpay.models.YouWillGetPayArrowButtonConfiguration
 
 
 @Composable

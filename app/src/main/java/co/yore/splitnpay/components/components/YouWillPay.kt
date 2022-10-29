@@ -19,12 +19,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.CustomButtonConfiguration
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.CustomButtonConfiguration
+import co.yore.splitnpay.models.Transaction
+import co.yore.splitnpay.models.YouWillPayConfiguration
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.pages.Transaction
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.LightBlue4
 import co.yore.splitnpay.ui.theme.LightRedButton
@@ -36,7 +36,7 @@ fun YouWillPay_m6awbp(
     list: List<Transaction>,
     userName: String,
     total: Float,
-    isWillPayTransactionSelected : Boolean,
+    isWillPayTransactionSelected: Boolean,
     contentDescription: String,
     config: YouWillPayConfiguration = YouWillPayConfiguration(),
     notifier: NotificationService = notifier()
@@ -70,11 +70,11 @@ fun YouWillPay_m6awbp(
             )
             config.bottomPadding.sy()
         }
-    }
-    else {
-        Column(modifier = Modifier
-            .semantics { this.contentDescription = contentDescription }
-            .fillMaxWidth()
+    } else {
+        Column(
+            modifier = Modifier
+                .semantics { this.contentDescription = contentDescription }
+                .fillMaxWidth()
         ) {
             val screenHeight = LocalConfiguration.current.screenHeightDp
             LazyColumn(
@@ -91,16 +91,17 @@ fun YouWillPay_m6awbp(
                             notifier.notify(DataIds.selectSettlePayMembers, index)
                         }
                     )
-                    if (index != list.lastIndex)
+                    if (index != list.lastIndex) {
                         config.gapBetweenTwoRow.sy()
+                    }
                 }
             }
             AnimatedContent(
                 targetState = isWillPayTransactionSelected,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(500, delayMillis = 90)) +
-                            scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
-                            fadeOut(animationSpec = tween(500))
+                        scaleIn(initialScale = 0.92f, animationSpec = tween(500, delayMillis = 90)) with
+                        fadeOut(animationSpec = tween(500))
                 }
             ) {
                 if (it) {
@@ -131,8 +132,7 @@ fun YouWillPay_m6awbp(
                             )
                         }
                     }
-                }
-                else {
+                } else {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ){
@@ -151,11 +151,3 @@ fun YouWillPay_m6awbp(
         }
     }
 }
-
-data class YouWillPayConfiguration(
-    val gapBetweenTwoText: Float = 5f,
-    val gapBetweenTextAndIcon: Float = 5f,
-    val bottomPadding: Float = 105f,
-    val gapBetweenTwoRow: Float = 18f,
-    val bottomHeight: Float = 50f
-)

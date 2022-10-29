@@ -7,7 +7,7 @@ interface TimeFilterRepository {
     suspend fun getItems(): List<SheetItem>
 }
 
-data class SheetItem(val id: Int, val icon: Int, val iconName: String, val isSelected: Boolean = false)
+
 
 class TimeFilterRepositoryImpl : TimeFilterRepository {
 

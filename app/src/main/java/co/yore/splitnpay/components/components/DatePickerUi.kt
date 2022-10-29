@@ -32,6 +32,7 @@ import co.yore.splitnpay.libs.fadingEdge
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localDesignWidth
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.snapper.ExperimentalSnapperApi
 import co.yore.splitnpay.snapper.rememberLazyListSnapperLayoutInfo
 import co.yore.splitnpay.snapper.rememberSnapperFlingBehavior

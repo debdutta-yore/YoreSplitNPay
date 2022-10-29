@@ -1,7 +1,5 @@
 package co.yore.splitnpay.models
 
-import co.yore.splitnpay.components.components.MemberTransact
-import co.yore.splitnpay.pages.SplitSelectableMember
 
 interface GroupSummaryRepository {
     suspend fun getMembers(): List<SplitSelectableMember>

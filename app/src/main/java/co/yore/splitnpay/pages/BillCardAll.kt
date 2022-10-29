@@ -33,140 +33,11 @@ import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sx
 import co.yore.splitnpay.libs.sy
-import co.yore.splitnpay.models.BillTransaction
-import co.yore.splitnpay.models.Category
-import co.yore.splitnpay.models.TransactionStatus
-import co.yore.splitnpay.models.TransactionType
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-data class BillCardAllConfiguration(
 
-    val cardBackground: Color = Color.White,
-    val cardHeight: Float = 125f,
-    val allSettledCardHeight: Float = 120f,
-
-    val firstRowVerticalAllSettledSpacing: Float = 15f,
-    val firstRowVerticalPaidSpacing: Float = 15f,
-    val firstRowVerticalReceivedSpacing: Float = 18f,
-    val firstRowAllSettledInternalSpacing: Float = 8f,
-    val progressBarTopAllSettledSpacing: Float = 7f,
-    val progressBarTopSpacing: Float = 4f,
-
-    val billTotalLetterSpacing: Float = (-0.333333f),
-    val completedTransactionLetterSpacing: Float = -0.333333f,
-    val willGetPayLetterSpacing: Float = -0.235784f,
-    val allPaidReceivedLetterSpacing: Float = -0.575758f,
-    val amountLeftLetterSpacing: Float = -0.575758f,
-
-    val dotStartHorizontalSpacer: Float = 4f,
-    val dotEndHorizontalSpacer: Float = 5f,
-    val dotLastHorizontalSpacer: Float = 4f,
-    val chatMessageReadSpacer: Float = 9f,
-    val cardBottomSpacer: Float = 17f,
-
-    val cardCornerAll: Float = 22f,
-    val cardCornerRounded: Float = 15f,
-    val cardCornerNotRounded: Float = 0f,
-
-    val billTotalRowStartPadding: Float = 24f + 25f,
-    val billTotalRowStartAllSettledPadding: Float = 24f,
-    val billTotalRowStartIsPaidPadding: Float = 21f,
-    val containerEndPadding: Float = 34f,
-    val arrowIconEndPadding: Float = 14f + 25f,
-    val arrowIconTopPadding: Float = 2f,
-    val arrowIconEndAllSettledPadding: Float = 11f,
-    val containerAllSettledEndPadding: Float = 0f,
-    val cardInnerRowTopPadding: Float = 15f,
-    val allPaidReceivedTopAllSettledPadding: Float = 10f,
-    val allPaidReceivedTopPadding: Float = 4f,
-    val allPaidReceivedExtraHorizontalPadding: Float = 2f,
-
-    val columnStartPadding: Float = 75f,
-    val columnStartAllSettledPadding: Float = 20f,
-    val columnStartPaidPadding: Float = (46f + 25f),
-    val columnStartReceivedPadding: Float = 72f,
-    val columnEndAllSettledPadding: Float = 20f,
-    val columnEndPaidPadding: Float = 53f - 25f,
-    val columnEndReceivedPadding: Float = 24f + 25f,
-    val allPaidReceivedAllSettledStartPadding: Float = 24f - 2f,
-    val allPaidReceivedPaidStartPadding: Float = 53f - 25f,
-    val allPaidReceivedReceivedStartPadding: Float = 24f + 25f,
-    val allPaidReceivedAllSettledEndPadding: Float = 20f,
-    val allPaidReceivedPaidEndPadding: Float = 72f,
-    val allPaidReceivedReceivedEndPadding: Float = 72f,
-    val completedTransactionEndPadding: Float = 2f,
-    val completedTransactionTopPadding: Float = 4f,
-
-    val paidReceivedColor: Color = LightBlue4,
-    val totalPaidReceivedTextColor: Color = LightBlue4,
-    val cardShadowColor: Color = Color(0xff5A87BB).copy(0.2f),
-    val paidSelectedAmountTextColor: Color = Pink,
-    val receivedSelectedAmountTextColor: Color = LightGreen3,
-    val amountNormalTextColor: Color = DarkBlue,
-    val paidTimeBackgroundColor: Color = Pink,
-    val settledTimeBarBackgroundColor: Color = LightBlue4,
-    val receivedTimeBackgroundColor: Color = LightGreen3,
-    val paidProgressColor: Color = DarkBlue,
-    val receiveProgressColor: Color = LightGreen3,
-    val paidProgressBackgroundColor: Color = Pink,
-    val receiveProgressBackgroundColor: Color = DarkBlue,
-
-    val willGetPayTextColor: Color = LightBlue4,
-    val allPaidReceivedLeadingTextColor: Color = LightBlue4,
-    val allPaidReceivedTrailingTextColor: Color = LightGreen3,
-    val amountLeftTextColor: Color = LightBlue4,
-
-
-    val billTotalCurrencyFontSize: Float = 8f,
-    val billTotalLeadingFontSize: Float = 11f,
-    val billTotalWholeFontSize: Float = 15f,
-    val billTotalDecFontSize: Float = 9f,
-    val paidReceivedFontSize: Float = 9f,
-    val leftAmountCurrencyFontSize: Float = 11f,
-    val leftAmountWholeFontSize: Float = 13f,
-    val leftAmountDecFontSize: Float = 9f,
-    val totalPaidReceivedFontSize: Float = 9f,
-    val willGetPayFontSize: Float = 9f,
-    val willGetPayCurrencyFontSize: Float = 11f,
-    val willGetPayWholeFontSize: Float = 13f,
-    val willGetPayDecFontSize: Float = 9f,
-    val allPaidReceivedFontSize: Float = 9f,
-    val allPaidReceivedTrailingFontSize: Float = 9f,
-    val allPaidReceivedCurrencyFontSize: Float = 9f,
-    val allPaidReceivedWholeFontSize: Float = 9f,
-    val allPaidReceivedDecFontSize: Float = 9f,
-    val amountLeftCurrencyFontSize: Float = 9f,
-    val amountLeftWholeFontSize: Float = 9f,
-    val amountLeftDecFontSize: Float = 9f,
-    val amountLeftTrailingFontSize: Float = 9f,
-
-    val arrowIconSize: Float = 14f,
-
-    val progressBarHeight: Float = 5f,
-    val totalPaidReceivedLineHeight: Float = 14f,
-    val cardShadowBorderRadius: Float = 15f,
-    val cardShadowBlurRadius: Float = 24f,
-    val cardShadowOffsetX: Float = 3f,
-    val cardShadowOffsetY: Float = 3f,
-    val cardShadowSpread: Float = 0f,
-
-    val categoryIconSize: Float = 19f,
-    val profileImageSize: Float = 30f,
-    val seenIconSize: Float = 16f,
-
-    val rightArrow: Int = R.drawable.ic_right_arrow,
-
-    val billTotalText: Int = R.string.bill_total,
-    val receivedStatusText: Int = R.string.paid,
-    val paidStatusText: Int = R.string.received,
-    val youReceivedStatusText: Int = R.string.you_received,
-    val youPaidStatusText: Int = R.string.you_paid,
-    val payStatusText: Int = R.string.you_will_pay,
-    val receiveStatusText: Int = R.string.you_will_get,
-    val totalReceivedText: Int = R.string.all_received,
-    val totalPaidText: Int = R.string.all_paid,
-)
 
 @Composable
 fun BillCard_s10zd7(
@@ -748,14 +619,7 @@ fun BillCard_s10zd7(
     }
 }
 
-data class DateBoxConfiguration(
-    val backgroundColor: Color = LightGray.copy(0.25f),
-    val textColor: Color = LightBlue4,
-    val fontSize: Float = 8f,
-    val lineHeight: Float = 9.38f,
-    val textInnerHorizontalPadding: Float = 7f,
-    val textInnerVerticalPadding: Float = 2f,
-)
+
 
 @Composable
 fun DateBox_rdu7a6(date: String, config: DateBoxConfiguration = DateBoxConfiguration()) {
@@ -779,16 +643,7 @@ fun DateBox_rdu7a6(date: String, config: DateBoxConfiguration = DateBoxConfigura
 
 }
 val LightBlue1 = Color(0xffEDF5FF)
-data class ChatMessageReadStatusConfiguration(
-    val checkIconSize: Float = 16f,
-    val checkIcon: Int = R.drawable.ic_seen,
-    val profileIconSize: Float = 30f,
-    val profileIconBorderWidth: Float = 3f,
-    val borderStroke: Float = 3f,
-    val borderColor: Color = LightBlue1,
-    val placeholder: Int = R.drawable.ic_profilepic1,
-    val iconImageSpacing: Float = 3f
-)
+
 
 @Composable
 fun ChatMessageReadStatus_m1cy0j(
@@ -822,14 +677,7 @@ fun ChatMessageReadStatus_m1cy0j(
     )
 }
 
-data class CircleIconWithBackgroundConfiguration(
-    val iconBackgroundSize: Float = 19f,
-    val categoryIconSize: Float = 10.23f,
-    val backgroundColor: Color = LightRedButton,
-    val textColor: Color = LightBlue4,
-    val fontSize: Float = 9f,
-    val lineHeight: Float = 11f
-)
+
 
 @Composable
 fun CircleIconWithBackground_xyo2d4(
@@ -853,23 +701,8 @@ fun CircleIconWithBackground_xyo2d4(
     }
 }
 
-data class CategoryRowConfiguration(
-    val categoryIconSize: Float = 19f,
-    val backgroundColor: Color = LightRedButton,
-    val textColor: Color = LightBlue4,
-    val fontSize: Float = 9f,
-    val lineHeight: Float = 11f,
-    val iconTextSpacing: Float = 4f
-)
-/*data class Category(
-    val name: String,
-    val color: Long,
-//    val icon: Painter,
-    val icon: Any,
-    val isSelected: Boolean = false,
-    val isEditable: Boolean = false,
-    val subCategory: String = "Business trip"
-)*/
+
+
 @Composable
 fun CategoryRow_a96p42(
     config: CategoryRowConfiguration = CategoryRowConfiguration(),
@@ -888,17 +721,7 @@ fun CategoryRow_a96p42(
 
 }
 val LightGrayBackground = Color(0xffE7EEF6)
-data class CircleBoxTextConfiguration(
-    val backgroundColor: Color = LightGrayBackground,
-    val fontSize: Float = 12f,
-    val textColor: Color = DarkBlue,
-    val lineHeight: Float = 14f,
-    val textInnerHorizontalPadding: Float = 8f,
-    val textInnerVerticalPadding: Float = 4f,
-    val boxStartPadding: Float = 2f,
-    val boxHeight: Float = 21f,
-    val letterSpacing: Float = -0.333333f
-)
+
 
 @Composable
 fun CircleBoxText_yl5a4b(
@@ -926,18 +749,7 @@ fun CircleBoxText_yl5a4b(
     }
 }
 
-data class SideBarConfiguration(
-    val iconSize: Float = 14f,
-    val topPadding: Float = 12f,
-    val startPadding: Float = 6.5f,
-    val endPadding: Float = 6.5f,
-    val timeFontSize: Float = 9f,
-    val textStartPadding: Float = 21.5f,
-    val timeFontWeight: FontWeight = FontWeight.Bold,
-    val timeTextColor: Color = White,
-    val receivedIcon: Int = R.drawable.ic_arrowbelow,
-    val paidIcon: Int = R.drawable.ic_arrow_up_right,
-)
+
 
 @Composable
 fun SideBar_82fc28(
@@ -1015,14 +827,9 @@ fun Modifier.rotateVertically(rotation: VerticalRotation) = then(
     })
     .then(rotate(rotation.value))
 
-enum class VerticalRotation(val value: Float) {
-    CLOCKWISE(90f), COUNTER_CLOCKWISE(270f)
-}
+
 val LightBlue = Color(0xff1B79E6)
-data class DotConfiguration(
-    val color:Color = LightBlue,
-    val size: Float = 4f
-)
+
 @Composable
 fun Dot_t8dyts(config: DotConfiguration = DotConfiguration()) {
     Box(

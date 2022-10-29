@@ -56,13 +56,11 @@ import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
-import co.yore.splitnpay.components.configuration.TopbarWithIconConfiguration
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.ui.theme.*
-import co.yore.splitnpay.viewModels.MemberPayment
 import co.yore.splitnpay.viewModels.MembersMock.transaction
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -109,27 +107,7 @@ fun SplitDetailsScreen(
     }
 }
 
-data class Transaction(
-    val name: String,
-    val imageUrl: String = "https://i.pravatar.cc/300",
-    val mobileNumber: String,
-    val amount: Float,
-    val transactionType: TransactionType,
-    val isSelected:Boolean = false
-)
-enum class SplitListOptions {
-    Equal,
-    Unequal,
-    Ratio,
-    Percentage
-}
-data class SplitTypeRowItem(
-    val selectedOptionBackground: Color = Bluish,
-    val unSelectedOptionBackground: Color = LightBlue1,
-    val selectedOptionTextColor: Color = White,
-    val unSelectedOptionTextColor: Color = Bluish,
-    val fontSize: Float = 12f
-)
+
 val BluishGrey = Color(0xff8498AB)
 @Composable
 fun SplitTypeRowItem_yxqp10(
@@ -712,18 +690,7 @@ fun TabItemUI(
     )
 }
 
-data class SplitAdjustItemConfiguration(
-    val horizontalRowPadding: Float = 32f,
-    val borderColor: Color = LightBlue1,
-    val imageSize: Float = 49f,
-    val borderStroke: Float = 3f,
-    val placeholder: Int = R.drawable.personactionbar,
-    val contentScale: ContentScale = ContentScale.Crop,
-    val nameFontSize: Float = 12f,
-    val nameTextColor: Color = DarkBlue,
-    val phoneNumberFontSize: Float = 11f,
-    val phoneNumberTextColor: Color = Color(0xff5A87BB)
-)
+
 @Composable
 fun SplitAdjustItem_eugo18(
     memberPayment: MemberPayment,
@@ -781,12 +748,7 @@ fun SplitAdjustItem_eugo18(
     }
 }
 val WhitishGreen = Color(0xFFF2FFFD)
-data class SplitMembersRemainingBoxConfiguration(
-    val backgroundColor: Color = WhitishGreen,
-    val textPaddingVertical: Float = 10f,
-    val fontSize : Float = 12f,
-    val textColor: Color = LightGreen3
-)
+
 @Composable
 fun SplitMembersRemainingBox(
     remaining: Int,
@@ -815,20 +777,7 @@ fun SplitMembersRemainingBox(
         }
     }
 }
-data class SplitPaidByItemConfiguration(
-    val horizontalRowPadding: Float = 32f,
-    val selectedBorderColor: Color = Pink,
-    val unSelectedBorderColor: Color = LightBlue1,
-    val imageSize: Float = 49f,
-    val selectedBorderStroke: Float = 2f,
-    val unSelectedBorderStroke: Float = 3f,
-    val placeholder: Int = R.drawable.personactionbar,
-    val contentScale: ContentScale = ContentScale.Crop,
-    val nameFontSize: Float = 12f,
-    val nameTextColor: Color = DarkBlue,
-    val phoneNumberFontSize: Float = 11f,
-    val phoneNumberTextColor: Color = Color(0xff5A87BB)
-)
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SplitMemberPaymentItem_z0nkzc(
@@ -1075,17 +1024,7 @@ fun TopBarWithIcon_1t9xbo(
         )
     }
 }
-data class EditIconConfiguration(
-    val backgroundColor: Color = LightBlue1,
-    val innerPaddingStart: Float = 7.92f,
-    val innerPaddingEnd: Float = 4f,
-    val innerPaddingTop: Float = 4f,
-    val innerPaddingBottom: Float = 4f,
-    val editIcon: Int = R.drawable.ic_pencil,
-    val textColor: Color = Bluish,
-    val fontSize: Float = 12f,
-    val cornerRadius: Float = 11f
-)
+
 @Composable
 fun EditIcon_gx6f1w(
     text: String,
@@ -1224,7 +1163,7 @@ fun Any.amountAnnotatedString(
     }
 }
 
-fun Number.splitted(): FloatSplitted {
+fun Number.splitted(): FloatSplitted1 {
     val text = this.toString()
     val parts = text.split(".")
     var wholeText = parts[0]
@@ -1239,35 +1178,19 @@ fun Number.splitted(): FloatSplitted {
     if (decText.length > 2) {
         decText = decText.substring(0..1)
     }
-    return FloatSplitted(
+    return FloatSplitted1(
         wholeText,
         decText
     )
 }
 
-data class FloatSplitted(
-    val whole: String,
-    val dec: String
-)
+
 val RoundedBorderGrey = Color(0xffD1E5F4)
-data class CategorySelectorCardConfiguration(
-    val borderStroke: Float = 1f,
-    val borderColor: Color = RoundedBorderGrey,
-    val height: Float = 26f,
-    val icon: Int = R.drawable.ic_trip,
-    val fontSize: Float = 11f,
-    val textColor: Color = DarkBlue,
-    val fontWeight: FontWeight = FontWeight(400),
-    val iconTopPadding: Float = 4.53f,
-    val iconBottomPadding: Float = 6.19f,
-    val iconStartPadding: Float = 9.53f,
-    val iconTextSpacer: Float = 3.19f,
-    val iconEndSpacer: Float = 21f
-)
+
 @Composable
 fun CategorySelectorCard_owv32g(
     notifier: NotificationService = notifier(),
-    config: CategorySelectorCardConfiguration = CategorySelectorCardConfiguration(),
+    config: CategorySelectorCardConfiguration1 = CategorySelectorCardConfiguration1(),
     category: Category = tState<Category>(key = DataIds.category).value,
     contentDescription: String
 ) {
@@ -1317,15 +1240,7 @@ fun CategorySelectorCard_owv32g(
         config.iconEndSpacer.sx()
     }
 }
-data class DateSelectorCardConfiguration(
-    val borderStroke: Float = 1f,
-    val borderColor: Color = RoundedBorderGrey,
-    val height: Float = 26f,
-    val icon: Int = R.drawable.ic_calender,
-    val fontSize: Float = 13f,
-    val textColor: Color = DarkBlue,
-    val fontWeight: FontWeight = FontWeight.Bold
-)
+
 @Composable
 fun DateSelectorCard_5b6qhm(
     contentDescription: String,
@@ -1372,15 +1287,7 @@ fun DateSelectorCard_5b6qhm(
         Spacer(modifier = Modifier.width(21.dep()))
     }
 }
-data class DashedBorderIconButtonConfiguration(
-    val borderWidth : Float = 1f,
-    val borderColor: Color = DarkGrey,
-    val borderCorner: Float = 5f,
-    val iconWidth: Float = 20f,
-    val iconHeight: Float= 18f,
-    val fontSize: Float = 10f,
-    val textColor: Color = LightBlue4
-)
+
 @Composable
 fun DashedBorderIconButtonWithText_13ppr3(
     text: String,
@@ -1458,23 +1365,7 @@ fun DashedBorderIconButtonWithText_13ppr3(
         }
     }
 }
-data class SplitAdjustAmountConfiguration(
-    val backgroundColor: Color = CardGrey,
-    val width: Float = 83f,
-    val height: Float = 33f,
-    val currencyFontSize: Float = 12f,
-    val currencyFontWeight: FontWeight = FontWeight.Normal,
-    val currencyScriptSize: Float = 16f,
-    val currencyScriptFontWeight: FontWeight = FontWeight.Bold,
-    val decimalScriptSize: Float = 10f,
-    val decimalScriptFontWeight: FontWeight = FontWeight.Normal,
-    val fontWeight: FontWeight = FontWeight.Bold,
-    val fontSize: Float = 20f,
-    val textColor: Color = DarkBlue,
-    val textStartPadding : Float = 8f,
-    val textEndPadding : Float = 8f,
-    val fontFamily: FontFamily = robotoFonts
-)
+
 val GreyShade = Color(0xff8C93A2)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -27,10 +27,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.CheckboxConfiguration
 import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
@@ -295,39 +294,6 @@ fun YouWillGetSingleItem_080weu(
     }
 
 }
-
-data class SingleUser(
-    val isChecked: Boolean,
-    val imageUrl: String,
-    val name: String,
-    val phNo: String,
-    val amount: Float
-)
-
-data class YouWillGetSingleItemConfiguration(
-    val checkBoxEndPadding: Float = 16f,
-    val profilePicEndPadding: Float = 22f,
-    val gapBetweenNameANdPhNo: Float = 5f,
-    val amountBoxWidth: Float = 80f
-)
-
-data class YouWillGetConfiguration(
-    val gapBetweenTwoRow: Float = 18f,
-    val bottomHeight: Float = 50f,
-    val gapBetweenTwoText: Float = 5f,
-    val gapBetweenTextAndIcon: Float = 5f,
-    val bottomPadding: Float = 105f
-)
-
-/*data class ProfileImageConfiguration(
-    val imageSize: Float = 49f,
-    val borderStroke: Float = 3f,
-    val borderColor: Color = LightBlue1,
-    val shape: Shape = CircleShape,
-    val imageUrl: String = "https://i.pravatar.cc/300",
-    val placeholder: Int = R.drawable.personactionbar,
-    val contentScale: ContentScale = ContentScale.Crop
-)*/
 
 @Composable
 fun ProfileImage_2hf7q0(

@@ -18,14 +18,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.YoreAmount
-import co.yore.splitnpay.components.components.YoreAmountConfiguration
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.components.configuration.FriendItemConfiguration
-import co.yore.splitnpay.demos.expenseDemo.sx
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.splitted
+import co.yore.splitnpay.libs.sx
 import co.yore.splitnpay.models.ContactData
+import co.yore.splitnpay.models.FriendItemConfiguration
+import co.yore.splitnpay.models.YoreAmountConfiguration
 import co.yore.splitnpay.ui.theme.robotoFonts
 
 @Composable

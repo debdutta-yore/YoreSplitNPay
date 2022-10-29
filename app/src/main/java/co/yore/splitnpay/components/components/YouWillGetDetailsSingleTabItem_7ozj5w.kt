@@ -18,6 +18,7 @@ import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.models.YouWillGetDetailsSingleTabItemConfiguration
 import co.yore.splitnpay.pages.Whitish6
 import co.yore.splitnpay.ui.theme.LightGreen3
 import co.yore.splitnpay.ui.theme.LightRedButton
@@ -75,26 +76,4 @@ fun YouWillGetDetailsSingleTabItem_7ozj5w(
     }
 }
 
-data class YouWillGetDetailsSingleTabItemConfiguration(
-    val cornerRadius: Float = 50f,
-    val selectedOptionBackground: Color = Whitish7,
-    val unSelectedOptionBackground: Color = Whitish6,
-    val selectedOptionTextColor: Color = LightGreen3,
-    val unSelectedOptionTextColor: Color = Color(0xff5A87BB),
-    val fontSize: Float = 9f,
-    val textTopPadding: Float = 3f,
-    val textBottomPadding: Float = 3f,
-    val textStartPadding: Float = 9f,
-    val textEndPadding: Float = 9f
-) {
-    companion object {
-        val variationOne = YouWillGetDetailsSingleTabItemConfiguration(
-            selectedOptionBackground = LightRedButton,
-            unSelectedOptionBackground = Whitish6,
-            selectedOptionTextColor = Pink,
-            unSelectedOptionTextColor = Color(0xff5A87BB)
 
-        )
-    }
-
-}

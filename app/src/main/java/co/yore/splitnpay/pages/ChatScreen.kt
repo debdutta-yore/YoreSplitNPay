@@ -50,12 +50,9 @@ import androidx.constraintlayout.compose.Dimension
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
-import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
-import co.yore.splitnpay.components.configuration.GroupMemberProfilePicsConfiguration
-import co.yore.splitnpay.components.configuration.SplitTabItemConfiguration
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.BillTransaction
-import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.*
 import coil.compose.AsyncImage
@@ -1210,15 +1207,9 @@ fun SingleButton(
     }
 }
 
-data class GroupChatTabsConfiguration(
-    val horizontalSpace: Float = 11f
-)
 
-enum class GroupChatTab {
-    All,
-    Pending,
-    Settled
-}
+
+
 
 @Composable
 fun GroupChatTabs_m5q49j(
@@ -1263,17 +1254,7 @@ fun GroupChatTabs_m5q49j(
     }
 }
 
-data class GroupChatTabItemConfiguration(
-    val minWidth: Float = 48f,
-    val roundedCorner: Float = 13.5f,
-    val selectedBackground: Color = Bluish,
-    val unSelectedBackground: Color = LightBlue1,
-    val paddingHorizontal: Float = 8f,
-    val paddingVertical: Float = 7f,
-    val textSize: Float = 11f,
-    val selectedTextColor: Color = Color.White,
-    val unSelectedTextColor: Color = Bluish
-)
+
 
 @Composable
 fun GroupChatTabItem_yb6b5a(

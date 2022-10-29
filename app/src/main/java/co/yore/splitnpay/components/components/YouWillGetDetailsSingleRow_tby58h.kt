@@ -7,19 +7,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.sep
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightGreen3
-import co.yore.splitnpay.ui.theme.Pink
+import co.yore.splitnpay.libs.sx
+import co.yore.splitnpay.libs.sy
+import co.yore.splitnpay.models.MemberWillGetOrPayDetailsSingleRowItem
+import co.yore.splitnpay.models.YouWillGetDetailsSingleRowConfiguration
 
 @Composable
 fun YouWillGetOrPayDetailsSingleRow_tby58h(
@@ -121,52 +118,4 @@ fun YouWillGetOrPayDetailsSingleRow_tby58h(
     }
 }
 
-data class YouWillGetDetailsSingleRowConfiguration(
-    val gapBetweenProfileImageAndUserDetails: Float = 22f,
-    val gapBetweenUserDetailsAndGetText: Float = 27f,
-    val gapBetweenUserNameAndMobileNo: Float = 5f,
-    val gapBetweenGetAndPaid: Float = 4f,
 
-    val userNameTextSize: Float = 12f,
-    val userPhNoTextSize: Float = 11f,
-    val userNameColor: Color = DarkBlue,
-    val userPhNoTextColor: Color = Color(0xff5A87BB),
-
-    val YouWillGetDetailsSingleRowGetText: Int = R.string.YouWillGetDetailsSingleRowGetText,
-    val YouWillGetDetailsSingleRowPaidText: Int = R.string.YouWillGetDetailsSingleRowPaidText,
-    val getTextColor: Color = LightGreen3,
-    val paidTextColor: Color = Color(0xff5A87BB),
-    val getTextFontSize: Float = 11f,
-    val paidTextFontSize: Float = 11f,
-
-    val currencyFontSizeForGetAmount: Float = 12f,
-    val currencyTextColorForGetAmount: Color = LightGreen3,
-    val decNumberTextColorForGetAmount: Color = LightGreen3,
-    val wholeNumberTextColorForGetAmount: Color = LightGreen3,
-    val wholeNumberFontSizeForGetAmount: Float = 12f,
-    val decNumberFontSizeForGetAmount: Float = 10f,
-
-    val currencyFontSizeForPaidAmount: Float = 9f,
-    val currencyTextColorForPaidAmount: Color = DarkBlue,
-    val decNumberTextColorForPaidAmount: Color = DarkBlue,
-    val wholeNumberTextColorForPaidAmount: Color = DarkBlue,
-    val wholeNumberFontSizeForPaidAmount: Float = 10f,
-    val decNumberFontSizeForPaidAmount: Float = 8f
-)
-{
-    companion object{
-        val variationOne = YouWillGetDetailsSingleRowConfiguration(
-            YouWillGetDetailsSingleRowGetText = R.string.YouWillPayDetailsSingleRowDueText,
-            YouWillGetDetailsSingleRowPaidText = R.string.YouWillPayDetailsSingleRowPaidText,
-            getTextColor = Pink,
-            paidTextColor = Color(0xff5A87BB),
-            currencyTextColorForGetAmount = Pink,
-            decNumberTextColorForGetAmount = Pink,
-            wholeNumberTextColorForGetAmount = Pink,
-            currencyTextColorForPaidAmount = DarkBlue,
-            decNumberTextColorForPaidAmount = DarkBlue,
-            wholeNumberTextColorForPaidAmount = DarkBlue
-        )
-    }
-
-}

@@ -36,8 +36,7 @@ import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.TransactionType
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -340,11 +339,7 @@ fun SplitCardBalance(
 }
 
 // //////////
-data class SplitSelectableMember(
-    val name: String,
-    val image: Any?,
-    val isSelected: Boolean
-)
+
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -447,20 +442,7 @@ fun SummarySinglePeople_q6c90m(
     }
 }
 
-data class SummarySinglePeopleConfig(
-    val profileImageSize: Float = 42f,
-    val shadowColor: Color = Greyish2,
-    val shadowBorderRadius: Float = 50f,
-    val shadowBlurRadius: Float = 5.63f,
-    val shadowOffsetX: Float = 5.63f,
-    val shadowOffsetY: Float = 0f,
-    val shadowSpread: Float = 0f,
-    val profileImageShape: Shape = CircleShape,
-    val selectedBorderColor: Color = Pink,
-    val unselectedBorderColor: Color = Color.White,
-    val profileImagePlaceHolder: Int = R.drawable.user_dummy4,
-    val gapBetweenProfileImageAndName: Float = 17f
-)
+
 
 val membersImages = listOf(
     Transaction(

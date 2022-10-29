@@ -18,6 +18,7 @@ import androidx.constraintlayout.compose.MotionLayout
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.Conversation
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.*

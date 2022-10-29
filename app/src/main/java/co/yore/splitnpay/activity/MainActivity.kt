@@ -12,26 +12,12 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import co.yore.splitnpay.app.YoreApp
-import co.yore.splitnpay.components.components.Group
-import co.yore.splitnpay.components.components.Member
-import co.yore.splitnpay.components.components.MemberEx
-import co.yore.splitnpay.libs.LocalResolver
-import co.yore.splitnpay.libs.NotificationService
-import co.yore.splitnpay.libs.Resolver
 import co.yore.splitnpay.localKeyboardHeight
 import co.yore.splitnpay.locals.localDesignWidth
-import co.yore.splitnpay.models.ContactData
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.GroupData
-import co.yore.splitnpay.pages.IndividualManagePage
-import co.yore.splitnpay.pages.Members
-import co.yore.splitnpay.pages.SplitCardDetailPage
-import co.yore.splitnpay.pages.membersImages
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 import java.lang.Integer.min
 

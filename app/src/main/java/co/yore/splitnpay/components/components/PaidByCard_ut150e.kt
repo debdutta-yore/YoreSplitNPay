@@ -20,9 +20,7 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.TransactionType
-import co.yore.splitnpay.pages.Transaction
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.splitted
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.GreyShadow
@@ -135,42 +133,8 @@ private val paidList = listOf<Transaction>(
         imageUrl = "https://i.pravatar.cc/300?"
     )
 )
-data class PaidBySingleItem(
-    val name: String,
-    val imageUrl: String,
-    val mobileNumber: String,
-    val amount: Float
-)
 
-data class PaidByCardConfiguration(
-    val shadowColor: Color = GreyShadow,
-    val shadowBorderRadius: Float = 15f,
-    val shadowBlurRadius: Float = 33f,
-    val shadowOffsetX: Float = 7f,
-    val shadowOffsetY: Float = 7f,
-    val shadowSpread: Float = 0f,
-    val cornerRadius: Float = 15f,
-    val backgroundColor: Color = Color.White,
-    val startPadding: Float = 33f,
-    val endPadding: Float = 30f,
-    val topPadding: Float = 26f,
-    val bottomPadding: Float = 29f,
 
-    val PaidByCardPaidByText: Int = R.string.PaidByCardPaidByText,
-    val paidByTextColor: Color = DarkBlue,
-    val paidByTextFontSize: Float = 16f,
-    val paidByTextBottomSpace: Float = 16f,
-
-    val spaceBetweenTwoRowItem: Float = 18f
-)
-
-// ///////////////////
-data class MemberTransact(
-    val name: String,
-    val mobile: String,
-    val image: Any?,
-    val amount: Float,
-)
 @Composable
 fun SingleItemYouWillGetCard_3btamv(
     item: MemberTransact,
@@ -271,8 +235,4 @@ fun Number.formatDecimalSeparator(): String {
         .joinToString(",")
         .reversed()
 }
-data class SingleItemYouWillGetCardConfiguration(
-    val gapBetweenProfileImageAndUserName: Float = 22f,
-    val gapBetweenPUserNameAndUserPhNo: Float = 5f,
-    val gapBetweenUserNameAndAmount: Float = 40f
-)
+

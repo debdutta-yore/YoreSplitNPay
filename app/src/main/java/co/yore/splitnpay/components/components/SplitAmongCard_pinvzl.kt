@@ -14,11 +14,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.listState
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.sy
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.MemberTransact
+import co.yore.splitnpay.models.PaidByCardConfiguration
 
 @Composable
 fun SplitAmongCard_pinvzl(

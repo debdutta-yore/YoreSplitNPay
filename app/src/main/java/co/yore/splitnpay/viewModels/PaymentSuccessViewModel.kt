@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.StatusBarColor
 
 class PaymentSuccessViewModel() : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)

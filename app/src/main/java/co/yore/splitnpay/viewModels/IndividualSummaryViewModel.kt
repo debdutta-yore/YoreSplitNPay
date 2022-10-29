@@ -1,26 +1,21 @@
 package co.yore.splitnpay.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import co.yore.splitnpay.components.components.MemberTransact
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.TransactionType
-import co.yore.splitnpay.pages.SplitSelectableMember
-import co.yore.splitnpay.pages.Transaction
+import co.yore.splitnpay.models.*
 
-class IndividualSummaryViewModel: ViewModel(), WirelessViewModelInterface {
+class IndividualSummaryViewModel : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
-    override val notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.selectBalanceMember->{
+    override val notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.selectBalanceMember -> {
                 val member = arg as? SplitSelectableMember
                 val index = splitSelectableMembers.indexOf(member)
-                if(index==-1){
+                if (index == -1){
                     return@NotificationService
                 }
                 splitSelectableMembers.forEachUpdate {
@@ -28,7 +23,7 @@ class IndividualSummaryViewModel: ViewModel(), WirelessViewModelInterface {
                 }
                 splitSelectableMembers[index] = splitSelectableMembers[index].copy(isSelected = true)
                 val name = splitSelectableMembers[index].name
-                //selectedMemberName.value = if(name.lowercase()=="you") "$name'll" else "$name will"
+                // selectedMemberName.value = if(name.lowercase()=="you") "$name'll" else "$name will"
             }
             DataIds.back -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -45,7 +40,8 @@ class IndividualSummaryViewModel: ViewModel(), WirelessViewModelInterface {
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
-    //////////////////
+
+    // ////////////////
     private val willGetTransactions = mutableStateListOf<MemberTransact>()
     private val willPayTransactions = mutableStateListOf<MemberTransact>()
     private val getTotal = mutableStateOf(0f)
@@ -60,7 +56,8 @@ class IndividualSummaryViewModel: ViewModel(), WirelessViewModelInterface {
         )
     )
     private val splitSelectableMembers = mutableStateListOf<SplitSelectableMember>()
-    //////////////////
+
+    // ////////////////
     init {
         resolver.addAll(
             DataIds.willGetTransactions to willGetTransactions,
@@ -78,13 +75,13 @@ class IndividualSummaryViewModel: ViewModel(), WirelessViewModelInterface {
                 SplitSelectableMember(
                     name = "You",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = true,
+                    isSelected = true
                 ),
                 SplitSelectableMember(
                     name = "Sushil",
                     image = "https://i.pravatar.cc/300",
-                    isSelected = false,
-                ),
+                    isSelected = false
+                )
             )
         )
         willGetTransactions.add(

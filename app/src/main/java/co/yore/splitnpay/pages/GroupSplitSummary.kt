@@ -10,16 +10,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.MemberTransact
 import co.yore.splitnpay.components.components.YouWillPayCard
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.MemberTransact
+import co.yore.splitnpay.models.SplitSelectableMember
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -69,24 +69,24 @@ fun GroupSplitSummary(
                     targetState = selectedBalanceExpenseTab,
                     transitionSpec = {
                         fadeIn(animationSpec = tween(500)) with
-                                fadeOut(animationSpec = tween(500))
+                            fadeOut(animationSpec = tween(500))
                     }
                 ) {
-                    if (it==0) {
+                    if (it == 0) {
                         Column(
                             modifier = Modifier
                                 .fadingEdge()
-                                .verticalScroll(rememberScrollState()),
+                                .verticalScroll(rememberScrollState())
                         ) {
                             12.sy()
-                            //SummarySelectableRow(members)
+                            // SummarySelectableRow(members)
                             LazyRow(
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(25.dep()),
                                 contentPadding = PaddingValues(
                                     start = 26.dep(),
-                                    end = 26.dep(),
+                                    end = 26.dep()
                                 )
                             ) {
                                 itemsIndexed(members) { index, it ->

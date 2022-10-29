@@ -21,9 +21,9 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.GroupCard_0msq1z
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.components.configuration.GroupCardConfiguration
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.GroupCardConfiguration
 import co.yore.splitnpay.models.GroupData
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.GreyShadow

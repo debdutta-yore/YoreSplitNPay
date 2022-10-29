@@ -16,10 +16,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.GreyShadow
 
@@ -57,7 +55,7 @@ fun YouWillGetDetails_o29zr4(
     totalGet: Float = floatState(key = DataIds.totalGet).value,
     contentDescription: String,
     config: YouWillGetDetailsConfiguration = YouWillGetDetailsConfiguration(),
-    selectedGetOption: TransactionStatus = tState<TransactionStatus>(key = DataIds.transactionStatus).value,
+    selectedGetOption: TransactionStatus1 = tState<TransactionStatus1>(key = DataIds.transactionStatus).value,
     notifier: NotificationService = notifier()
 ) {
 
@@ -162,8 +160,8 @@ fun YouWillGetDetails_o29zr4(
 fun YouWillGetDetailsTabRow(
     contentDescription: String,
     config: YouWillGetDetailsTabRowConfiguration = YouWillGetDetailsTabRowConfiguration(),
-    status: TransactionStatus,
-    onClick: (TransactionStatus) -> Unit
+    status: TransactionStatus1,
+    onClick: (TransactionStatus1) -> Unit
 ) {
     val length = with(LocalDensity.current){5.5.dep().toPx()}
     LazyRow(
@@ -178,99 +176,31 @@ fun YouWillGetDetailsTabRow(
             YouWillGetDetailsSingleTabItem_7ozj5w(
                 item = stringResource(config.YouWillGetDetailsTabRowPendingItem),
                 contentDescription = "PendingChip",
-                selected = status == TransactionStatus.Pending,
-                onClick = { onClick(TransactionStatus.Pending) }
+                selected = status == TransactionStatus1.Pending,
+                onClick = { onClick(TransactionStatus1.Pending) }
             )
         }
         item{
             YouWillGetDetailsSingleTabItem_7ozj5w(
                 item = stringResource(config.YouWillGetDetailsTabRowPartiallyReceivedItem),
                 contentDescription = "PartiallyReceivedChip",
-                selected = status == TransactionStatus.PartiallyReceived,
-                onClick = { onClick(TransactionStatus.PartiallyReceived) }
+                selected = status == TransactionStatus1.PartiallyReceived,
+                onClick = { onClick(TransactionStatus1.PartiallyReceived) }
             )
         }
         item{
             YouWillGetDetailsSingleTabItem_7ozj5w(
                 item = stringResource(config.YouWillGetDetailsTabRowSettledItem),
                 contentDescription = "SettledChip",
-                selected = status == TransactionStatus.Settled,
-                onClick = { onClick(TransactionStatus.Settled) }
+                selected = status == TransactionStatus1.Settled,
+                onClick = { onClick(TransactionStatus1.Settled) }
             )
         }
     }
 }
 
-data class MemberWillGetOrPayDetailsSingleRowItem(
-    val imageUrl: String,
-    val userName: String,
-    val userPhNo: String,
-    val getAmount: Float,
-    val paidAmount: Float
-)
 
-enum class TransactionStatus {
-    Pending,
-    PartiallyReceived,
-    Settled,
-    AllSettled
-}
 
-data class YouWillGetDetailsTabRowConfiguration(
-    val YouWillGetDetailsTabRowPendingItem: Int = R.string.YouWillGetDetailsTabRowPendingItem,
-    val YouWillGetDetailsTabRowPartiallyReceivedItem: Int = R.string.YouWillGetDetailsTabRowPartiallyReceivedItem,
-    val YouWillGetDetailsTabRowSettledItem: Int = R.string.YouWillGetDetailsTabRowSettledItem
-)
-{
-    companion object{
-        val variationOne = YouWillGetDetailsTabRowConfiguration(
-            YouWillGetDetailsTabRowPartiallyReceivedItem = R.string.YouWillPayDetailsTabRowPartiallyPaidItem
-        )
-    }
 
-}
 
-data class YouWillGetDetailsConfiguration(
-    val shadowColor: Color = GreyShadow,
-    val shadowBorderRadius: Float = 15f,
-    val shadowBlurRadius: Float = 33f,
-    val shadowOffsetX: Float = 7f,
-    val shadowOffsetY: Float = 7f,
-    val shadowSpread: Float = 0f,
-    val cornerRadius: Float = 15f,
-    val backgroundColor: Color = Color.White,
-    val startPadding: Float = 33f,
-    val endPadding: Float = 18f,
-    val topPadding: Float = 26f,
-    val BottomPadding: Float = 18f,
 
-    val memberWillGetText: Int = R.string.member_will_get_text,
-    val memberWillPayText: Int = R.string.member_will_pay_text,
-    val youWillGetTextFontSize: Float = 16f,
-    val youWillGetTextFontColor: Color = DarkBlue,
-
-    val gapBetweenYouWillGetTextAndTabRow: Float = 11f,
-
-    val lazyColumnEndPadding: Float = 26f,
-    val lazyColumnTopPadding: Float = 19f,
-    val lazyColumnHeight: Float = 185f,
-    val gapBetweenTwoRowInLazyColumn: Float = 19f,
-
-    val totalCardStartPadding: Float = 5f,
-    val totalCardEndPadding: Float = 12f,
-    val totalCardTopPadding: Float = 27f,
-    val totalCardBottomPadding: Float = 27f,
-    val totalCardText: Int = R.string.YouWillGetDetailsTotalYouWillGet,
-    val totalCardTrailingText: Int = R.string.YouWillGetDetailsCr
-)
-{
-    companion object {
-
-        val variation1 = YouWillGetDetailsConfiguration(
-            lazyColumnHeight = 50f,
-            memberWillGetText = R.string.YouWillPayDetailsYouWillPayText,
-            totalCardText = R.string.YouWillPayDetailsTotalYouWillPay,
-            totalCardTrailingText = R.string.YouWillPayDetailsDr
-        )
-    }
-}

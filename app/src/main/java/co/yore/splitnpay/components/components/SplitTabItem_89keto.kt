@@ -18,17 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import co.yore.splitnpay.components.configuration.SplitTabItemConfiguration
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
-
-enum class SplitPageTabs {
-    All,
-    YouOwe,
-    YouAreOwed
-}
-
-
+import co.yore.splitnpay.models.SplitPageTabs
+import co.yore.splitnpay.models.SplitTabItemConfiguration
 
 @Composable
 fun SplitTabItem_89keto(
@@ -37,22 +30,24 @@ fun SplitTabItem_89keto(
     currentTab: SplitPageTabs,
     contentDescription: String,
     config: SplitTabItemConfiguration = SplitTabItemConfiguration(),
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     val computedBackgroundColor by remember(selected) {
         derivedStateOf {
-            if (selected == currentTab)
+            if (selected == currentTab) {
                 config.selectedBackground
-            else
+            } else {
                 config.unSelectedBackground
+            }
         }
     }
     val computedColor by remember(selected) {
         derivedStateOf {
-            if (selected == currentTab)
+            if (selected == currentTab) {
                 config.selectedTextColor
-            else
+            } else {
                 config.unSelectedTextColor
+            }
         }
     }
     val animatedBackgroundColor by animateColorAsState(

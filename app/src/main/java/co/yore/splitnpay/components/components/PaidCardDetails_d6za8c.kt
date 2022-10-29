@@ -6,20 +6,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.GreyShadow
-import co.yore.splitnpay.ui.theme.LightBlue4
-import co.yore.splitnpay.ui.theme.LightGreen3
+import co.yore.splitnpay.libs.sy
+import co.yore.splitnpay.models.CategorySelectorCardConfiguration
+import co.yore.splitnpay.models.PaidCardConfiguration
+import co.yore.splitnpay.models.SplitCardDetailsData
 
 @Composable
 fun PaidCardDetails_d6za8c(
@@ -162,90 +159,4 @@ fun PaidCardDetails_d6za8c(
 
 }
 
-data class PaidCardConfiguration(
 
-    val shadowColor: Color = GreyShadow,
-    val borderRadius: Float = 15f,
-    val shadowBlurRadius: Float = 33f,
-    val shadowOffsetX: Float = 7f,
-    val shadowOffsetY: Float = 7f,
-    val shadowSpread: Float = 0f,
-    val background: Color = Color.White,
-    val startPadding: Float = 31f,
-    val endPadding: Float = 49f,
-    val topPadding: Float = 21f,
-    val bottomPadding: Float = 26f,
-
-    val gapBetweenTwoStatus: Float = 5f,
-    val gapBetweenStatusAndSplitMethod: Float = 21f,
-    val gapBetweenTwoSplitMethod: Float = 5f,
-    val gapBetweenSplitMethodAndCategories: Float = 13f,
-    val gapBetweenTwoCategories: Float = 10f,
-    val gapBetweenTwoCreatedBy: Float = 5f,
-    val gapBetweenCreatedByAndCreatedOn: Float = 21f,
-    val gapBetweenTwoCreatedOn: Float = 5f,
-    val gapBetweenCreatedOnAndSplitAmong: Float = 13f,
-    val gapBetweenTwoSplitAmong: Float = 5f,
-
-    val PaidCardDetailsStatus: Int = R.string.PaidCardDetailsStatus,
-    val PaidCardDetailsSplitMethod: Int = R.string.PaidCardDetailsSplitMethod,
-    val PaidCardDetailsCategories: Int = R.string.PaidCardDetailsCategories,
-    val PaidCardDetailsCreatedBy: Int = R.string.PaidCardDetailsCreatedBy,
-    val PaidCardDetailsCreatedOn: Int = R.string.PaidCardDetailsCreatedOn,
-    val PaidCardDetailsSplitAmong: Int = R.string.PaidCardDetailsSplitAmong,
-
-    val statusFontSize: Float = 11f,
-    val statusColor: Color = LightBlue4,
-
-    val partiallyPaidSize: Float = 14f,
-    val partiallyPaidColor: Color = LightGreen3,
-
-    val splitMethodFontSize: Float = 11f,
-    val splitMethodColor: Color = LightBlue4,
-
-    val unequalFontSize: Float = 14f,
-    val unequalColor: Color = DarkBlue,
-
-    val categoriesFontSize: Float = 11f,
-    val categoriesColor: Color = LightBlue4,
-
-    val createdByFontSize: Float = 11f,
-    val createdByColor: Color = LightBlue4,
-
-    val youFontSize: Float = 14f,
-    val youColor: Color = DarkBlue,
-
-    val createdOnFontSize: Float = 11f,
-    val createdOnColor: Color = LightBlue4,
-
-    val dateFontSize: Float = 14f,
-    val dateColor: Color = DarkBlue,
-
-    val splitAmongFontSize: Float = 11f,
-    val splitAmongColor: Color = LightBlue4,
-
-    val membersFontSize: Float = 14f,
-    val membersColor: Color = DarkBlue
-)
-
-data class SplitCardDetailsData(
-    val status: String,
-    val splitMethod: String,
-    val categories: String,
-    val categoryIcon: Any?,
-    val createdBy: String,
-    val createdOn: String,
-    val noOfMembers: Int
-){
-    companion object{
-        val blank = SplitCardDetailsData(
-            status = "",
-            splitMethod = "",
-            categories = "",
-            createdBy = "",
-            createdOn = "",
-            noOfMembers = 0,
-            categoryIcon = null,
-        )
-    }
-}

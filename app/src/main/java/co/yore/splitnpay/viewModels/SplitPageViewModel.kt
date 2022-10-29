@@ -16,11 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-enum class SplitPageState{
-    GET,
-    PAY,
-    NONE
-}
+
 
 class SplitPageViewModel(
     private val repo: Repo = RepoImpl(),

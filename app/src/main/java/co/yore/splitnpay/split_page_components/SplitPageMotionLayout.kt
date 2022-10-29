@@ -30,15 +30,11 @@ import androidx.constraintlayout.compose.layoutId
 import co.yore.splitnpay.addmembers.PeopleCard_eq3k8h
 import co.yore.splitnpay.components.components.AddGroupButton_kbf1at
 import co.yore.splitnpay.components.components.GroupCard_0msq1z
-import co.yore.splitnpay.components.components.SplitPageTabs
 import co.yore.splitnpay.components.components.SplitTabItem_89keto
 import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
-import co.yore.splitnpay.models.ContactData
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.GroupData
-import co.yore.splitnpay.models.GroupOrContact
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.NothingFoundUI
 import co.yore.splitnpay.ui.theme.robotoFonts
 
@@ -112,10 +108,9 @@ fun GroupsChildPage(
                 AddGroupButton_kbf1at()
                 16.sx()
             }
-            if(groups.isEmpty()){
+            if (groups.isEmpty()){
                 NothingFoundUI()
-            }
-            else{
+            } else {
                 LazyColumn(
                     modifier = Modifier.fadingEdge(),
                     contentPadding = PaddingValues(
@@ -166,7 +161,7 @@ fun PeoplesChildPage() {
 fun GiveTakeTypeTabs(
     suffix: String = suffix(),
     selectedTab: SplitPageTabs = tState<SplitPageTabs>("${DataIds.subTab}$suffix").value,
-    notifier: NotificationService = notifier(),
+    notifier: NotificationService = notifier()
 ) {
     val notificationId by remember(suffix) {
         derivedStateOf {
@@ -214,7 +209,7 @@ fun FriendsContent(
             start = 17.dep(),
             end = 17.dep(),
             bottom = 85.dep()
-        ),
+        )
     ) {
         items(
             peoples,
@@ -252,15 +247,15 @@ fun NoGroupsContent() {
     }
 }
 
-
 @Composable
 fun GroupCreationButton(
     config: GroupCreationButtonConfiguration = GroupCreationButtonConfiguration(),
     notifier: NotificationService = notifier()
 ) {
-    Button(modifier = Modifier
-        .width(config.width.dep())
-        .height(config.height.dep()),
+    Button(
+        modifier = Modifier
+            .width(config.width.dep())
+            .height(config.height.dep()),
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = config.backgroundColor
@@ -315,15 +310,16 @@ fun Tabs(
             indicator = {
                 Box {}
             },
-            divider = { TabRowDefaults.Divider(color = Color.Transparent) },
+            divider = { TabRowDefaults.Divider(color = Color.Transparent) }
         ) {
             tabsList.forEachIndexed { index, text ->
                 val computedColor by remember(selectedIndex) {
                     derivedStateOf {
-                        if (selectedIndex == index)
+                        if (selectedIndex == index) {
                             config.selectedColor
-                        else
+                        } else {
                             config.color
+                        }
                     }
                 }
                 val tabColor by animateColorAsState(
@@ -358,10 +354,9 @@ fun SplitBalanceText(
     RobotoText(
         stringResource(splitTextId),
         fontSize = fontSize.sep(),
-        color = color,
+        color = color
     )
 }
-
 
 @Composable
 fun HeaderBackAndSplit(

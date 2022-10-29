@@ -1,5 +1,6 @@
 package co.yore.splitnpay.split_page_components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +21,6 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -29,9 +29,11 @@ import androidx.constraintlayout.compose.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.ContactTabs
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.SplitPageState
+import co.yore.splitnpay.models.YoreAmountConfiguration
 import co.yore.splitnpay.ui.theme.robotoFonts
-import co.yore.splitnpay.viewModels.SplitPageState
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -40,7 +42,7 @@ fun SplitPageContent() {
         threshold = 0.05f,
         keyboardAware = true,
         insetAware = false
-    ){progress->
+    ){progress ->
         val dep = 1.dep()
         MotionLayout(
             progress = progress,
@@ -48,10 +50,9 @@ fun SplitPageContent() {
             end = SplitPageEndConstraint(dep),
             modifier = Modifier
                 .fillMaxSize()
-            ,
         ) {
             CollapsibleContents(
-                progress = progress,
+                progress = progress
             )
         }
     }
@@ -79,7 +80,7 @@ fun CollapsibleContents(
     YouWillPayCard(progress)
     SearchBarSection()
     TabsSection(selectedIndex){
-        notifier.notify(DataIds.selectedTabIndex,it)
+        notifier.notify(DataIds.selectedTabIndex, it)
     }
     ContentSection(selectedIndex)
 }
@@ -97,7 +98,7 @@ fun SplitPageEndConstraint(dep: Dp): ConstraintSet {
         val you_will_get_card = createRefFor("you_will_get_card")
         val you_will_get_card1 = createRefFor("you_will_get_card1")
         constrain(upper_cut){
-            height = Dimension.value(159*dep)
+            height = Dimension.value(159 * dep)
             width = Dimension.matchParent
             end.linkTo(get_card.end)
         }
@@ -105,11 +106,11 @@ fun SplitPageEndConstraint(dep: Dp): ConstraintSet {
             top.linkTo(upper_cut.bottom)
         }
         constrain(search_bar){
-            top.linkTo(upper_cut.bottom,31*dep)
+            top.linkTo(upper_cut.bottom, 31 * dep)
         }
         constrain(header_content){
             centerVerticallyTo(upper_cut)
-            start.linkTo(upper_cut.start,38*dep)
+            start.linkTo(upper_cut.start, 38 * dep)
         }
         constrain(collapsed_cards){
             centerVerticallyTo(header_content)
@@ -126,13 +127,13 @@ fun SplitPageEndConstraint(dep: Dp): ConstraintSet {
         }
         constrain(you_will_get_card){
             end.linkTo(upper_cut.end)
-            //bottom.linkTo(upper_cut.bottom,_53_dep)
-            top.linkTo(you_will_get_card1.bottom,8*dep)
+            // bottom.linkTo(upper_cut.bottom,_53_dep)
+            top.linkTo(you_will_get_card1.bottom, 8 * dep)
         }
         constrain(you_will_get_card1){
             end.linkTo(upper_cut.end)
-            top.linkTo(upper_cut.top,53*dep)
-            //bottom.linkTo(you_will_get_card.top,_8_dep)
+            top.linkTo(upper_cut.top, 53 * dep)
+            // bottom.linkTo(you_will_get_card.top,_8_dep)
         }
     }
 }
@@ -203,16 +204,17 @@ fun YouWillGetCard(
 ) {
     val themeColor by remember {
         derivedStateOf {
-            if(haveSplit)
+            if (haveSplit) {
                 Color(0xff37D8CF)
-            else
+            } else {
                 Color(0xff859DBA)
+            }
         }
     }
     val dep = 1.dep()
     val textColor by remember(progress) {
         derivedStateOf {
-            Color.blend(Color(0xff243257), Color(0xff839BB9),progress)
+            Color.blend(Color(0xff243257), Color(0xff839BB9), progress)
         }
     }
     MotionLayout(
@@ -226,12 +228,12 @@ fun YouWillGetCard(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Color(0x80C6CFD8).copy(alpha = 1f-progress),
+                    color = Color(0x80C6CFD8).copy(alpha = 1f - progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
                     offsetX = 7.dep(),
-                    offsetY = 7.dep(),
+                    offsetY = 7.dep()
                 )
                 .clip(RoundedCornerShape(15.dep()))
                 .background(
@@ -247,14 +249,14 @@ fun YouWillGetCard(
         }
         AnimatedTextContent(
             modifier = Modifier
-            .layoutId("text"),
+                .layoutId("text"),
             from = "You’ll get",
             to = "You will get",
             progress = progress,
             spanStyle = SpanStyle(
-                fontWeight = FontWeight((700 - 300*progress).toInt()),
+                fontWeight = FontWeight((700 - 300 * progress).toInt()),
                 color = textColor,
-                fontSize = (16-5*progress).sep()
+                fontSize = (16 - 5 * progress).sep()
             )
         )
         Box(
@@ -298,6 +300,7 @@ fun YouWillGetCard(
     }
 }
 
+@SuppressLint("Range")
 fun YouWillGetCardEndConstraint(dep: Dp): ConstraintSet {
     return ConstraintSet {
         val get_card = createRefFor("get_card")
@@ -306,25 +309,25 @@ fun YouWillGetCardEndConstraint(dep: Dp): ConstraintSet {
         val get_icon = createRefFor("get_icon")
         val arrow = createRefFor("arrow")
         constrain(get_card){
-            height = Dimension.value(32*dep)
+            height = Dimension.value(32 * dep)
             width = Dimension.fillToConstraints
-            start.linkTo(text.start,-12*dep)
-            end.linkTo(amount.end,-12*dep)
+            start.linkTo(text.start, -12 * dep)
+            end.linkTo(amount.end, -12 * dep)
         }
         constrain(text){
             centerVerticallyTo(get_card)
         }
         constrain(amount){
-            start.linkTo(text.end,12*dep)
+            start.linkTo(text.end, 12 * dep)
             centerVerticallyTo(get_card)
         }
         constrain(amount){
-            start.linkTo(text.end,12*dep)
-            end.linkTo(parent.end,28*dep)
+            start.linkTo(text.end, 12 * dep)
+            end.linkTo(parent.end, 28 * dep)
             centerVerticallyTo(get_card)
         }
         constrain(get_icon){
-            start.linkTo(get_card.start,33*dep)
+            start.linkTo(get_card.start, 33 * dep)
             bottom.linkTo(get_card.bottom)
             pivotX = 0f
             pivotY = 1f
@@ -333,8 +336,8 @@ fun YouWillGetCardEndConstraint(dep: Dp): ConstraintSet {
             scaleY = 0f
         }
         constrain(arrow){
-            bottom.linkTo(get_card.bottom,8*dep)
-            end.linkTo(get_card.end,10*dep)
+            bottom.linkTo(get_card.bottom, 8 * dep)
+            end.linkTo(get_card.end, 10 * dep)
             pivotX = 1f
             pivotY = 1f
             alpha = 0.0f
@@ -353,32 +356,33 @@ fun YouWillGetCardStartConstraint(dep: Dp): ConstraintSet {
         val arrow = createRefFor("arrow")
         constrain(get_card){
 
-            width = Dimension.value(153*dep)
-            height = Dimension.value(149*dep)
+            width = Dimension.value(153 * dep)
+            height = Dimension.value(149 * dep)
         }
         constrain(text){
             centerHorizontallyTo(get_card)
-            top.linkTo(get_card.top,22*dep)
+            top.linkTo(get_card.top, 22 * dep)
         }
         constrain(amount){
             centerHorizontallyTo(get_card)
-            top.linkTo(text.bottom,6*dep)
+            top.linkTo(text.bottom, 6 * dep)
         }
         constrain(get_icon){
             pivotX = 0f
             pivotY = 1f
-            start.linkTo(get_card.start,33*dep)
+            start.linkTo(get_card.start, 33 * dep)
             bottom.linkTo(get_card.bottom)
         }
         constrain(arrow){
             pivotX = 1f
             pivotY = 1f
-            bottom.linkTo(get_card.bottom,8*dep)
-            end.linkTo(get_card.end,10*dep)
+            bottom.linkTo(get_card.bottom, 8 * dep)
+            end.linkTo(get_card.end, 10 * dep)
         }
     }
 }
 
+@SuppressLint("Range")
 @OptIn(ExperimentalMotionApi::class)
 @Composable
 fun YouWillPayCard(
@@ -391,17 +395,18 @@ fun YouWillPayCard(
 
     val themeColor by remember {
         derivedStateOf {
-            if(haveSplit)
+            if (haveSplit) {
                 Color(0xffFF4077)
-            else
+            } else {
                 Color(0xff859DBA)
+            }
         }
     }
     val dep = 1.dep()
 
     val textColor by remember(progress) {
         derivedStateOf {
-            Color.blend(Color(0xff243257), Color(0xff839BB9),progress)
+            Color.blend(Color(0xff243257), Color(0xff839BB9), progress)
         }
     }
 
@@ -414,28 +419,28 @@ fun YouWillPayCard(
             val arrow = createRefFor("arrow")
             constrain(get_card){
 
-                width = Dimension.value(153*dep)
-                height = Dimension.value(149*dep)
+                width = Dimension.value(153 * dep)
+                height = Dimension.value(149 * dep)
             }
             constrain(text){
                 centerHorizontallyTo(get_card)
-                top.linkTo(get_card.top,22*dep)
+                top.linkTo(get_card.top, 22 * dep)
             }
             constrain(amount){
                 centerHorizontallyTo(get_card)
-                top.linkTo(text.bottom,6*dep)
+                top.linkTo(text.bottom, 6 * dep)
             }
             constrain(pay_icon){
                 pivotX = 0f
                 pivotY = 1f
-                start.linkTo(get_card.start,27*dep)
+                start.linkTo(get_card.start, 27 * dep)
                 bottom.linkTo(get_card.bottom)
             }
             constrain(arrow){
                 pivotX = 1f
                 pivotY = 1f
-                bottom.linkTo(get_card.bottom,8*dep)
-                end.linkTo(get_card.end,10*dep)
+                bottom.linkTo(get_card.bottom, 8 * dep)
+                end.linkTo(get_card.end, 10 * dep)
             }
         },
         end = ConstraintSet {
@@ -445,25 +450,25 @@ fun YouWillPayCard(
             val pay_icon = createRefFor("pay_icon")
             val arrow = createRefFor("arrow")
             constrain(get_card){
-                height = Dimension.value(32*dep)
+                height = Dimension.value(32 * dep)
                 width = Dimension.fillToConstraints
-                start.linkTo(text.start,-12*dep)
-                end.linkTo(amount.end,-12*dep)
+                start.linkTo(text.start, -12 * dep)
+                end.linkTo(amount.end, -12 * dep)
             }
             constrain(text){
                 centerVerticallyTo(get_card)
             }
             constrain(amount){
-                start.linkTo(text.end,12*dep)
+                start.linkTo(text.end, 12 * dep)
                 centerVerticallyTo(get_card)
             }
             constrain(amount){
-                start.linkTo(text.end,12*dep)
-                end.linkTo(parent.end,28*dep)
+                start.linkTo(text.end, 12 * dep)
+                end.linkTo(parent.end, 28 * dep)
                 centerVerticallyTo(get_card)
             }
             constrain(pay_icon){
-                start.linkTo(get_card.start,33*dep)
+                start.linkTo(get_card.start, 33 * dep)
                 bottom.linkTo(get_card.bottom)
                 pivotX = 0f
                 pivotY = 1f
@@ -472,8 +477,8 @@ fun YouWillPayCard(
                 scaleY = 0f
             }
             constrain(arrow){
-                bottom.linkTo(get_card.bottom,8*dep)
-                end.linkTo(get_card.end,10*dep)
+                bottom.linkTo(get_card.bottom, 8 * dep)
+                end.linkTo(get_card.end, 10 * dep)
                 pivotX = 1f
                 pivotY = 1f
                 alpha = 0.0f
@@ -484,26 +489,26 @@ fun YouWillPayCard(
         progress = progress,
         modifier = Modifier
             .layoutId("you_will_get_card1")
-            //.size(cardSize)
-            //.background(Color.Red)
-        //.clipToBounds()
+        // .size(cardSize)
+        // .background(Color.Red)
+        // .clipToBounds()
     ) {
         Box(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Color(0x80C6CFD8).copy(alpha = 1f-progress),
+                    color = Color(0x80C6CFD8).copy(alpha = 1f - progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
                     offsetX = 7.dep(),
-                    offsetY = 7.dep(),
+                    offsetY = 7.dep()
                 )
                 .clip(
                     RoundedCornerShape((15 * (1f + progress)).dep())
                 )
                 .background(
-                    Color.White,
+                    Color.White
                 )
                 .clickable(
                     rippleColor = themeColor
@@ -515,14 +520,14 @@ fun YouWillPayCard(
         }
         AnimatedTextContent(
             modifier = Modifier
-            .layoutId("text"),
+                .layoutId("text"),
             from = "You'll pay",
             to = "You will pay",
             progress = progress,
             spanStyle = SpanStyle(
-                fontWeight = FontWeight((700 - 300*progress).toInt()),
+                fontWeight = FontWeight((700 - 300 * progress).toInt()),
                 color = textColor,
-                fontSize = (16-5*progress).sep()
+                fontSize = (16 - 5 * progress).sep()
             )
         )
         Box(
@@ -567,8 +572,6 @@ fun YouWillPayCard(
     }
 }
 
-
-
 fun Modifier.ripple() = composed(
     factory = {
         val interactionSource = remember { MutableInteractionSource() }
@@ -583,7 +586,6 @@ fun Modifier.ripple() = composed(
             )
     }
 )
-
 
 @Composable
 fun ContentSection(
@@ -600,7 +602,7 @@ fun ContentSection(
 @Composable
 fun TabsSection(
     selectedIndex: Int,
-    onIndexChanged: (Int)->Unit
+    onIndexChanged: (Int) -> Unit
 ) {
     val tabsList =
         listOf(ContactTabs.Groups.name, ContactTabs.People.name)
@@ -611,7 +613,7 @@ fun TabsSection(
     ){
         Tabs(
             selectedIndex,
-            tabsList,
+            tabsList
         ) {
             onIndexChanged(it)
         }
@@ -621,7 +623,7 @@ fun TabsSection(
 @Composable
 fun HeaderContentSection(
     whole: String = stringState(DataIds.whole).value,
-    decimal: String = stringState(DataIds.decimal).value,
+    decimal: String = stringState(DataIds.decimal).value
 ) {
     Column(
         modifier = Modifier
@@ -638,7 +640,7 @@ fun HeaderContentSection(
         YoreAmount(
             config = YoreAmountConfiguration.splitPageHeadContent,
             whole = whole,
-            decimal = decimal,
+            decimal = decimal
         )
     }
 }
@@ -662,7 +664,7 @@ fun BottomCut(
 ) {
     val backgroundColor by remember(pageState) {
         derivedStateOf {
-            when(pageState){
+            when (pageState){
                 SplitPageState.GET -> Color(0xff37D8CF)
                 SplitPageState.PAY -> Color(0xffFF4077)
                 SplitPageState.NONE -> Color(0xff839BB9)
@@ -678,9 +680,9 @@ fun BottomCut(
             .background(
                 Color.White,
                 RoundedCornerShape(
-                    topEnd = 48.dep(),
+                    topEnd = 48.dep()
 
-                    )
+                )
             )
     ){
 
@@ -693,7 +695,7 @@ fun UpperCut(
 ) {
     val backgroundColor by remember(pageState) {
         derivedStateOf {
-            when(pageState){
+            when (pageState){
                 SplitPageState.GET -> Color(0xff37D8CF)
                 SplitPageState.PAY -> Color(0xffFF4077)
                 SplitPageState.NONE -> Color(0xff839BB9)
@@ -708,9 +710,9 @@ fun UpperCut(
             .background(
                 backgroundColor,
                 RoundedCornerShape(
-                    bottomStart = 48.dep(),
+                    bottomStart = 48.dep()
 
-                    )
+                )
             )
     ){
 

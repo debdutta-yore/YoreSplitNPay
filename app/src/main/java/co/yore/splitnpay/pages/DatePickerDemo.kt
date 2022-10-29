@@ -17,76 +17,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.YoreDatePicker
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.currentYear
 import co.yore.splitnpay.viewModels.getOrMyDefault
 import kotlinx.coroutines.CoroutineScope
 import kotlin.math.ceil
 
-enum class DatePickerOption {
-    Monthly,
-    Weekly;
 
-    val switch: DatePickerOption
-        get() {
-            val index = this.ordinal
-            var nextIndex = index + 1
-            val vals = enumValues<DatePickerOption>()
-            val count = vals.size
-            nextIndex %= count
-            return vals[nextIndex]
-        }
-}
 
-enum class DatePickerRange {
-    Date,
-    DateRange;
 
-    val switch: DatePickerRange
-        get() {
-            val index = this.ordinal
-            var nextIndex = index + 1
-            val vals = enumValues<DatePickerRange>()
-            val count = vals.size
-            nextIndex %= count
-            return vals[nextIndex]
-        }
-}
 
-enum class DatePickerFromTo {
-    From,
-    To;
 
-    val switch: DatePickerFromTo
-        get() {
-            val index = this.ordinal
-            var nextIndex = index + 1
-            val vals = enumValues<DatePickerFromTo>()
-            val count = vals.size
-            nextIndex %= count
-            return vals[nextIndex]
-        }
-}
 
-enum class TimeTabs{
-    SINGLE,
-    RANGE,
-}
 
-class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetModel{
+
+class DatePickerAdvancedBottomSheetModel(val callback: Callback) : BottomSheetModel{
     sealed class Result{
         class MonthYear(
             val year: Int,
             val month: Int,
             private val display: String
-        ): Result() {
+        ) : Result() {
             override fun display(): String {
                 return display
             }
@@ -96,7 +53,7 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
             val from: MonthYear,
             val to: MonthYear,
             private val display: String
-        ): Result() {
+        ) : Result() {
             override fun display(): String {
                 return display
             }
@@ -107,7 +64,7 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
             val month: Int,
             day: Int,
             private val display: String
-        ): Result() {
+        ) : Result() {
             override fun display(): String {
                 return display
             }
@@ -117,7 +74,7 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
             val from: Date,
             val to: Date,
             private val display: String
-        ): Result() {
+        ) : Result() {
             override fun display(): String {
                 return display
             }
@@ -130,36 +87,37 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
         fun close()
         fun onContinue(result: Result)
     }
-    /////////////////
+
+    // ///////////////
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
             DataIds.monthlyOrWeekly -> {
                 handleDatePickerOption(arg = arg)
             }
-            DataIds.year->{
-                years[combineKey] = arg as? Int?:return@NotificationService
+            DataIds.year -> {
+                years[combineKey] = arg as? Int ?: return@NotificationService
                 updateDatePicker()
             }
-            DataIds.month->{
-                months[combineKey] = arg as? Int?:return@NotificationService
+            DataIds.month -> {
+                months[combineKey] = arg as? Int ?: return@NotificationService
                 updateDatePicker()
             }
-            DataIds.day->{
-                val day = arg as? Int?:return@NotificationService
+            DataIds.day -> {
+                val day = arg as? Int ?: return@NotificationService
                 days[combineKey] = day
                 updateDatePicker()
             }
-            DataIds.monthlyTab->{
-                selectedMonthlyTab.value = arg as? TimeTabs?:return@NotificationService
-                if(selectedMonthlyTab.value == TimeTabs.RANGE){
+            DataIds.monthlyTab -> {
+                selectedMonthlyTab.value = arg as? TimeTabs ?: return@NotificationService
+                if (selectedMonthlyTab.value == TimeTabs.RANGE){
                     datePickerFromTo.value = DatePickerFromTo.From
                 }
                 updateDatePicker()
             }
-            DataIds.weeklyTab->{
-                selectedWeeklyTab.value = arg as? TimeTabs?:return@NotificationService
-                if(selectedWeeklyTab.value == TimeTabs.RANGE){
+            DataIds.weeklyTab -> {
+                selectedWeeklyTab.value = arg as? TimeTabs ?: return@NotificationService
+                if (selectedWeeklyTab.value == TimeTabs.RANGE){
                     datePickerFromTo.value = DatePickerFromTo.From
                 }
                 updateDatePicker()
@@ -169,28 +127,27 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
             }
             DataIds.datePickerContinueClick -> {
                 val result: Result
-                if(
+                if (
                     datePickerOption.value == DatePickerOption.Monthly
                 ){
-                    if(selectedMonthlyTab.value == TimeTabs.RANGE){
+                    if (selectedMonthlyTab.value == TimeTabs.RANGE){
                         val keyFrom = "${DatePickerOption.Monthly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.From.name}"
                         val keyTo = "${DatePickerOption.Monthly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.To}"
-                        val fromYear = years[keyFrom]?:currentYear
-                        val toYear = years[keyTo]?:currentYear
-                        val fromMonth = months[keyFrom]?:0
-                        val toMonth = months[keyTo]?:0
-                        //////////
+                        val fromYear = years[keyFrom] ?: currentYear
+                        val toYear = years[keyTo] ?: currentYear
+                        val fromMonth = months[keyFrom] ?: 0
+                        val toMonth = months[keyTo] ?: 0
+                        // ////////
                         var fromMonthString = monthNameShort(fromMonth)
                         var toMonthString = monthNameShort(toMonth)
                         var yearSuffix = ""
-                        if(fromYear!=toYear){
+                        if (fromYear != toYear){
                             fromMonthString += " $fromYear"
                             toMonthString += " $toYear"
-                        }
-                        else{
+                        } else {
                             yearSuffix = ", $fromYear"
                         }
-                        //////////
+                        // ////////
                         result = Result.MonthYearRange(
                             from = Result.MonthYear(
                                 year = fromYear,
@@ -204,46 +161,42 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                             ),
                             display = "$fromMonthString - $toMonthString$yearSuffix"
                         )
-                    }
-                    else{
+                    } else {
                         val ck = combineKey
-                        val year = years[ck]?:currentYear
-                        val month = months[ck]?:0
+                        val year = years[ck] ?: currentYear
+                        val month = months[ck] ?: 0
                         result = Result.MonthYear(
                             year = year,
                             month = month,
                             display = "$month $year"
                         )
                     }
-                }
-                else{
-                    if(selectedWeeklyTab.value == TimeTabs.RANGE){
+                } else {
+                    if (selectedWeeklyTab.value == TimeTabs.RANGE){
                         val keyFrom = "${DatePickerOption.Weekly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.From.name}"
                         val keyTo = "${DatePickerOption.Weekly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.To}"
-                        val fromYear = years[keyFrom]?:currentYear
-                        val toYear = years[keyTo]?:currentYear
-                        val fromMonth = months[keyFrom]?:0
-                        val toMonth = months[keyTo]?:0
-                        val fromDay = days[keyFrom]?:0
-                        val toDay = days[keyTo]?:0
-                        //////
+                        val fromYear = years[keyFrom] ?: currentYear
+                        val toYear = years[keyTo] ?: currentYear
+                        val fromMonth = months[keyFrom] ?: 0
+                        val toMonth = months[keyTo] ?: 0
+                        val fromDay = days[keyFrom] ?: 0
+                        val toDay = days[keyTo] ?: 0
+                        // ////
                         var display = ""
-                        val fromDisplay = displayableDate(fromDay,fromMonth,fromYear)
-                        val toDisplay = displayableDate(toDay,toMonth,toYear)
-                        if(fromYear==toYear){
-                            if(fromMonth==toMonth){
-                                if(fromDay==toDay){
-                                    display = displayableDate(fromDay,fromMonth,fromYear)
-                                }
-                                else {
+                        val fromDisplay = displayableDate(fromDay, fromMonth, fromYear)
+                        val toDisplay = displayableDate(toDay, toMonth, toYear)
+                        if (fromYear == toYear){
+                            if (fromMonth == toMonth){
+                                if (fromDay == toDay){
+                                    display = displayableDate(fromDay, fromMonth, fromYear)
+                                } else {
                                     val fromOrdinal = ordinal(fromDay)
                                     val toDayOrdinal = ordinal(toDay)
                                     val month = shortMonth(fromMonth)
 
                                     display = "$fromDay$fromOrdinal - $toDay$toDayOrdinal $month, $fromYear"
                                 }
-                            }
-                            else{
+                            } else {
                                 val fromOrdinal = ordinal(fromDay)
                                 val toDayOrdinal = ordinal(toDay)
                                 val fromMonthString = shortMonth(fromMonth)
@@ -251,12 +204,11 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
 
                                 display = "$fromDay$fromOrdinal $fromMonthString - $toDay$toDayOrdinal $toMonthString , $fromYear"
                             }
-                        }
-                        else{
+                        } else {
 
                             display = "$fromDisplay - $toDisplay"
                         }
-                        //////
+                        // ////
                         result = Result.DateRange(
                             from = Result.Date(
                                 year = fromYear,
@@ -272,17 +224,16 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                             ),
                             display = display
                         )
-                    }
-                    else{
+                    } else {
                         val ck = combineKey
-                        val year = years[ck]?:currentYear
-                        val month = months[ck]?:0
-                        val day = days[ck]?:0
+                        val year = years[ck] ?: currentYear
+                        val month = months[ck] ?: 0
+                        val day = days[ck] ?: 0
                         result = Result.Date(
                             year = year,
                             month = month,
                             day = day,
-                            display = displayableDate(day,month,year)
+                            display = displayableDate(day, month, year)
                         )
                     }
                 }
@@ -290,7 +241,8 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
             }
         }
     }
-    /////////////////
+
+    // ///////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
@@ -330,9 +282,10 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
     override fun onBack() {
 
     }
-    ////////////
-    //data
-    ////////////
+
+    // //////////
+    // data
+    // //////////
     private val datePickerOption = mutableStateOf(DatePickerOption.Monthly)
     private val datePickerFromTo = mutableStateOf(DatePickerFromTo.From)
     private val datePickerData = mutableStateOf(YoreDatePickerData())
@@ -340,10 +293,11 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
     private val selectedWeeklyTab = mutableStateOf(TimeTabs.SINGLE)
     private val displayResult = mutableStateOf<DateDisplayData>(DateDisplayDataNone)
     private val canSubmit = mutableStateOf(false)
-    ///////////
-    private val years = mutableMapOf<String,Int>()
-    private val months = mutableMapOf<String,Int?>()
-    private val days = mutableMapOf<String,Int?>()
+
+    // /////////
+    private val years = mutableMapOf<String, Int>()
+    private val months = mutableMapOf<String, Int?>()
+    private val days = mutableMapOf<String, Int?>()
     init {
         _resolver.addAll(
             DataIds.monthlyOrWeekly to datePickerOption,
@@ -355,29 +309,29 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
             DataIds.canSubmit to canSubmit
         )
     }
-    /////////////
+
+    // ///////////
     private fun handleDatePickerOption(arg: Any?) {
-        val option  = arg as? DatePickerOption ?: return
+        val option = arg as? DatePickerOption ?: return
         datePickerOption.value = option
         updateDatePicker()
     }
     private fun updateDatePicker() {
         val ck = combineKey
         val year = years.getOrMyDefault(ck, currentYear)
-        val month = months.getOrMyDefault(ck,null)
-        val day = days.getOrMyDefault(ck,null)
-        val showDates = datePickerOption.value== DatePickerOption.Weekly
+        val month = months.getOrMyDefault(ck, null)
+        val day = days.getOrMyDefault(ck, null)
+        val showDates = datePickerOption.value == DatePickerOption.Weekly
         val ydpd = YoreDatePickerData(
             selectedYear = year,
             selectedMonth = month,
             selectedDay = day,
             dateSelectable = showDates
         )
-        if(YoreDatePickerData.same(datePickerData.value,ydpd)){
+        if (YoreDatePickerData.same(datePickerData.value, ydpd)){
             updateDisplayResultAndCanSubmit()
             return
-        }
-        else{
+        } else {
             datePickerData.value = ydpd
             updateDisplayResultAndCanSubmit()
         }
@@ -389,30 +343,30 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
         fromYear: Int,
         toYear: Int
     ): String {
-        if(fromMonth==0 ||toMonth==0){return ""}
-        return when(val duration = 12*(toYear - fromYear) + toMonth - fromMonth + 1) {
+        if (fromMonth == 0 || toMonth == 0){return ""}
+        return when (val duration = 12 * (toYear - fromYear) + toMonth - fromMonth + 1) {
             1 -> "1 Month"
-            in 2 .. Int.MAX_VALUE -> "$duration Months"
-            else-> ""
+            in 2..Int.MAX_VALUE -> "$duration Months"
+            else -> ""
         }
     }
 
     private fun updateDisplayResultAndCanSubmit() {
         val error = updateCanSubmit()
-        if(
-            datePickerOption.value==DatePickerOption.Monthly
-            && selectedMonthlyTab.value==TimeTabs.RANGE
+        if (
+            datePickerOption.value == DatePickerOption.Monthly &&
+            selectedMonthlyTab.value == TimeTabs.RANGE
         ) {
             val keyFrom = "${DatePickerOption.Monthly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.From.name}"
             val keyTo = "${DatePickerOption.Monthly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.To}"
-            val fromYear = years[keyFrom]?:currentYear
-            val toYear = years[keyTo]?:currentYear
-            val fromMonth = months[keyFrom]?:0
-            val toMonth = months[keyTo]?:0
+            val fromYear = years[keyFrom] ?: currentYear
+            val toYear = years[keyTo] ?: currentYear
+            val fromMonth = months[keyFrom] ?: 0
+            val toMonth = months[keyTo] ?: 0
             var fromMonthString = monthNameShort(fromMonth)
             var toMonthString = monthNameShort(toMonth)
-            var durationString = monthDurationString(fromMonth,toMonth,fromYear,toYear)
-            if(fromYear!=toYear){
+            var durationString = monthDurationString(fromMonth, toMonth, fromYear, toYear)
+            if (fromYear != toYear){
                 fromMonthString += " $fromYear"
                 toMonthString += " $toYear"
             }
@@ -422,30 +376,28 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                 duration = durationString,
                 error = error
             )
-        }
-        else if(datePickerOption.value == DatePickerOption.Weekly){
-            if(selectedWeeklyTab.value == TimeTabs.SINGLE){
+        } else if (datePickerOption.value == DatePickerOption.Weekly){
+            if (selectedWeeklyTab.value == TimeTabs.SINGLE){
                 val ck = combineKey
                 val year = years.getOrMyDefault(ck, currentYear)
-                val month = months.getOrMyDefault(ck,null)
-                val day = days.getOrMyDefault(ck,null)
-                val display = displayableDate(day,month,year)
+                val month = months.getOrMyDefault(ck, null)
+                val day = days.getOrMyDefault(ck, null)
+                val display = displayableDate(day, month, year)
                 displayResult.value = DateDisplayDataDate(
                     value = display,
                     "",
                     false,
                     error = error
                 )
-            }
-            else if(selectedWeeklyTab.value == TimeTabs.RANGE){
+            } else if (selectedWeeklyTab.value == TimeTabs.RANGE){
                 val keyFrom = "${DatePickerOption.Weekly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.From.name}"
                 val keyTo = "${DatePickerOption.Weekly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.To}"
-                val fromYear = years[keyFrom]?:currentYear
-                val toYear = years[keyTo]?:currentYear
-                val fromMonth = months[keyFrom]?:0
-                val toMonth = months[keyTo]?:0
-                val fromDay = days[keyFrom]?:0
-                val toDay = days[keyTo]?:0
+                val fromYear = years[keyFrom] ?: currentYear
+                val toYear = years[keyTo] ?: currentYear
+                val fromMonth = months[keyFrom] ?: 0
+                val toMonth = months[keyTo] ?: 0
+                val fromDay = days[keyFrom] ?: 0
+                val toDay = days[keyTo] ?: 0
                 val dif = dayDif(
                     dt1 = Date(
                         year = fromYear,
@@ -458,46 +410,43 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                         day = toDay
                     )
                 )
-                val weeksCount = ceil(dif/7f).toInt()
+                val weeksCount = ceil(dif / 7f).toInt()
                 val weeks = if (weeksCount > 1) "Weeks" else "Week"
-                val duration = if(weeksCount==0) "" else "$weeksCount $weeks"
+                val duration = if (weeksCount == 0) "" else "$weeksCount $weeks"
                 displayResult.value = DateDisplayDataDate(
                     value = "",
                     "",
                     true,
                     error = error
                 )
-                if(fromYear==toYear){
-                    if(fromMonth==toMonth){
-                        if(fromDay==toDay){
+                if (fromYear == toYear){
+                    if (fromMonth == toMonth){
+                        if (fromDay == toDay){
                             displayResult.value = DateDisplayDataDate(
-                                value = displayableDate(fromDay,fromMonth,fromYear),
+                                value = displayableDate(fromDay, fromMonth, fromYear),
                                 duration,
                                 true,
                                 error = error
                             )
-                        }
-                        else {
+                        } else {
                             val fromOrdinal = ordinal(fromDay)
                             val toDayOrdinal = ordinal(toDay)
                             val month = shortMonth(fromMonth)
-                            if(toDay==0){
+                            if (toDay == 0){
                                 displayResult.value = DateDisplayDataDate(
                                     value = "$fromDay$fromOrdinal $month, $fromYear -",
                                     duration,
                                     true,
                                     error = error
                                 )
-                            }
-                            else if(fromDay==0){
+                            } else if (fromDay == 0){
                                 displayResult.value = DateDisplayDataDate(
                                     value = "- $toDay$toDayOrdinal $month, $fromYear",
                                     duration,
                                     true,
                                     error = error
                                 )
-                            }
-                            else{
+                            } else {
                                 displayResult.value = DateDisplayDataDate(
                                     value = "$fromDay$fromOrdinal - $toDay$toDayOrdinal $month, $fromYear",
                                     duration,
@@ -506,29 +455,26 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                                 )
                             }
                         }
-                    }
-                    else{
+                    } else {
                         val fromOrdinal = ordinal(fromDay)
                         val toDayOrdinal = ordinal(toDay)
                         val fromMonthString = shortMonth(fromMonth)
                         val toMonthString = shortMonth(toMonth)
-                        if(toMonth==0){
+                        if (toMonth == 0){
                             displayResult.value = DateDisplayDataDate(
                                 value = "$fromDay$fromOrdinal $fromMonthString, $fromYear -",
                                 duration,
                                 true,
                                 error = error
                             )
-                        }
-                        else if(fromMonth==0){
+                        } else if (fromMonth == 0){
                             displayResult.value = DateDisplayDataDate(
                                 value = "- $toDay$toDayOrdinal $toMonthString, $fromYear",
                                 duration,
                                 true,
                                 error = error
                             )
-                        }
-                        else{
+                        } else {
                             displayResult.value = DateDisplayDataDate(
                                 value = "$fromDay$fromOrdinal $fromMonthString - $toDay$toDayOrdinal $toMonthString , $fromYear",
                                 duration,
@@ -537,10 +483,9 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                             )
                         }
                     }
-                }
-                else{
-                    val fromDisplay = displayableDate(fromDay,fromMonth,fromYear)
-                    val toDisplay = displayableDate(toDay,toMonth,toYear)
+                } else {
+                    val fromDisplay = displayableDate(fromDay, fromMonth, fromYear)
+                    val toDisplay = displayableDate(toDay, toMonth, toYear)
                     displayResult.value = DateDisplayDataDate(
                         value = "$fromDisplay - $toDisplay",
                         duration,
@@ -549,31 +494,29 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                     )
                 }
             }
-        }
-        else{
+        } else {
             displayResult.value = DateDisplayDataNone
         }
     }
 
     private fun updateCanSubmit(): Boolean {
         var error = false
-        if(
-            datePickerOption.value == DatePickerOption.Monthly
-            && selectedMonthlyTab.value == TimeTabs.SINGLE
+        if (
+            datePickerOption.value == DatePickerOption.Monthly &&
+            selectedMonthlyTab.value == TimeTabs.SINGLE
         ){
-            val month = months[combineKey]?:0
+            val month = months[combineKey] ?: 0
             canSubmit.value = month > 0
-        }
-        else if(
-            datePickerOption.value == DatePickerOption.Monthly
-            && selectedMonthlyTab.value == TimeTabs.RANGE
+        } else if (
+            datePickerOption.value == DatePickerOption.Monthly &&
+            selectedMonthlyTab.value == TimeTabs.RANGE
         ) {
             val keyFrom = "${DatePickerOption.Monthly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.From.name}"
             val keyTo = "${DatePickerOption.Monthly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.To}"
-            val fromMonth = months[keyFrom]?:0
-            val toMonth = months[keyTo]?:0
-            val fromYear = years[keyFrom]?: currentYear
-            val toYear = years[keyTo]?: currentYear
+            val fromMonth = months[keyFrom] ?: 0
+            val toMonth = months[keyTo] ?: 0
+            val fromYear = years[keyFrom] ?: currentYear
+            val toYear = years[keyTo] ?: currentYear
             error = dayDif(
                 Date(
                     day = 1,
@@ -584,33 +527,31 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                     day = 1,
                     month = toMonth,
                     year = toYear
-                ),
+                )
             ) < 0
             canSubmit.value = fromMonth > 0 && toMonth > 0 && !error
-        }
-        else if(
-            datePickerOption.value == DatePickerOption.Weekly
-            && selectedWeeklyTab.value == TimeTabs.SINGLE
+        } else if (
+            datePickerOption.value == DatePickerOption.Weekly &&
+            selectedWeeklyTab.value == TimeTabs.SINGLE
         ){
             val ck = combineKey
-            val year = years[ck]?:currentYear
-            val month = months[ck]?:0
-            val day = days[ck]?:0
+            val year = years[ck] ?: currentYear
+            val month = months[ck] ?: 0
+            val day = days[ck] ?: 0
             canSubmit.value = year > 0 && month > 0 && day > 0
-        }
-        else if(
-            datePickerOption.value == DatePickerOption.Weekly
-            && selectedWeeklyTab.value == TimeTabs.RANGE
+        } else if (
+            datePickerOption.value == DatePickerOption.Weekly &&
+            selectedWeeklyTab.value == TimeTabs.RANGE
         ){
             val keyFrom = "${DatePickerOption.Weekly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.From.name}"
             val keyTo = "${DatePickerOption.Weekly.name}-${TimeTabs.RANGE.name}-${DatePickerFromTo.To}"
-            val fromYear = years[keyFrom]?: currentYear
-            val fromMonth = months[keyFrom]?:0
-            val fromDay = days[keyFrom]?:0
+            val fromYear = years[keyFrom] ?: currentYear
+            val fromMonth = months[keyFrom] ?: 0
+            val fromDay = days[keyFrom] ?: 0
 
-            val toYear = years[keyTo]?: currentYear
-            val toMonth = months[keyTo]?:0
-            val toDay = days[keyTo]?:0
+            val toYear = years[keyTo] ?: currentYear
+            val toMonth = months[keyTo] ?: 0
+            val toDay = days[keyTo] ?: 0
             error = dayDif(
                 Date(
                     day = fromDay,
@@ -621,16 +562,16 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
                     day = toDay,
                     month = toMonth,
                     year = toYear
-                ),
+                )
             ) < 0
             canSubmit.value =
-                        fromYear > 0
-                        && fromMonth > 0
-                        && fromDay > 0
-                        && toYear > 0
-                        && toMonth > 0
-                        && toDay > 0
-                                && !error
+                fromYear > 0 &&
+                fromMonth > 0 &&
+                fromDay > 0 &&
+                toYear > 0 &&
+                toMonth > 0 &&
+                toDay > 0 &&
+                !error
         }
         return error
     }
@@ -638,16 +579,17 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback): BottomSheetMod
     private val combineKey: String
         get(){
             val _1st_level_key = datePickerOption.value.name
-            val _2nd_level_key = if(datePickerOption.value== DatePickerOption.Monthly)
+            val _2nd_level_key = if (datePickerOption.value == DatePickerOption.Monthly) {
                 selectedMonthlyTab.value
-            else
+            } else {
                 selectedWeeklyTab.value
-            val _3rd_level_key = if(_2nd_level_key == TimeTabs.RANGE) datePickerFromTo.value.name else "normal"
+            }
+            val _3rd_level_key = if (_2nd_level_key == TimeTabs.RANGE) datePickerFromTo.value.name else "normal"
             val key = "$_1st_level_key-$_2nd_level_key-$_3rd_level_key"
             return key
         }
     private fun handleDatePickerFromTo(arg: Any?) {
-        val option  = if(arg==true) DatePickerFromTo.From else DatePickerFromTo.To
+        val option = if (arg == true) DatePickerFromTo.From else DatePickerFromTo.To
         datePickerFromTo.value = option
         updateDatePicker()
     }
@@ -677,13 +619,13 @@ fun DatePickerDemo(
     ) {
         derivedStateOf {
             (
-                    datePickerOption == DatePickerOption.Monthly
-                    && selectedMonthlyTab == TimeTabs.RANGE
-            )
-            || (
-                    datePickerOption == DatePickerOption.Weekly
-                    && selectedWeeklyTab == TimeTabs.RANGE
-            )
+                datePickerOption == DatePickerOption.Monthly &&
+                    selectedMonthlyTab == TimeTabs.RANGE
+                ) ||
+                (
+                    datePickerOption == DatePickerOption.Weekly &&
+                        selectedWeeklyTab == TimeTabs.RANGE
+                    )
         }
     }
     val isFromSelected by remember(key1 = datePickerFromTo) {
@@ -735,24 +677,24 @@ fun DatePickerDemo(
             AnimatedContent(
                 targetState = isMonthlySelected,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(700)) with //+scaleIn(initialScale = 0.92f, animationSpec = tween(700, delayMillis = 90)) with
-                    fadeOut(animationSpec = tween(700))
+                    fadeIn(animationSpec = tween(700)) with // +scaleIn(initialScale = 0.92f, animationSpec = tween(700, delayMillis = 90)) with
+                        fadeOut(animationSpec = tween(700))
                 }
             ) {
-                when(it){
+                when (it){
                     true -> TabGroup(
                         text1 = "Select Month",
                         text2 = "Select Month Range",
-                        selectedMonthlyTab,
+                        selectedMonthlyTab
                     ){
-                        notifier.notify(DataIds.monthlyTab,it)
+                        notifier.notify(DataIds.monthlyTab, it)
                     }
                     false -> TabGroup(
                         text1 = "Select Date",
                         text2 = "Select Date Range",
-                        selectedWeeklyTab,
+                        selectedWeeklyTab
                     ){
-                        notifier.notify(DataIds.weeklyTab,it)
+                        notifier.notify(DataIds.weeklyTab, it)
                     }
                 }
             }
@@ -776,15 +718,13 @@ fun DatePickerDemo(
                     FromToSection(
                         isFromSelected
                     ){
-                        notifier.notify(DataIds.datePickerFromTo,it)
+                        notifier.notify(DataIds.datePickerFromTo, it)
                     }
                 }
                 AnimatedVisibility(visible = !isRangeSelected) {
                     37.sy()
                 }
             }
-
-
 
             DateResultDisplayUI(displayResult)
 
@@ -815,7 +755,7 @@ fun FromToSection(
     Row(
         modifier = Modifier
             .padding(
-                horizontal = 21.dep(),
+                horizontal = 21.dep()
             )
             .padding(
                 top = 25.dep(),
@@ -826,9 +766,9 @@ fun FromToSection(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SingleFromToUI("From",isFromSelected){onClick(true)}
+        SingleFromToUI("From", isFromSelected){onClick(true)}
         FromToDash()
-        SingleFromToUI("To",!isFromSelected){onClick(false)}
+        SingleFromToUI("To", !isFromSelected){onClick(false)}
     }
 }
 
@@ -858,10 +798,11 @@ fun SingleFromToUI(
 ) {
     val color by remember(selected) {
         derivedStateOf {
-            if(selected)
+            if (selected) {
                 Bluish
-            else
+            } else {
                 GreyBorder
+            }
         }
     }
     val animatedColor by animateColorAsState(
@@ -912,7 +853,7 @@ fun SingleFromToUI(
 fun TabGroup(
     text1: String,
     text2: String,
-    selected:  TimeTabs,
+    selected: TimeTabs,
     onClick: (TimeTabs) -> Unit
 ) {
     Row(modifier = Modifier.padding(start = 28.dep())) {
@@ -936,14 +877,15 @@ fun TabGroup(
 fun SingleTab(
     text: String,
     selected: Boolean,
-    onClick: ()->Unit
+    onClick: () -> Unit
 ) {
     val color by remember(selected) {
         derivedStateOf {
-            if(selected)
+            if (selected) {
                 DarkBlue
-            else
+            } else {
                 GreyBorder
+            }
         }
     }
     val animatedColor by animateColorAsState(targetValue = color, tween(700))
@@ -960,28 +902,10 @@ fun SingleTab(
         color = animatedColor
     )
 }
-//////////////
-interface DateDisplayData{
-    val error: Boolean
-}
-object DateDisplayDataNone: DateDisplayData{
-    override val error: Boolean
-        get() = false
-}
 
-data class DateDisplayDataDate(
-    val value: String,
-    val duration: String,
-    val range: Boolean,
-    override val error: Boolean,
-): DateDisplayData
-data class DateDisplayDataMonths(
-    val from: String,
-    val to: String,
-    val duration: String,
-    override val error: Boolean
-): DateDisplayData
-/////////////
+// ////////////
+
+// ///////////
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DateResultDisplayUI(
@@ -996,8 +920,8 @@ fun DateResultDisplayUI(
         targetValue = show,
         tween(500)
     )
-    (15*(1f-animatedShow)).sy()
-    (14*(animatedShow)).sy()
+    (15 * (1f - animatedShow)).sy()
+    (14 * (animatedShow)).sy()
     val borderColor by animateColorAsState(
         targetValue = if (data.error) Color(0xffFF4077) else LightGrey7,
         tween(500)
@@ -1031,18 +955,18 @@ fun DateResultDisplayUI(
             data,
             transitionSpec = { fadeIn() with fadeOut() }
         ){
-            when(it){
-                is DateDisplayDataDate->{
+            when (it){
+                is DateDisplayDataDate -> {
                     Row(
                         modifier = Modifier
-                           .fillMaxWidth(),
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Row() {
                             20.sx()
                             FontFamilyText(
-                                text = (if(it.range) stringResource(R.string.dates) else stringResource(R.string.date))+ ": ",
+                                text = (if (it.range) stringResource(R.string.dates) else stringResource(R.string.date)) + ": ",
                                 fontSize = 12.sep(),
                                 color = LightGrey6
                             )
@@ -1064,7 +988,7 @@ fun DateResultDisplayUI(
                         }
                     }
                 }
-                is DateDisplayDataMonths->{
+                is DateDisplayDataMonths -> {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -1092,14 +1016,16 @@ fun DateResultDisplayUI(
                             )
                             3.sx()
                             FontFamilyText(
-                                text =  it.to,
+                                text = it.to,
                                 fontSize = 12.sep(),
                                 color = Black
                             )
                         }
-                        Spacer(modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f))
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
                         FontFamilyText(
                             text = it.duration,
                             fontSize = 14.sep(),

@@ -7,22 +7,12 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
-import co.yore.splitnpay.ui.theme.Bluish
-
-data class CustomButtonConfiguration(
-    val buttonColor: androidx.compose.ui.graphics.Color = Bluish,
-    val fontSize: Float = 16f,
-    val fontColor: androidx.compose.ui.graphics.Color = White,
-    val fontWeight: FontWeight = FontWeight.Bold,
-    val cornerRadius: Float = 23.5f
-)
+import co.yore.splitnpay.models.CustomButtonConfiguration
 
 @Composable
 fun CustomButton_3egxtx(
@@ -60,8 +50,8 @@ fun CustomButton_3egxtx(
         FontFamilyText(
             text = text,
             fontSize = config.fontSize.sep(),
-            fontWeight = config.fontWeight,
-            //color = config.fontColor
+            fontWeight = config.fontWeight
+            // color = config.fontColor
         )
     }
 }

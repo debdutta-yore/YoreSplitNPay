@@ -16,25 +16,24 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Velocity
 
-enum class SwipingStates {
-    EXPANDED,
-    COLLAPSED
-}
-
 class DragRecord{
     private var prev = 0
-    fun current(value: Int):Int{
+    fun current(value: Int): Int{
         val r = prev - value
         var dir = 0
-        if(r<0){
+        if (r < 0){
             dir = -1
         }
-        if(r>0){
+        if (r > 0){
             dir = 1
         }
         prev = value
         return dir
     }
+}
+enum class SwipingStates {
+    EXPANDED,
+    COLLAPSED
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -47,21 +46,21 @@ fun CollapsibleBox(
     content: @Composable BoxScope.(Float) -> Unit
 ){
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
-    if(keyboardAware){
+    if (keyboardAware){
         val insetLength = WindowInsets.ime.getBottom(LocalDensity.current)
         val record = remember {
             DragRecord()
         }
         LaunchedEffect(key1 = insetLength){
             val d = record.current(insetLength)
-            if(d<0){
+            if (d < 0){
                 swipingState.animateTo(
                     SwipingStates.COLLAPSED,
                     anim = tween(2000)
                 )
                 return@LaunchedEffect
             }
-            if(d>0){
+            if (d > 0){
                 swipingState.animateTo(
                     SwipingStates.EXPANDED,
                     anim = tween(2000)
@@ -74,12 +73,12 @@ fun CollapsibleBox(
         modifier = Modifier
             .fillMaxSize()
             .then(
-                if(insetAware)
+                if (insetAware) {
                     Modifier.safeDrawingPadding()
-                else
+                } else {
                     Modifier
+                }
             )
-        ,
     ) {
         val heightInPx = with(LocalDensity.current) { maxHeight.toPx() }
         val connection = remember {
@@ -124,17 +123,18 @@ fun CollapsibleBox(
                     orientation = Orientation.Vertical,
                     anchors = mapOf(
                         0f to SwipingStates.COLLAPSED,
-                        heightInPx to SwipingStates.EXPANDED,
+                        heightInPx to SwipingStates.EXPANDED
                     )
                 )
                 .nestedScroll(connection)
         ) {
             val computedProgress by remember {
                 derivedStateOf {
-                    if (swipingState.progress.to == SwipingStates.COLLAPSED)
+                    if (swipingState.progress.to == SwipingStates.COLLAPSED) {
                         swipingState.progress.fraction
-                    else
+                    } else {
                         1f - swipingState.progress.fraction
+                    }
                 }
             }
             content(computedProgress)

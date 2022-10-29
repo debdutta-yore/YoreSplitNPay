@@ -5,7 +5,6 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.pages.CategoryExpense
-import co.yore.splitnpay.pages.ExpenseChartData
 import co.yore.splitnpay.pages.PieData
 
 class ExpenseRepositoryImpl : ExpenseRepository {
@@ -74,7 +73,7 @@ class ExpenseRepositoryImpl : ExpenseRepository {
             xAxis = "Sep",
             yAxis = 35000f,
             year = 2026
-        ),
+        )
         /*ExpenseChartData(
             xAxis = "Oct",
             yAxis = 0f,

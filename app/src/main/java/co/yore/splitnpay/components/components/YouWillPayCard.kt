@@ -16,9 +16,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.sy
+import co.yore.splitnpay.models.MemberTransact
+import co.yore.splitnpay.models.YouWillPayConfiguration1
 import co.yore.splitnpay.ui.theme.*
 
 @Composable
@@ -145,20 +147,3 @@ fun YouWillPayCard(
     }
 }
 
-data class YouWillPayConfiguration1(
-    val shadowColor: Color = Greyish2,
-    val shadowBorderRadius: Float = 15f,
-    val shadowBlurRadius: Float = 33f,
-    val shadowOffsetX: Float = 5.63f,
-    val shadowOffsetY: Float = 7f,
-    val shadowSpread: Float = 0f,
-    val cornerRadius: Float = 15f,
-    val backgroundColor: Color = Color.White,
-    val cardStartPadding: Float = 38f,
-    val cardEndPadding: Float = 30f,
-    val cardTopPadding: Float = 30f,
-    val cardBottomPadding: Float = 28f,
-    val gapBetweenText: Float = 5f,
-    val gapBetweenIconAndTotalCard: Float = 11.3f
-
-)

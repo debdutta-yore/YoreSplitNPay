@@ -5,9 +5,18 @@ import android.util.Log
 import co.yore.splitnpay.BuildConfig
 import io.objectbox.BoxStore
 import io.objectbox.android.Admin
+import io.objectbox.annotation.Entity
+import io.objectbox.annotation.Id
 
 
-
+@Entity
+data class Contact(
+    @JvmField
+    @Id
+    var id: Long = 0,
+    @JvmField
+    var mobile: String
+)
 
 object ObjectBox {
     lateinit var store: BoxStore

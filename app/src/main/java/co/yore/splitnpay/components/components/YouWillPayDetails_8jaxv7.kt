@@ -13,10 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.*
 
 private val list = listOf(
     MemberWillGetOrPayDetailsSingleRowItem(
@@ -92,7 +90,7 @@ fun YouWillPayDetails_8jaxv7(
                     contentDescription = "YouWillPayDetailsTabRow"
                 )
                 {
-                    notifier.notify(DataIds.payTransactionStatus,it)
+                    notifier.notify(DataIds.payTransactionStatus, it)
                 }
 
             }
@@ -186,16 +184,4 @@ fun YouWillPayDetailsTabRow(
     }
 }
 
-data class YouWillPayDetailsSingleRowItem(
-    val imageUrl: String,
-    val userName: String,
-    val userPhNo: String,
-    val dueAmount: Float,
-    val paidAmount: Float
-)
 
-enum class YouWillPayTransactionStatus {
-    Pending,
-    PartiallyPaid,
-    Settled
-}

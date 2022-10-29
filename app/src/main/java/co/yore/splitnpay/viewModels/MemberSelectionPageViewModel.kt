@@ -16,11 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-enum class TriState{
-    CHECKED,
-    UNCHECKED,
-    INTERMEDIATE
-}
+
 
 class MemberSelectionPageViewModel(
     private val repo: Repo = RepoImpl()
@@ -253,10 +249,7 @@ class MemberSelectionPageViewModel(
         }
     }
 
-    data class GroupIdState(
-        val id: Any,
-        val state: TriState
-    )
+
 
     private var searchJob: kotlinx.coroutines.Job? = null
     private fun initiateSearch() {

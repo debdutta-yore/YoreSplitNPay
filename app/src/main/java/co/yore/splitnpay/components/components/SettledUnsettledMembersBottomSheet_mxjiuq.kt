@@ -20,10 +20,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.SettleOptions
+import co.yore.splitnpay.models.SettledUnsettledMembersBottomSheet
+import co.yore.splitnpay.models.SingleSettledOrUnsettledMember
 import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.ui.theme.DarkBlue
 import kotlinx.coroutines.CoroutineScope
@@ -281,7 +282,4 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
     }
 }
 
-data class SettledUnsettledMembersBottomSheet(
-    val holderTopPadding: Float = 20f,
-    val holderBottomPadding: Float = 33f
-)
+

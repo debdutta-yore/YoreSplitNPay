@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -23,7 +22,6 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.CustomButtonConfiguration
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
@@ -228,15 +226,6 @@ fun PaymentReviewBottomSheet_6vn06v(
         }*/
     }
 }
-
-data class TransactionReview(
-    val transactionType: TransactionType,
-    val paymentMethod: String,
-    val amount: Float,
-    val from: Friend,
-    val to: Friend,
-    val category: Category
-)
 
 @Composable
 fun AmountSection(
@@ -562,56 +551,6 @@ fun BankSymbolIcon_1a0qh2(
     }
 }
 
-data class EditIconConfiguration(
-    val backgroundColor: Color = LightBlue1,
-    val innerPaddingStart: Float = 7.92f,
-    val innerPaddingEnd: Float = 4f,
-    val innerPaddingTop: Float = 4f,
-    val innerPaddingBottom: Float = 4f,
-    val editIcon: Int = R.drawable.ic_pencil,
-    val textColor: Color = Bluish,
-    val fontSize: Float = 12f,
-    val cornerRadius: Float = 11f
-)
-
-data class BankSymbolIconConfiguration(
-    val size: Float = 62f,
-    val shadowColor: Color = DarkBlueShadow,
-    val borderRadius: Float = 50f,
-    val blurRadius: Float = 6f,
-    val shadowOffsetX: Float = 0f,
-    val shadowOffsetY: Float = 3f,
-    val shadowSpread: Float = 0f,
-    val shape: Shape = CircleShape,
-    val backgroundColor: Color = Color.White,
-    val borderStroke: Float = 5f,
-    val borderColor: Color = Greyish3,
-    val icon: Int = R.drawable.ic_upi
-)
-
-data class FromToPortionConfiguration(
-    val startPadding: Float = 31f,
-    val endPadding: Float = 30f,
-    val bankIconColumnTopPadding: Float = 6f,
-    val gapBetweenBankIconAndDetailsPart: Float = 28f,
-    val spaceBetweenToAndFrom: Float = 28f
-)
-
-data class AmountPortionConfiguration(
-    val startPadding: Float = 30f,
-    val endPadding: Float = 30f
-)
-
-data class PaymentReviewBottomSheetConfiguration(
-    val holderIconTopPadding: Float = 20f,
-    val holderBottomPadding: Float = 33f,
-    val fromToPortionBottomPadding: Float = 25f,
-    val amountSectionBottomPadding: Float = 21f,
-    val customTextBoxBottomPadding: Float = 18f,
-    val acceptTextBottomPadding: Float = 18f,
-    val buttonBottomPadding: Float = 12f
-)
-
 // ////////////////////
 // ////////////////////
 // ////////////////////
@@ -620,46 +559,6 @@ data class PaymentReviewBottomSheetConfiguration(
 // ////////////////////
 // ////////////////////
 val LightGrey3 = Color(0xff989898)
-
-data class Category(
-    val name: String,
-    val color: Long,
-//    val icon: Painter,
-    val icon: Any,
-    val isSelected: Boolean = false,
-    val isEditable: Boolean = false,
-    val subCategory: String = "Business trip"
-)
-
-data class Friend(
-    val uid: Int = 0,
-    val name: String,
-    val mobileNumber: String = "9563376942",
-    val accountNumber: String = "",
-    val accountType: AccountType = AccountType.Current,
-    val imageUrl: String,
-    val bank: Bank = Bank(),
-    val isSelected: Boolean = false,
-    val hasRead: Boolean = false
-)
-data class BillTransaction(
-    val transactionType: TransactionType,
-    val transactionStatus: TransactionStatus,
-    val isSingleChat: Boolean,
-    val billTotal: Float, // total transaction amount to settle
-    val allPaidReceivedTotal: Float, // total paid/received until now
-    val amountLeft: Float, // amount left to complete the bill total
-    val willPayReceive: Float, // you will received/pay in this transaction
-    val paidReceived: Float, // paid received in this transaction
-    val totalTransactions: Int,
-    val completedTransactions: Int,
-    val transactionTime: String,
-    val transactionDate: String,
-    val paymentMethod: String,
-    val from: Friend,
-    val to: Friend,
-    val category: Category
-)
 
 @Composable
 fun AmountSection(

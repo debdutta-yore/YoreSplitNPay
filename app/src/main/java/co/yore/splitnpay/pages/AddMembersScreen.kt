@@ -1,18 +1,15 @@
 package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -22,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -35,10 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.PeopleCard_eq3k8h
-import co.yore.splitnpay.components.components.ContactTabs
 import co.yore.splitnpay.components.components.GroupCard_0msq1z
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.components.configuration.*
@@ -47,26 +41,26 @@ import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.split_page_components.ContactSearchBar
 import co.yore.splitnpay.ui.theme.robotoFonts
-import co.yore.splitnpay.viewModels.TriState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
 fun SingleItem(
     modifier: Modifier = Modifier,
-    icon: Painter, text: String,
+    icon: Painter,
+    text: String,
     isSelected: Boolean = false
 ) {
     Row(
         modifier = modifier
             .background(
-                if (isSelected)
-                    Color(237, 245, 255) else Color.White
+                if (isSelected) {
+                    Color(237, 245, 255)
+                }else Color.White
             )
             .padding(start = 31f.dep())
             .fillMaxWidth()
-            .height(49f.dep())
-        ,
+            .height(49f.dep()),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -79,7 +73,8 @@ fun SingleItem(
             Icon(
                 modifier = Modifier.size(18.dp),
                 tint = Color(26, 121, 229),
-                painter = icon, contentDescription = "selected photo icon"
+                painter = icon,
+                contentDescription = "selected photo icon"
             )
             Spacer(modifier = Modifier.width(15f.dep()))
             Text(
@@ -92,22 +87,17 @@ fun SingleItem(
 
         if (isSelected) {
             Icon(
-                modifier = Modifier
+                modifier = Modifier,
                 //  .width(18f.dep())
-                ,
                 tint = Color(26, 121, 229),
                 painter = painterResource(id = R.drawable.ic_sheet_selector),
                 contentDescription = "holder"
             )
         }
 
-
     }
 
 }
-
-
-
 
 @Composable
 fun TopBarWithIcon_1t9xbo(
@@ -131,9 +121,9 @@ fun TopBarWithIcon_1t9xbo(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.width((config.startPadding-12).dep()))
+            Spacer(modifier = Modifier.width((config.startPadding - 12).dep()))
             Icon(
                 modifier = Modifier
                     .size((config.iconSize + 12).dep())
@@ -146,7 +136,7 @@ fun TopBarWithIcon_1t9xbo(
                 contentDescription = "back arrow",
                 tint = config.iconTint
             )
-            Spacer(modifier = Modifier.width((config.space-6).dep()))
+            Spacer(modifier = Modifier.width((config.space - 6).dep()))
             Text(
                 text = text,
                 fontSize = config.textSize.sep(),
@@ -180,7 +170,6 @@ fun MemberSelectionPage_g5024t(
     }
 }
 
-
 @OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -194,8 +183,8 @@ fun SplitWithPageContent(
         floatingActionButton = {
             AnimatedVisibility(
                 proceedWithContacts,
-                enter = fadeIn(tween(300))+ scaleIn(tween(300)),
-                exit = fadeOut(tween(300))+ scaleOut(tween(300))
+                enter = fadeIn(tween(300)) + scaleIn(tween(300)),
+                exit = fadeOut(tween(300)) + scaleOut(tween(300))
             ){
                 FloatingActionButton(
                     shape = CircleShape,
@@ -203,11 +192,13 @@ fun SplitWithPageContent(
                     modifier = Modifier
                         .size(61.dep()),
                     onClick = {
-                        notifier.notify(DataIds.proceedWithContacts,null)
-                    }) {
+                        notifier.notify(DataIds.proceedWithContacts, null)
+                    }
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_forward_black_24dp_1),
-                        contentDescription = "next", tint = Color.Unspecified
+                        contentDescription = "next",
+                        tint = Color.Unspecified
                     )
                 }
             }
@@ -216,7 +207,7 @@ fun SplitWithPageContent(
         Column {
             TopBarWithIcon_1t9xbo(
                 onClick = {
-                    notifier.notify(DataIds.back,null)
+                    notifier.notify(DataIds.back, null)
                 },
                 text = stringResource(config.splitTextId)
             )
@@ -244,18 +235,17 @@ fun SplitWithPageContent(
                 )
             }
 
-
             Spacer(modifier = Modifier.height(38.dep()))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         start = 16f.dep(),
-                        end = 16f.dep(),
+                        end = 16f.dep()
                     )
             ) {
                 SplitWithPageTabsSection(selectedIndex){
-                    notifier.notify(DataIds.selectedTabIndex,it)
+                    notifier.notify(DataIds.selectedTabIndex, it)
                 }
             }
             Spacer(modifier = Modifier.height(18.dep()))
@@ -264,8 +254,6 @@ fun SplitWithPageContent(
         }
     }
 }
-
-
 
 @Composable
 fun NothingFoundUI() {
@@ -288,17 +276,18 @@ fun GroupAndContactsUI(
     items: List<GroupOrContact> = listState(DataIds.groupsAndPeoples),
     selecteds: List<Any> = listState(DataIds.selecteds),
     proceedWithContacts: Boolean = boolState(DataIds.proceedWithContacts).value,
-    groupsChecked: Map<Any,TriState>? = safeMapState(DataIds.groupsChecked)
+    groupsChecked: Map<Any, TriState>? = safeMapState(DataIds.groupsChecked)
 ) {
     val bottomPadding by remember(proceedWithContacts) {
         derivedStateOf {
-            if(proceedWithContacts)
+            if (proceedWithContacts) {
                 85
-            else
+            } else {
                 13
+            }
         }
     }
-    if(items.isNotEmpty()){
+    if (items.isNotEmpty()){
         val listState = rememberLazyListState()
         LazyColumn(
             state = listState,
@@ -318,29 +307,27 @@ fun GroupAndContactsUI(
                     it.id()
                 }
             ) {
-                if(it is ContactData){
+                if (it is ContactData){
                     PeopleCard_eq3k8h(
                         modifier = Modifier.animateItemPlacement(),
                         data = it,
                         selected = selecteds.contains(it.id),
                         contentDescription = "",
                         checkBoxContentDescription = "",
-                        profileImageContentDescription = "",
+                        profileImageContentDescription = ""
                     )
-                }
-                else if(it is GroupData){
+                } else if (it is GroupData){
                     GroupCard_0msq1z(
                         modifier = Modifier.animateItemPlacement(),
                         config = GroupCardConfiguration.checked,
                         data = it,
                         contentDescription = "",
-                        selected = groupsChecked?.get(it.id)?:TriState.UNCHECKED
+                        selected = groupsChecked?.get(it.id) ?: TriState.UNCHECKED
                     )
                 }
             }
         }
-    }
-    else{
+    } else {
         NothingFoundUI()
     }
 }
@@ -362,7 +349,7 @@ fun AddedMembersSection(
         AnimatedVisibility(
             visible = addedFriends.isNotEmpty(),
             enter = fadeIn(tween(700)),
-            exit = fadeOut(tween(700)),
+            exit = fadeOut(tween(700))
         ) {
             LazyRow(
                 modifier = Modifier
@@ -372,7 +359,7 @@ fun AddedMembersSection(
                     addedFriends,
                     key = {
                         it.id
-                    },
+                    }
                 ) { item ->
                     Box(
                         modifier = Modifier
@@ -381,7 +368,7 @@ fun AddedMembersSection(
                     ){
                         PeopleImageItem_r02b97(
                             onDelete = {
-                                notifier.notify(DataIds.deleteAdded,item.id)
+                                notifier.notify(DataIds.deleteAdded, item.id)
                             },
                             friend = item,
                             contentDescription = "people image"
@@ -396,7 +383,7 @@ fun AddedMembersSection(
 @Composable
 fun SplitWithPageTabsSection(
     selectedIndex: Int,
-    onIndexChanged: (Int)->Unit
+    onIndexChanged: (Int) -> Unit
 ) {
     val tabsList = remember {
         listOf(
@@ -411,15 +398,16 @@ fun SplitWithPageTabsSection(
         indicator = { tabPositions: List<TabPosition> ->
             Box {}
         },
-        divider = { TabRowDefaults.Divider(color = Color.Transparent) },
+        divider = { TabRowDefaults.Divider(color = Color.Transparent) }
     ) {
         tabsList.forEachIndexed { index, text ->
             val computedColor by remember(selectedIndex) {
                 derivedStateOf {
-                    if (selectedIndex == index)
+                    if (selectedIndex == index) {
                         Color(0xff243257)
-                    else
+                    } else {
                         Color(0xffCFD8E4)
+                    }
                 }
             }
 
@@ -446,7 +434,6 @@ fun SplitWithPageTabsSection(
     }
 }
 
-
 @Composable
 fun PeopleImageItem_r02b97(
     config: PeopleRowItemConfiguration = PeopleRowItemConfiguration(),
@@ -463,7 +450,7 @@ fun PeopleImageItem_r02b97(
                 .clip(CircleShape)
                 .size(config.imageSize.dep()),
             model = ImageRequest.Builder(LocalContext.current)
-                //TODO- update using friend.imageUrl
+                // TODO- update using friend.imageUrl
                 .data(friend.image)
                 .crossfade(true)
                 .build(),
@@ -472,7 +459,7 @@ fun PeopleImageItem_r02b97(
             contentDescription = ""
         )
 
-        if(friend.deletable){
+        if (friend.deletable){
             DeleteIcon_iw4d3p(
                 modifier = Modifier
                     .radialBottomLeft(config.imageSize.dep()),
@@ -494,11 +481,11 @@ fun Modifier.radialBottomLeft(
     val ph = pw
     val mw = placeable.width
     val mh = placeable.height
-    val cx = (pw - mw)/2
-    val cy = (ph - mh)/2
-    val offset = (pw/2.8284f).toInt()
-    layout(pw/2+mw/2+offset, ph/2+mh/2+offset) {
-        placeable.placeRelative(cx+offset, cy+offset)
+    val cx = (pw - mw) / 2
+    val cy = (ph - mh) / 2
+    val offset = (pw / 2.8284f).toInt()
+    layout(pw / 2 + mw / 2 + offset, ph / 2 + mh / 2 + offset) {
+        placeable.placeRelative(cx + offset, cy + offset)
     }
 }
 

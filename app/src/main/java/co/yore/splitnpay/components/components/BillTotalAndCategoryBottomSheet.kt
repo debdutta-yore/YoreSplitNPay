@@ -44,8 +44,8 @@ import androidx.core.view.WindowCompat
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Category
-import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
@@ -596,49 +596,10 @@ fun CustomTextField_wangst(
 }
 val LightGrey = Color(0xff656565)
 val LightGrey4 = Color(0xffBCBCBC)
-data class CustomTextFieldConfiguration(
-    val disabledTextColor: Color = Color.Transparent,
-    val backgroundColor: Color = LightGrey2,
-    val iconColor: Color = LightGrey,
-    val focusedIndicatorColor: Color = Color.Transparent,
-    val unfocusedIndicatorColor: Color = Color.Transparent,
-    val disabledIndicatorColor: Color = Color.Transparent,
-    val cursorColor: Color = Color.Gray,
-    val cornerShape: Float = 8f,
-    val contentStartPadding: Float = 15f,
-    val contentTopPadding: Float = 10f,
-    val contentBottomPadding: Float = 10f,
-    val textColor: Color = LightGrey4,
-    val textFontSize: Float = 14f,
-    val textFontWeight: FontWeight = FontWeight(400),
-    val leadingIconWidth: Float = 22f,
-    val leadingIconHeight: Float = 14f,
-    val dividerWidth: Float = 1f,
-    val dividerHeight: Float = 19f,
-    val dividerColor: Color = LightBlue4,
-    val dividerStartPadding: Float = 9f
-)
+
 ///////////////////////////////////////
 val LightBlue3 = Color(0xffCFD8E4)
-data class CategoryItemConfiguration(
-    val size: Float = 45f,
-    val borderStroke: Float = 1f,
-    val borderColor: Color = LightBlue3,
-    val iconSize: Float = 20f,
-    val spacerIconText: Float = 7f,
-    val textSize: Float = 11f,
-    val textColor: Color = Color.Black,
-)
-data class SelectorIconConfiguration(
-    val selectorSize: Float = 20f,
-    val backgroundColor: Color = Color.White,
-    val selectorBorderStroke: Float = 1f,
-    val selectorBorderColor: Color = Color.White,
-    val selectorIconSize: Float = 6.67f,
-    val selectorIcon: Int = R.drawable.ic_checked_right,
-    val selectorIconContentDescription: String = "checked_right",
-    val selectorIconTint: Color = Color.Unspecified
-)
+
 @Composable
 fun SelectorIcon_ulkel8(
     config: SelectorIconConfiguration = SelectorIconConfiguration(),
