@@ -103,7 +103,13 @@ fun YoreApp() {
         }
         YoreScreen<SplitReviewViewModel>(
             navController = navController,
-            route = "split_review_page"
+            route = "split_review_page?asGroup={asGroup}",
+            arguments = listOf(
+                navArgument("asGroup"){
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
         ) {
             SplitDetailsScreen()
         }

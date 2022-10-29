@@ -237,7 +237,6 @@ fun AnimatedTextContent(
     style: TextStyle = LocalTextStyle.current,
     renderer: (AnnotatedString.Builder.(AnimatableTextPart, Float, SpanStyle?)->Unit) = AnimatableTextPart.render
 ){
-    Log.d("fljlffds","$from,$to,$progress")
     val items by remember(from,to,spanStyle) {
         derivedStateOf {
             AnimatableTextPart.diff(from, to, spanStyle, diffSettings)

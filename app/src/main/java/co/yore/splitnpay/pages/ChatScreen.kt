@@ -1,5 +1,6 @@
 package co.yore.splitnpay.pages
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -52,8 +53,6 @@ import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.configuration.ContactSearchBarConfiguration
 import co.yore.splitnpay.components.configuration.GroupMemberProfilePicsConfiguration
 import co.yore.splitnpay.components.configuration.SplitTabItemConfiguration
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.DataIds
@@ -496,6 +495,7 @@ fun HeaderUI(
     }
 }
 
+@SuppressLint("Range")
 fun normalEndConstraint(
     dep: Dp,
     endGap: Float,
@@ -1066,6 +1066,7 @@ fun TopBar(
     modifier: Modifier = Modifier,
     alpha: Float,
     notifier: NotificationService = notifier(),
+    text: String,
 ) {
     Row(
         modifier = modifier
@@ -1089,7 +1090,7 @@ fun TopBar(
         4.sx()
 
         FontFamilyText(
-            text = stringResource(R.string.split_group),
+            text = text,
             fontSize = 14.sep(),
             fontWeight = FontWeight.Bold,
             color = Color.blend(Color.White,Color.Black, 1-alpha),

@@ -64,9 +64,10 @@ fun GroupImagePicker_ncbmdg(
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.Center),
-                model = groupImage,
-                contentScale = ContentScale.FillBounds,
-                contentDescription = "people icon"
+                model = groupImage?:co.yore.splitnpay.R.drawable.placeholder_image_2,
+                contentScale = ContentScale.Crop,
+                contentDescription = "people icon",
+                placeholder = painterResource(co.yore.splitnpay.R.drawable.placeholder_image_2),
             )
         }
 

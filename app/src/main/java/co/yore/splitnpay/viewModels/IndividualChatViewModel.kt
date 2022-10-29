@@ -24,6 +24,7 @@ class IndividualChatViewModel(
     private val repo: GroupRepository = GroupsMock(),
     private val settleRepository: SettleRepository = SettleRepositoryImpl()
 ) : ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
 
     override val resolver = Resolver()
     override val navigation = Navigation()
@@ -221,6 +222,12 @@ class IndividualChatViewModel(
             ),
             Sheets.PaymentReview to PaymentReviewBottomSheetModel(
                 object : PaymentReviewBottomSheetModel.Callback{
+                    override fun onContinue() {
+                        mySheeting.hide()
+                        navigation.scope { navHostController, lifecycleOwner, toaster ->
+                            navHostController.navigate("payment_success")
+                        }
+                    }
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -402,13 +409,13 @@ class IndividualChatViewModel(
                 mySheeting.show()
             }
             DataIds.summaryClick -> {
-                /*navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("split_summary_balance")
-                }*/
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.navigate("individual_summary")
+                }
             }
             DataIds.manageClick -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("group_manage")
+                    navHostController.navigate("individual_manage_page")
                 }
                 // _typingMembers.add("https://i.pravatar.cc/100")
             }
@@ -419,9 +426,9 @@ class IndividualChatViewModel(
                 _searchText.value = (arg as? String) ?: ""
             }
             DataIds.cardClick -> {
-                /*navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("split_card_details_screen")
-                }*/
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.navigate("split_card_details")
+                }
             }
             // //////
 

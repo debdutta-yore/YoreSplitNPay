@@ -7,6 +7,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 
 class PaymentSuccessViewModel() : ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()

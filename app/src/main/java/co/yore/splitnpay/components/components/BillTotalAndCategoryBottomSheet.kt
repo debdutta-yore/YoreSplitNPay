@@ -40,10 +40,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sx
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.DataIds
@@ -172,6 +171,7 @@ class BillTotalAndCategoryBottomSheetModel(
     override fun onBack() {
         if(_renamePressed.value!=-1){
             _renamePressed.value = -1
+            updateCanProceed()
         }
         else{
             clear()

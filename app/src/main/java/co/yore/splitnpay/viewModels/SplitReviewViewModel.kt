@@ -80,6 +80,7 @@ class SplitReviewViewModel(
     private val repo: SplitReviewRepository = SplitReviewMock(),
     private val groupRepo: GroupRepository = GroupsMock()
 ) : ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustPan)
     @OptIn(ExperimentalMaterialApi::class)
 
     override val resolver = Resolver()
@@ -217,7 +218,11 @@ class SplitReviewViewModel(
         ),
         onVisibilityChanged = {
             if(!it){
+                softInputMode.value = SoftInputMode.adjustPan
                 mySheeting.sheets.value = Sheets.None
+            }
+            else{
+                softInputMode.value = SoftInputMode.adjustNothing
             }
         },
         confirmStateChange = {
@@ -248,6 +253,7 @@ class SplitReviewViewModel(
     //private val sheets = mutableStateOf(Sheets.None)
     private val category = mutableStateOf(Category.blank)
     private val date = mutableStateOf(Kal.Date(7,6,2022))
+    private var asGroup = false
     ///////////////////
     /////////////////////////////////////////
 
@@ -255,6 +261,11 @@ class SplitReviewViewModel(
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
+            WirelessViewModelInterface.startupNotification -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    asGroup = getBoolean("asGroup",false)
+                }
+            }
             DataIds.deleteReceipt->{
                 receipt.value = null
             }
@@ -341,7 +352,12 @@ class SplitReviewViewModel(
                 showCameraOrGallery()
             }
             DataIds.confirmSplitClick -> {
-
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.popBackStack("split_page", false)
+                    if(asGroup){
+                        navHostController.navigate("group_chat_page")
+                    }
+                }
             }
             DataIds.scanClick -> {
 

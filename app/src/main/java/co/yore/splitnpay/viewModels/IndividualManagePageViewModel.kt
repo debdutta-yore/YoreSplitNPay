@@ -25,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class IndividualManagePageViewModel: ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val sheeting = Sheeting(
         sheetMap = mapOf(
@@ -71,7 +72,9 @@ class IndividualManagePageViewModel: ViewModel(), WirelessViewModelInterface {
     }
 
     private fun pageHandleBack() {
-
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.popBackStack()
+        }
     }
 
     override val navigation = Navigation()

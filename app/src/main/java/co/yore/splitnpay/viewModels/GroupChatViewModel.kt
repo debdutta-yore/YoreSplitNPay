@@ -12,6 +12,7 @@ import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.components.Friend
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.AccountType
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.TransactionStatus
@@ -97,7 +98,44 @@ object MembersMock {
         transactionTime = "12:56 pm",
         totalTransactions = 5,
         completedTransactions = 5,
-        isSingleChat = false
+        isSingleChat = false,
+        category =  Category(
+            id = 6,
+            name = "Trip",
+            color = 0xFFFF4077,
+            icon = R.drawable.ic_trip,
+            isSelected = true,
+            isEditable = false,
+            subCategory = "Business Trip"
+        ),
+        from = co.yore.splitnpay.models.Friend(
+            name = "Sushil Roy",
+            mobileNumber = "8989898989",
+            imageUrl = "https://i.pravatar.cc/300",
+            accountNumber = "12334456511",
+            bank = Bank(
+                name = "SBI",
+                imageUrl = "https://i.pravatar.cc/300"
+            ),
+            accountType = AccountType.Savings,
+            hasRead = false,
+            isSelected = true
+        ),
+        to = co.yore.splitnpay.models.Friend(
+            name = "Manisha Roy",
+            mobileNumber = "8989898989",
+            imageUrl = "https://i.pravatar.cc/300",
+            accountNumber = "34526378964",
+            accountType = AccountType.Savings,
+            bank = Bank(
+                name = "Axis Bank",
+                imageUrl = "https://i.pravatar.cc/300"
+            ),
+            hasRead = false,
+            isSelected = true
+        ),
+        paymentMethod = "UPI",
+        transactionDate = "9 May 2020",
     )
 }
 
@@ -272,9 +310,10 @@ data class SingleItem(
 
 class GroupChatViewModel(
     private val repo: GroupRepository = GroupsMock(),
-    private val settleRepository: SettleRepository = SettleRepositoryImpl()
+    private val settleRepository: SettleRepository = SettleRepositoryImpl(),
+    private val groupChatRepository: TransactionRepository = GroupChatRepositoryImpl(),
 ) : ViewModel(), WirelessViewModelInterface {
-
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
@@ -339,6 +378,15 @@ class GroupChatViewModel(
                         when (arg){
                             "Manage" -> navigation.scope { navHostController, lifecycleOwner, toaster ->
                                 navHostController.navigate("group_manage")
+                            }
+                            "Summary"->{
+                                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                                    navHostController.navigate("group_split_summary")
+                                }
+                            }
+                            "Settle"->{
+                                mySheeting.sheets.value = Sheets.Settle
+                                mySheeting.show()
                             }
                         }
                     }
@@ -521,6 +569,13 @@ class GroupChatViewModel(
                     override fun onChangeAmount() {
                         mySheeting.sheets.value = Sheets.BillTotal
                     }
+
+                    override fun onContinue() {
+                        mySheeting.hide()
+                        navigation.scope { navHostController, lifecycleOwner, toaster ->
+                            navHostController.navigate("payment_success")
+                        }
+                    }
                 }
             ),
             Sheets.BillTotal to BillTotalBottomSheetModel(
@@ -598,13 +653,6 @@ class GroupChatViewModel(
                 mySheeting.sheets.value = Sheets.SettleSummaryManage
                 mySheeting.show()
             }
-            "${DataIds.back}group_chat_page" -> {
-                when (mySheeting.sheets.value){
-                    Sheets.None -> {}
-                    else -> mySheeting.map[mySheeting.sheets.value]?.onBack()
-                }
-
-            }
             DataIds.searchTextInput -> {
                 searchText.value = arg as? String ?: return@NotificationService
             }
@@ -630,17 +678,12 @@ class GroupChatViewModel(
                 )
             }
             DataIds.back -> {
-                if (search.value){
-                    search.value = false
-                    _statusBarColor.value = StatusBarColor(
-                        color = StatusBarGreen,
-                        darkIcons = true
-                    )
-                    searchText.value = ""
-                    return@NotificationService
-                }
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+                pageBack()
+            }
+            "${DataIds.back}group_chat_page"->{
+                when(mySheeting.sheets.value){
+                    Sheets.None -> pageBack()
+                    else-> mySheeting.onBack()
                 }
             }
             DataIds.groupAmount -> {
@@ -655,9 +698,9 @@ class GroupChatViewModel(
                 mySheeting.show()
             }
             DataIds.summaryClick -> {
-                /*navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("split_summary_balance")
-                }*/
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.navigate("group_split_summary")
+                }
             }
             DataIds.manageClick -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -672,9 +715,9 @@ class GroupChatViewModel(
                 _searchText.value = (arg as? String) ?: ""
             }
             DataIds.cardClick -> {
-                /*navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("split_card_details_screen")
-                }*/
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.navigate("split_card_details")
+                }
             }
             // //////
 
@@ -684,6 +727,21 @@ class GroupChatViewModel(
             DataIds.billTotalContinueClick -> {
                 mySheeting.sheets.value = Sheets.DatePicker
             }
+        }
+    }
+
+    private fun pageBack() {
+        if (search.value){
+            search.value = false
+            _statusBarColor.value = StatusBarColor(
+                color = StatusBarGreen,
+                darkIcons = true
+            )
+            searchText.value = ""
+            return
+        }
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.popBackStack()
         }
     }
 
@@ -721,7 +779,7 @@ class GroupChatViewModel(
         )
         // ////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {
-            val billTransactions = repo.getBillTransactions()
+            val billTransactions = groupChatRepository.getTransactions()
             withContext(Dispatchers.Main) {
                 _conversations.add(
                     Conversation(

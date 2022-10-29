@@ -26,6 +26,7 @@ class SplitPageViewModel(
     private val repo: Repo = RepoImpl(),
     private val groupRepo: GroupRepository = GroupsMock(),
 ): ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
     override val navigation = mutableStateOf<UIScope?>(null)

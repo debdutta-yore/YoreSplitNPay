@@ -1,6 +1,7 @@
 package co.yore.splitnpay.libs
 
 import android.content.Context
+import android.os.Bundle
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.runtime.MutableState
@@ -20,12 +21,17 @@ data class Toaster(
     }
 }
 
-typealias UIScope = suspend (NavHostController, LifecycleOwner, Toaster?)->Unit
+typealias UIScope = suspend Bundle.(NavHostController, LifecycleOwner, Toaster?)->Unit
 
 fun MutableState<UIScope?>.scope(block: UIScope?){
     this.value = {navHostController, lifecycleOwner,toaster ->
-        block?.invoke(navHostController,lifecycleOwner,toaster)
-        this.value = null
+        block?.invoke(
+            navHostController.currentBackStackEntry?.arguments?:Bundle(),
+            navHostController,
+            lifecycleOwner,
+            toaster
+        )
+        this@scope.value = null
     }
 }
 
@@ -34,7 +40,11 @@ suspend fun MutableState<UIScope?>.forward(
     lifecycleOwner: LifecycleOwner,
     toaster: Toaster? = null
 ){
-    this.value?.invoke(navHostController,lifecycleOwner,toaster)
+    this.value?.invoke(
+        navHostController.currentBackStackEntry?.arguments?:Bundle(),
+        navHostController,
+        lifecycleOwner,toaster
+    )
 }
 
 fun Navigation() = mutableStateOf<UIScope?>(null)

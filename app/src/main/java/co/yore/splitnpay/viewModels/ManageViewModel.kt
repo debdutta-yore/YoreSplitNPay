@@ -74,6 +74,7 @@ class ManageRepositoryMockImpl : ManageRepository {
 class ManageViewModel(
     private val repo: ManageRepository = ManageRepositoryMockImpl()
 ) : ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()

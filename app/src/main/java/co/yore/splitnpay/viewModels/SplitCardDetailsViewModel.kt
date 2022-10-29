@@ -15,6 +15,7 @@ import co.yore.splitnpay.pages.Transaction
 
 
 class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val notifier = NotificationService{id,arg->
         when(id){
@@ -36,6 +37,16 @@ class SplitCardDetailsViewModel: ViewModel(), WirelessViewModelInterface {
             }
             DataIds.payTransactionStatus->{
                 selectedPayOption.value = arg as? YouWillPayTransactionStatus?:return@NotificationService
+            }
+            DataIds.back -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.popBackStack()
+                }
+            }
+            "${DataIds.back}split_card_details" -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.popBackStack()
+                }
             }
         }
     }

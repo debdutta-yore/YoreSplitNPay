@@ -79,6 +79,7 @@ class GroupSummaryViewModel(
     private val expenseRepository: ExpenseRepository = ExpenseRepositoryImpl(),
     private val timeFilterRepo: TimeFilterRepository = TimeFilterRepositoryImpl()
 ) : ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     private val _resolver = Resolver()
 
     ///////
@@ -87,7 +88,7 @@ class GroupSummaryViewModel(
         val r = _resolver
         return r
     }
-    override val navigation get() = Navigation()
+    override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
     //////////////////////////////////////////
@@ -186,6 +187,11 @@ class GroupSummaryViewModel(
             DataIds.back -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack()
+                }
+            }
+            "${DataIds.back}group_split_summary" -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.navigateUp()
                 }
             }
             DataIds.selectBalanceMember -> {

@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 class GroupCreationPageViewModel(
     private val repo: Repo = RepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     private val contacts = mutableStateListOf<ContactData>()
     private val profileImage = mutableStateOf<Any?>(null)
 

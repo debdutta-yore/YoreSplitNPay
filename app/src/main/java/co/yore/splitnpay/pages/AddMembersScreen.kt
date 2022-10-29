@@ -1,6 +1,7 @@
 package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -106,81 +107,7 @@ fun SingleItem(
 }
 
 
-@Composable
-fun MembersGroupSelectionBottomSheet(modifier: Modifier = Modifier, navController: NavController) {
 
-    val itemList = listOf(
-        SplitMemberItem(id = 0, painterResource(R.drawable.ic_splitasgroup), "Split as Group"),
-        SplitMemberItem(
-            id = 1,
-            painterResource(id = R.drawable.ic_splitnongroup),
-            "Split as Non-group"
-        )
-    )
-
-    val listState = rememberLazyListState()
-    var selectedIndex by remember { mutableStateOf(-1) }
-
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .height((231f - 46f).dep()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Icon(
-            modifier = Modifier
-                .padding(top = 20.dep()),
-            tint = Color(0xff5A87BB),
-            painter = painterResource(id = R.drawable.ic_sheet_holder),
-            contentDescription = "sheet holder"
-        )
-
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .padding(top = 24f.dep())
-                .fillMaxWidth()
-        )
-        {
-            itemsIndexed(items = itemList)
-            { index, _ ->
-
-                SingleItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = itemList[index].id == selectedIndex,
-                            onClick = {
-                            }
-                        )
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onPress = {
-                                    selectedIndex = if (selectedIndex != itemList[index].id)
-                                        itemList[index].id else -1
-
-                                    if (selectedIndex == 0) {
-                                        navController.navigate("group_creation_screen")
-                                    }
-                                    if (selectedIndex == 1) {
-                                        navController.navigate("split_details_screen")
-                                    }
-                                },
-                                onTap = { },
-                                onDoubleTap = { },
-                                onLongPress = { }
-                            )
-                        },
-                    icon = itemList[index].icon,
-                    text = itemList[index].iconName,
-                    isSelected = itemList[index].id == selectedIndex
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun TopBarWithIcon_1t9xbo(
@@ -234,25 +161,20 @@ fun TopBarWithIcon_1t9xbo(
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MemberSelectionPage_g5024t(
-
+    sheeting: Sheeting = sheeting()
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmStateChange = { it!=ModalBottomSheetValue.HalfExpanded }
-    )
+    val sheetState = sheeting.sheetHandler.handle()
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-                       Text("fdfd")
-            //MembersGroupSelectionBottomSheet(navController = navController)
-
+            sheeting.sheetContent()
         },
+        scrimColor = Color(0x8C243257),
+        sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
-            topStart = 25f.dep(),
-            topEnd = 25f.dep()
-        ),
-        scrimColor = Color(0xff8C243257)
+            topStart = 33.dep(),
+            topEnd = 33.dep()
+        )
     ) {
         SplitWithPageContent()
     }

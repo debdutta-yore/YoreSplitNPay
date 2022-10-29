@@ -1,19 +1,17 @@
 package co.yore.splitnpay.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.components.components.SplitAsChoiceBottomSheetModel
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.ContactData
-import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.GroupData
-import co.yore.splitnpay.models.GroupOrContact
+import co.yore.splitnpay.models.*
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,6 +25,7 @@ enum class TriState{
 class MemberSelectionPageViewModel(
     private val repo: Repo = RepoImpl()
 ): ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
     override val navigation = mutableStateOf<UIScope?>(null)
@@ -52,7 +51,32 @@ class MemberSelectionPageViewModel(
         resolver[DataIds.groupsChecked] = _groupsChecked
         fetchGroupAndContacts()
     }
+    override val sheeting = Sheeting(
+        sheetMap = mapOf(
+            Sheets.SplitAsChoice to SplitAsChoiceBottomSheetModel(
+                object : SplitAsChoiceBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
 
+                    override fun onContinue(arg: Any?) {
+                        mySheeting.hide()
+                        val index = arg as? Int ?: return
+                        if(index == 1) {
+                            gotoSplitReviewPage(false)
+                        }
+                        else{
+                            gotoGroupCreationPage()
+                        }
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+                }
+            )
+        )
+    )
     private fun purgeContacts() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.purgeContacts()
@@ -124,8 +148,7 @@ class MemberSelectionPageViewModel(
 
     private fun getArguments() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
-            val args = navHostController.currentBackStackEntry?.arguments
-            forSplit = args?.getBoolean("split")?:false
+            forSplit = getBoolean("split",false)
         }
     }
 
@@ -137,7 +160,13 @@ class MemberSelectionPageViewModel(
 
     private fun proceedWithContacts() {
         saveAddedContacts()
-        gotoGroupCreationPage()
+        if(!forSplit){
+            gotoGroupCreationPage()
+        }
+        else{
+            mySheeting.change(Sheets.SplitAsChoice)
+            mySheeting.show()
+        }
     }
 
     private fun saveAddedContacts() {
@@ -238,12 +267,11 @@ class MemberSelectionPageViewModel(
         }
     }
 
-    //1. Any possibility of changing details of split like amount, member(add, delete) etc? If yes then system will recalculate the settlement status?
-    //2. If unsettled member can be deleted then system will recalculate the settlement status?
-
-
-
-
+    private fun gotoSplitReviewPage(asGroup: Boolean) {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.navigate("split_review_page?asGroup=$asGroup")
+        }
+    }
 
     private fun fetchGroupAndContacts() {
         viewModelScope.launch(Dispatchers.IO) {

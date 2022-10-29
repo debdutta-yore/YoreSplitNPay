@@ -18,5 +18,6 @@ enum class Sheets {
     SettledUnsettledMembers,
     ExpenseFilter,
     TimeFilter,
-    AdvancedDatePicker
+    AdvancedDatePicker,
+    SplitAsChoice
 }

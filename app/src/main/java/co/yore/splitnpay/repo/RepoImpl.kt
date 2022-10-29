@@ -31,12 +31,15 @@ class RepoImpl:Repo {
             val willGet = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f)
             val willPay = Rand.nextFloat(0f,10000f, reseed = true, biased = 0f)
             val name = f.animal.name()
+            val now = System.currentTimeMillis()
+            val dif: Long = 365*24*3600*1000L
+            val then = now - dif
             GroupData(
                 id = newId,
                 name = name,
                 image = "https://randomuser.me/api/portraits/lego/${(++i)%10}.jpg",
                 members = members,
-                lastActivity = randomDate(1643049000000L,1664099455386L),
+                lastActivity = randomDate(then,now),
                 willGet = willGet,
                 willPay = willPay,
             )

@@ -12,8 +12,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
+import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
@@ -158,7 +160,8 @@ fun IndividualChatScreen(
                     TopBar(
                         modifier = Modifier
                             .layoutId("topBar"),
-                        alpha
+                        alpha,
+                        text = stringResource(id = R.string.friends)
                     )
 
                     TypingIndicator(

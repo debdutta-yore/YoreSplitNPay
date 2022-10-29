@@ -13,6 +13,7 @@ import co.yore.splitnpay.pages.SplitSelectableMember
 import co.yore.splitnpay.pages.Transaction
 
 class IndividualSummaryViewModel: ViewModel(), WirelessViewModelInterface {
+    override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val notifier = NotificationService{id,arg->
         when(id){
@@ -28,6 +29,16 @@ class IndividualSummaryViewModel: ViewModel(), WirelessViewModelInterface {
                 splitSelectableMembers[index] = splitSelectableMembers[index].copy(isSelected = true)
                 val name = splitSelectableMembers[index].name
                 //selectedMemberName.value = if(name.lowercase()=="you") "$name'll" else "$name will"
+            }
+            DataIds.back -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.popBackStack()
+                }
+            }
+            "${DataIds.back}individual_summary" -> {
+                navigation.scope { navHostController, lifecycleOwner, toaster ->
+                    navHostController.popBackStack()
+                }
             }
         }
     }

@@ -1,5 +1,7 @@
 package co.yore.splitnpay.libs
 
+import android.app.Activity
+import android.view.WindowManager
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -12,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import co.yore.splitnpay.models.Sheets
@@ -219,7 +222,15 @@ class Sheeting @OptIn(ExperimentalMaterialApi::class) constructor(
     }
 }
 
+object SoftInputMode{
+    const val adjustPan = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+    const val adjustNothing = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING
+    const val adjustUnspecified = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED
+    const val adjustResize = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+}
+
 interface WirelessViewModelInterface{
+    val softInputMode: MutableState<Int>
     val resolver: Resolver
     val notifier: NotificationService
     val navigation: MutableState<UIScope?>
@@ -248,6 +259,12 @@ fun YorePage(
     LaunchedEffect(key1 = wvm.navigation.value){
         wvm.navigation.forward(navController,owner)
     }
+    ///////////
+    val activity = LocalContext.current as Activity
+    LaunchedEffect(key1 = wvm.softInputMode.value) {
+        activity.window.setSoftInputMode(wvm.softInputMode.value)
+    }
+    ///////////
     CompositionLocalProvider(
         LocalResolver provides wvm.resolver,
         LocalNotificationService provides wvm.notifier,
