@@ -30,10 +30,7 @@ import co.yore.splitnpay.models.ProfileImageConfiguration
 import co.yore.splitnpay.models.SingleItemYouWillGetCardConfiguration
 import co.yore.splitnpay.models.YouWillGetCardConfiguration
 import co.yore.splitnpay.pages.WhitishGreen
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.Greyish2
-import co.yore.splitnpay.ui.theme.LightBlue4
-import co.yore.splitnpay.ui.theme.LightGreen3
+import co.yore.splitnpay.ui.theme.*
 import java.text.DecimalFormat
 
 @Composable
@@ -199,7 +196,7 @@ fun SingleItemYouWillGetCard_3btamv(
                 FontFamilyText(
                     text = transaction.mobile,
                     fontSize = 11.sep(),
-                    color = Color(0xff5A87BB)
+                    color = LightBlue5
                 )
             }
         }

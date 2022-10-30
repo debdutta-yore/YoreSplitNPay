@@ -142,7 +142,7 @@ fun MemberFilterBottomSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Color(0xff5A87BB))
+                .background(LightBlue5)
                 .align(Alignment.CenterHorizontally)
         )
         41.sy()
@@ -233,7 +233,7 @@ private fun FilterSingleUser_ffkz81(
 
             FontFamilyText(
                 text = item.mobileNo,
-                color = Color(0xff5A87BB),
+                color = LightBlue5,
                 fontSize = 11.sep(),
                 lineHeight = 13.sep(),
                 letterSpacing = 0.2.sep()

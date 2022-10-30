@@ -24,6 +24,7 @@ import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sx
 import co.yore.splitnpay.models.Amount
+import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.robotoFonts
 import java.math.MathContext
 
@@ -73,9 +74,9 @@ fun AmountField(
     val color by remember(amount) {
         derivedStateOf {
             if (amount > 0) {
-                Color(0xff243257)
+                DarkBlue
             } else {
-                Color(0xff8C93A2)
+                MyColor
             }
         }
     }
@@ -105,7 +106,7 @@ fun AmountField(
                 modifier = modifier
                     .height(33.dep())
                     .clip(RoundedCornerShape(8.dep()))
-                    .background(Color(0xffF9F9F9))
+                    .background(CardGrey)
                     .padding(horizontal = 8.dep()),
                 verticalAlignment = Alignment.CenterVertically
             ) {

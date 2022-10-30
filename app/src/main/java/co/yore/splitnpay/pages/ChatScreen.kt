@@ -282,7 +282,7 @@ fun ContentUI(
                         top = 18.dep()
                     ),
                     modifier = Modifier.fadingEdge(
-                        startingColor = Color(0xffF5F9FF)
+                        startingColor = Whitish
                     )
                 ) {
                     items(conversations) { it ->
@@ -337,7 +337,7 @@ fun HeaderUI(
             modifier = Modifier
                 .layoutId("groupImage")
                 .coloredShadow(
-                    color = Color(0x4F075692),
+                    color = DarkBlueShadow,
                     offsetX = 0.dep(),
                     offsetY = 2.25.dep(),
                     blurRadius = 4.5.dep(),

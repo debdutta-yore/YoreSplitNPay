@@ -406,7 +406,7 @@ fun YouWillPayCard(
 
     val textColor by remember(progress) {
         derivedStateOf {
-            Color.blend(DarkBlue, Color(0xff839BB9), progress)
+            Color.blend(DarkBlue, Lightblue4, progress)
         }
     }
 
@@ -497,7 +497,7 @@ fun YouWillPayCard(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Color(0x80C6CFD8).copy(alpha = 1f - progress),
+                    color = Grey_shadow.copy(alpha = 1f - progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
@@ -564,7 +564,7 @@ fun YouWillPayCard(
                 .size(26.dep())
                 .clip(CircleShape)
                 .clickable(
-                    rippleColor = Color(0xffFF4077)
+                    rippleColor = Pink
                 ) {
                     notifier.notify(DataIds.payCard, null)
                 }
@@ -665,9 +665,9 @@ fun BottomCut(
     val backgroundColor by remember(pageState) {
         derivedStateOf {
             when (pageState){
-                SplitPageState.GET -> Color(0xff37D8CF)
-                SplitPageState.PAY -> Color(0xffFF4077)
-                SplitPageState.NONE -> Color(0xff839BB9)
+                SplitPageState.GET -> LightGreen3
+                SplitPageState.PAY -> Pink
+                SplitPageState.NONE -> LightBlue4
             }
         }
     }
@@ -696,9 +696,9 @@ fun UpperCut(
     val backgroundColor by remember(pageState) {
         derivedStateOf {
             when (pageState){
-                SplitPageState.GET -> Color(0xff37D8CF)
-                SplitPageState.PAY -> Color(0xffFF4077)
-                SplitPageState.NONE -> Color(0xff839BB9)
+                SplitPageState.GET -> Lightgreen3
+                SplitPageState.PAY -> Pink
+                SplitPageState.NONE -> LightBlue4
             }
         }
     }

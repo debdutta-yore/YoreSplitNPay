@@ -23,6 +23,7 @@ import co.yore.splitnpay.models.SingleSettledOrUnsettledMember
 import co.yore.splitnpay.models.UnSettledMembersConfiguration
 import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.LightBlue5
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -117,7 +118,7 @@ fun UnsettledMembersAlertSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Color(0xff5A87BB))
+                .background(LightBlue5)
                 .align(Alignment.CenterHorizontally)
         )
         33.sy()

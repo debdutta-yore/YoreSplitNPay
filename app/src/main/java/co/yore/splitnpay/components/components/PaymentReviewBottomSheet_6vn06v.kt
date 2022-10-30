@@ -140,7 +140,7 @@ fun PaymentReviewBottomSheet_6vn06v(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Color(0xff5A87BB))
+                .background(LightBlue5)
                 .align(Alignment.CenterHorizontally)
         )
         config.holderBottomPadding.sy()
@@ -178,7 +178,7 @@ fun PaymentReviewBottomSheet_6vn06v(
                 leadingIcon = R.drawable.ic_description,
                 placeHolderText = stringResource(id = R.string.note),
                 contentDescription = "CustomTextField",
-                iconTint = Color(0xff656565)
+                iconTint = LightGrey
             )
         }
         config.customTextBoxBottomPadding.sy()

@@ -97,7 +97,7 @@ fun SplitDetailsScreen(
             topStart = 25f.dep(),
             topEnd = 25f.dep()
         ),
-        scrimColor = Color(0x8C243257)
+        scrimColor = SheetScrim
     ) {
         SplitDetailsPage()
     }
@@ -732,7 +732,7 @@ fun SplitAdjustItem_eugo18(
         SplitAdjustAmount_ppv64u(memberPayment.toPay, isEditable)
     }
 }
-val WhitishGreen = Color(0xFFF2FFFD)
+
 
 @Composable
 fun SplitMembersRemainingBox(

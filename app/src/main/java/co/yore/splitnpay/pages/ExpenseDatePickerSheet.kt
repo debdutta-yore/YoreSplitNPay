@@ -20,6 +20,9 @@ import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.ui.theme.BluishGrey
+import co.yore.splitnpay.ui.theme.Darkblue
+import co.yore.splitnpay.ui.theme.LightBlue5
 import kotlinx.coroutines.*
 
 class ExpenseDatePickerBottomSheetModel(val callback: Callback): BottomSheetModel{
@@ -133,7 +136,7 @@ fun ExpenseDatePickerSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Color(0xff5A87BB))
+                .background(LightBlue5)
                 .align(Alignment.CenterHorizontally)
         )
         13.sy()
@@ -158,13 +161,13 @@ fun ExpenseDatePickerSheet(
                     text = stringResource(id = R.string.select_expense_date),
                     fontSize = 18.sep(),
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xff243257)
+                    color = Darkblue
                 )
             }
             7.sy()
             RobotoText(
                 text = stringResource(id = R.string.expense_date_instruction),
-                color = Color(0xff8498AB),
+                color = BluishGrey,
                 fontSize = 12.sep(),
                 modifier = Modifier.padding(start = 24.dep())
             )

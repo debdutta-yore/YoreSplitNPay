@@ -167,7 +167,7 @@ fun SingleMember(
                         .clip(CircleShape)
                         .border(
                             width = 3.dep(),
-                            color = Color(0xffEDF5FF),
+                            color = LightBlue1,
                             CircleShape
                         )
                         .padding(3.dep())
@@ -204,7 +204,7 @@ fun SingleMember(
                 5.sy()
                 FontFamilyText(
                     text = userPhNo,
-                    color = Color(0xff5A87BB),
+                    color = Lightblue5,
                     fontSize = 11.sep()
                 )
             }
@@ -276,7 +276,7 @@ fun GroupManagePage(
                             )
                         )
                         .background(
-                            Color(0xff34cfcf),
+                            MyColor8,
                             RoundedCornerShape(
                                 bottomStart = 48.dep()
 
@@ -296,7 +296,7 @@ fun GroupManagePage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(42.dep())
-                        .background(Color(0xff34cfcf))
+                        .background(MyColor8)
                         .background(
                             Color.White,
                             RoundedCornerShape(
@@ -362,7 +362,7 @@ fun GroupManagePage(
                             top = 146.dep(),
                             start = 16.dep()
                         ),
-                    color = Color(0xff5A87BB),
+                    color = LightBlue5,
                     fontSize = 13.sep(),
                     annotatedString = buildAnnotatedString {
                         append("Created by $groupCreatedBy on ")
@@ -586,7 +586,7 @@ fun SingleSetting(
             .fillMaxWidth()
             .height(60.dep())
             .clickable(
-                rippleColor = Color(0xff1A79E5),
+                rippleColor = Bluish,
                 onClick = {
                     onClick()
                 }
@@ -607,7 +607,7 @@ fun SingleSetting(
             36.sx()
             FontFamilyText(
                 text = text,
-                color = Color(0xff5A87BB),
+                color = LightBlue5,
                 fontSize = 14.sep()
             )
         }
@@ -617,7 +617,7 @@ fun SingleSetting(
                 width = 36.dep(),
                 height = 20.dep(),
                 strokeWidth = 1.dep(),
-                checkedTrackColor = Color(0xff37D8CF),
+                checkedTrackColor = Lightgreen3,
                 uncheckedTrackColor = LightBlue4,
                 gapBetweenThumbAndTrackEdge = 3.dep(),
                 onSwitch = {
@@ -631,7 +631,7 @@ fun SingleSetting(
                     .size(32.dep())
                     .clip(CircleShape)
                     .clickable(
-                        rippleColor = Color(0xff1A79E5)
+                        rippleColor = Bluish
                     ) {
 
                     }
@@ -928,7 +928,7 @@ fun UnSettledMemberItem(
     }
 }
 
-val Whitish5 = Color(0xFFF8FBFF)
+
 
 // //////////////
 private const val RadioAnimationDuration = 700

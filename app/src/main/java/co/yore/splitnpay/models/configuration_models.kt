@@ -24,7 +24,7 @@ data class AmountPortionConfiguration(
 
 data class ArrowButtonConfiguration(
     val iconBackgroundColor: Color = Lightblue4,
-    val iconPressedColor: Color = Color(0xff1A79E5),
+    val iconPressedColor: Color = Bluish,
     val iconTint: Color = Color.White,
     val iconButtonRadius: Float = 9f,
     val iconButtonSize: Float = 28f,
@@ -362,7 +362,7 @@ data class HeaderBackAndSplitConfiguration(
 data class MonthDayPickerConfiguration(
     val verticalPadding: Float = 9f,
     val height: Float = 89f,
-    val backgroundColor: Color = Color(0xffEDF5FF),
+    val backgroundColor: Color = LightBlue1,
     val boxSize: Float = 54f,
     val highlightWidth: Float = 64f,
     val highlightBorderRadius: Float = 13f,
@@ -374,17 +374,17 @@ data class MonthUIConfiguration(
     val width: Float = 74f,
     val height: Float = 42f,
     val borderRadius: Float = 21f,
-    val selectedBackgroundColor: Color = Color(0xffEDF5FF),
+    val selectedBackgroundColor: Color = LightBlue1,
     val fontSize: Float = 14f,
     val disabledColor: Color = Color.Gray,
-    val activeColor: Color = Color(0xff1B79E6),
+    val activeColor: Color = LightBlue,
     val color: Color = Color(0xff243257)
 )
 
 data class NavIconConfiguration(
     val size: Float = 18f,
     val disabledBackgroundColor: Color = Color.Gray,
-    val enabledBackgroundColor: Color = Color(0xff1A79E5),
+    val enabledBackgroundColor: Color = Bluish,
     val drawableId: Int,
     val padding: Float = 4f,
     val iconTint: Color = Color.White
@@ -573,9 +573,9 @@ data class YouWillGetSingleItemConfiguration(
 )
 
 data class SplitButtonConfiguration(
-    val backgroundColor: Color = Color(0xffFF4077),
+    val backgroundColor: Color = Pink,
     val tint: Color = Color.White,
-    val shadowColor: Color = Color(0x4fff4077),
+    val shadowColor: Color = PinkShadow,
     val shadowBorderRadius: Float = 100f,
     val shadowBlurRadius: Float = 12f,
     val shadowSpread: Float = 0f,
@@ -619,7 +619,7 @@ data class YouWillGetPayCardConfig(
     val height: Float = 153f,
     val width: Float = 149f,
 
-    val shadowColor: Color = Color(0x80C6CFD8),
+    val shadowColor: Color = Grey_shadow,
     val shadowBlurRadius: Float = 33f,
     val shadowOffset: Float = 7f,
     val borderRadius: Float = 15f,
@@ -637,10 +637,10 @@ data class YouWillGetPayCardConfig(
     val arrowButtonRightPadding: Float = 10f,
     val arrowButtonBottomPadding: Float = 8f,
     val type: Type,
-    val amountColor: Color = Color(0xff839BB9),
+    val amountColor: Color = LightBlue4,
     val backgroundColor: Color = Color.White,
-    val activeGetColor: Color = Color(0xff37D8CF),
-    val activePayColor: Color = Color(0xffFF4077)
+    val activeGetColor: Color = LightGreen3,
+    val activePayColor: Color = Pink
 ) {
     enum class Type {
         GET,
@@ -672,7 +672,7 @@ data class PeopleCardConfiguration(
 data class YearSwitcherConfiguration(
     val navYearSpace: Float = 40f,
     val fontSize: Float = 16f,
-    val color: Color = Color(0xff243257),
+    val color: Color = Darkblue,
     val horizontalPadding: Float = 4f
 )
 
@@ -690,11 +690,11 @@ data class YearItemConfiguration(
     val width: Float = 84f,
     val height: Float = 42f,
     val borderRadius: Float = 21f,
-    val selectedBackgroundColor: Color = Color(0xffEDF5FF),
+    val selectedBackgroundColor: Color = LightBlue1,
     val unselectedBackgroundColor: Color = Color.Transparent,
     val fontSize: Float = 14f,
-    val selectedColor: Color = Color(0xff1B79E6),
-    val unselectedColor: Color = Color(0xff243257)
+    val selectedColor: Color = LightBlue,
+    val unselectedColor: Color = Darkblue
 )
 
 data class WeekDayUIConfiguration(
@@ -707,7 +707,7 @@ data class WeekDayUIConfiguration(
     val dateFontSize: Float = 11f,
     val dateDisabledColor: Color = Color.LightGray,
     val dateActiveColor: Color = Color.White,
-    val dateEnabledColor: Color = Color(0xff1A79E5)
+    val dateEnabledColor: Color = Bluish
 )
 
 data class SingleGroupMemberProfilePicConfiguration(
@@ -753,8 +753,8 @@ data class TabsConfiguration(
     val backgroundColor: Color = Color.White,
     val startPadding: Float = 15f,
     val fontSize: Float = 21f,
-    val color: Color = Color(0xffCFD8E4),
-    val selectedColor: Color = Color(0xff243257),
+    val color: Color = LightBlue3,
+    val selectedColor: Color = DarkBlue,
     val height: Float = 73f,
     val dividerThickness: Float = 1f,
     val dividerColor: Color = Color(0xfffafcff)
@@ -796,7 +796,7 @@ data class TransparentProfilePicConfiguration(
 
 data class NoGroupHasBeenCreatedYetConfiguration(
     val stringId: Int = R.string.no_group_has_been_created_yet,
-    val color: Color = Color(0xff839BB9),
+    val color: Color = Lightblue4,
     val fontSize: Float = 13f
 )
 
