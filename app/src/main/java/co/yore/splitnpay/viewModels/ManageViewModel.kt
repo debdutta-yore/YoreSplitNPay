@@ -6,69 +6,24 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.components.components.DeleteAlertSheetModel
 import co.yore.splitnpay.components.components.SettledUnsettledMembersBottomSheetModel
 import co.yore.splitnpay.components.components.SuccessUndoSheetModel
 import co.yore.splitnpay.components.components.UnsettledMembersAlertSheetModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-interface ManageRepository {
-    suspend fun getMembers(): List<Member>
-}
-class ManageRepositoryMockImpl : ManageRepository {
-    val group = listOf(
-        Member(
-            id = 1,
-            profilePic = "https://i.pravatar.cc/300",
-            userName = "You",
-            mobileNo = "9563376942",
-            isSelected = false,
-            isGroupAdmin = true
-        ),
-        Member(
-            id = 2,
-            profilePic = "https://i.pravatar.cc/300",
-            userName = "Manisha Roy",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-        Member(
-            id = 3,
-            profilePic = "https://i.pravatar.cc/300",
-            userName = "Sushil Roy",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-        Member(
-            id = 4,
-            profilePic = "https://i.pravatar.cc/300",
-            userName = "Sanjana Ray",
-            mobileNo = "9563376942",
-            isSelected = false
-        ),
-        Member(
-            id = 5,
-            profilePic = "https://i.pravatar.cc/300",
-            userName = "Ankita Ray",
-            mobileNo = "9563376942",
-            isSelected = false
-        )
-    )
-
-    override suspend fun getMembers(): List<Member> {
-        return group
-    }
-
-}
 class ManageViewModel(
-    private val repo: ManageRepository = ManageRepositoryMockImpl()
+    private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
@@ -95,78 +50,7 @@ class ManageViewModel(
                     }
 
                     override suspend fun members(): List<SingleSettledOrUnsettledMember> {
-                        return listOf(
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            ),
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            ),
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            ),
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            ),
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            ),
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            ),
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            )
-                        )
+                        return repo.singleSettledOrUnsettledMembers()
                     }
 
                     override fun onContinue() {
@@ -235,33 +119,11 @@ class ManageViewModel(
                     }
 
                     override suspend fun settledMembers(): List<SingleSettledOrUnsettledMember> {
-                        return listOf(
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = true,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 600f,
-                                paidAmount = 0f
-                            )
-                        )
+                        return repo.settledMembers()
                     }
 
                     override suspend fun unsettledMembers(): List<SingleSettledOrUnsettledMember> {
-                        return listOf(
-                            SingleSettledOrUnsettledMember(
-                                selectedSettleOption = SettleOptions.SplitIndividual,
-                                isChecked = true,
-                                isSettledMember = false,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                userName = "Sushil Roy",
-                                userPhNo = "8967114927",
-                                getAmount = 0f,
-                                paidAmount = 600f
-                            )
-                        )
+                        return repo.unsettledMembers()
                     }
 
                     override fun onContinue(
@@ -390,7 +252,7 @@ class ManageViewModel(
 
     private fun setUpStatusBarColor() {
         _statusBarColor.value = StatusBarColor(
-            color = StatusBarGreen,
+            color = RobinsEggBlue,
             darkIcons = true
         )
     }
@@ -415,7 +277,7 @@ class ManageViewModel(
 
     private fun populateMembers() {
         viewModelScope.launch(Dispatchers.IO) {
-            val members = repo.getMembers()
+            val members = repo.getMembers1()
             withContext(Dispatchers.Main) {
                 _groupMembers.addAll(
                     members

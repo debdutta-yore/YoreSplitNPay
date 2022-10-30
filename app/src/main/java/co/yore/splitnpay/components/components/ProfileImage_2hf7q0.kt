@@ -1,4 +1,4 @@
-package co.yore.splitnpay.friend_item // ktlint-disable package-name
+package co.yore.splitnpay.components.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding

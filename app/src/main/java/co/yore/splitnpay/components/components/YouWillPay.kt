@@ -18,17 +18,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.CustomButtonConfiguration
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Transaction
 import co.yore.splitnpay.models.YouWillPayChildPageConfiguration
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.LightBlue4
-import co.yore.splitnpay.ui.theme.LightRedButton
-import co.yore.splitnpay.ui.theme.Pink
+import co.yore.splitnpay.ui.theme.CuriousBlue
+import co.yore.splitnpay.ui.theme.WildBlueYonder
+import co.yore.splitnpay.ui.theme.LavenderBlush
+import co.yore.splitnpay.ui.theme.RadicalRed
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -51,14 +50,14 @@ fun YouWillPayChildPage_m6awbp(
             72.sy()
             FontFamilyText(
                 text = "$userName " + stringResource(id = R.string.have_already_paid),
-                color = LightBlue4,
+                color = WildBlueYonder,
                 fontSize = 13.sep(),
                 fontWeight = FontWeight.Bold
             )
             config.gapBetweenTwoText.sy()
             FontFamilyText(
                 text = "$userName " + stringResource(id = R.string.dont_owe_anything),
-                color = LightBlue4,
+                color = WildBlueYonder,
                 fontSize = 13.sep()
             )
             config.gapBetweenTextAndIcon.sy()
@@ -111,7 +110,7 @@ fun YouWillPayChildPage_m6awbp(
                         29.sy()
                         FontFamilyText(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            color = Bluish,
+                            color = CuriousBlue,
                             text = stringResource(R.string.remind),
                             fontSize = 16.sep()
                         )
@@ -141,8 +140,8 @@ fun YouWillPayChildPage_m6awbp(
                             text = stringResource(R.string.total_you_will_pay),
                             amount = total,
                             contentDescription = "YouWillGet",
-                            borderColor = Pink,
-                            backgroundColor = LightRedButton
+                            borderColor = RadicalRed,
+                            backgroundColor = LavenderBlush
                         )
                         24.sy()
                     }

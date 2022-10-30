@@ -16,14 +16,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightGrey2
+import co.yore.splitnpay.ui.theme.CuriousBlue
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.Alabaster
 import kotlinx.coroutines.CoroutineScope
 
 class DeleteAlertSheetModel(val callback: Callback): BottomSheetModel{
@@ -101,7 +99,7 @@ fun DeleteAlertSheet(
                 .align(CenterHorizontally)
                 .clip(CircleShape)
                 .size(80.dep())
-                .background(LightGrey2, shape = CircleShape),
+                .background(Alabaster, shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -116,7 +114,7 @@ fun DeleteAlertSheet(
                 .fillMaxWidth()
                 .align(CenterHorizontally),
             text = message,
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 16.sep(),
             textAlign = TextAlign.Center
         )
@@ -144,7 +142,7 @@ fun DeleteAlertSheet(
                     }
                 ),
             text = stringResource(id = R.string.cancel),
-            color = Bluish,
+            color = CuriousBlue,
             fontSize = 16.sep(),
         )
         20.sy()

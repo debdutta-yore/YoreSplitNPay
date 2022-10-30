@@ -51,7 +51,7 @@ fun GroupChatScreen(
                 sheeting[it]
             }
         },
-        scrimColor = Color(0x8C243257),
+        scrimColor = CloudBurst8C,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
             topStart = 33.dep(),
@@ -192,7 +192,7 @@ fun GroupChatScreen(
                                 onClick = {
                                     notifier.notify(DataIds.settleSummaryManage)
                                 },
-                                rippleColor = Bluish
+                                rippleColor = CuriousBlue
                             )
                     )
                 }

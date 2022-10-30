@@ -16,13 +16,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightGrey2
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.DoveGray
+import co.yore.splitnpay.ui.theme.Alabaster
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -135,7 +134,7 @@ fun BillTotalBottomSheet(
 
         FontFamilyText(
             text = stringResource(R.string.enter_bill_total),
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 16.sep(),
             fontWeight = FontWeight.Bold,
         )
@@ -144,7 +143,7 @@ fun BillTotalBottomSheet(
             modifier = Modifier
                 .padding(top = 17.dep())
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
@@ -164,14 +163,14 @@ fun BillTotalBottomSheet(
                 keyboardType = KeyboardType.Number,
                 visualTransformation = ThousandsTransformer(),
                 textStyle = TextStyle(
-                    color = Color(0xff243257),
+                    color = CloudBurst,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sep(),
                 ),
                 interceptor = {
                     it.replace("^0+".toRegex(),"").take(14)
                 },
-                iconTint = Color(0xff656565)
+                iconTint = DoveGray
             )
         }
 
@@ -179,7 +178,7 @@ fun BillTotalBottomSheet(
             modifier = Modifier
                 .padding(top = 17.dep())
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
@@ -196,7 +195,7 @@ fun BillTotalBottomSheet(
                 placeHolderText = stringResource(R.string.add_description),
                 singleLine = true,
                 maxLines = 1,
-                iconTint = Color(0xff656565)
+                iconTint = DoveGray
             )
         }
 

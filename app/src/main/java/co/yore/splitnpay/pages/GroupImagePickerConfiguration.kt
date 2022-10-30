@@ -19,8 +19,8 @@ import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.droot2
 import co.yore.splitnpay.models.GroupImagePickerConfiguration
-import co.yore.splitnpay.ui.theme.DarkBlueShadow
-import co.yore.splitnpay.ui.theme.LightBlue3
+import co.yore.splitnpay.ui.theme.VeniceBlue4F
+import co.yore.splitnpay.ui.theme.Botticelli
 import co.yore.splitnpay.ui.theme.White
 import coil.compose.AsyncImage
 
@@ -42,7 +42,7 @@ fun GroupImagePicker_ncbmdg(
             modifier = Modifier
                 .size(config.imageSize.dep())
                 .coloredShadow(
-                    color = DarkBlueShadow,
+                    color = VeniceBlue4F,
                     borderRadius = 50.dep(),
                     blurRadius = 6.dep(),
                     spread = 0f,
@@ -50,7 +50,7 @@ fun GroupImagePicker_ncbmdg(
                     offsetY = 3.dep(),
                 )
                 .clip(CircleShape)
-                .background(LightBlue3)
+                .background(Botticelli)
                 .border(
                     width = config.borderStroke.dep(),
                     color = config.borderColor,
@@ -77,7 +77,7 @@ fun GroupImagePicker_ncbmdg(
                 )
                 .size(27.dep())
                 .coloredShadow(
-                    color = DarkBlueShadow,
+                    color = VeniceBlue4F,
                     borderRadius = 50.dep(),
                     blurRadius = 6.dep(),
                     spread = 0f,

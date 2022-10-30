@@ -53,7 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.dashedBorder
@@ -61,7 +60,6 @@ import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.ui.theme.*
-import co.yore.splitnpay.viewModels.MembersMock.transaction
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.launch
@@ -97,7 +95,7 @@ fun SplitDetailsScreen(
             topStart = 25f.dep(),
             topEnd = 25f.dep()
         ),
-        scrimColor = SheetScrim
+        scrimColor = CloudBurst8C
     ) {
         SplitDetailsPage()
     }
@@ -195,7 +193,7 @@ fun SplitDetailsPage(
                 fontSize = 14.sep(),
                 fontWeight = FontWeight.Normal,
                 fontFamily = robotoFonts,
-                color = BluishGrey
+                color = BaliHai
             )
             val boldScript = SpanStyle(
                 baselineShift = BaselineShift.None,
@@ -208,7 +206,7 @@ fun SplitDetailsPage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dep())
-                    .background(LightBlue1),
+                    .background(Zumthor),
                 contentAlignment = Center
             ) {
                 FontFamilyText(
@@ -230,7 +228,7 @@ fun SplitDetailsPage(
                 FontFamilyText(
                     text = stringResource(R.string.total_bill_amount),
                     fontSize = 14.sep(),
-                    color = BluishGrey,
+                    color = BaliHai,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .align(alignment = Center)
@@ -249,7 +247,7 @@ fun SplitDetailsPage(
                     EditIcon_gx6f1w(
                         text = "Edit",
                         icon = R.drawable.edit,
-                        iconTint = Bluish,
+                        iconTint = CuriousBlue,
                         contentDescription = "edit icon"
                     )
                 }
@@ -266,14 +264,14 @@ fun SplitDetailsPage(
                     annotatedString = billTotal.amountAnnotatedString(
                         isSpaceBetween = true,
                         isCurrencySymbolEnabled = false,
-                        wholeNumberTextColor = DarkBlue,
+                        wholeNumberTextColor = CloudBurst,
                         wholeNumberFontSize = 40f,
-                        decNumberTextColor = DarkBlue,
+                        decNumberTextColor = CloudBurst,
                         decNumberFontSize = 14f,
                         isTrailingTextEnabled = true,
                         trailingText = " INR",
                         trailingTextFontSize = 21f,
-                        trailingTextTextColor = DarkBlue,
+                        trailingTextTextColor = CloudBurst,
                         trailingTextFontWeight = FontWeight.Bold
                     ),
                     textAlign = TextAlign.Center
@@ -284,7 +282,7 @@ fun SplitDetailsPage(
                 modifier = Modifier
                     .align(CenterHorizontally),
                 text = billTotal.toInt().numberToWords(),
-                color = DarkBlue,
+                color = CloudBurst,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sep()
             )
@@ -297,7 +295,7 @@ fun SplitDetailsPage(
                     .padding(horizontal = 69.dep())
                     .border(
                         width = 1.dep(),
-                        color = GreyBorder,
+                        color = RockBlue,
                         shape = RoundedCornerShape(8.dep())
                     ),
                 value = subCategoryText,
@@ -317,7 +315,7 @@ fun SplitDetailsPage(
                         FontFamilyText(
                             text = stringResource(id = R.string.description),
                             fontSize = 13.sep(),
-                            color = GreyBorder
+                            color = RockBlue
                         )
                     },
                     trailingIcon = {
@@ -337,7 +335,7 @@ fun SplitDetailsPage(
                 ) {
                     FontFamilyText(
                         text = stringResource(R.string.category) + ":",
-                        color = LightBlue4,
+                        color = WildBlueYonder,
                         fontSize = 15.sep()
                     )
                     12.sy()
@@ -352,7 +350,7 @@ fun SplitDetailsPage(
                 ) {
                     FontFamilyText(
                         text = stringResource(R.string.date) + ":",
-                        color = LightBlue4,
+                        color = WildBlueYonder,
                         fontSize = 15.sep()
                     )
                     12.sy()
@@ -585,11 +583,11 @@ fun PaidMessage(remaining: Double) {
     val backgroundColor by remember(remaining) {
         derivedStateOf {
             if (remaining == 0.0){
-                Color(0xffF2FFFD)
+                Dew1
             } else if (remaining > 0f){
-                Color(0xFFFFE2D3)
+                Watusi
             } else if (remaining < 0f){
-                Color(0xffFFEFF4)
+                LavenderBlush1
             } else {
                 Color.Transparent
             }
@@ -612,11 +610,11 @@ fun PaidMessage(remaining: Double) {
     val color by remember(remaining) {
         derivedStateOf {
             if (remaining == 0.0){
-                Color(0xff37D8CF)
+                Turquoise1
             } else if (remaining > 0f){
-                Color(0xFFFF5700)
+                InternationalOrange
             } else if (remaining < 0f){
-                Color(0xffFF4077)
+                RadicalRed
             } else {
                 Color.Transparent
             }
@@ -652,7 +650,7 @@ fun TabItemUI(
 ) {
     val color by remember(selectedTabIndex, index) {
         derivedStateOf {
-            if (selectedTabIndex == index) DarkBlue else LightBlue3
+            if (selectedTabIndex == index) CloudBurst else Botticelli
         }
     }
     val animatedColor by animateColorAsState(
@@ -792,7 +790,7 @@ fun SplitMemberPaymentItem_z0nkzc(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() } // This is mandatory
                 ) {
-                    notifier.notify(DataIds.selectPaidByMemberClick, transaction)
+                    notifier.notify(DataIds.selectPaidByMemberClick)
                 },
             contentAlignment = Alignment.TopEnd
         ) {
@@ -932,7 +930,7 @@ fun TopBarWithIcon_1t9xbo(
                 blurRadius = 6.dep(),
                 offsetX = 0.dep(),
                 offsetY = 3.dep(),
-                color = Color(0xff075692).copy(alpha = 0.11f)
+                color = VeniceBlue.copy(alpha = 0.11f)
             )
             .fillMaxSize()
             .background(Color.White),
@@ -1044,7 +1042,7 @@ fun EditIcon_gx6f1w(
             modifier = Modifier.align(Alignment.CenterVertically),
             text = text,
             fontSize = 12.sep(),
-            color = Bluish
+            color = CuriousBlue
         )
         Spacer(modifier = Modifier.width(10.dep()))
     }
@@ -1056,17 +1054,17 @@ fun Any.amountAnnotatedString(
     isLeadingTextEnabled: Boolean = false,
     leadingText: String = "",
     leadingTextFontSize: Float = 9f,
-    leadingTextTextColor: Color = DarkBlue,
+    leadingTextTextColor: Color = CloudBurst,
     leadingTextFontWeight: FontWeight = FontWeight(400),
     isTrailingTextEnabled: Boolean = false,
     trailingText: String = "",
     trailingTextFontSize: Float = 9f,
-    trailingTextTextColor: Color = DarkBlue,
+    trailingTextTextColor: Color = CloudBurst,
     trailingTextFontWeight: FontWeight = FontWeight(400),
     isSpaceBetween: Boolean = true,
     isCurrencySymbolEnabled: Boolean = true,
     currencyFontSize: Float = 12f,
-    currencyTextColor: Color = DarkBlue,
+    currencyTextColor: Color = CloudBurst,
     currencyFontWeight: FontWeight = FontWeight(400),
     wholeNumberFontSize: Float = 12f,
     wholeNumberTextColor: Color,
@@ -1332,7 +1330,7 @@ fun DashedBorderIconButtonWithText_13ppr3(
     }
 }
 
-val GreyShade = Color(0xff8C93A2)
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -1344,7 +1342,7 @@ fun SplitAdjustAmount_ppv64u(
     val textColor = remember {
         derivedStateOf {
             if (!isAmountEditable){
-                if (amount != 0.0) config.textColor else GreyShade
+                if (amount != 0.0) config.textColor else Manatee
             } else config.textColor
         }
     }

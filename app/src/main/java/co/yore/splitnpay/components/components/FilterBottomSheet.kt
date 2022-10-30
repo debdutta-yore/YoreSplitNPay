@@ -23,15 +23,14 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.CheckboxConfiguration
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.FilterSingleUserConfiguration
 import co.yore.splitnpay.models.SingleItem
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.CuriousBlue
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.SteelBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -142,14 +141,14 @@ fun MemberFilterBottomSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(SteelBlue)
                 .align(Alignment.CenterHorizontally)
         )
         41.sy()
         FontFamilyText(
 //            modifier = Modifier.padding(start = 33.dep()),
             text = "Filter",
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 16.sep(),
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.67.sep(),
@@ -185,7 +184,7 @@ fun MemberFilterBottomSheet(
             },
             shape = RoundedCornerShape(23.5.dep()),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Bluish
+                backgroundColor = CuriousBlue
             )
         ) {
             FontFamilyText(
@@ -222,7 +221,7 @@ private fun FilterSingleUser_ffkz81(
         Column {
             FontFamilyText(
                 text = item.userName,
-                color = DarkBlue,
+                color = CloudBurst,
                 fontSize = 12.sep(),
                 fontWeight = FontWeight.Bold,
                 lineHeight = 14.sep(),
@@ -233,7 +232,7 @@ private fun FilterSingleUser_ffkz81(
 
             FontFamilyText(
                 text = item.mobileNo,
-                color = LightBlue5,
+                color = SteelBlue,
                 fontSize = 11.sep(),
                 lineHeight = 13.sep(),
                 letterSpacing = 0.2.sep()

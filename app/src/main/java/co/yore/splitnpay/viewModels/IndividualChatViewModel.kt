@@ -3,23 +3,23 @@ package co.yore.splitnpay.viewModels
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.BlackSqueeze
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class IndividualChatViewModel(
-    private val repo: GroupRepository = GroupsMock(),
-    private val settleRepository: SettleRepository = SettleRepositoryImpl()
+    private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
 
@@ -164,11 +164,11 @@ class IndividualChatViewModel(
                     }
 
                     override suspend fun getGetStat(): List<Transaction> {
-                        return settleRepository.getWillGet()
+                        return repo.getWillGet()
                     }
 
                     override suspend fun getPayStat(): List<Transaction> {
-                        return settleRepository.getWillPay()
+                        return repo.getWillPay()
                     }
 
                     override fun onGetContinue(transaction: Transaction) {
@@ -187,17 +187,7 @@ class IndividualChatViewModel(
                     }
 
                     override suspend fun getUpis(): List<Upi> {
-                        return listOf(
-                            Upi("UPI-1", "fdfldf@ljl", "SBI", "User1", Color(0xff008523), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false)
-                        )
+                        return repo.getUpis()
                     }
 
                     override suspend fun cashPaymentMobileNumber(): String {
@@ -230,43 +220,7 @@ class IndividualChatViewModel(
                     }
 
                     override fun transaction(): TransactionReview {
-                        return TransactionReview(
-                            transactionType = TransactionType.Paid,
-                            paymentMethod = "UPI",
-                            amount = 10000f,
-                            from = Friend(
-                                name = "Rudra Dev",
-                                mobileNumber = "7896230125",
-                                accountNumber = "AC-123",
-                                accountType = AccountType.Current,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                bank = Bank(
-                                    name = "SBI",
-                                    imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/SBI-logo.svg/500px-SBI-logo.svg.png?20200329171950"
-                                ),
-                                isSelected = true,
-                                hasRead = false
-                            ),
-                            to = Friend(
-                                name = "Deb Pan",
-                                mobileNumber = "8954102365",
-                                accountNumber = "AC-124",
-                                accountType = AccountType.Current,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                bank = Bank(
-                                    name = "Axis",
-                                    imageUrl = "https://is3-ssl.mzstatic.com/image/thumb/Purple112/v4/8f/77/e9/8f77e9ee-9cc9-a308-eeda-7b4cbbcdeda6/AppIcon-0-0-1x_U007emarketing-0-0-0-8-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/146x0w.webp"
-                                ),
-                                isSelected = true,
-                                hasRead = false
-                            ),
-                            category = Category(
-                                id = 0,
-                                name = "Category",
-                                color = 0xffff0000,
-                                icon = R.drawable.travel
-                            )
-                        )
+                        return repo.transactionData()
                     }
 
                     override fun onChangeReceiver() {
@@ -368,7 +322,7 @@ class IndividualChatViewModel(
             }
             DataIds.search -> {
                 search.value = true
-                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9), true)
+                _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
             }
             DataIds.filterDone -> {
                 mySheeting.hide()
@@ -380,7 +334,7 @@ class IndividualChatViewModel(
 
             WirelessViewModelInterface.startupNotification -> {
                 _statusBarColor.value = StatusBarColor(
-                    color = StatusBarGreen,
+                    color = RobinsEggBlue,
                     darkIcons = true
                 )
             }
@@ -388,7 +342,7 @@ class IndividualChatViewModel(
                 if (search.value){
                     search.value = false
                     _statusBarColor.value = StatusBarColor(
-                        color = StatusBarGreen,
+                        color = RobinsEggBlue,
                         darkIcons = true
                     )
                     searchText.value = ""
@@ -468,76 +422,13 @@ class IndividualChatViewModel(
         // ////////////////////////////////////
 
         _statusBarColor.value = StatusBarColor(
-            color = StatusBarGreen,
+            color = RobinsEggBlue,
             darkIcons = true
         )
         // ////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {
-            val billTransactions = repo.getBillTransactions()
             withContext(Dispatchers.Main) {
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.MEMBER,
-                        data = MemberData(
-                            name = "Manisha Roy",
-                            profileImage = "https://i.pravatar.cc/100"
-                        )
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.DATE,
-                        data = "May 9th 2022"
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.CREATION,
-                        data = GroupCreationEvent(
-                            creator = "You",
-                            groupName = "Office buddies"
-                        )
-                    )
-                )
-                _conversations.addAll(
-                    billTransactions.map {
-                        Conversation(
-                            type = Conversation.Type.TRANSACTION,
-                            data = it
-                        )
-                    }
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.STATUS,
-                        data = ChatStatus(
-                            listOf(
-                                "https://i.pravatar.cc/100",
-                                "https://i.pravatar.cc/100",
-                                "https://i.pravatar.cc/100",
-                                "https://i.pravatar.cc/100"
-                            ),
-                            left = false
-                        )
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.CHAT,
-                        data = ChatData(
-                            content = "Hello, guy"
-                        )
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.CHAT,
-                        data = ChatData(
-                            content = "Hello, guys",
-                            profileImage = "https://i.pravatar.cc/100"
-                        )
-                    )
-                )
+                _conversations.addAll(repo.conversations())
             }
         }
 

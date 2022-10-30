@@ -3,25 +3,22 @@ package co.yore.splitnpay.viewModels
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.components.SplitAsChoiceBottomSheetModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.repo.Repo
-import co.yore.splitnpay.repo.RepoImpl
-import co.yore.splitnpay.ui.theme.MyColor6
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.BlackSqueeze
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
-
 class MemberSelectionPageViewModel(
-    private val repo: Repo = RepoImpl()
-): ViewModel(), WirelessViewModelInterface {
+    private val repo: MasterRepo = MasterRepoImpl()
+) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
@@ -35,7 +32,7 @@ class MemberSelectionPageViewModel(
     private val proceedWithContacts = mutableStateOf(false)
     private val addedContacts = mutableStateListOf<ContactData>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
-    private val _groupsChecked = mutableStateMapOf<Any,TriState>()
+    private val _groupsChecked = mutableStateMapOf<Any, TriState>()
     private var forSplit = false
     init {
         resolver[DataIds.textInput] = splitWithInput
@@ -59,10 +56,9 @@ class MemberSelectionPageViewModel(
                     override fun onContinue(arg: Any?) {
                         mySheeting.hide()
                         val index = arg as? Int ?: return
-                        if(index == 1) {
+                        if (index == 1) {
                             gotoSplitReviewPage(false)
-                        }
-                        else{
+                        } else {
                             gotoGroupCreationPage()
                         }
                     }
@@ -80,62 +76,60 @@ class MemberSelectionPageViewModel(
         }
     }
 
-    private val _notificationService = NotificationService{id,arg->
-        when(id){
-            WirelessViewModelInterface.startupNotification->{
+    private val _notificationService = NotificationService{id, arg ->
+        when (id){
+            WirelessViewModelInterface.startupNotification -> {
                 getArguments()
                 purgeContacts()
-                _statusBarColor.value = StatusBarColor(MyColor6,true)
+                _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
             }
-            DataIds.proceedWithContacts->{
+            DataIds.proceedWithContacts -> {
                 proceedWithContacts()
             }
-            DataIds.back->{
+            DataIds.back -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack()
                 }
             }
-            DataIds.textInput->{
-                val query = (arg as? String)?:return@NotificationService
+            DataIds.textInput -> {
+                val query = (arg as? String) ?: return@NotificationService
                 splitWithInput.value = query
                 initiateSearch()
             }
-            DataIds.deleteAdded->{
-                if(arg==null){
+            DataIds.deleteAdded -> {
+                if (arg == null){
                     return@NotificationService
                 }
-                if(selectedContactIds.contains(arg)){
+                if (selectedContactIds.contains(arg)){
                     removeMembersFromSelecteds(setOf(arg))
                 }
                 updateCanProceed()
             }
-            DataIds.checkItem->{
-                if(arg==null){
+            DataIds.checkItem -> {
+                if (arg == null){
                     return@NotificationService
                 }
-                if(selectedContactIds.contains(arg)){
+                if (selectedContactIds.contains(arg)){
                     removeMembersFromSelecteds(setOf(arg))
-                }
-                else{
+                } else {
                     addMembersToSelecteds(setOf(arg))
                 }
                 updateCanProceed()
             }
-            DataIds.checkGroupItem->{
-                val groupId = arg?:return@NotificationService
-                val checked = _groupsChecked[groupId]?:TriState.UNCHECKED
-                val group = (groupsAndContacts.first { it.id()==groupId } as? GroupData)?:return@NotificationService
+            DataIds.checkGroupItem -> {
+                val groupId = arg ?: return@NotificationService
+                val checked = _groupsChecked[groupId] ?: TriState.UNCHECKED
+                val group = (groupsAndContacts.first { it.id() == groupId } as? GroupData) ?: return@NotificationService
                 val memberIds = group.members.map { it.id() }.toSet()
-                if(checked!=TriState.UNCHECKED){
+                if (checked != TriState.UNCHECKED){
                     removeMembersFromSelecteds(memberIds)
-                }
-                else{
+                } else {
                     addMembersToSelecteds(memberIds)
                 }
                 updateCanProceed()
             }
-            DataIds.selectedTabIndex->{
-                if(arg is Int){
+            DataIds.selectedTabIndex -> {
+                if (arg is Int){
                     selectedIndex.value = arg
                     filter()
                 }
@@ -145,22 +139,21 @@ class MemberSelectionPageViewModel(
 
     private fun getArguments() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
-            forSplit = getBoolean("split",false)
+            forSplit = getBoolean("split", false)
         }
     }
 
     private fun updateCanProceed() {
-        proceedWithContacts.value = addedContacts.size>1
+        proceedWithContacts.value = addedContacts.size > 1
     }
 
     override val notifier = _notificationService
 
     private fun proceedWithContacts() {
         saveAddedContacts()
-        if(!forSplit){
+        if (!forSplit){
             gotoGroupCreationPage()
-        }
-        else{
+        } else {
             mySheeting.change(Sheets.SplitAsChoice)
             mySheeting.show()
         }
@@ -181,29 +174,26 @@ class MemberSelectionPageViewModel(
 
     private fun addMembersToSelecteds(memberIds: Set<Any>) {
         val finalIds = selectedContactIds.union(memberIds)
-        val states = mutableMapOf<Any,TriState>()
+        val states = mutableMapOf<Any, TriState>()
         val membersToAdd = mutableListOf<ContactData>()
         val alreadyAdded = addedContacts.map{
             it.id()
         }
         groupsAndContacts.forEach {
-            if(it is GroupData){
+            if (it is GroupData){
                 val ids = it.members.map { it.id }.toSet()
                 val commonCount = finalIds.intersect(ids).size
-                if(commonCount!=0){
-                    if(commonCount==it.members.size){
+                if (commonCount != 0){
+                    if (commonCount == it.members.size){
                         states[it.id] = TriState.CHECKED
-                    }
-                    else if(commonCount<it.members.size){
+                    } else if (commonCount < it.members.size){
                         states[it.id] = TriState.INTERMEDIATE
                     }
-                }
-                else{
+                } else {
                     states[it.id] = TriState.UNCHECKED
                 }
-            }
-            else{
-                if(memberIds.contains(it.id())&&!alreadyAdded.contains(it.id())){
+            } else {
+                if (memberIds.contains(it.id()) && !alreadyAdded.contains(it.id())){
                     membersToAdd.add(it as ContactData)
                 }
             }
@@ -215,24 +205,21 @@ class MemberSelectionPageViewModel(
 
     private fun removeMembersFromSelecteds(memberIds: Set<Any?>) {
         val finalIds = selectedContactIds.minus(memberIds)
-        if(finalIds.isEmpty()){
+        if (finalIds.isEmpty()){
             _groupsChecked.clear()
-        }
-        else{
-            val states = mutableMapOf<Any,TriState>()
+        } else {
+            val states = mutableMapOf<Any, TriState>()
             groupsAndContacts.forEach {
-                if(it is GroupData){
+                if (it is GroupData){
                     val ids = it.members.map { it.id }.toSet()
                     val commonCount = finalIds.intersect(ids).size
-                    if(commonCount!=0){
-                        if(commonCount==it.members.size){
+                    if (commonCount != 0){
+                        if (commonCount == it.members.size){
                             states[it.id] = TriState.CHECKED
-                        }
-                        else if(commonCount<it.members.size){
+                        } else if (commonCount < it.members.size){
                             states[it.id] = TriState.INTERMEDIATE
                         }
-                    }
-                    else{
+                    } else {
                         states[it.id] = TriState.UNCHECKED
                     }
                 }
@@ -240,17 +227,15 @@ class MemberSelectionPageViewModel(
             _groupsChecked.putAll(states)
         }
         selectedContactIds.removeAll(memberIds)
-        memberIds.forEach { m->
+        memberIds.forEach { m ->
             val index = addedContacts.indexOfFirst {
                 it.id == m
             }
-            if(index>-1){
+            if (index > -1){
                 addedContacts.removeAt(index)
             }
         }
     }
-
-
 
     private var searchJob: kotlinx.coroutines.Job? = null
     private fun initiateSearch() {
@@ -276,23 +261,25 @@ class MemberSelectionPageViewModel(
 
     fun filter(){
         visibleGroupsAndContacts.clear()
-        visibleGroupsAndContacts.addAll(groupsAndContacts.filter {
-            itemFilter(it)
-        })
+        visibleGroupsAndContacts.addAll(
+            groupsAndContacts.filter {
+                itemFilter(it)
+            }
+        )
     }
 
     private fun itemFilter(it: GroupOrContact): Boolean {
         val now = System.currentTimeMillis()
         return when (selectedIndex.value) {
             1 -> {
-                (it is GroupData) && search(splitWithInput.value,it.searchables())
+                (it is GroupData) && search(splitWithInput.value, it.searchables())
             }
             2 -> {
-                (it is ContactData) && search(splitWithInput.value,it.searchables())
+                (it is ContactData) && search(splitWithInput.value, it.searchables())
             }
             else -> {
-                val dif = (now - it.lastActivity())/(24*3600000)
-                dif <= 30 && search(splitWithInput.value,it.searchables())
+                val dif = (now - it.lastActivity()) / (24 * 3600000)
+                dif <= 30 && search(splitWithInput.value, it.searchables())
             }
         }
     }

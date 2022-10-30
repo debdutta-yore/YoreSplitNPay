@@ -1,4 +1,4 @@
-package co.yore.splitnpay.split_page_components
+package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -22,8 +22,6 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactSearchBarConfiguration
 import co.yore.splitnpay.models.DataIds
 
-
-
 @Composable
 fun ContactSearchBar(
     modifier: Modifier = Modifier,
@@ -38,7 +36,7 @@ fun ContactSearchBar(
         modifier = modifier
             .semantics {
                 this.contentDescription = contentDescription
-            },
+            }
     ) {
         TextField(
             modifier = Modifier
@@ -53,7 +51,7 @@ fun ContactSearchBar(
                 ),
             value = text,
             onValueChange = {
-                notifier.notify(DataIds.textInput,it)
+                notifier.notify(DataIds.textInput, it)
             },
             textStyle = TextStyle(fontSize = config.fontSize.sep()),
             shape = RoundedCornerShape(config.borderRadius.dep()),
@@ -80,7 +78,7 @@ fun ContactSearchBar(
                     )
                     config.dividerRightSpace.sx()
                 }
-            },
+            }
         )
 
         AnimatedVisibility(

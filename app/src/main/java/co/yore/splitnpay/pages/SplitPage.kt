@@ -1,9 +1,7 @@
 package co.yore.splitnpay.pages
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -14,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.split_page_components.SplitPageContent
-import co.yore.splitnpay.ui.theme.MyColor2
+import co.yore.splitnpay.ui.theme.CloudBurst8C
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -27,7 +25,7 @@ fun SplitScreen(
         sheetContent = {
             sheeting.sheetContent()
         },
-        scrimColor = MyColor2,
+        scrimColor = CloudBurst8C,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
             topStart = 33.dep(),

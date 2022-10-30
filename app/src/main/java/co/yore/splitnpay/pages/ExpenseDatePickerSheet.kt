@@ -20,9 +20,7 @@ import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.ui.theme.BluishGrey
-import co.yore.splitnpay.ui.theme.Darkblue
-import co.yore.splitnpay.ui.theme.LightBlue5
+import co.yore.splitnpay.ui.theme.*
 import kotlinx.coroutines.*
 
 class ExpenseDatePickerBottomSheetModel(val callback: Callback): BottomSheetModel{
@@ -136,7 +134,7 @@ fun ExpenseDatePickerSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(SteelBlue)
                 .align(Alignment.CenterHorizontally)
         )
         13.sy()
@@ -161,13 +159,13 @@ fun ExpenseDatePickerSheet(
                     text = stringResource(id = R.string.select_expense_date),
                     fontSize = 18.sep(),
                     fontWeight = FontWeight.Bold,
-                    color = Darkblue
+                    color = CloudBurst
                 )
             }
             7.sy()
             RobotoText(
                 text = stringResource(id = R.string.expense_date_instruction),
-                color = BluishGrey,
+                color = BaliHai,
                 fontSize = 12.sep(),
                 modifier = Modifier.padding(start = 24.dep())
             )
@@ -199,13 +197,13 @@ fun ExpenseDatePickerSheet(
                 .fillMaxWidth()
                 .height(46.dep())
                 .clip(RoundedCornerShape(5.dep()))
-                .background(Color(0xffF4F7FB))
+                .background(BlackSqueeze1)
                 .padding(horizontal = 19.dep()),
             verticalAlignment = Alignment.CenterVertically
         ){
             RobotoText(
                 text = stringResource(id = R.string.dates_colon_space),
-                color = Color(0xff677C91),
+                color = Lynch,
                 fontSize = 12.sep()
             )
             RobotoText(

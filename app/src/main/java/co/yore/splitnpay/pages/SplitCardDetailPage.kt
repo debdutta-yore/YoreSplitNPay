@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -32,7 +31,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
@@ -51,7 +49,7 @@ fun SplitCardDetailPage(
     Box(modifier = Modifier) {
         CutoutShape(
             boxHeight = 220.dep().value,
-            cardColor = LightGreen3
+            cardColor = Turquoise1
         )
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -196,7 +194,7 @@ fun SplitCardInformations() {
 
 @Composable
 fun DashedHeight(
-    height: Float,
+    height: Float
 ) {
     Box(
         modifier = Modifier
@@ -204,7 +202,7 @@ fun DashedHeight(
             .width(1.dep())
             .dashedBorder(
                 width = 1.dep(),
-                color = LightBlue4,
+                color = WildBlueYonder,
                 shape = RoundedCornerShape(0.dep()),
                 on = 5.dep(),
                 off = 5.dep()
@@ -253,7 +251,7 @@ fun SplitCardBalance(
         modifier = Modifier
             .padding(horizontal = 18.dep())
             .coloredShadow(
-                color = GrayShadow1,
+                color = Ghost80,
                 blurRadius = 33.dep(),
                 borderRadius = 15.dep(),
                 offsetX = 7.dep(),
@@ -274,7 +272,7 @@ fun SplitCardBalance(
                 FontFamilyText(
                     modifier = Modifier.padding(top = 17.dep(), start = 21.dep()),
                     text = stringResource(R.string.balance),
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     lineHeight = 16.41.sep(),
                     letterSpacing = 0.17.sep()
@@ -283,13 +281,13 @@ fun SplitCardBalance(
                     modifier = Modifier.padding(top = 16.dep()),
                     annotatedString = splitBalance.amountAnnotatedString(
                         isSpaceBetween = true,
-                        currencyTextColor = Pink,
+                        currencyTextColor = RadicalRed,
                         currencyFontSize = 11f,
                         currencyFontWeight = FontWeight.Bold,
-                        wholeNumberTextColor = Pink,
+                        wholeNumberTextColor = RadicalRed,
                         wholeNumberFontSize = 15f,
                         wholeNumberFontWeight = FontWeight.Bold,
-                        decNumberTextColor = Pink,
+                        decNumberTextColor = RadicalRed,
                         decNumberFontSize = 9f
                     )
                 )
@@ -303,14 +301,14 @@ fun SplitCardBalance(
             ) {
                 FontFamilyText(
                     text = splitStatusMessage,
-                    color = LightGreen3,
+                    color = Turquoise1,
                     fontSize = 12.sep(),
                     lineHeight = 14.06.sep(),
                     letterSpacing = (-0.33).sep()
                 )
                 FontFamilyText(
                     text = splitPaidMark,
-                    color = LightBlue4,
+                    color = WildBlueYonder,
                     fontSize = 9.sep()
 
                 )
@@ -324,14 +322,14 @@ fun SplitCardBalance(
                     )
                     .fillMaxWidth(),
                 progress = splitProgress,
-                color = LightGreen3,
-                backgroundColor = Pink
+                color = Turquoise1,
+                backgroundColor = RadicalRed
             )
             10.sy()
             FontFamilyText(
                 modifier = Modifier.padding(start = 24.dep()),
                 text = "${localCurrency.current} $splitTransacted Paid / Received",
-                color = LightGreen3,
+                color = Turquoise1,
                 fontSize = 9.sep()
             )
         }
@@ -339,7 +337,6 @@ fun SplitCardBalance(
 }
 
 // //////////
-
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -418,8 +415,8 @@ fun SummarySinglePeople_q6c90m(
             ) {
                 androidx.compose.animation.AnimatedVisibility(
                     splitSelectableMember.isSelected,
-                    enter = fadeIn(tween(700))+ scaleIn(tween(700)),
-                    exit = fadeOut(tween(700))+ scaleOut(tween(700))
+                    enter = fadeIn(tween(700)) + scaleIn(tween(700)),
+                    exit = fadeOut(tween(700)) + scaleOut(tween(700))
                 ) {
                     SelectedIcon_f9tfi6(contentDescription = "SelectedIcon")
                 }
@@ -437,12 +434,10 @@ fun SummarySinglePeople_q6c90m(
                 FontWeight.Normal
             },
             fontSize = 12.sep(),
-            color = DarkBlue
+            color = CloudBurst
         )
     }
 }
-
-
 
 val membersImages = listOf(
     Transaction(

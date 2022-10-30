@@ -7,12 +7,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.*
-import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.ui.theme.*
 
 data class AddGroupButtonConfiguration(
-    val backgroundColor: Color = LightRedButton,
+    val backgroundColor: Color = LavenderBlush,
     val size: Float = 40f,
     val icon: Int = R.drawable.ic_group
 )
@@ -23,8 +21,8 @@ data class AmountPortionConfiguration(
 )
 
 data class ArrowButtonConfiguration(
-    val iconBackgroundColor: Color = Lightblue4,
-    val iconPressedColor: Color = Bluish,
+    val iconBackgroundColor: Color = WildBlueYonder,
+    val iconPressedColor: Color = CuriousBlue,
     val iconTint: Color = Color.White,
     val iconButtonRadius: Float = 9f,
     val iconButtonSize: Float = 28f,
@@ -34,7 +32,7 @@ data class ArrowButtonConfiguration(
     companion object {
         val group
             get() = ArrowButtonConfiguration(
-                iconBackgroundColor = Color(0xff1A79E5),
+                iconBackgroundColor = CuriousBlue,
                 iconResource = R.drawable.ic_add_group,
                 iconSize = 14f
             )
@@ -43,7 +41,7 @@ data class ArrowButtonConfiguration(
 
 data class BankSymbolIconConfiguration(
     val size: Float = 62f,
-    val shadowColor: Color = DarkBlueShadow,
+    val shadowColor: Color = VeniceBlue4F,
     val borderRadius: Float = 50f,
     val blurRadius: Float = 6f,
     val shadowOffsetX: Float = 0f,
@@ -52,14 +50,14 @@ data class BankSymbolIconConfiguration(
     val shape: Shape = CircleShape,
     val backgroundColor: Color = Color.White,
     val borderStroke: Float = 5f,
-    val borderColor: Color = Greyish3,
+    val borderColor: Color = Gallery,
     val icon: Int = R.drawable.ic_upi
 )
 
 data class CategoryItemConfiguration(
     val size: Float = 45f,
     val borderStroke: Float = 1f,
-    val borderColor: Color = LightBlue3,
+    val borderColor: Color = Botticelli,
     val iconSize: Float = 20f,
     val spacerIconText: Float = 7f,
     val textSize: Float = 11f,
@@ -68,8 +66,8 @@ data class CategoryItemConfiguration(
 
 data class CategoryRowConfiguration(
     val categoryIconSize: Float = 19f,
-    val backgroundColor: Color = LightRedButton,
-    val textColor: Color = LightBlue4,
+    val backgroundColor: Color = LavenderBlush,
+    val textColor: Color = WildBlueYonder,
     val fontSize: Float = 9f,
     val lineHeight: Float = 11f,
     val iconTextSpacing: Float = 4f
@@ -77,11 +75,11 @@ data class CategoryRowConfiguration(
 
 data class CategorySelectorCardConfiguration(
     val borderStroke: Float = 1f,
-    val borderColor: Color = RoundedBorderGrey,
+    val borderColor: Color = LinkWater,
     val height: Float = 26f,
     val icon: Int = R.drawable.ic_trip,
     val fontSize: Float = 11f,
-    val textColor: Color = DarkBlue,
+    val textColor: Color = CloudBurst,
     val fontWeight: FontWeight = FontWeight(400),
     val iconTopPadding: Float = 4.53f,
     val iconBottomPadding: Float = 6.19f,
@@ -91,7 +89,7 @@ data class CategorySelectorCardConfiguration(
 ) {
     companion object {
         val variation1 = CategorySelectorCardConfiguration(
-            textColor = Pink,
+            textColor = RadicalRed,
             fontWeight = FontWeight.Bold,
             fontSize = 12f,
             iconTopPadding = 0f,
@@ -109,22 +107,22 @@ data class ChatMessageReadStatusConfiguration(
     val profileIconSize: Float = 30f,
     val profileIconBorderWidth: Float = 3f,
     val borderStroke: Float = 3f,
-    val borderColor: Color = LightBlue1,
+    val borderColor: Color = Zumthor,
     val placeholder: Int = R.drawable.ic_profilepic1,
     val iconImageSpacing: Float = 3f
 )
 
 data class CheckboxConfiguration(
-    val iconColor: Color = Bluish,
+    val iconColor: Color = CuriousBlue,
     val iconSize: Float = 28f,
     val icon: Int = R.drawable.ic_check,
     val cornerRadius: Float = 10f
 )
 
 data class CircleBoxTextConfiguration(
-    val backgroundColor: Color = LightGrayBackground,
+    val backgroundColor: Color = Whitish6,
     val fontSize: Float = 12f,
-    val textColor: Color = DarkBlue,
+    val textColor: Color = CloudBurst,
     val lineHeight: Float = 14f,
     val textInnerHorizontalPadding: Float = 8f,
     val textInnerVerticalPadding: Float = 4f,
@@ -136,27 +134,27 @@ data class CircleBoxTextConfiguration(
 data class CircleIconWithBackgroundConfiguration(
     val iconBackgroundSize: Float = 19f,
     val categoryIconSize: Float = 10.23f,
-    val backgroundColor: Color = LightRedButton,
-    val textColor: Color = LightBlue4,
+    val backgroundColor: Color = LavenderBlush,
+    val textColor: Color = WildBlueYonder,
     val fontSize: Float = 9f,
     val lineHeight: Float = 11f
 )
 
 data class ContactSearchBarConfiguration(
     val height: Float = 44f,
-    val backgroundColor: Color = CardGrey,
+    val backgroundColor: Color = Alabaster1,
     val borderRadius: Float = 8f,
     val fontSize: Float = 11f,
     val cursorColor: Color = Color.DarkGray,
     val iconLeftSpace: Float = 20.5f,
     val searchIconId: Int = R.drawable.ic_search,
-    val searchIconTint: Color = LightGrey3,
+    val searchIconTint: Color = DustyGray,
     val iconRightSpace: Float = 12.5f,
-    val dividerColor: Color = Color(0xffBCBCBC),
+    val dividerColor: Color = Silver,
     val dividerHeight: Float = 13f,
     val dividerWidth: Float = 1f,
     val dividerRightSpace: Float = 15f,
-    val color: Color = LightGrey4,
+    val color: Color = Silver,
     val startPadding: Float = 72f
 ) {
     companion object {
@@ -168,7 +166,7 @@ data class ContactSearchBarConfiguration(
 }
 
 data class CustomButtonConfiguration(
-    val buttonColor: androidx.compose.ui.graphics.Color = Bluish,
+    val buttonColor: androidx.compose.ui.graphics.Color = CuriousBlue,
     val fontSize: Float = 16f,
     val fontColor: androidx.compose.ui.graphics.Color = Color.White,
     val fontWeight: FontWeight = FontWeight.Bold,
@@ -177,8 +175,8 @@ data class CustomButtonConfiguration(
 
 data class CustomTextFieldConfiguration(
     val disabledTextColor: Color = Color.Transparent,
-    val backgroundColor: Color = LightGrey2,
-    val iconColor: Color = LightGrey,
+    val backgroundColor: Color = Alabaster,
+    val iconColor: Color = DoveGray,
     val focusedIndicatorColor: Color = Color.Transparent,
     val unfocusedIndicatorColor: Color = Color.Transparent,
     val disabledIndicatorColor: Color = Color.Transparent,
@@ -187,30 +185,30 @@ data class CustomTextFieldConfiguration(
     val contentStartPadding: Float = 15f,
     val contentTopPadding: Float = 10f,
     val contentBottomPadding: Float = 10f,
-    val textColor: Color = LightGrey4,
+    val textColor: Color = Silver,
     val textFontSize: Float = 14f,
     val textFontWeight: FontWeight = FontWeight(400),
     val leadingIconWidth: Float = 22f,
     val leadingIconHeight: Float = 14f,
     val dividerWidth: Float = 1f,
     val dividerHeight: Float = 19f,
-    val dividerColor: Color = LightBlue4,
+    val dividerColor: Color = WildBlueYonder,
     val dividerStartPadding: Float = 9f
 )
 
 data class DashedBorderIconButtonConfiguration(
     val borderWidth: Float = 1f,
-    val borderColor: Color = DarkGrey,
+    val borderColor: Color = ChetwodeBlue,
     val borderCorner: Float = 5f,
     val iconWidth: Float = 20f,
     val iconHeight: Float = 18f,
     val fontSize: Float = 10f,
-    val textColor: Color = LightBlue4
+    val textColor: Color = WildBlueYonder
 )
 
 data class DateBoxConfiguration(
     val backgroundColor: Color = Color.LightGray.copy(0.25f),
-    val textColor: Color = LightBlue4,
+    val textColor: Color = WildBlueYonder,
     val fontSize: Float = 8f,
     val lineHeight: Float = 9.38f,
     val textInnerHorizontalPadding: Float = 7f,
@@ -219,17 +217,17 @@ data class DateBoxConfiguration(
 
 data class DateSelectorCardConfiguration(
     val borderStroke: Float = 1f,
-    val borderColor: Color = RoundedBorderGrey,
+    val borderColor: Color = LinkWater,
     val height: Float = 26f,
     val icon: Int = R.drawable.ic_calender,
     val fontSize: Float = 13f,
-    val textColor: Color = DarkBlue,
+    val textColor: Color = CloudBurst,
     val fontWeight: FontWeight = FontWeight.Bold
 )
 
 data class DeleteIconConfiguration(
     val selectorSize: Float = 20f,
-    val backgroundColor: Color = Pink,
+    val backgroundColor: Color = RadicalRed,
     val selectorBorderStroke: Float = 1f,
     val selectorBorderColor: Color = Color.White,
     val selectorIconSize: Float = 12f,
@@ -238,18 +236,18 @@ data class DeleteIconConfiguration(
 )
 
 data class DotConfiguration(
-    val color: Color = LightBlue,
+    val color: Color = CuriousBlue1,
     val size: Float = 4f
 )
 
 data class EditIconConfiguration(
-    val backgroundColor: Color = co.yore.splitnpay.components.components.LightBlue1,
+    val backgroundColor: Color = Zumthor,
     val innerPaddingStart: Float = 7.92f,
     val innerPaddingEnd: Float = 4f,
     val innerPaddingTop: Float = 4f,
     val innerPaddingBottom: Float = 4f,
     val editIcon: Int = R.drawable.ic_pencil,
-    val textColor: Color = Bluish,
+    val textColor: Color = CuriousBlue,
     val fontSize: Float = 12f,
     val cornerRadius: Float = 11f
 )
@@ -269,7 +267,7 @@ data class FromToPortionConfiguration(
 )
 
 data class GroupCardConfiguration(
-    val shadowColor: Color = GreyShadow,
+    val shadowColor: Color = Ghost80,
     val shadowBorderRadius: Float = 22f,
     val shadowBlurRadius: Float = 33f,
     val shadowOffsetX: Float = 7f,
@@ -288,10 +286,10 @@ data class GroupCardConfiguration(
     val groupBalanceTopPadding: Float = 21f,
     val groupBalanceFontSize: Float = 10f,
     val cardPaddingTop: Float = 17f,
-    val cardBackgroundColor: Color = Lightblue1,
+    val cardBackgroundColor: Color = Zumthor,
     val cardUnselectedColor: Color = Color.White,
     val borderStroke: Float = 1f,
-    val borderColor: Color = Bluish,
+    val borderColor: Color = CuriousBlue,
     val type: Type = Type.CHECKABLE
 ) {
     enum class Type {
@@ -314,7 +312,7 @@ data class GroupChatTabsConfiguration(
 data class GroupCreationButtonConfiguration(
     val width: Float = 90f,
     val height: Float = 35f,
-    val backgroundColor: Color = LightBlue4,
+    val backgroundColor: Color = WildBlueYonder,
     val iconId: Int = R.drawable.ic_add_group,
     val size: Float = 18f
 )
@@ -343,7 +341,7 @@ data class GroupProfileImageConfiguration(
     val borderColor: Color = Color.White,
     val placeholder: Int = R.drawable.ic_people,
     val contentScale: ContentScale = ContentScale.Crop,
-    val shadowColor: Color = DarkBlueShadow,
+    val shadowColor: Color = VeniceBlue4F,
     val shadowBorderRadius: Float = 50f,
     val shadowBlurRadius: Float = 4.5f,
     val shadowOffsetX: Float = 0f,
@@ -362,11 +360,11 @@ data class HeaderBackAndSplitConfiguration(
 data class MonthDayPickerConfiguration(
     val verticalPadding: Float = 9f,
     val height: Float = 89f,
-    val backgroundColor: Color = LightBlue1,
+    val backgroundColor: Color = Zumthor,
     val boxSize: Float = 54f,
     val highlightWidth: Float = 64f,
     val highlightBorderRadius: Float = 13f,
-    val highlightBackgroundColor: Color = Color(0xff1A79E5),
+    val highlightBackgroundColor: Color = CuriousBlue,
     val apparentCurrentThreshold: Float = 0.1f
 )
 
@@ -374,17 +372,17 @@ data class MonthUIConfiguration(
     val width: Float = 74f,
     val height: Float = 42f,
     val borderRadius: Float = 21f,
-    val selectedBackgroundColor: Color = LightBlue1,
+    val selectedBackgroundColor: Color = Zumthor,
     val fontSize: Float = 14f,
     val disabledColor: Color = Color.Gray,
-    val activeColor: Color = LightBlue,
-    val color: Color = Color(0xff243257)
+    val activeColor: Color = CuriousBlue1,
+    val color: Color = CloudBurst
 )
 
 data class NavIconConfiguration(
     val size: Float = 18f,
     val disabledBackgroundColor: Color = Color.Gray,
-    val enabledBackgroundColor: Color = Bluish,
+    val enabledBackgroundColor: Color = CuriousBlue,
     val drawableId: Int,
     val padding: Float = 4f,
     val iconTint: Color = Color.White
@@ -414,13 +412,13 @@ data class TotalCardConfiguration(
     val textFontSize: Float = 12f,
     val cornerRadius: Float = 8f,
     val borderRadius: Float = 1f,
-    val borderColor: Color = LightGreen3,
-    val backgroundColor: Color = CyanLight,
+    val borderColor: Color = Turquoise1,
+    val backgroundColor: Color = Dew1,
     val paddingValue: Float = 16f,
-    val currencyTextColor: Color = LightGreen3,
-    val wholeNumberTextColor: Color = LightGreen3,
-    val decNumberTextColor: Color = LightGreen3,
-    val trailingTextTextColor: Color = LightGreen3,
+    val currencyTextColor: Color = Turquoise1,
+    val wholeNumberTextColor: Color = Turquoise1,
+    val decNumberTextColor: Color = Turquoise1,
+    val trailingTextTextColor: Color = Turquoise1,
     val currencyFontSize: Float = 11f,
     val wholeNumberFontSize: Float = 14f,
     val decNumberFontSize: Float = 10f,
@@ -429,12 +427,12 @@ data class TotalCardConfiguration(
     companion object {
 
         val variationOne = TotalCardConfiguration(
-            borderColor = Pink,
-            backgroundColor = LightRedButton,
-            currencyTextColor = Pink,
-            wholeNumberTextColor = Pink,
-            decNumberTextColor = Pink,
-            trailingTextTextColor = Pink
+            borderColor = RadicalRed,
+            backgroundColor = LavenderBlush,
+            currencyTextColor = RadicalRed,
+            wholeNumberTextColor = RadicalRed,
+            decNumberTextColor = RadicalRed,
+            trailingTextTextColor = RadicalRed
         )
     }
 }
@@ -520,14 +518,14 @@ data class YoreAmountConfiguration(
     companion object {
 
         val splitGroupCardGet = YoreAmountConfiguration(
-            color = Color(0xff37D8CF),
+            color = Turquoise1,
             fontSize = 14,
             currencyFontSize = 12,
             decimalFontSize = 10,
             wholeFontWeight = FontWeight.Bold
         )
         val splitGroupCardPay = YoreAmountConfiguration(
-            color = Color(0xffFF4077),
+            color = RadicalRed,
             fontSize = 14,
             currencyFontSize = 12,
             decimalFontSize = 10,
@@ -573,9 +571,9 @@ data class YouWillGetSingleItemConfiguration(
 )
 
 data class SplitButtonConfiguration(
-    val backgroundColor: Color = Pink,
+    val backgroundColor: Color = RadicalRed,
     val tint: Color = Color.White,
-    val shadowColor: Color = PinkShadow,
+    val shadowColor: Color = RadicalRed4F,
     val shadowBorderRadius: Float = 100f,
     val shadowBlurRadius: Float = 12f,
     val shadowSpread: Float = 0f,
@@ -587,7 +585,7 @@ data class SplitButtonConfiguration(
 data class ProfileImageConfiguration(
     val imageSize: Float = 49f,
     val borderStroke: Float = 3f,
-    val borderColor: Color = Color(0xffEDF5FF),
+    val borderColor: Color = Zumthor,
     val shape: Shape = CircleShape,
     val placeholder: Int = R.drawable.user_dummy4,
     val contentScale: ContentScale = ContentScale.Crop
@@ -596,15 +594,15 @@ data class ProfileImageConfiguration(
 data class SplitTabItemConfiguration(
     val minWidth: Float = 48f,
     val roundedCorner: Float = 13.5f,
-    val selectedBackground: Color = Bluish,
-    val unSelectedBackground: Color = Lightblue1,
+    val selectedBackground: Color = CuriousBlue,
+    val unSelectedBackground: Color = Zumthor,
     val paddingStart: Float = 9f,
     val paddingEnd: Float = 8f,
     val paddingTop: Float = 7f,
     val paddingBottom: Float = 7f,
     val textSize: Float = 11f,
     val selectedTextColor: Color = Color.White,
-    val unSelectedTextColor: Color = Bluish,
+    val unSelectedTextColor: Color = CuriousBlue,
     val fontWeight: FontWeight = FontWeight(400)
 )
 
@@ -619,7 +617,7 @@ data class YouWillGetPayCardConfig(
     val height: Float = 153f,
     val width: Float = 149f,
 
-    val shadowColor: Color = Grey_shadow,
+    val shadowColor: Color = Ghost80,
     val shadowBlurRadius: Float = 33f,
     val shadowOffset: Float = 7f,
     val borderRadius: Float = 15f,
@@ -637,10 +635,10 @@ data class YouWillGetPayCardConfig(
     val arrowButtonRightPadding: Float = 10f,
     val arrowButtonBottomPadding: Float = 8f,
     val type: Type,
-    val amountColor: Color = LightBlue4,
+    val amountColor: Color = WildBlueYonder,
     val backgroundColor: Color = Color.White,
-    val activeGetColor: Color = LightGreen3,
-    val activePayColor: Color = Pink
+    val activeGetColor: Color = Turquoise1,
+    val activePayColor: Color = RadicalRed
 ) {
     enum class Type {
         GET,
@@ -653,8 +651,8 @@ data class PeopleCardConfiguration(
     val paddingStart: Float = 18f,
     val paddingEnd: Float = 18f,
     val borderStroke: Float = 1f,
-    val borderColor: Color = Bluish,
-    val cardBackgroundColor: Color = Color(0xffEDF5FF),
+    val borderColor: Color = CuriousBlue,
+    val cardBackgroundColor: Color = Zumthor,
     val cardUnselectedColor: Color = Color.White,
     val cornerRadius: Float = 22f,
     val blurRadius: Float = 33f,
@@ -672,7 +670,7 @@ data class PeopleCardConfiguration(
 data class YearSwitcherConfiguration(
     val navYearSpace: Float = 40f,
     val fontSize: Float = 16f,
-    val color: Color = Darkblue,
+    val color: Color = CloudBurst,
     val horizontalPadding: Float = 4f
 )
 
@@ -690,11 +688,11 @@ data class YearItemConfiguration(
     val width: Float = 84f,
     val height: Float = 42f,
     val borderRadius: Float = 21f,
-    val selectedBackgroundColor: Color = LightBlue1,
+    val selectedBackgroundColor: Color = Zumthor,
     val unselectedBackgroundColor: Color = Color.Transparent,
     val fontSize: Float = 14f,
-    val selectedColor: Color = LightBlue,
-    val unselectedColor: Color = Darkblue
+    val selectedColor: Color = CuriousBlue1,
+    val unselectedColor: Color = CloudBurst
 )
 
 data class WeekDayUIConfiguration(
@@ -702,12 +700,12 @@ data class WeekDayUIConfiguration(
     val activeThreshold: Float = 0.1f,
     val weekDayDisabledColor: Color = Color.LightGray,
     val weekDayActiveColor: Color = Color.White,
-    val weekDayEnabledColor: Color = Color(0xff243257),
+    val weekDayEnabledColor: Color = CloudBurst,
     val weekDayDateSpace: Float = 12f,
     val dateFontSize: Float = 11f,
     val dateDisabledColor: Color = Color.LightGray,
     val dateActiveColor: Color = Color.White,
-    val dateEnabledColor: Color = Bluish
+    val dateEnabledColor: Color = CuriousBlue
 )
 
 data class SingleGroupMemberProfilePicConfiguration(
@@ -735,12 +733,12 @@ data class SplitWithPageContentConfiguration(
 
 data class TopbarWithIconConfiguration(
     val iconSize: Float = 12f,
-    val iconTint: Color = DarkBlue,
+    val iconTint: Color = CloudBurst,
     val icon: Int = R.drawable.ic_left_arrow,
     val textSize: Float = 14f,
     val fontWeight: FontWeight = FontWeight(700),
-    val fontColor: Color = DarkBlue,
-    val shadowColor: Color = Color(0xff075692).copy(alpha = 0.11f),
+    val fontColor: Color = CloudBurst,
+    val shadowColor: Color = VeniceBlue.copy(alpha = 0.11f),
     val blurRadius: Float = 6f,
     val offsetY: Float = 3f,
     val height: Float = 54f,
@@ -753,11 +751,11 @@ data class TabsConfiguration(
     val backgroundColor: Color = Color.White,
     val startPadding: Float = 15f,
     val fontSize: Float = 21f,
-    val color: Color = LightBlue3,
-    val selectedColor: Color = DarkBlue,
+    val color: Color = Botticelli,
+    val selectedColor: Color = CloudBurst,
     val height: Float = 73f,
     val dividerThickness: Float = 1f,
-    val dividerColor: Color = Color(0xfffafcff)
+    val dividerColor: Color = Zircon2
 )
 
 data class YouWillPayGetIconConfig(
@@ -779,7 +777,7 @@ data class YouWillGetPayArrowButtonConfiguration(
 
 data class TransparentProfilePicConfiguration(
     val imageSize: Float = 29f,
-    val backGroundColor: Color = DarkBlue.copy(alpha = 0.65f),
+    val backGroundColor: Color = CloudBurst.copy(alpha = 0.65f),
     val borderWidth: Float = 1f,
     val borderColor: Color = Color.White.copy(alpha = 0.5f),
     val fontSize: Float = 12f,
@@ -796,23 +794,23 @@ data class TransparentProfilePicConfiguration(
 
 data class NoGroupHasBeenCreatedYetConfiguration(
     val stringId: Int = R.string.no_group_has_been_created_yet,
-    val color: Color = Lightblue4,
+    val color: Color = WildBlueYonder,
     val fontSize: Float = 13f
 )
 
 data class TextFieldConfiguration(
     val cardHeight: Float = 95f,
-    val textFieldBackgroundColor: Color = Color(0xffF8F8F8),
+    val textFieldBackgroundColor: Color = Alabaster,
     val cursorColor: Color = Color.Gray,
     val cornerRadius: Float = 8f,
     val hintTextSize: Float = 14f,
-    val hintTextColor: Color = Color(0xffBCBCBC),
-    val textColor: Color = Color(0xff656565),
+    val hintTextColor: Color = Silver,
+    val textColor: Color = DoveGray,
     val textSize: Float = 14f
 )
 
 data class PaidByCardConfiguration(
-    val shadowColor: Color = GreyShadow,
+    val shadowColor: Color = Ghost80,
     val shadowBorderRadius: Float = 15f,
     val shadowBlurRadius: Float = 33f,
     val shadowOffsetX: Float = 7f,
@@ -826,7 +824,7 @@ data class PaidByCardConfiguration(
     val bottomPadding: Float = 29f,
 
     val PaidByCardPaidByText: Int = R.string.PaidByCardPaidByText,
-    val paidByTextColor: Color = DarkBlue,
+    val paidByTextColor: Color = CloudBurst,
     val paidByTextFontSize: Float = 16f,
     val paidByTextBottomSpace: Float = 16f,
 
@@ -841,7 +839,7 @@ data class SingleItemYouWillGetCardConfiguration(
 
 data class PaidCardConfiguration(
 
-    val shadowColor: Color = GreyShadow,
+    val shadowColor: Color = Ghost80,
     val borderRadius: Float = 15f,
     val shadowBlurRadius: Float = 33f,
     val shadowOffsetX: Float = 7f,
@@ -872,37 +870,37 @@ data class PaidCardConfiguration(
     val PaidCardDetailsSplitAmong: Int = R.string.PaidCardDetailsSplitAmong,
 
     val statusFontSize: Float = 11f,
-    val statusColor: Color = LightBlue4,
+    val statusColor: Color = WildBlueYonder,
 
     val partiallyPaidSize: Float = 14f,
-    val partiallyPaidColor: Color = LightGreen3,
+    val partiallyPaidColor: Color = Turquoise1,
 
     val splitMethodFontSize: Float = 11f,
-    val splitMethodColor: Color = LightBlue4,
+    val splitMethodColor: Color = WildBlueYonder,
 
     val unequalFontSize: Float = 14f,
-    val unequalColor: Color = DarkBlue,
+    val unequalColor: Color = CloudBurst,
 
     val categoriesFontSize: Float = 11f,
-    val categoriesColor: Color = LightBlue4,
+    val categoriesColor: Color = WildBlueYonder,
 
     val createdByFontSize: Float = 11f,
-    val createdByColor: Color = LightBlue4,
+    val createdByColor: Color = WildBlueYonder,
 
     val youFontSize: Float = 14f,
-    val youColor: Color = DarkBlue,
+    val youColor: Color = CloudBurst,
 
     val createdOnFontSize: Float = 11f,
-    val createdOnColor: Color = LightBlue4,
+    val createdOnColor: Color = WildBlueYonder,
 
     val dateFontSize: Float = 14f,
-    val dateColor: Color = DarkBlue,
+    val dateColor: Color = CloudBurst,
 
     val splitAmongFontSize: Float = 11f,
-    val splitAmongColor: Color = LightBlue4,
+    val splitAmongColor: Color = WildBlueYonder,
 
     val membersFontSize: Float = 14f,
-    val membersColor: Color = DarkBlue
+    val membersColor: Color = CloudBurst
 )
 
 data class PaymentReviewBottomSheetConfiguration(
@@ -920,7 +918,7 @@ data class SelectedIconConfiguration(
     val borderWidth: Float = 1f,
     val borderColor: Color = Color.White,
     val shape: Shape = CircleShape,
-    val backGroundColor: Color = Pink,
+    val backGroundColor: Color = RadicalRed,
     val icon: Int = R.drawable.ic_checked_right,
     val iconSize: Float = 7f
 )
@@ -933,27 +931,27 @@ data class YouWillGetDetailsSingleRowConfiguration(
 
     val userNameTextSize: Float = 12f,
     val userPhNoTextSize: Float = 11f,
-    val userNameColor: Color = DarkBlue,
-    val userPhNoTextColor: Color = Color(0xff5A87BB),
+    val userNameColor: Color = CloudBurst,
+    val userPhNoTextColor: Color = SteelBlue,
 
     val YouWillGetDetailsSingleRowGetText: Int = R.string.YouWillGetDetailsSingleRowGetText,
     val YouWillGetDetailsSingleRowPaidText: Int = R.string.YouWillGetDetailsSingleRowPaidText,
-    val getTextColor: Color = LightGreen3,
-    val paidTextColor: Color = Color(0xff5A87BB),
+    val getTextColor: Color = Turquoise1,
+    val paidTextColor: Color = SteelBlue,
     val getTextFontSize: Float = 11f,
     val paidTextFontSize: Float = 11f,
 
     val currencyFontSizeForGetAmount: Float = 12f,
-    val currencyTextColorForGetAmount: Color = LightGreen3,
-    val decNumberTextColorForGetAmount: Color = LightGreen3,
-    val wholeNumberTextColorForGetAmount: Color = LightGreen3,
+    val currencyTextColorForGetAmount: Color = Turquoise1,
+    val decNumberTextColorForGetAmount: Color = Turquoise1,
+    val wholeNumberTextColorForGetAmount: Color = Turquoise1,
     val wholeNumberFontSizeForGetAmount: Float = 12f,
     val decNumberFontSizeForGetAmount: Float = 10f,
 
     val currencyFontSizeForPaidAmount: Float = 9f,
-    val currencyTextColorForPaidAmount: Color = DarkBlue,
-    val decNumberTextColorForPaidAmount: Color = DarkBlue,
-    val wholeNumberTextColorForPaidAmount: Color = DarkBlue,
+    val currencyTextColorForPaidAmount: Color = CloudBurst,
+    val decNumberTextColorForPaidAmount: Color = CloudBurst,
+    val wholeNumberTextColorForPaidAmount: Color = CloudBurst,
     val wholeNumberFontSizeForPaidAmount: Float = 10f,
     val decNumberFontSizeForPaidAmount: Float = 8f
 ) {
@@ -961,14 +959,14 @@ data class YouWillGetDetailsSingleRowConfiguration(
         val variationOne = YouWillGetDetailsSingleRowConfiguration(
             YouWillGetDetailsSingleRowGetText = R.string.YouWillPayDetailsSingleRowDueText,
             YouWillGetDetailsSingleRowPaidText = R.string.YouWillPayDetailsSingleRowPaidText,
-            getTextColor = Pink,
-            paidTextColor = Color(0xff5A87BB),
-            currencyTextColorForGetAmount = Pink,
-            decNumberTextColorForGetAmount = Pink,
-            wholeNumberTextColorForGetAmount = Pink,
-            currencyTextColorForPaidAmount = DarkBlue,
-            decNumberTextColorForPaidAmount = DarkBlue,
-            wholeNumberTextColorForPaidAmount = DarkBlue
+            getTextColor = RadicalRed,
+            paidTextColor = SteelBlue,
+            currencyTextColorForGetAmount = RadicalRed,
+            decNumberTextColorForGetAmount = RadicalRed,
+            wholeNumberTextColorForGetAmount = RadicalRed,
+            currencyTextColorForPaidAmount = CloudBurst,
+            decNumberTextColorForPaidAmount = CloudBurst,
+            wholeNumberTextColorForPaidAmount = CloudBurst
         )
     }
 
@@ -976,10 +974,10 @@ data class YouWillGetDetailsSingleRowConfiguration(
 
 data class YouWillGetDetailsSingleTabItemConfiguration(
     val cornerRadius: Float = 50f,
-    val selectedOptionBackground: Color = Whitish7,
+    val selectedOptionBackground: Color = Tranquil,
     val unSelectedOptionBackground: Color = Whitish6,
-    val selectedOptionTextColor: Color = LightGreen3,
-    val unSelectedOptionTextColor: Color = Color(0xff5A87BB),
+    val selectedOptionTextColor: Color = Turquoise1,
+    val unSelectedOptionTextColor: Color = SteelBlue,
     val fontSize: Float = 9f,
     val textTopPadding: Float = 3f,
     val textBottomPadding: Float = 3f,
@@ -988,10 +986,10 @@ data class YouWillGetDetailsSingleTabItemConfiguration(
 ) {
     companion object {
         val variationOne = YouWillGetDetailsSingleTabItemConfiguration(
-            selectedOptionBackground = LightRedButton,
+            selectedOptionBackground = LavenderBlush,
             unSelectedOptionBackground = Whitish6,
-            selectedOptionTextColor = Pink,
-            unSelectedOptionTextColor = Color(0xff5A87BB)
+            selectedOptionTextColor = RadicalRed,
+            unSelectedOptionTextColor = SteelBlue
 
         )
     }
@@ -1007,7 +1005,7 @@ data class YouWillPayChildPageConfiguration(
 )
 
 data class YouWillPayConfiguration(
-    val shadowColor: Color = Greyish2,
+    val shadowColor: Color = Black1A,
     val shadowBorderRadius: Float = 15f,
     val shadowBlurRadius: Float = 33f,
     val shadowOffsetX: Float = 5.63f,
@@ -1026,21 +1024,21 @@ data class YouWillPayConfiguration(
 
 data class SummarySinglePeopleConfig(
     val profileImageSize: Float = 42f,
-    val shadowColor: Color = Greyish2,
+    val shadowColor: Color = Black1A,
     val shadowBorderRadius: Float = 50f,
     val shadowBlurRadius: Float = 5.63f,
     val shadowOffsetX: Float = 5.63f,
     val shadowOffsetY: Float = 0f,
     val shadowSpread: Float = 0f,
     val profileImageShape: Shape = CircleShape,
-    val selectedBorderColor: Color = Pink,
+    val selectedBorderColor: Color = RadicalRed,
     val unselectedBorderColor: Color = Color.White,
     val profileImagePlaceHolder: Int = R.drawable.ic_people,
     val gapBetweenProfileImageAndName: Float = 17f
 )
 
 data class YouWillGetCardConfiguration(
-    val shadowColor: Color = Greyish2,
+    val shadowColor: Color = Black1A,
     val shadowBorderRadius: Float = 15f,
     val shadowBlurRadius: Float = 33f,
     val shadowOffsetX: Float = 5.63f,
@@ -1094,41 +1092,41 @@ data class SettledOrUnsettledSingleRowConfiguration(
 
 data class SplitAdjustItemConfiguration(
     val horizontalRowPadding: Float = 32f,
-    val borderColor: Color = LightBlue1,
+    val borderColor: Color = Zumthor,
     val imageSize: Float = 49f,
     val borderStroke: Float = 3f,
     val placeholder: Int = R.drawable.personactionbar,
     val contentScale: ContentScale = ContentScale.Crop,
     val nameFontSize: Float = 12f,
-    val nameTextColor: Color = DarkBlue,
+    val nameTextColor: Color = CloudBurst,
     val phoneNumberFontSize: Float = 11f,
-    val phoneNumberTextColor: Color = Color(0xff5A87BB)
+    val phoneNumberTextColor: Color = SteelBlue
 )
 
 data class SplitMembersRemainingBoxConfiguration(
-    val backgroundColor: Color = WhitishGreen,
+    val backgroundColor: Color = Dew1,
     val textPaddingVertical: Float = 10f,
     val fontSize: Float = 12f,
-    val textColor: Color = LightGreen3
+    val textColor: Color = Turquoise1
 )
 
 data class SplitPaidByItemConfiguration(
     val horizontalRowPadding: Float = 32f,
-    val selectedBorderColor: Color = Pink,
-    val unSelectedBorderColor: Color = LightBlue1,
+    val selectedBorderColor: Color = RadicalRed,
+    val unSelectedBorderColor: Color = Zumthor,
     val imageSize: Float = 49f,
     val selectedBorderStroke: Float = 2f,
     val unSelectedBorderStroke: Float = 3f,
     val placeholder: Int = R.drawable.personactionbar,
     val contentScale: ContentScale = ContentScale.Crop,
     val nameFontSize: Float = 12f,
-    val nameTextColor: Color = DarkBlue,
+    val nameTextColor: Color = CloudBurst,
     val phoneNumberFontSize: Float = 11f,
-    val phoneNumberTextColor: Color = Color(0xff5A87BB)
+    val phoneNumberTextColor: Color = SteelBlue
 )
 
 data class SplitAdjustAmountConfiguration(
-    val backgroundColor: Color = CardGrey,
+    val backgroundColor: Color = Alabaster1,
     val width: Float = 83f,
     val height: Float = 33f,
     val currencyFontSize: Float = 12f,
@@ -1139,7 +1137,7 @@ data class SplitAdjustAmountConfiguration(
     val decimalScriptFontWeight: FontWeight = FontWeight.Normal,
     val fontWeight: FontWeight = FontWeight.Bold,
     val fontSize: Float = 20f,
-    val textColor: Color = DarkBlue,
+    val textColor: Color = CloudBurst,
     val textStartPadding: Float = 8f,
     val textEndPadding: Float = 8f,
     val fontFamily: FontFamily = robotoFonts
@@ -1148,8 +1146,8 @@ data class SplitAdjustAmountConfiguration(
 data class UpiButtonConfiguration(
     val size: Float = 45f,
     val shape: Shape = CircleShape,
-    val backGroundColor: Color = LightGreen3,
-    val borderColor: Color = Bluish,
+    val backGroundColor: Color = Turquoise1,
+    val borderColor: Color = CuriousBlue,
     val borderWidth: Float = 1f,
     val textSize: Float = 12f,
     val textColor: Color = Color.White,
@@ -1159,7 +1157,7 @@ data class UpiButtonConfiguration(
 data class OutlineButtonConfiguration(
     val size: Float = 45f,
     val shape: Shape = CircleShape,
-    val borderColor: Color = Bluish,
+    val borderColor: Color = CuriousBlue,
     val borderWidth: Float = 1.1f,
     val icon: Int = R.drawable.ic_category_blue_plus,
     val iconTint: Color = Color.Unspecified
@@ -1171,7 +1169,7 @@ data class SettlePaymentMethodBottomSheetConfiguration(
     val bottomPaddingOfHolder: Float = 22f,
     val firstRowHeight: Float = 80f,
     val secondRowHeight: Float = 57f,
-    val selectedBackGroundColor: Color = LightBlue1,
+    val selectedBackGroundColor: Color = Zumthor,
     val rowStartPadding: Float = 28f,
     val upiRowTopPadding: Float = 21f,
     val bottomPaddingOfContinueButton: Float = 12f
@@ -1191,7 +1189,7 @@ data class YouWillGetDetailsTabRowConfiguration(
 }
 
 data class YouWillGetDetailsConfiguration(
-    val shadowColor: Color = GreyShadow,
+    val shadowColor: Color = Ghost80,
     val shadowBorderRadius: Float = 15f,
     val shadowBlurRadius: Float = 33f,
     val shadowOffsetX: Float = 7f,
@@ -1207,7 +1205,7 @@ data class YouWillGetDetailsConfiguration(
     val memberWillGetText: Int = R.string.member_will_get_text,
     val memberWillPayText: Int = R.string.member_will_pay_text,
     val youWillGetTextFontSize: Float = 16f,
-    val youWillGetTextFontColor: Color = DarkBlue,
+    val youWillGetTextFontColor: Color = CloudBurst,
 
     val gapBetweenYouWillGetTextAndTabRow: Float = 11f,
 

@@ -10,21 +10,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.SettleBottomSheetTabs
 import co.yore.splitnpay.models.Transaction
 import co.yore.splitnpay.models.YouWillGetPayBottomSheetConfiguration
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightBlue3
-import co.yore.splitnpay.ui.theme.Lightblue5
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.Botticelli
+import co.yore.splitnpay.ui.theme.SteelBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -169,17 +167,17 @@ fun YouWillGetPayBottomSheet_al32sa(
     }
     val getTabColor = animateColorAsState(
         if (willGetPayTab == SettleBottomSheetTabs.YouWillGet) {
-            DarkBlue
+            CloudBurst
         } else {
-            LightBlue3
+            Botticelli
         }
     )
 
     val payTabColor = animateColorAsState(
         if (willGetPayTab == SettleBottomSheetTabs.YouWillPay) {
-            DarkBlue
+            CloudBurst
         } else {
-            LightBlue3
+            Botticelli
         }
     )
 
@@ -196,7 +194,7 @@ fun YouWillGetPayBottomSheet_al32sa(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Lightblue5)
+                .background(SteelBlue)
                 .align(Alignment.CenterHorizontally)
         )
         config.bottomSheetHolderBottomPadding.sy()

@@ -20,6 +20,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.MemberTransact
 import co.yore.splitnpay.models.SplitSelectableMember
+import co.yore.splitnpay.ui.theme.CloudBurst8C
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -45,7 +46,7 @@ fun GroupSplitSummary(
             topStart = 25f.dep(),
             topEnd = 25f.dep()
         ),
-        scrimColor = SheetScrim
+        scrimColor = CloudBurst8C
     ) {
         Box(
             modifier = Modifier.fillMaxSize()

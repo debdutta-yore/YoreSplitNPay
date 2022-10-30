@@ -11,19 +11,19 @@ import co.yore.splitnpay.libs.formatComma
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.splitted
 import co.yore.splitnpay.locals.localCurrency
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightGreen3
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.Turquoise1
 import co.yore.splitnpay.ui.theme.robotoFonts
 
 @Composable
 fun Float.groupCard():AnnotatedString {
     return this.amountAnnotatedString(
         currencyFontSize = 12f,
-        currencyTextColor = LightGreen3,
+        currencyTextColor = Turquoise1,
         wholeNumberFontSize = 16f,
-        wholeNumberTextColor = LightGreen3,
+        wholeNumberTextColor = Turquoise1,
         decNumberFontSize = 10f,
-        decNumberTextColor = LightGreen3,
+        decNumberTextColor = Turquoise1,
     )
 }
 
@@ -32,12 +32,12 @@ fun Float.amountAnnotatedString(
     isLeadingTextEnabled: Boolean = false,
     leadingText: String = "",
     leadingTextFontSize: Float = 9f,
-    leadingTextTextColor: Color = DarkBlue,
+    leadingTextTextColor: Color = CloudBurst,
     leadingTextFontWeight: FontWeight = FontWeight(400),
     isTrailingTextEnabled: Boolean = false,
     trailingText: String = "",
     trailingTextFontSize: Float = 9f,
-    trailingTextTextColor: Color = DarkBlue,
+    trailingTextTextColor: Color = CloudBurst,
     trailingTextFontWeight: FontWeight = FontWeight(400),
     isSpaceBetween: Boolean = false,
     currencyFontSize: Float = 12f,

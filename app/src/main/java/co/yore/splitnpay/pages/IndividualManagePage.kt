@@ -18,16 +18,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.components.components.GroupCard_0msq1z
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.GroupCardConfiguration
 import co.yore.splitnpay.models.GroupData
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.GreyShadow
-import co.yore.splitnpay.ui.theme.White
+import co.yore.splitnpay.ui.theme.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -66,7 +64,7 @@ fun IndividualManagePage(
                         )
                     )
                     .background(
-                        Color(0xff34cfcf),
+                        Turquoise,
                         RoundedCornerShape(
                             bottomStart = 48.dep()
 
@@ -86,7 +84,7 @@ fun IndividualManagePage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(42.dep())
-                    .background(Color(0xff34cfcf))
+                    .background(Turquoise)
                     .background(
                         Color.White,
                         RoundedCornerShape(
@@ -153,14 +151,14 @@ fun IndividualManagePage(
                         top = 146.dep(),
                         start = 16.dep()
                     ),
-                color = Color(0xff5A87BB),
+                color = SteelBlue,
                 fontSize = 13.sep(),
                 annotatedString = buildAnnotatedString {
                     append(stringResource(R.string.joined_on) + " ")
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.Bold
-                        ),
+                        )
                     ) {
                         append(memberJoiningDate)
                     }
@@ -188,7 +186,7 @@ fun IndividualManagePage(
                         FontFamilyText(
                             modifier = Modifier.padding(start = 18.dep()),
                             text = stringResource(R.string.settings),
-                            color = DarkBlue,
+                            color = CloudBurst,
                             fontSize = 21.sep(),
                             fontWeight = FontWeight.Bold
                         )
@@ -204,7 +202,7 @@ fun IndividualManagePage(
                                 bottom = 18.dep()
                             )
                             .coloredShadow(
-                                color = GreyShadow,
+                                color = Ghost80,
                                 borderRadius = 20.dep(),
                                 blurRadius = 33.dep(),
                                 offsetY = 7.dep(),
@@ -215,7 +213,7 @@ fun IndividualManagePage(
                                 color = White,
                                 shape = RoundedCornerShape(20.dep())
                             )
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
                     )
                 }
                 stickyHeader {
@@ -227,7 +225,7 @@ fun IndividualManagePage(
                         FontFamilyText(
                             modifier = Modifier.padding(start = 18.dep()),
                             text = stringResource(R.string.groups),
-                            color = DarkBlue,
+                            color = CloudBurst,
                             fontSize = 21.sep(),
                             fontWeight = FontWeight.Bold
                         )
@@ -239,7 +237,7 @@ fun IndividualManagePage(
                             .padding(
                                 top = 0.dep(),
                                 start = 18.dep(),
-                                end = 18.dep(),
+                                end = 18.dep()
                             )
                     )
                 }
@@ -276,7 +274,7 @@ fun Groups(
                 modifier = Modifier.padding(top = 13.dep()),
                 config = GroupCardConfiguration.GROUP,
                 contentDescription = "",
-                data = item,
+                data = item
             )
             14.sy()
         }

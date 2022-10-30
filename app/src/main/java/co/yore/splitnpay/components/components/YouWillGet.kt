@@ -24,8 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.*
@@ -52,14 +50,14 @@ fun YouWillGetChildPage(
             72.sy()
             FontFamilyText(
                 text = "$userName " + stringResource(id = R.string.will_receive_nothing),
-                color = LightBlue4,
+                color = WildBlueYonder,
                 fontSize = 13.sep(),
                 fontWeight = FontWeight.Bold
             )
             config.gapBetweenTwoText.sy()
             FontFamilyText(
                 text = stringResource(id = R.string.nobody_indebted),
-                color = LightBlue4,
+                color = WildBlueYonder,
                 fontSize = 13.sep()
             )
             config.gapBetweenTextAndIcon.sy()
@@ -123,7 +121,7 @@ fun YouWillGetChildPage(
                         29.sy()
                         FontFamilyText(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            color = Bluish,
+                            color = CuriousBlue,
                             text = stringResource(R.string.remind),
                             fontSize = 16.sep()
                         )
@@ -153,8 +151,8 @@ fun YouWillGetChildPage(
                             text = stringResource(R.string.total_you_will_get),
                             amount = total,
                             contentDescription = "YouWillGet",
-                            borderColor = LightGreen3,
-                            backgroundColor = WhitishGreen
+                            borderColor = Turquoise1,
+                            backgroundColor = Dew1
                         )
                         24.sy()
                     }
@@ -191,18 +189,18 @@ fun TotalCard_6re10h(
     ) {
         FontFamilyText(
             text = text,
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 12.sep()
         )
         FontFamilyText(
             annotatedString = amount.amountAnnotatedString(
                 isSpaceBetween = true,
-                currencyTextColor = DarkBlue,
+                currencyTextColor = CloudBurst,
                 currencyFontSize = 11.29f,
-                wholeNumberTextColor = DarkBlue,
+                wholeNumberTextColor = CloudBurst,
                 wholeNumberFontSize = 14f,
                 wholeNumberFontWeight = FontWeight.W600,
-                decNumberTextColor = DarkBlue,
+                decNumberTextColor = CloudBurst,
                 decNumberFontSize = 10f,
                 trailingText = " Dr",
                 trailingTextFontSize = 11.29f,
@@ -227,7 +225,7 @@ fun YouWillGetSingleItem_080weu(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SelectorIcon_ulkel8(
-            config = CheckboxConfiguration(iconColor = Bluish),
+            config = CheckboxConfiguration(iconColor = CuriousBlue),
             contentDescription = "YouWillGetCheckBox",
             selected = transaction.isSelected,
             onClick = onClick
@@ -251,13 +249,13 @@ fun YouWillGetSingleItem_080weu(
                         text = transaction.name,
                         fontSize = 12.sep(),
                         fontWeight = FontWeight.Bold,
-                        color = DarkBlue
+                        color = CloudBurst
                     )
                     config.gapBetweenNameANdPhNo.sy()
                     FontFamilyText(
                         text = transaction.mobileNumber,
                         fontSize = 11.sep(),
-                        color = Lightblue5
+                        color = SteelBlue
                     )
                 }
             }
@@ -273,12 +271,12 @@ fun YouWillGetSingleItem_080weu(
                     overflow = TextOverflow.Ellipsis,
                     annotatedString = transaction.amount.amountAnnotatedString(
                         isSpaceBetween = true,
-                        currencyTextColor = DarkBlue,
+                        currencyTextColor = CloudBurst,
                         currencyFontSize = 12f,
-                        wholeNumberTextColor = DarkBlue,
+                        wholeNumberTextColor = CloudBurst,
                         wholeNumberFontWeight = FontWeight.Bold,
                         wholeNumberFontSize = 14f,
-                        decNumberTextColor = DarkBlue,
+                        decNumberTextColor = CloudBurst,
                         decNumberFontSize = 10f
                     )
                 )

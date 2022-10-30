@@ -2,14 +2,16 @@ package co.yore.splitnpay.viewModels
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
 
-class SplitCardDetailsViewModel : ViewModel(), WirelessViewModelInterface {
+class SplitCardDetailsViewModel(
+    val repo: MasterRepo = MasterRepoImpl()
+) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val notifier = NotificationService{id, arg ->
@@ -78,7 +80,7 @@ class SplitCardDetailsViewModel : ViewModel(), WirelessViewModelInterface {
     private val selectedPayOption = mutableStateOf(YouWillPayTransactionStatus.Pending)
     private val statusBarColor = mutableStateOf(
         StatusBarColor(
-            color = Color(0xff00CEC3),
+            color = RobinsEggBlue,
             darkIcons = false
         )
     )
@@ -107,128 +109,21 @@ class SplitCardDetailsViewModel : ViewModel(), WirelessViewModelInterface {
             DataIds.statusBarColor to statusBarColor
         )
 
-        splitCardDetailsData.value = SplitCardDetailsData(
-            status = "Partially Paid",
-            splitMethod = "Unequal",
-            categories = "Trip",
-            createdBy = "You",
-            createdOn = "9th May, 2022",
-            noOfMembers = 5,
-            categoryIcon = R.drawable.ic_trip
-        )
+        splitCardDetailsData.value = repo.sampleSplitCardDetails()
         splitSelectableMembers.addAll(
-            listOf(
-                SplitSelectableMember(
-                    name = "You",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = true
-                ),
-                SplitSelectableMember(
-                    name = "Sushil",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = false
-                ),
-                SplitSelectableMember(
-                    name = "Manisha",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = false
-                ),
-                SplitSelectableMember(
-                    name = "Tanisha",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = false
-                ),
-                SplitSelectableMember(
-                    name = "Sanjana",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = false
-                ),
-                SplitSelectableMember(
-                    name = "Arvind",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = false
-                )
-            )
+            repo.splitSelectableMembers()
         )
         getMembers.addAll(
-            listOf(
-                MemberWillGetOrPayDetailsSingleRowItem(
-                    userName = "Sushil Roy",
-                    imageUrl = "https://i.pravatar.cc/300",
-                    userPhNo = "7610036985",
-                    getAmount = 600f,
-                    paidAmount = 0f
-                ),
-                MemberWillGetOrPayDetailsSingleRowItem(
-                    userName = "Sanjana Roy",
-                    imageUrl = "https://i.pravatar.cc/300",
-                    userPhNo = "8953246985",
-                    getAmount = 600f,
-                    paidAmount = 0f
-                )
-            )
+            repo.splitCardGetMembers()
         )
         payMembers.addAll(
-            listOf(
-                MemberWillGetOrPayDetailsSingleRowItem(
-                    userName = "Sushil Roy",
-                    imageUrl = "https://i.pravatar.cc/300",
-                    userPhNo = "7610036985",
-                    getAmount = 600f,
-                    paidAmount = 0f
-                ),
-                MemberWillGetOrPayDetailsSingleRowItem(
-                    userName = "Sanjana Roy",
-                    imageUrl = "https://i.pravatar.cc/300",
-                    userPhNo = "8953246985",
-                    getAmount = 600f,
-                    paidAmount = 0f
-                )
-            )
+            repo.splitCardPayMembers()
         )
         paidList.addAll(
-            listOf(
-                MemberTransact(
-                    name = "You",
-                    mobile = "7923012593",
-                    image = "https://i.pravatar.cc/300",
-                    amount = 5000f
-                ),
-                MemberTransact(
-                    name = "Manisha Roy",
-                    mobile = "9610356210",
-                    image = "https://i.pravatar.cc/300",
-                    amount = 5000f
-                )
-            )
+            repo.splitCardPaidList()
         )
         splitAmong.addAll(
-            listOf(
-                MemberTransact(
-                    name = "You",
-                    mobile = "7923012593",
-                    image = "https://i.pravatar.cc/300",
-                    amount = 5000f
-                ),
-                MemberTransact(
-                    name = "Sushil Roy",
-                    mobile = "9610356210",
-                    image = "https://i.pravatar.cc/300",
-                    amount = 5000f
-                ),
-                MemberTransact(
-                    name = "Sanjana Roy",
-                    mobile = "9610356210",
-                    image = "https://i.pravatar.cc/300",
-                    amount = 5000f
-                ),
-                MemberTransact(
-                    name = "Ankita Roy",
-                    mobile = "9610356210",
-                    image = "https://i.pravatar.cc/300",
-                    amount = 5000f
-                )
-            )
+            repo.splitCardSplitAmong()
         )
     }
 }

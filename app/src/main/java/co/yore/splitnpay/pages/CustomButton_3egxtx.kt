@@ -6,14 +6,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.models.CustomButtonConfiguration
-import co.yore.splitnpay.ui.theme.Lightblue4
+import co.yore.splitnpay.ui.theme.WildBlueYonder
 
 @Composable
 fun CustomButton_3egxtx(
@@ -23,17 +22,6 @@ fun CustomButton_3egxtx(
     onClick: () -> Unit,
     contentDescription: String
 ) {
-    /*val backgroundColor by remember(enabled) {
-        derivedStateOf {
-            if(enabled){
-                config.buttonColor
-            }
-            else{
-                Color(0xff839BB9)
-            }
-        }
-    }
-    val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor)*/
     Button(
         enabled = enabled,
         modifier = Modifier
@@ -43,7 +31,7 @@ fun CustomButton_3egxtx(
         shape = RoundedCornerShape(config.cornerRadius.dep()),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = config.buttonColor,
-            disabledBackgroundColor = Lightblue4,
+            disabledBackgroundColor = WildBlueYonder,
             disabledContentColor = config.fontColor,
             contentColor = config.fontColor
         )

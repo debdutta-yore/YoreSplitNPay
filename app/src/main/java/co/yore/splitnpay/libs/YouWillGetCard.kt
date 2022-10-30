@@ -20,16 +20,12 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.MemberTransact
-import co.yore.splitnpay.models.ProfileImageConfiguration
 import co.yore.splitnpay.models.SingleItemYouWillGetCardConfiguration
 import co.yore.splitnpay.models.YouWillGetCardConfiguration
-import co.yore.splitnpay.pages.WhitishGreen
 import co.yore.splitnpay.ui.theme.*
 import java.text.DecimalFormat
 
@@ -66,7 +62,7 @@ fun YouWillGetCard(
                         top = 26.dep()
                     ),
                     text = stringResource(R.string.will_get, payerName),
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -103,8 +99,8 @@ fun YouWillGetCard(
                         contentDescription = "TotalYouWillGetCard",
                         text = stringResource(R.string.total) + " " + stringResource(R.string.will_get, payerName),
                         amount = total,
-                        borderColor = LightGreen3,
-                        backgroundColor = WhitishGreen
+                        borderColor = Turquoise1,
+                        backgroundColor = Dew1
                     )
                 }
                 config.bottomPadding.sy()
@@ -117,7 +113,7 @@ fun YouWillGetCard(
                         top = 26.dep()
                     ),
                     text = stringResource(R.string.will_get, payerName),
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -132,14 +128,14 @@ fun YouWillGetCard(
                 ) {
                     FontFamilyText(
                         text = stringResource(R.string.will_receive_nothing, payerName),
-                        color = LightBlue4,
+                        color = WildBlueYonder,
                         fontSize = 13.sep(),
                         fontWeight = FontWeight.Bold
                     )
                     5.sy()
                     FontFamilyText(
                         text = stringResource(R.string.nobody_indebted),
-                        color = LightBlue4,
+                        color = WildBlueYonder,
                         fontSize = 13.sep()
                     )
                     85.sy()
@@ -148,8 +144,8 @@ fun YouWillGetCard(
                         contentDescription = "TotalYouWillPayCard",
                         text = stringResource(R.string.total_receivable),
                         amount = total,
-                        borderColor = LightGreen3,
-                        backgroundColor = WhitishGreen
+                        borderColor = Turquoise1,
+                        backgroundColor = Dew1
                     )
                 }
             }
@@ -190,13 +186,13 @@ fun SingleItemYouWillGetCard_3btamv(
                     text = transaction.name,
                     fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold,
-                    color = DarkBlue
+                    color = CloudBurst
                 )
                 config.gapBetweenPUserNameAndUserPhNo.sx()
                 FontFamilyText(
                     text = transaction.mobile,
                     fontSize = 11.sep(),
-                    color = LightBlue5
+                    color = SteelBlue
                 )
             }
         }
@@ -251,7 +247,7 @@ fun SingleItemYouWillGetCard_3btamv(
                     }
                 },
                 fontSize = 14f.sep(),
-                color = DarkBlue,
+                color = CloudBurst,
                 fontWeight = FontWeight.Bold
             )
         }

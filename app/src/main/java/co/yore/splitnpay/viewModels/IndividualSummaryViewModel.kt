@@ -2,12 +2,19 @@ package co.yore.splitnpay.viewModels
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.MemberTransact
+import co.yore.splitnpay.models.SplitSelectableMember
+import co.yore.splitnpay.models.StatusBarColor
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.BlackSqueeze
 
-class IndividualSummaryViewModel : ViewModel(), WirelessViewModelInterface {
+class IndividualSummaryViewModel(
+    val repo: MasterRepo = MasterRepoImpl()
+) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val notifier = NotificationService{id, arg ->
@@ -51,7 +58,7 @@ class IndividualSummaryViewModel : ViewModel(), WirelessViewModelInterface {
     private val selectedBalanceExpenseTab = mutableStateOf(0)
     private val statusBarColor = mutableStateOf(
         StatusBarColor(
-            Color(0xffEDF3F9),
+            BlackSqueeze,
             darkIcons = false
         )
     )
@@ -71,34 +78,13 @@ class IndividualSummaryViewModel : ViewModel(), WirelessViewModelInterface {
             DataIds.splitSelectableMembers to splitSelectableMembers
         )
         splitSelectableMembers.addAll(
-            listOf(
-                SplitSelectableMember(
-                    name = "You",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = true
-                ),
-                SplitSelectableMember(
-                    name = "Sushil",
-                    image = "https://i.pravatar.cc/300",
-                    isSelected = false
-                )
-            )
+            repo.splitSelectableMembers()
         )
         willGetTransactions.add(
-            MemberTransact(
-                name = "Sushil",
-                image = "https://i.pravatar.cc/300",
-                amount = 1000f,
-                mobile = "7610236589"
-            )
+            repo.willGetTransact()
         )
         willPayTransactions.add(
-            MemberTransact(
-                name = "Sushil",
-                image = "https://i.pravatar.cc/300",
-                amount = 1000f,
-                mobile = "7610236589"
-            )
+            repo.willPayTransact()
         )
     }
 }

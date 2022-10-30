@@ -13,11 +13,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.demos.expenseDemo.sy
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.CloudBurst
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -31,7 +29,9 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import co.yore.splitnpay.ui.theme.LightGrey2
+import co.yore.splitnpay.ui.theme.DoveGray1
+import co.yore.splitnpay.ui.theme.Alabaster
+import co.yore.splitnpay.ui.theme.DustyGray
 import kotlinx.coroutines.CoroutineScope
 
 class SuccessUndoSheetModel(val callback: Callback): BottomSheetModel{
@@ -118,7 +118,7 @@ fun SuccessUndoBottomSheet(
                 .clip(CircleShape)
                 .size(80.dep())
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -135,7 +135,7 @@ fun SuccessUndoBottomSheet(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
             text = message,
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 16.sep()
         )
         40.sy()
@@ -158,7 +158,7 @@ fun SuccessUndoBottomSheet(
                 )
                 .clip(RoundedCornerShape(23.5.dep()))
                 .background(
-                    LightGrey2,
+                    Alabaster,
                 )
                 .then(
                     if (enabled) {
@@ -175,7 +175,7 @@ fun SuccessUndoBottomSheet(
                 text = stringResource(R.string.undo),
                 textAlign = TextAlign.Center,
                 fontSize = 16.sep(),
-                color = GreyText,
+                color = DoveGray1,
                 lineHeight = 18.75.sep()
             )
             CanvasCountDownTimer(
@@ -227,7 +227,7 @@ fun CanvasCountDownTimer(
         val canvasHeight = size.height
 
         drawArc(
-            color = LightGrey3,
+            color = DustyGray,
             startAngle = 0f,
             sweepAngle = 360f,
             useCenter = false,
@@ -240,7 +240,7 @@ fun CanvasCountDownTimer(
         )
 
         drawArc(
-            color = LightGrey3,
+            color = DustyGray,
             startAngle = -90f,
             sweepAngle = 360f * (1f-animateFloat.value),
             useCenter = true,

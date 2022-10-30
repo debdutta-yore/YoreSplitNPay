@@ -40,9 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Category
@@ -246,7 +244,7 @@ fun BillTotalAndCategoryBottomSheet(
 
         FontFamilyText(
             text = stringResource(R.string.enter_bill_total),
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 16.sep(),
             fontWeight = FontWeight.Bold,
         )
@@ -255,7 +253,7 @@ fun BillTotalAndCategoryBottomSheet(
             modifier = Modifier
                 .padding(top = 17.dep())
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
@@ -275,14 +273,14 @@ fun BillTotalAndCategoryBottomSheet(
                 keyboardType = KeyboardType.Number,
                 visualTransformation = ThousandsTransformer(),
                 textStyle = TextStyle(
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sep(),
                 ),
                 interceptor = {
                     it.replace("^0+".toRegex(),"").take(14)
                 },
-                iconTint = Lightgrey
+                iconTint = DoveGray
             )
         }
 
@@ -290,7 +288,7 @@ fun BillTotalAndCategoryBottomSheet(
             modifier = Modifier
                 .padding(top = 17.dep())
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
@@ -307,14 +305,14 @@ fun BillTotalAndCategoryBottomSheet(
                 placeHolderText = stringResource(R.string.add_description),
                 singleLine = true,
                 maxLines = 1,
-                iconTint = Lightgrey
+                iconTint = DoveGray
             )
         }
 
         FontFamilyText(
             modifier = Modifier.padding(top = 23.dep()),
             text = stringResource(R.string.categories),
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 16.sep(),
             fontWeight = FontWeight.Bold,
         )
@@ -360,7 +358,7 @@ fun BillTotalAndCategoryBottomSheet(
                             modifier = Modifier
                                 .size(45.dep())
                                 .background(
-                                    color = Grayish,
+                                    color = WildSand,
                                     shape = CircleShape
                                 )
                                 .clip(CircleShape)
@@ -380,7 +378,7 @@ fun BillTotalAndCategoryBottomSheet(
 
                     FontFamilyText(
                         text = stringResource(id = R.string.others),
-                        color = DarkBlue,
+                        color = CloudBurst,
                         fontSize = 11.sep(),
                     )
                 }
@@ -424,7 +422,7 @@ fun BillTotalAndCategoryBottomSheet(
                     //end = 31.dep()
                 )
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
@@ -444,7 +442,7 @@ fun BillTotalAndCategoryBottomSheet(
                     contentDescription = "",
                     leadingIcon = categoryImage,
                     placeHolderText = categoryPlaceholder,
-                    iconTint = Lightgrey
+                    iconTint = DoveGray
                 )
             }
         }

@@ -12,13 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.PhotoSelectionBottomSheet
+import co.yore.splitnpay.components.components.FontFamilyText
+import co.yore.splitnpay.components.components.PeopleImageItem_r02b97
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheet
 import co.yore.splitnpay.ui.theme.*
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -36,7 +36,7 @@ fun GroupCreationScreen(
             topStart = 25f.dep(),
             topEnd = 25f.dep()
         ),
-        scrimColor = MyColor2
+        scrimColor = CloudBurst8C
     ) {
         GroupCreationPageContent()
     }
@@ -91,13 +91,13 @@ fun GroupCreationPageContent(
                     text = "Name Your Group",
                     fontSize = 16.sep(),
                     fontWeight = FontWeight(700),
-                    color = DarkBlue
+                    color = CloudBurst
                 )
             }
 
             Spacer(modifier = Modifier.height(17.dep()))
 
-            //Group name text field
+            // Group name text field
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,13 +107,13 @@ fun GroupCreationPageContent(
                 GroupNameTextField(
                     groupName
                 ){
-                    notifier.notify(DataIds.groupName,it)
+                    notifier.notify(DataIds.groupName, it)
                 }
             }
 
             Spacer(modifier = Modifier.height(23.dep()))
 
-            //Selected people row
+            // Selected people row
             Box(modifier = Modifier.padding(start = 16.dep(), end = 16.dep())) {
                 LazyRow(
                     modifier = Modifier
@@ -123,7 +123,7 @@ fun GroupCreationPageContent(
                     items(friends) { item ->
                         PeopleImageItem_r02b97(
                             onDelete = {
-                                notifier.notify(DataIds.deleteAdded,item)
+                                notifier.notify(DataIds.deleteAdded, item)
                             },
                             friend = item,
                             contentDescription = "people image"
@@ -136,7 +136,7 @@ fun GroupCreationPageContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
         ) {
             Box(
                 Modifier
@@ -146,7 +146,7 @@ fun GroupCreationPageContent(
                         end = 16.dep()
                     )
                     .clip(RoundedCornerShape(12.dep()))
-                    .background(color = Lightgrey5),
+                    .background(color = Mystic),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -161,7 +161,7 @@ fun GroupCreationPageContent(
                     text = "*By continuing, you agree that members of this groups will abide by the Yore Payments user policies",
                     fontSize = 10.sep(),
                     fontWeight = FontWeight(400),
-                    color = Lightblue5,
+                    color = SteelBlue,
                     maxLines = 2,
                     lineHeight = 13.sep(),
                     fontFamily = robotoFonts
@@ -196,4 +196,3 @@ fun GroupCreationPageContent(
         }
     }
 }
-

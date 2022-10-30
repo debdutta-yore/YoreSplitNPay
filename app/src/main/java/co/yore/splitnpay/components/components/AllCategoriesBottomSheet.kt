@@ -26,15 +26,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightGrey2
-import co.yore.splitnpay.ui.theme.Lightgrey
+import co.yore.splitnpay.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -164,7 +160,7 @@ fun AllCategoriesBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dep())
-                .background(color = LightBlue1)
+                .background(color = Zumthor)
                 .padding(start = 28.dep()),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -182,7 +178,7 @@ fun AllCategoriesBottomSheet(
                 14.sx()
                 FontFamilyText(
                     text = "Categories",
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -198,7 +194,7 @@ fun AllCategoriesBottomSheet(
                     .width((21 / 2).dep())
                     .fillMaxHeight()
                     .background(
-                        color = Bluish,
+                        color = CuriousBlue,
                         shape = RoundedCornerShape(
                             topStart = 5.dep(),
                             bottomStart = 5.dep()
@@ -242,7 +238,7 @@ fun AllCategoriesBottomSheet(
                     val color by remember(isAddCategoryEnabled) {
                         derivedStateOf {
                             if(isAddCategoryEnabled){
-                                Bluish
+                                CuriousBlue
                             }
                             else{
                                 Color.White
@@ -259,7 +255,7 @@ fun AllCategoriesBottomSheet(
                             )
                             .border(
                                 width = 1.dep(),
-                                color = Bluish,
+                                color = CuriousBlue,
                                 shape = CircleShape
                             )
                             .clip(CircleShape)
@@ -272,7 +268,7 @@ fun AllCategoriesBottomSheet(
                                 .align(Alignment.Center),
                             painter = painterResource(id = R.drawable.ic_plus),
                             contentDescription = "Plus icon",
-                            tint = if (isAddCategoryEnabled) Color.White else Bluish
+                            tint = if (isAddCategoryEnabled) Color.White else CuriousBlue
                         )
                     }
                 }
@@ -311,7 +307,7 @@ fun AllCategoriesBottomSheet(
                     end = 31.dep()
                 )
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
@@ -328,7 +324,7 @@ fun AllCategoriesBottomSheet(
                     contentDescription = "",
                     leadingIcon = R.drawable.ic_description,
                     placeHolderText = "Custom category name",
-                    iconTint = Lightgrey
+                    iconTint = DoveGray
                 )
             }
         }

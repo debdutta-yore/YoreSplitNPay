@@ -9,11 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.models.TotalCardConfiguration
@@ -45,7 +43,7 @@ fun TotalCard_6re10h(
     ) {
         FontFamilyText(
             text = text,
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = config.textFontSize.sep(),
             style = MaterialTheme.typography.body1
         )

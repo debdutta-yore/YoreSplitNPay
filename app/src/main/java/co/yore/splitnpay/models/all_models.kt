@@ -4,8 +4,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.LightBlue1
-import co.yore.splitnpay.pages.Whitish5
 import co.yore.splitnpay.ui.theme.*
 import java.math.BigDecimal
 
@@ -219,24 +217,24 @@ data class BillCardAllConfiguration(
     val completedTransactionEndPadding: Float = 2f,
     val completedTransactionTopPadding: Float = 4f,
 
-    val paidReceivedColor: Color = LightBlue4,
-    val totalPaidReceivedTextColor: Color = LightBlue4,
-    val cardShadowColor: Color = LightBlue5.copy(0.2f),
-    val paidSelectedAmountTextColor: Color = Pink,
-    val receivedSelectedAmountTextColor: Color = LightGreen3,
-    val amountNormalTextColor: Color = DarkBlue,
-    val paidTimeBackgroundColor: Color = Pink,
-    val settledTimeBarBackgroundColor: Color = LightBlue4,
-    val receivedTimeBackgroundColor: Color = LightGreen3,
-    val paidProgressColor: Color = DarkBlue,
-    val receiveProgressColor: Color = LightGreen3,
-    val paidProgressBackgroundColor: Color = Pink,
-    val receiveProgressBackgroundColor: Color = DarkBlue,
+    val paidReceivedColor: Color = WildBlueYonder,
+    val totalPaidReceivedTextColor: Color = WildBlueYonder,
+    val cardShadowColor: Color = SteelBlue.copy(0.2f),
+    val paidSelectedAmountTextColor: Color = RadicalRed,
+    val receivedSelectedAmountTextColor: Color = Turquoise1,
+    val amountNormalTextColor: Color = CloudBurst,
+    val paidTimeBackgroundColor: Color = RadicalRed,
+    val settledTimeBarBackgroundColor: Color = WildBlueYonder,
+    val receivedTimeBackgroundColor: Color = Turquoise1,
+    val paidProgressColor: Color = CloudBurst,
+    val receiveProgressColor: Color = Turquoise1,
+    val paidProgressBackgroundColor: Color = RadicalRed,
+    val receiveProgressBackgroundColor: Color = CloudBurst,
 
-    val willGetPayTextColor: Color = LightBlue4,
-    val allPaidReceivedLeadingTextColor: Color = LightBlue4,
-    val allPaidReceivedTrailingTextColor: Color = LightGreen3,
-    val amountLeftTextColor: Color = LightBlue4,
+    val willGetPayTextColor: Color = WildBlueYonder,
+    val allPaidReceivedLeadingTextColor: Color = WildBlueYonder,
+    val allPaidReceivedTrailingTextColor: Color = Turquoise1,
+    val amountLeftTextColor: Color = WildBlueYonder,
 
     val billTotalCurrencyFontSize: Float = 8f,
     val billTotalLeadingFontSize: Float = 11f,
@@ -305,10 +303,10 @@ enum class SplitListOptions {
 }
 
 data class SplitTypeRowItem(
-    val selectedOptionBackground: Color = Bluish,
-    val unSelectedOptionBackground: Color = LightBlue1,
+    val selectedOptionBackground: Color = CuriousBlue,
+    val unSelectedOptionBackground: Color = Zumthor,
     val selectedOptionTextColor: Color = White,
-    val unSelectedOptionTextColor: Color = Bluish,
+    val unSelectedOptionTextColor: Color = CuriousBlue,
     val fontSize: Float = 12f
 )
 
@@ -457,12 +455,12 @@ data class Item(val id: Int, val icon: Int, val name: String)
 data class CustomRadioButton(
     val height: Float = 47f,
     val cornerRadius: Float = 12f,
-    val selectedBackGroundColor: Color = Whitish5,
+    val selectedBackGroundColor: Color = Zircon1,
     val unSelectedBackGroundColor: Color = Color.White,
-    val borderColor: Color = Bluish,
+    val borderColor: Color = CuriousBlue,
     val borderWidth: Float = 1f,
-    val selectedTextColor: Color = Bluish,
-    val unSelectedTextColor: Color = DarkBlue,
+    val selectedTextColor: Color = CuriousBlue,
+    val unSelectedTextColor: Color = CloudBurst,
     val fontSize: Float = 14f
 )
 

@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,7 +23,9 @@ import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sx
 import co.yore.splitnpay.models.Amount
-import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.Alabaster1
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.Manatee
 import co.yore.splitnpay.ui.theme.robotoFonts
 import java.math.MathContext
 
@@ -74,9 +75,9 @@ fun AmountField(
     val color by remember(amount) {
         derivedStateOf {
             if (amount > 0) {
-                DarkBlue
+                CloudBurst
             } else {
-                MyColor
+                Manatee
             }
         }
     }
@@ -106,7 +107,7 @@ fun AmountField(
                 modifier = modifier
                     .height(33.dep())
                     .clip(RoundedCornerShape(8.dep()))
-                    .background(CardGrey)
+                    .background(Alabaster1)
                     .padding(horizontal = 8.dep()),
                 verticalAlignment = Alignment.CenterVertically
             ) {

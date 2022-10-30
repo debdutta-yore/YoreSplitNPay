@@ -20,13 +20,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.LightBlue1
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.SheetItem
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.pages.subpages.SingleItem
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.CuriousBlue
+import co.yore.splitnpay.ui.theme.SteelBlue
+import co.yore.splitnpay.ui.theme.Zumthor
 import kotlinx.coroutines.CoroutineScope
 
 class ExpenseFilterBottomSheetModel(val callback: Callback) : BottomSheetModel{
@@ -100,7 +102,7 @@ fun ExpenseFilterBottomSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(SteelBlue)
                 .align(Alignment.CenterHorizontally)
         )
         LazyColumn(
@@ -143,7 +145,7 @@ fun ExpenseFilterBottomSheet(
                     }
                 )*/
 
-                co.yore.splitnpay.components.SingleItem(
+                SingleItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .pointerInput(Unit) {
@@ -179,7 +181,7 @@ fun SingleItem1(
         modifier = modifier
             .background(
                 if (isSelected) {
-                    LightBlue1
+                    Zumthor
                 } else {
                     Color.White
                 }
@@ -188,7 +190,7 @@ fun SingleItem1(
             .height(49f.dep())
             .clickable(
                 rippleRadius = 360.dep(),
-                rippleColor = LightBlue1,
+                rippleColor = Zumthor,
                 onClick = {
                     onClick()
                 }
@@ -203,14 +205,14 @@ fun SingleItem1(
         ) {
             Icon(
                 modifier = Modifier.size(18.dep()),
-                tint = Bluish,
+                tint = CuriousBlue,
                 painter = icon,
                 contentDescription = "selected photo icon"
             )
             15.sx()
             FontFamilyText(
                 text = text,
-                color = DarkBlue,
+                color = CloudBurst,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -227,7 +229,7 @@ fun SingleItem1(
                     .width(8.dep())
                     .fillMaxHeight()
                     .background(
-                        color = Bluish,
+                        color = CuriousBlue,
                         shape = RoundedCornerShape(
                             topStart = 5.dep(),
                             bottomStart = 5.dep()

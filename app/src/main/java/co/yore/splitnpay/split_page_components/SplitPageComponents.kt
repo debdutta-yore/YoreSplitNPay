@@ -3,7 +3,6 @@ package co.yore.splitnpay.split_page_components
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -205,16 +204,16 @@ fun YouWillGetCard(
     val themeColor by remember {
         derivedStateOf {
             if (haveSplit) {
-                LightGreen3
+                Turquoise1
             } else {
-                MyColor3
+                Nepal
             }
         }
     }
     val dep = 1.dep()
     val textColor by remember(progress) {
         derivedStateOf {
-            Color.blend(DarkBlue, LightBlue4, progress)
+            Color.blend(CloudBurst, WildBlueYonder, progress)
         }
     }
     MotionLayout(
@@ -228,7 +227,7 @@ fun YouWillGetCard(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Grey_shadow.copy(alpha = 1f - progress),
+                    color = Ghost80.copy(alpha = 1f - progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
@@ -396,9 +395,9 @@ fun YouWillPayCard(
     val themeColor by remember {
         derivedStateOf {
             if (haveSplit) {
-                Pink
+                RadicalRed
             } else {
-                MyColor3
+                Nepal
             }
         }
     }
@@ -406,7 +405,7 @@ fun YouWillPayCard(
 
     val textColor by remember(progress) {
         derivedStateOf {
-            Color.blend(DarkBlue, Lightblue4, progress)
+            Color.blend(CloudBurst, WildBlueYonder, progress)
         }
     }
 
@@ -497,7 +496,7 @@ fun YouWillPayCard(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Grey_shadow.copy(alpha = 1f - progress),
+                    color = Ghost80.copy(alpha = 1f - progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
@@ -564,7 +563,7 @@ fun YouWillPayCard(
                 .size(26.dep())
                 .clip(CircleShape)
                 .clickable(
-                    rippleColor = Pink
+                    rippleColor = RadicalRed
                 ) {
                     notifier.notify(DataIds.payCard, null)
                 }
@@ -665,9 +664,9 @@ fun BottomCut(
     val backgroundColor by remember(pageState) {
         derivedStateOf {
             when (pageState){
-                SplitPageState.GET -> LightGreen3
-                SplitPageState.PAY -> Pink
-                SplitPageState.NONE -> LightBlue4
+                SplitPageState.GET -> Turquoise1
+                SplitPageState.PAY -> RadicalRed
+                SplitPageState.NONE -> WildBlueYonder
             }
         }
     }
@@ -696,9 +695,9 @@ fun UpperCut(
     val backgroundColor by remember(pageState) {
         derivedStateOf {
             when (pageState){
-                SplitPageState.GET -> Lightgreen3
-                SplitPageState.PAY -> Pink
-                SplitPageState.NONE -> LightBlue4
+                SplitPageState.GET -> Turquoise1
+                SplitPageState.PAY -> RadicalRed
+                SplitPageState.NONE -> WildBlueYonder
             }
         }
     }

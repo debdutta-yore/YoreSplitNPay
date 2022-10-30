@@ -1,18 +1,14 @@
 package co.yore.splitnpay.pages
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -20,26 +16,28 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.maxHeightFactor
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.Item
 import co.yore.splitnpay.models.SheetItem
+import co.yore.splitnpay.pages.subpages.SingleItem
 import kotlinx.coroutines.CoroutineScope
 
-class TimeFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
+class TimeFilterBottomSheetModel(val callback: Callback) : BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         fun close()
         fun onOptionSelected(arg: Any?)
     }
-    /////////////////
+
+    // ///////////////
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.timeFilter->{
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.timeFilter -> {
                 callback.onOptionSelected(arg)
             }
         }
     }
-    /////////////////
+
+    // ///////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
@@ -60,13 +58,12 @@ class TimeFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
     override fun onBack() {
 
     }
-    ////////////
-    //data
-    ////////////
-    init {
-        _resolver.addAll(
 
-        )
+    // //////////
+    // data
+    // //////////
+    init {
+        _resolver.addAll()
     }
 }
 
@@ -87,12 +84,10 @@ fun TimeFilterSheet(
     val listState = rememberLazyListState()
     var selectedIndex by remember { mutableStateOf(-1) }
 
-
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            //.height((231f - 46f).dep())
-                ,
+            .fillMaxWidth(),
+        // .height((231f - 46f).dep())
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -115,7 +110,7 @@ fun TimeFilterSheet(
             itemsIndexed(items = itemList)
             { index, _ ->
 
-                co.yore.splitnpay.components.SingleItem(
+                SingleItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .pointerInput(Unit) {

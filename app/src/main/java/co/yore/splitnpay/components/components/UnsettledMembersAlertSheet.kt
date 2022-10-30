@@ -9,21 +9,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.SettleOptions
 import co.yore.splitnpay.models.SingleSettledOrUnsettledMember
 import co.yore.splitnpay.models.UnSettledMembersConfiguration
 import co.yore.splitnpay.pages.*
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightBlue5
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.SteelBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -118,13 +116,13 @@ fun UnsettledMembersAlertSheet(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(SteelBlue)
                 .align(Alignment.CenterHorizontally)
         )
         33.sy()
         FontFamilyText(
             text = stringResource(R.string.unsettled_members),
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 16.sep(),
             fontWeight = FontWeight.Bold
         )

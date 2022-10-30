@@ -46,10 +46,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
+import co.yore.splitnpay.components.components.ProfileImage_2hf7q0
 import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
@@ -68,7 +68,7 @@ fun Members(
     Box(
         modifier = modifier
             .coloredShadow(
-                color = GreyShadow,
+                color = Ghost80,
                 borderRadius = 20.dep(),
                 blurRadius = 16.dep(),
                 offsetY = 7.dep(),
@@ -167,7 +167,7 @@ fun SingleMember(
                         .clip(CircleShape)
                         .border(
                             width = 3.dep(),
-                            color = LightBlue1,
+                            color = Zumthor,
                             CircleShape
                         )
                         .padding(3.dep())
@@ -188,7 +188,7 @@ fun SingleMember(
                         .align(Alignment.TopEnd)
                 ) {
                     SelectedIcon(
-                        iconBackGroundColor = LightBlue
+                        iconBackGroundColor = CuriousBlue1
                     )
                 }
             }
@@ -197,14 +197,14 @@ fun SingleMember(
             Column {
                 FontFamilyText(
                     text = userName,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold
                 )
                 5.sy()
                 FontFamilyText(
                     text = userPhNo,
-                    color = Lightblue5,
+                    color = SteelBlue,
                     fontSize = 11.sep()
                 )
             }
@@ -213,13 +213,13 @@ fun SingleMember(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50.dep()))
-                    .background(color = Whitish3)
+                    .background(color = Dew)
             ) {
                 FontFamilyText(
                     modifier = Modifier
                         .padding(10.dep()),
                     text = stringResource(R.string.group_admin),
-                    color = LightGreen3,
+                    color = Turquoise1,
                     fontSize = 12.sep(),
                     letterSpacing = (-0.333333).sep(),
                     lineHeight = 14.sep()
@@ -256,7 +256,7 @@ fun GroupManagePage(
             topStart = 25f.dep(),
             topEnd = 25f.dep()
         ),
-        scrimColor = SheetScrim
+        scrimColor = CloudBurst8C
     ) {
         Box(
             modifier = Modifier
@@ -276,7 +276,7 @@ fun GroupManagePage(
                             )
                         )
                         .background(
-                            MyColor8,
+                            Turquoise,
                             RoundedCornerShape(
                                 bottomStart = 48.dep()
 
@@ -296,7 +296,7 @@ fun GroupManagePage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(42.dep())
-                        .background(MyColor8)
+                        .background(Turquoise)
                         .background(
                             Color.White,
                             RoundedCornerShape(
@@ -362,7 +362,7 @@ fun GroupManagePage(
                             top = 146.dep(),
                             start = 16.dep()
                         ),
-                    color = LightBlue5,
+                    color = SteelBlue,
                     fontSize = 13.sep(),
                     annotatedString = buildAnnotatedString {
                         append("Created by $groupCreatedBy on ")
@@ -392,7 +392,7 @@ fun GroupManagePage(
                             FontFamilyText(
                                 modifier = Modifier.padding(start = 18.dep()),
                                 text = stringResource(R.string.settings),
-                                color = DarkBlue,
+                                color = CloudBurst,
                                 fontSize = 21.sep(),
                                 fontWeight = FontWeight.Bold
                             )
@@ -427,7 +427,7 @@ fun GroupManagePage(
                             FontFamilyText(
                                 modifier = Modifier.padding(start = 18.dep()),
                                 text = stringResource(R.string.members),
-                                color = DarkBlue,
+                                color = CloudBurst,
                                 fontSize = 21.sep(),
                                 fontWeight = FontWeight.Bold
                             )
@@ -466,7 +466,7 @@ fun GroupManagePage(
                                 FloatingActionButton(
                                     modifier = Modifier
                                         .size(47.dep()),
-                                    backgroundColor = Pink,
+                                    backgroundColor = RadicalRed,
                                     onClick = {
                                         notifier.notify(DataIds.deleteMembersClick)
                                     }
@@ -494,7 +494,7 @@ fun GroupSettingsCard(
     Box(
         modifier = modifier
             .coloredShadow(
-                color = GreyShadow,
+                color = Ghost80,
                 borderRadius = 20.dep(),
                 blurRadius = 16.dep(),
                 offsetY = 7.dep(),
@@ -586,7 +586,7 @@ fun SingleSetting(
             .fillMaxWidth()
             .height(60.dep())
             .clickable(
-                rippleColor = Bluish,
+                rippleColor = CuriousBlue,
                 onClick = {
                     onClick()
                 }
@@ -607,7 +607,7 @@ fun SingleSetting(
             36.sx()
             FontFamilyText(
                 text = text,
-                color = LightBlue5,
+                color = SteelBlue,
                 fontSize = 14.sep()
             )
         }
@@ -617,8 +617,8 @@ fun SingleSetting(
                 width = 36.dep(),
                 height = 20.dep(),
                 strokeWidth = 1.dep(),
-                checkedTrackColor = Lightgreen3,
-                uncheckedTrackColor = LightBlue4,
+                checkedTrackColor = Turquoise1,
+                uncheckedTrackColor = WildBlueYonder,
                 gapBetweenThumbAndTrackEdge = 3.dep(),
                 onSwitch = {
                     notifier.notify(DataIds.groupNotificationSwitch)
@@ -631,13 +631,13 @@ fun SingleSetting(
                     .size(32.dep())
                     .clip(CircleShape)
                     .clickable(
-                        rippleColor = Bluish
+                        rippleColor = CuriousBlue
                     ) {
 
                     }
                     .padding(12.5.dep()),
                 painter = trailingIcon,
-                tint = Bluish,
+                tint = CuriousBlue,
                 contentDescription = "trailingIcon"
             )
         }
@@ -651,9 +651,9 @@ fun CustomSwitch(
     width: Dp = 36.dep(),
     height: Dp = 20.dep(),
     strokeWidth: Dp = 2.dep(),
-    checkedTrackColor: Color = LightBlue4,
-    uncheckedTrackColor: Color = LightBlue4,
-    checkedBackgroundColor: Color = Color(0xffE4FFFA),
+    checkedTrackColor: Color = WildBlueYonder,
+    uncheckedTrackColor: Color = WildBlueYonder,
+    checkedBackgroundColor: Color = ClearDay,
     unCheckedBackgroundColor: Color = colorResource(R.color.lightblue1),
     gapBetweenThumbAndTrackEdge: Dp = 4.dep(),
     onSwitch: () -> Unit
@@ -722,7 +722,7 @@ fun Profile(
         AsyncImage(
             modifier = Modifier
                 .coloredShadow(
-                    color = DarkBlueShadow,
+                    color = VeniceBlue4F,
                     offsetY = 3.75.dep(),
                     offsetX = 0.dep(),
                     blurRadius = 7.dep(),
@@ -806,7 +806,7 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
             FontFamilyText(
                 modifier = Modifier.clickable { isSettledMemberSelected = true },
                 text = "Settled Members",
-                color = if (isSettledMemberSelected) DarkBlue else LightBlue3,
+                color = if (isSettledMemberSelected) CloudBurst else Botticelli,
                 fontSize = 16.sep(),
                 fontWeight = FontWeight.Bold
             )
@@ -815,7 +815,7 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
             FontFamilyText(
                 modifier = Modifier.clickable { isSettledMemberSelected = false },
                 text = "Unsettled Members",
-                color = if (isSettledMemberSelected) LightBlue3 else DarkBlue,
+                color = if (isSettledMemberSelected) Botticelli else CloudBurst,
                 fontSize = 16.sep(),
                 fontWeight = FontWeight.Bold
             )
@@ -1132,9 +1132,9 @@ fun CustomRadioButton_2ofz97(
                 selected = isSelected,
                 onClick = onClick,
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = Bluish,
-                    unselectedColor = GreyBorder,
-                    disabledColor = LightGrayShadow
+                    selectedColor = CuriousBlue,
+                    unselectedColor = RockBlue,
+                    disabledColor = Mercury
                 )
             )
         }
@@ -1199,10 +1199,10 @@ fun SettledOrUnsettledSingleRow_70d834(
     onChecked: () -> Unit
 ) {
 
-    val getTextColor = animateColorAsState(targetValue = if (member.getAmount > 0f) LightGreen3 else Color(0xff5A87BB))
-    val paidTextColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) Pink else Color(0xff5A87BB))
-    val getCurrencyColor = animateColorAsState(targetValue = if (member.getAmount > 0f) LightGreen3 else DarkBlue)
-    val payCurrencyColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) Pink else DarkBlue)
+    val getTextColor = animateColorAsState(targetValue = if (member.getAmount > 0f) Turquoise1 else SteelBlue)
+    val paidTextColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) RadicalRed else SteelBlue)
+    val getCurrencyColor = animateColorAsState(targetValue = if (member.getAmount > 0f) Turquoise1 else CloudBurst)
+    val payCurrencyColor = animateColorAsState(targetValue = if (member.paidAmount > 0f) RadicalRed else CloudBurst)
 
     Row(
         modifier = Modifier
@@ -1212,7 +1212,7 @@ fun SettledOrUnsettledSingleRow_70d834(
         Row(verticalAlignment = Alignment.CenterVertically) {
             SelectorIcon_ulkel8(
                 config = CheckboxConfiguration(
-                    iconColor = LightBlue4
+                    iconColor = WildBlueYonder
                 ),
                 contentDescription = "YouWillGetCheckBox",
                 selected = member.isChecked,
@@ -1235,14 +1235,14 @@ fun SettledOrUnsettledSingleRow_70d834(
                     text = member.userName,
                     fontSize = 12.sep(),
                     fontWeight = FontWeight.Bold,
-                    color = DarkBlue
+                    color = CloudBurst
                 )
                 5.sy()
 
                 FontFamilyText(
                     text = member.userPhNo,
                     fontSize = 11.sep(),
-                    color = Color(0xff5A87BB)
+                    color = SteelBlue
                 )
             }
 
@@ -1271,7 +1271,7 @@ fun SettledOrUnsettledSingleRow_70d834(
                             wholeNumberFontWeight = FontWeight.Bold,
                             decNumberFontSize = 9f
                         ),
-                        color = Color(0xff5A87BB)
+                        color = SteelBlue
                     )
                 }
 
@@ -1299,7 +1299,7 @@ fun SettledOrUnsettledSingleRow_70d834(
                             wholeNumberFontSize = if (member.paidAmount > 0f) 12f else 10f,
                             decNumberFontSize = if (member.paidAmount > 0f) 10f else 9f
                         ),
-                        color = Color(0xff5A87BB)
+                        color = SteelBlue
                     )
                 }
 
@@ -1314,7 +1314,7 @@ fun SettledOrUnsettledSingleRow_70d834(
                         FontFamilyText(
                             text = stringResource(id = R.string.settled),
                             fontSize = 12.sep(),
-                            color = DarkBlue,
+                            color = CloudBurst,
                             lineHeight = 14.sep(),
                             modifier = Modifier
                                 .padding(
@@ -1374,6 +1374,6 @@ fun SelectorIcon_ulkel8(
     }
 }
 
-val Whitish6 = Color(0xFFE7EEF6)
+
 
 // ///////////////////////

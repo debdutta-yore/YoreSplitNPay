@@ -15,7 +15,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sy
@@ -57,7 +56,7 @@ fun YouWillPayCard(
                         top = 26.dep()
                     ),
                     text = stringResource(R.string.willpay,payeeName),
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -75,8 +74,8 @@ fun YouWillPayCard(
                     contentDescription = "TotalYouWillPayCard",
                     text = stringResource(R.string.total)  + " " + stringResource(R.string.willpay,payeeName),
                     amount = 0f,
-                    borderColor = Pink,
-                    backgroundColor = LightRedButton
+                    borderColor = RadicalRed,
+                    backgroundColor = LavenderBlush
                 )
                 28.sy()
             }
@@ -89,7 +88,7 @@ fun YouWillPayCard(
                         start = 32.dep()
                     ),
                     text = stringResource(R.string.willpay, payeeName),
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -106,14 +105,14 @@ fun YouWillPayCard(
                         text = payeeName + if (payeeName == "You") stringResource(R.string.have_already_paid) else stringResource(
                             R.string.has_already_paid
                         ),
-                        color = LightBlue4,
+                        color = WildBlueYonder,
                         fontSize = 13.sep(),
                         fontWeight = FontWeight.Bold
                     )
                     config.gapBetweenText.sy()
                     FontFamilyText(
                         text = "$payeeName " + stringResource(R.string.dont_owe_anything),
-                        color = LightBlue4,
+                        color = WildBlueYonder,
                         fontSize = 13.sep()
                     )
 
@@ -125,8 +124,8 @@ fun YouWillPayCard(
                         contentDescription = "TotalYouWillPayCard",
                         text = stringResource(R.string.total) + " " + stringResource(R.string.willpay,payeeName),
                         amount = total,
-                        borderColor = Pink,
-                        backgroundColor = LightRedButton
+                        borderColor = RadicalRed,
+                        backgroundColor = LavenderBlush
                     )
                 }
 

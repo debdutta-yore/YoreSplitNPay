@@ -9,7 +9,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -18,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -26,16 +24,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.SelectedIconConfiguration
 import co.yore.splitnpay.models.SplitSelectableMember
 import co.yore.splitnpay.models.SummarySinglePeopleConfig
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.Greyish2
-import co.yore.splitnpay.ui.theme.Pink
+import co.yore.splitnpay.ui.theme.CloudBurst
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -148,7 +143,7 @@ fun SummarySinglePeople_q6c90m(
             else
                 FontWeight.Normal,
             fontSize = 12.sep(),
-            color = DarkBlue
+            color = CloudBurst
         )
     }
 }

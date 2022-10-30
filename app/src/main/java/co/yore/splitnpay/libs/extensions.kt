@@ -33,8 +33,8 @@ import androidx.navigation.NavGraphBuilder
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.FloatSplitted
 import co.yore.splitnpay.models.StatusBarColor
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.MyColor
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.Manatee
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.math.BigDecimal
@@ -398,9 +398,9 @@ class AmountStyle(private var sp: TextUnit) : VisualTransformation {
         out = YoreAmountFormatter.formatter.format(wholeInt)
         val dec = parts[1].toInt()
         val color = if (wholeInt + dec.toBigDecimal() > BigDecimal(0)){
-            DarkBlue
+            CloudBurst
         } else {
-            MyColor
+            Manatee
         }
         builder.withStyle(
             SpanStyle(

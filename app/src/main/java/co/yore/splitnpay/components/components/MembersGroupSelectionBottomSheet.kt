@@ -17,10 +17,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.SingleItem
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Item
+import co.yore.splitnpay.pages.subpages.SingleItem
 import kotlinx.coroutines.CoroutineScope
 
 class SplitAsChoiceBottomSheetModel(val callback: Callback) : BottomSheetModel {
@@ -102,7 +102,6 @@ fun SplitAsChoiceBottomSheet(
         {
             itemsIndexed(items = itemList)
             { index, _ ->
-
                 SingleItem(
                     modifier = Modifier
                         .fillMaxWidth()

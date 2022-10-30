@@ -24,14 +24,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.CheckBoxIcon_b6qwbf
-import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightBlue4
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.WildBlueYonder
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -157,7 +154,7 @@ fun GroupCard_0msq1z(
             ) {
                 RobotoText(
                     text = data.name,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = config.groupNameFontSize.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -182,7 +179,7 @@ fun GroupCard_0msq1z(
                 ) {
                     RobotoText(
                         text = stringResource(R.string.group_balance),
-                        color = LightBlue4,
+                        color = WildBlueYonder,
                         fontSize = config.groupBalanceFontSize.sep()
                     )
 

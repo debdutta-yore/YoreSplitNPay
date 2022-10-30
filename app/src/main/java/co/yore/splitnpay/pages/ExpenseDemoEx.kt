@@ -41,7 +41,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import java.text.DecimalFormat
 
@@ -97,7 +97,7 @@ fun ExpenseDemo(
                     .clickable {
                         notifier.notify(DataIds.summaryMode)
                     }
-                    .background(Color(0xffEDF5FF))
+                    .background(Zumthor)
                     .padding(horizontal = 14.dep()),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -105,7 +105,7 @@ fun ExpenseDemo(
                     modeString,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xff1A79E5),
+                    color = CuriousBlue,
                     modifier = Modifier.animateContentSize()
                 )
                 7.sx()
@@ -114,7 +114,7 @@ fun ExpenseDemo(
                     contentDescription = "",
                     modifier = Modifier
                         .size(6.86.dep()),
-                    tint = Color(0xff1B79E6)
+                    tint = CuriousBlue1
                 )
             }
             TimeOption(timeOption){
@@ -177,7 +177,7 @@ fun ExpenseDemo(
                             ) {
                                 RobotoText(
                                     stringResource(R.string.total_share),
-                                    color = Color(0xff677C91),
+                                    color = Lynch,
                                     fontSize = 13.sep()
                                 )
                                 3.sy()
@@ -185,14 +185,14 @@ fun ExpenseDemo(
                                     RobotoText(
                                         "${localCurrency.current} ",
                                         fontSize = 10.sep(),
-                                        color = Color(0xff243257),
+                                        color = CloudBurst,
                                         modifier = Modifier
                                             .alignByBaseline()
                                     )
                                     RobotoText(
                                         expensesOvertimeTotal.splitted().wholeString,
                                         fontSize = 15.sep(),
-                                        color = Color(0xff243257),
+                                        color = CloudBurst,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier
                                             .alignByBaseline()
@@ -200,7 +200,7 @@ fun ExpenseDemo(
                                     RobotoText(
                                         text = ". ${expensesOvertimeTotal.splitted().decString}",
                                         fontSize = 15.sep(),
-                                        color = Color(0xff243257),
+                                        color = CloudBurst,
                                         modifier = Modifier
                                             .alignByBaseline()
                                     )
@@ -220,7 +220,7 @@ fun ExpenseDemo(
                         ) {
                             RobotoText(
                                 text = stringResource(R.string.expense_categories),
-                                color = Color(0xff243257),
+                                color = CloudBurst,
                                 fontSize = 18.sep(),
                                 fontWeight = FontWeight.Bold
                             )
@@ -230,7 +230,7 @@ fun ExpenseDemo(
                                     contentDescription = "",
                                     modifier = Modifier
                                         .size(19.dep()),
-                                    tint = Color(0xff1B79E6)
+                                    tint = CuriousBlue1
                                 )
                                 20.sx()
                                 Icon(
@@ -241,7 +241,7 @@ fun ExpenseDemo(
                                         .clickable {
                                             notifier.notify(DataIds.expenseCategoryFilterClick)
                                         },
-                                    tint = Color(0xff1B79E6)
+                                    tint = CuriousBlue1
                                 )
                             }
                         }
@@ -289,7 +289,7 @@ fun ExpenseDemo(
                                                 it.category,
                                                 fontSize = 14.sep(),
                                                 fontWeight = FontWeight.Bold,
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 modifier = Modifier
                                                     // .alignBy(FirstBaseline)
                                                     .offset(y = -4.dep())
@@ -298,7 +298,7 @@ fun ExpenseDemo(
                                             RobotoText(
                                                 "(${it.description})",
                                                 fontSize = 11.sep(),
-                                                color = Color(0xff5A87BB),
+                                                color = SteelBlue,
                                                 modifier = Modifier
                                                     // .alignBy(FirstBaseline)
                                                     .offset(y = -2.dep())
@@ -308,12 +308,12 @@ fun ExpenseDemo(
                                         Row() {
                                             RobotoText(
                                                 stringResource(R.string.number_of_expenses) + ": ",
-                                                color = Color(0xff677C91),
+                                                color = Lynch,
                                                 fontSize = 11.sep()
                                             )
                                             RobotoText(
                                                 String.format("%02d", it.count),
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontSize = 11.sep()
                                             )
                                         }
@@ -332,20 +332,20 @@ fun ExpenseDemo(
                                         Row() {
                                             RobotoText(
                                                 "${localCurrency.current} ",
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontSize = 9.sep(),
                                                 modifier = Modifier.alignByBaseline()
                                             )
                                             RobotoText(
                                                 it.amount.splitted().wholeString,
                                                 fontSize = 12.sep(),
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontWeight = FontWeight.Bold,
                                                 modifier = Modifier.alignByBaseline()
                                             )
                                             RobotoText(
                                                 ".${it.amount.splitted().decString}",
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontSize = 6.sep(),
                                                 modifier = Modifier.alignByBaseline()
                                             )
@@ -357,7 +357,7 @@ fun ExpenseDemo(
                                             modifier = Modifier
                                                 .size(20.dep())
                                                 .clip(CircleShape)
-                                                .background(Color(0xff1A79E5))
+                                                .background(CuriousBlue)
                                                 .clickable {
 
                                                 }
@@ -440,7 +440,7 @@ fun ExpenseDemo(
                                         ""
                                     },
                                     {
-                                        Color(0xff35BAE9)
+                                        PictonBlue
                                     },
                                     yAxisLabelCount = 6,
                                     maxYAxisValue = 90000f,
@@ -456,7 +456,7 @@ fun ExpenseDemo(
                                     strokeWidth = 5f,
                                     axisColor = Color.Gray,
                                     axisLabelFontSize = 11f,
-                                    highlightedBarColor = Color(0xff289fc9),
+                                    highlightedBarColor = CuriousBlue2,
                                     highlightedXLabelColor = Color.Blue
                                 )
                             ) { index, touchArea ->
@@ -489,7 +489,7 @@ fun ExpenseDemo(
                                             Orientation.Horizontal
                                         )
                                         .coloredShadow(
-                                            color = Color(0xff8498AB),
+                                            color = BaliHai,
                                             borderRadius = 5.dep(),
                                             blurRadius = 19.dep(),
                                             offsetY = 3.dep()
@@ -503,27 +503,27 @@ fun ExpenseDemo(
                                     RobotoText(
                                         text = expenseBarChartList[labelData!!.index].xAxis + " | " + expenseBarChartList[labelData!!.index].year,
                                         fontSize = 12.sep(),
-                                        color = LightGrey6,
+                                        color = Lynch,
                                         letterSpacing = 0.67.sep()
                                     )
                                     4.sy()
                                     Row() {
                                         RobotoText(
                                             text = "${localCurrency.current} ",
-                                            color = Color(0xff243257),
+                                            color = CloudBurst,
                                             fontSize = 9.sep(),
                                             modifier = Modifier.alignByBaseline()
                                         )
                                         RobotoText(
                                             text = numberFormatter.value.format(expenseBarChartList[labelData!!.index].yAxis.splitted().whole.toFloat()),
                                             fontSize = 12.sep(),
-                                            color = Color(0xff243257),
+                                            color = CloudBurst,
                                             fontWeight = FontWeight.Bold,
                                             modifier = Modifier.alignByBaseline()
                                         )
                                         RobotoText(
                                             text = ".${expenseBarChartList[labelData!!.index].yAxis.splitted().decString}",
-                                            color = Color(0xff243257),
+                                            color = CloudBurst,
                                             fontSize = 6.sep(),
                                             modifier = Modifier.alignByBaseline()
                                         )
@@ -550,14 +550,14 @@ fun ExpenseDemo(
                                         stringResource(R.string.overtime),
                                         fontSize = 18.sep(),
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xff243257),
+                                        color = CloudBurst,
                                         modifier = Modifier.padding(start = 20.dep())
                                     )
                                     27.sy()
                                     Box(
                                         modifier = Modifier
                                             .coloredShadow(
-                                                color = Color(0xffC6CFD8).copy(alpha = 0.3f),
+                                                color = Ghost.copy(alpha = 0.3f),
                                                 blurRadius = 33.dep(),
                                                 offsetX = 7.dep(),
                                                 offsetY = 7.dep()
@@ -571,11 +571,11 @@ fun ExpenseDemo(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .clip(RoundedCornerShape(4.dep()))
-                                                .background(Color(0xffF3FCFF))
+                                                .background(TwilightBlue)
                                                 .border(
                                                     BorderStroke(
                                                         width = 1.dep(),
-                                                        color = Color(0xff35BAE9)
+                                                        color = PictonBlue
                                                     ),
                                                     shape = RoundedCornerShape(4.dep())
                                                 )
@@ -594,27 +594,27 @@ fun ExpenseDemo(
                                                     RobotoText(
                                                         stringResource(R.string.total_paid),
                                                         fontSize = 12.sep(),
-                                                        color = Color(0xff0A688A)
+                                                        color = VeniceBlue1
                                                     )
                                                     9.sy()
                                                     Row() {
                                                         RobotoText(
                                                             "${localCurrency.current} ",
                                                             fontSize = 9.sep(),
-                                                            color = Color(0xff243257),
+                                                            color = CloudBurst,
                                                             modifier = Modifier.alignByBaseline()
                                                         )
                                                         RobotoText(
                                                             expensesOvertimeTotal.splitted().wholeString,
                                                             fontWeight = FontWeight.Bold,
                                                             fontSize = 14.sep(),
-                                                            color = Color(0xff243257),
+                                                            color = CloudBurst,
                                                             modifier = Modifier.alignByBaseline()
                                                         )
                                                         RobotoText(
                                                             ". ${expensesOvertimeTotal.splitted().decString}",
                                                             fontSize = 6.sep(),
-                                                            color = Color(0xff243257),
+                                                            color = CloudBurst,
                                                             modifier = Modifier.alignByBaseline()
                                                         )
                                                     }
@@ -673,7 +673,7 @@ fun ExpenseDemo(
                                     ) {
                                         RobotoText(
                                             text = stringResource(R.string.categories),
-                                            color = Color(0xff243257),
+                                            color = CloudBurst,
                                             fontSize = 18.sep(),
                                             fontWeight = FontWeight.Bold
                                         )
@@ -683,7 +683,7 @@ fun ExpenseDemo(
                                                 contentDescription = "",
                                                 modifier = Modifier
                                                     .size(19.dep()),
-                                                tint = Color(0xff1B79E6)
+                                                tint = CuriousBlue1
                                             )
                                             20.sx()
                                             Icon(
@@ -694,7 +694,7 @@ fun ExpenseDemo(
                                                     .clickable {
                                                         notifier.notify(DataIds.expenseCategoryFilterClick)
                                                     },
-                                                tint = Color(0xff1B79E6)
+                                                tint = CuriousBlue1
                                             )
                                         }
                                     }
@@ -741,7 +741,7 @@ fun ExpenseDemo(
                                                 it.category,
                                                 fontSize = 14.sep(),
                                                 fontWeight = FontWeight.Bold,
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 modifier = Modifier
                                                     // .alignBy(FirstBaseline)
                                                     .offset(y = -4.dep())
@@ -750,7 +750,7 @@ fun ExpenseDemo(
                                             RobotoText(
                                                 "(${it.description})",
                                                 fontSize = 11.sep(),
-                                                color = Color(0xff5A87BB),
+                                                color = SteelBlue,
                                                 modifier = Modifier
                                                     // .alignBy(FirstBaseline)
                                                     .offset(y = -2.dep())
@@ -760,12 +760,12 @@ fun ExpenseDemo(
                                         Row() {
                                             RobotoText(
                                                 text = stringResource(R.string.number_of_expanses) + ": ",
-                                                color = Color(0xff677C91),
+                                                color = Lynch,
                                                 fontSize = 11.sep()
                                             )
                                             RobotoText(
                                                 String.format("%02d", it.count),
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontSize = 11.sep()
                                             )
                                         }
@@ -784,20 +784,20 @@ fun ExpenseDemo(
                                         Row() {
                                             RobotoText(
                                                 text = "${localCurrency.current} ",
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontSize = 9.sep(),
                                                 modifier = Modifier.alignByBaseline()
                                             )
                                             RobotoText(
                                                 text = numberFormatter.value.format(it.amount.splitted().whole.toFloat()),
                                                 fontSize = 12.sep(),
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontWeight = FontWeight.Bold,
                                                 modifier = Modifier.alignByBaseline()
                                             )
                                             RobotoText(
                                                 text = ".${it.amount.splitted().decString}",
-                                                color = Color(0xff243257),
+                                                color = CloudBurst,
                                                 fontSize = 6.sep(),
                                                 modifier = Modifier.alignByBaseline()
                                             )
@@ -809,7 +809,7 @@ fun ExpenseDemo(
                                             modifier = Modifier
                                                 .size(20.dep())
                                                 .clip(CircleShape)
-                                                .background(Color(0xff1A79E5))
+                                                .background(CuriousBlue)
                                                 .clickable {
 
                                                 }
@@ -851,7 +851,7 @@ fun TimeOption(
         tween(animDuration)
     )
     val borderColor by animateColorAsState(
-        targetValue = if (outlined) Color(0xffB6BABE) else Color.Transparent,
+        targetValue = if (outlined) SilverSand else Color.Transparent,
         tween(animDuration)
     )
     val paddingOpacity by animateFloatAsState(
@@ -872,7 +872,7 @@ fun TimeOption(
                 CircleShape
             )
             .clickable(
-                rippleColor = Color(0xff1A79E5)
+                rippleColor = CuriousBlue
             ) {
                 onClick()
             }
@@ -900,7 +900,7 @@ fun TimeOption(
         /*RobotoText(
             text = data.text,
             fontSize = if(data is TimeOptionData.Outlined) 14.sep() else 12.sep(),
-            color = Color(0xff243257),
+            color = Darkblue,
             fontWeight = if(data is TimeOptionData.Outlined) FontWeight.Bold else FontWeight.Normal
         )*/
         val depx = with(LocalDensity.current){2.dep().toPx()}
@@ -918,7 +918,7 @@ fun TimeOption(
                     animate = true,
                     fontFamily = robotoFonts,
                     fontSize = if (data is TimeOptionData.Outlined) 14.sep() else 12.sep(),
-                    color = Color(0xff243257),
+                    color = CloudBurst,
                     fontWeight = if (data is TimeOptionData.Outlined) FontWeight.Bold else FontWeight.Normal,
                     animationSpec = tween(animDuration),
                     maxLines = 1
@@ -938,7 +938,7 @@ fun TimeOption(
                 contentDescription = "",
                 modifier = Modifier
                     .size((paddingOpacity * 7).dep()),
-                tint = Color(0xff243257)
+                tint = CloudBurst
             )
         }
         // }

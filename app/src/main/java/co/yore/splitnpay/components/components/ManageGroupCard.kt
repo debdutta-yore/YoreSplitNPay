@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sx
@@ -108,7 +107,7 @@ fun ManageGroupCard(
             ) {
                 FontFamilyText(
                     text = group.name,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 12.sep(),
                     fontWeight = Bold,
                     maxLines = 1,
@@ -144,7 +143,7 @@ fun ManageGroupCard(
                                 style = SpanStyle(
                                     letterSpacing = (-0.333333).sep(),
                                     fontFamily = robotoFonts,
-                                    color = LightGreen3,
+                                    color = Turquoise1,
                                     fontSize = 12f.sep()
                                 ),
                             ) {
@@ -155,7 +154,7 @@ fun ManageGroupCard(
                                 style = SpanStyle(
                                     letterSpacing = (-0.333333).sep(),
                                     fontFamily = robotoFonts,
-                                    color = LightGreen3,
+                                    color = Turquoise1,
                                     fontSize = 16f.sep(),
                                     fontWeight = Bold
                                 ),
@@ -166,7 +165,7 @@ fun ManageGroupCard(
                                 style = SpanStyle(
                                     letterSpacing = (-0.333333).sep(),
                                     fontFamily = robotoFonts,
-                                    color = LightGreen3,
+                                    color = Turquoise1,
                                     fontSize = 10f.sep()
                                 ),
                             ) {
@@ -192,7 +191,7 @@ fun ManageGroupCard(
                                 style = SpanStyle(
                                     letterSpacing = (-0.333333).sep(),
                                     fontFamily = robotoFonts,
-                                    color = Pink,
+                                    color = RadicalRed,
                                     fontSize = 12f.sep()
                                 ),
                             ) {
@@ -203,7 +202,7 @@ fun ManageGroupCard(
                                 style = SpanStyle(
                                     letterSpacing = (-0.333333).sep(),
                                     fontFamily = robotoFonts,
-                                    color = Pink,
+                                    color = RadicalRed,
                                     fontSize = 16f.sep(),
                                     fontWeight = Bold
                                 ),
@@ -214,7 +213,7 @@ fun ManageGroupCard(
                                 style = SpanStyle(
                                     letterSpacing = (-0.333333).sep(),
                                     fontFamily = robotoFonts,
-                                    color = Pink,
+                                    color = RadicalRed,
                                     fontSize = 10f.sep()
                                 ),
                             ) {
@@ -233,7 +232,7 @@ fun ManageGroupCard(
                 8.sy()
                 FontFamilyText(
                     text = stringResource(R.string.group_balance),
-                    color = LightBlue4,
+                    color = WildBlueYonder,
                     fontSize = 10.sep(),
                 )
             }
@@ -371,7 +370,7 @@ fun AddGroupIconButton(
             }
             .clip(RoundedCornerShape(config.iconButtonRadius.dep()))
             .background(
-                color = Bluish,
+                color = CuriousBlue,
                 shape = RoundedCornerShape(config.iconButtonRadius.dep())
             )
             .size(config.iconButtonSize.dep())

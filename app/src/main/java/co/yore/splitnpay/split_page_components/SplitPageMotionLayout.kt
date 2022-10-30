@@ -1,4 +1,4 @@
-package co.yore.splitnpay.split_page_components
+package co.yore.splitnpay.split_page_components // ktlint-disable package-name
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -27,15 +27,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.constraintlayout.compose.layoutId
-import co.yore.splitnpay.addmembers.PeopleCard_eq3k8h
-import co.yore.splitnpay.components.components.AddGroupButton_kbf1at
-import co.yore.splitnpay.components.components.GroupCard_0msq1z
-import co.yore.splitnpay.components.components.SplitTabItem_89keto
-import co.yore.splitnpay.components.configuration.*
+import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.NothingFoundUI
 import co.yore.splitnpay.ui.theme.robotoFonts
 
 @Composable

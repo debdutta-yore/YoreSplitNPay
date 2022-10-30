@@ -3,9 +3,12 @@ package co.yore.splitnpay.pages
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -13,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -21,13 +23,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.components.components.TriangleShape
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightBlue3
-import co.yore.splitnpay.ui.theme.White
+import co.yore.splitnpay.ui.theme.*
 
 @Composable
 fun SplitSummary() {
@@ -105,18 +105,18 @@ fun BalanceExpenseTabs(
     )
 
     val balanceTabColor = animateColorAsState(
-        targetValue = if (selected == 0) DarkBlue else LightBlue3,
+        targetValue = if (selected == 0) CloudBurst else Botticelli,
         tween(500)
     )
     val expenseTabColor = animateColorAsState(
-        targetValue = if (selected == 1) DarkBlue else LightBlue3,
+        targetValue = if (selected == 1) CloudBurst else Botticelli,
         tween(500)
     )
 
     Box(
         modifier = Modifier
             .height(56.dep())
-            .background(LightBlue6)
+            .background(Zircon1)
     ) {
         // triangle arrow
 
@@ -124,7 +124,7 @@ fun BalanceExpenseTabs(
             modifier = Modifier
                 .fillMaxWidth()
                 .absoluteOffset(y = 55.5.dep()),
-            color = GreyShadow1
+            color = Mystic1
         )
 
         Row(
@@ -188,7 +188,7 @@ fun BalanceExpenseTabs(
                             lineTo(size.width / 2f, 0f)
                             lineTo(size.width, size.height)
                         },
-                        Color(0xffEAEEF3),
+                        Mystic1,
                         style = Stroke(
                             width = depx,
                             cap = StrokeCap.Butt

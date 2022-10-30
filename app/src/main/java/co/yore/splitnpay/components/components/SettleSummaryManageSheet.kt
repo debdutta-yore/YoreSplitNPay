@@ -18,26 +18,28 @@ import co.yore.splitnpay.libs.NotificationService
 import co.yore.splitnpay.libs.Resolver
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.pages.SingleItem1
 import kotlinx.coroutines.CoroutineScope
 
-
-class SettleSummaryManageBottomSheetModel(val callback: Callback): BottomSheetModel {
+class SettleSummaryManageBottomSheetModel(val callback: Callback) : BottomSheetModel {
     interface Callback{
         fun scope(): CoroutineScope
         fun onContinue(arg: Any?)
     }
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.settleSummaryManage->{
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.settleSummaryManage -> {
                 callback.onContinue(arg)
             }
         }
     }
-    //////////////////
+
+    // ////////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
+
     @Composable
     override fun Content() {
         SettleSummaryManageSheet()
@@ -54,7 +56,7 @@ class SettleSummaryManageBottomSheetModel(val callback: Callback): BottomSheetMo
     override fun onBack() {
 
     }
-    /////////////////////////
+    // ///////////////////////
 }
 
 @Composable
@@ -71,7 +73,6 @@ fun SettleSummaryManageSheet(
 
     val listState = rememberLazyListState()
     var selectedIndex by remember { mutableStateOf(-1) }
-
 
     Column(
         modifier = Modifier
@@ -99,7 +100,7 @@ fun SettleSummaryManageSheet(
             itemsIndexed(items = itemList)
             { index, _ ->
 
-                co.yore.splitnpay.components.SingleItem(
+                SingleItem1(
                     modifier = Modifier
                         .fillMaxWidth()
                         .pointerInput(Unit) {

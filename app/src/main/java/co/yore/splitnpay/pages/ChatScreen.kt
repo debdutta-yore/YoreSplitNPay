@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
@@ -69,9 +68,9 @@ fun SearchBar(
     val colors = TextFieldDefaults.textFieldColors(
         disabledTextColor = Color.Black,
         backgroundColor = Color.White,
-        focusedIndicatorColor = LightGrey8,
-        unfocusedIndicatorColor = LightGrey8,
-        disabledIndicatorColor = LightGrey8,
+        focusedIndicatorColor = Alto,
+        unfocusedIndicatorColor = Alto,
+        disabledIndicatorColor = Alto,
         cursorColor = LightGray
     )
     val interactionSource = remember { MutableInteractionSource() }
@@ -263,7 +262,7 @@ fun ContentUI(
             .clip(RoundedCornerShape(24.dep()))
             .fillMaxWidth()
             .background(
-                color = Whitish,
+                color = Zircon,
                 shape = RoundedCornerShape(24.dep())
             )
     ) {
@@ -282,7 +281,7 @@ fun ContentUI(
                         top = 18.dep()
                     ),
                     modifier = Modifier.fadingEdge(
-                        startingColor = Whitish
+                        startingColor = Zircon
                     )
                 ) {
                     items(conversations) { it ->
@@ -323,21 +322,21 @@ fun HeaderUI(
             modifier = Modifier
                 .layoutId("upperCut")
                 .alpha(animatedAlpha),
-            color = LightGreen3
+            color = Turquoise1
         )
 
         BottomCut(
             modifier = Modifier
                 .layoutId("bottomCut")
                 .alpha(animatedAlpha),
-            color = LightGreen3
+            color = Turquoise1
         )
 
         AsyncImage(
             modifier = Modifier
                 .layoutId("groupImage")
                 .coloredShadow(
-                    color = DarkBlueShadow,
+                    color = VeniceBlue4F,
                     offsetX = 0.dep(),
                     offsetY = 2.25.dep(),
                     blurRadius = 4.5.dep(),
@@ -430,7 +429,7 @@ fun HeaderUI(
                 .alpha(animatedAlpha),
             text = stringResource(R.string.settle),
             fontSize = 11.sep(),
-            color = LightBlue4,
+            color = WildBlueYonder,
             lineHeight = 12.89.sep(),
             letterSpacing = 0.2.sep()
         )
@@ -455,7 +454,7 @@ fun HeaderUI(
                 .alpha(animatedAlpha),
             text = stringResource(R.string.summary),
             fontSize = 11.sep(),
-            color = LightBlue4,
+            color = WildBlueYonder,
             lineHeight = 12.89.sep(),
             letterSpacing = 0.2.sep()
         )
@@ -479,7 +478,7 @@ fun HeaderUI(
                 .alpha(animatedAlpha),
             text = stringResource(R.string.Manage),
             fontSize = 11.sep(),
-            color = LightBlue4,
+            color = WildBlueYonder,
             lineHeight = 12.89.sep(),
             letterSpacing = 0.2.sep()
         )
@@ -753,7 +752,7 @@ fun TypingIndicator(
                 4.sx()
                 Text(
                     stringResource(id = R.string.typing),
-                    color = Color(0xff243257),
+                    color = CloudBurst,
                     fontSize = 9.sep()
                 )
             }
@@ -783,7 +782,7 @@ fun ConversationItemUI(
                     modifier = Modifier.align(Alignment.Center),
                     text = it.data as String,
                     fontSize = 14.sep(),
-                    color = Bluish
+                    color = CuriousBlue
                 )
             }
 
@@ -800,7 +799,7 @@ fun ConversationItemUI(
                         withStyle(
                             style = SpanStyle(
                                 fontSize = 13.sep(),
-                                color = Color(0xff5A87BB)
+                                color = SteelBlue
                             )
                         ) {
                             append(stringResource(R.string.x_created_group, (it.data as GroupCreationEvent).creator))
@@ -810,13 +809,13 @@ fun ConversationItemUI(
                             style = SpanStyle(
                                 fontSize = 13.sep(),
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xff5A87BB)
+                                color = SteelBlue
                             )
                         ) {
                             append((it.data as GroupCreationEvent).groupName)
                         }
                     },
-                    color = Color(0xff5A87BB),
+                    color = SteelBlue,
                     fontSize = 13.sep()
                 )
             }
@@ -846,7 +845,7 @@ fun MemberUI(memberData: MemberData) {
             modifier = Modifier
                 .coloredShadowDp(
                     borderRadius = 16.5.dep(),
-                    color = Color(0x1A000000),
+                    color = Black1A,
                     offsetX = 0.dep(),
                     offsetY = 4.dep(),
                     blurRadius = 4.dep(),
@@ -874,39 +873,6 @@ fun MemberUI(memberData: MemberData) {
                 contentDescription = "profile_image"
             )
         }
-        /*Box(
-            modifier = Modifier
-                .size(33.dep())
-                .coloredShadow(
-                    color = Color(0x1A000000),
-                    offsetX = 0.dep(),
-                    offsetY = 4.dep(),
-                    blurRadius = 4.dep(),
-                    spread = 0f
-                )
-                .clip(
-                    CircleShape
-                )
-        ){
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .border(
-                        width = 2.02.dep(),
-                        color = Color.White,
-                        shape = CircleShape
-                    )
-                    .clip(
-                        CircleShape
-                    ),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(memberData.profileImage).crossfade(true)
-                    .build(),
-                placeholder = painterResource(R.drawable.user_dummy4),
-                contentScale = ContentScale.Crop,
-                contentDescription = null
-            )
-        }*/
         8.sx()
         FontFamilyText(
             text = memberData.name,
@@ -945,7 +911,7 @@ fun PeerChatUI(chatData: ChatData) {
                     .clip(CircleShape)
                     .border(
                         width = 3.dep(),
-                        color = Color(0xffEDF5FF),
+                        color = Zumthor,
                         shape = CircleShape
                     )
                     .padding(3.dep()),
@@ -972,7 +938,7 @@ fun PeerChatUI(chatData: ChatData) {
                     Text(
                         chatData.content as? String ?: "Not supported",
                         fontSize = 9.sep(),
-                        color = Color(0xff243257),
+                        color = CloudBurst,
                         textAlign = TextAlign.Start
                     )
                 }
@@ -1006,14 +972,14 @@ fun MyChatUI(content: Any) {
                     .padding(top = 2.5.dep(), end = 3.dep())
                     .widthIn(max = 151.dep())
                     .clip(RoundedCornerShape(10.dep()))
-                    .background(Color(0xffCFD8E4))
+                    .background(Botticelli)
                     .padding(12.dep()),
                 contentAlignment = Alignment.CenterEnd
             ){
                 Text(
                     content as? String ?: "Not supported",
                     fontSize = 9.sep(),
-                    color = Color(0xff243257),
+                    color = CloudBurst,
                     textAlign = TextAlign.End
                 )
             }
@@ -1170,7 +1136,7 @@ fun SingleButton(
     Box(
         modifier = modifier
             .coloredShadow(
-                color = CircleButtonShadow.copy(alpha = 0.31f),
+                color = HippieGreen07.copy(alpha = 0.31f),
                 borderRadius = 50.dep(),
                 blurRadius = 6.dep(),
                 offsetX = 0.dep(),
@@ -1372,11 +1338,11 @@ fun Message(
     ) {
         FloatingActionButton(
             shape = CircleShape,
-            backgroundColor = Pink,
+            backgroundColor = RadicalRed,
             modifier = Modifier
                 .size(47.dep())
                 .coloredShadow(
-                    color = PinkShadow,
+                    color = RadicalRed4F,
                     offsetX = 0.dep(),
                     offsetY = 3.dep(),
                     blurRadius = 6.dep(),
@@ -1413,7 +1379,7 @@ fun Message(
                         .fillMaxWidth()
                         .height(49.dep())
                         .coloredShadow(
-                            color = Blackish,
+                            color = Black1A,
                             offsetX = 0.dep(),
                             offsetY = 4.dep(),
                             blurRadius = 19.dep(),
@@ -1447,7 +1413,7 @@ fun Message(
                                 }
                                 .padding(4.dep()),
                             painter = painterResource(id = R.drawable.ic_send_icon),
-                            tint = Grey2,
+                            tint = Emperor,
                             contentDescription = "send"
                         )
                     }
@@ -1458,7 +1424,7 @@ fun Message(
                                 .align(Alignment.CenterStart)
                                 .padding(horizontal = 20.dep()),
                             fontSize = 12.sep(),
-                            color = Color(0xff839BB9)
+                            color = WildBlueYonder
                         )
                     }
 

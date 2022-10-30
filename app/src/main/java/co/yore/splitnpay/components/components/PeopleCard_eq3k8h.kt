@@ -1,4 +1,4 @@
-package co.yore.splitnpay.addmembers
+package co.yore.splitnpay.components.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,188 +10,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import co.yore.splitnpay.R
-import co.yore.splitnpay.components.components.YoreAmount
-import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
-import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.ui.theme.GreyShadow
-import co.yore.splitnpay.ui.theme.Lightgreen3
-import co.yore.splitnpay.ui.theme.Pink
-import co.yore.splitnpay.ui.theme.robotoFonts
-
-
-
-
-
-
-@Composable
-fun CheckBoxIcon_b6qwbf(
-    modifier: Modifier = Modifier,
-    selected: TriState,
-    contentDescription: String,
-    config: CheckboxConfiguration = CheckboxConfiguration(),
-    onPressed: (Boolean)->Unit,
-    onClick: () -> Unit,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    LaunchedEffect(key1 = isPressed){
-        onPressed(isPressed)
-    }
-    val computedBackgroundColor by remember(selected,config) {
-        derivedStateOf{
-            if (selected==TriState.CHECKED)
-                config.iconColor
-            else
-                Color.White
-        }
-    }
-    val animatedBackgroundColor by animateColorAsState(
-        targetValue = computedBackgroundColor,
-        animationSpec = tween(
-            durationMillis = 700
-        )
-    )
-    val computedBorderStroke by remember(selected) {
-        derivedStateOf {
-            if (selected==TriState.CHECKED) 0f else 1f
-        }
-    }
-    val animatedBorderStroke by animateFloatAsState(
-        targetValue = computedBorderStroke,
-        animationSpec = tween(700)
-    )
-    Box(
-        modifier = modifier
-            .size(config.iconSize.dep())
-            .clip(RoundedCornerShape(config.cornerRadius.dep()))
-            .background(animatedBackgroundColor)
-            .border(
-                animatedBorderStroke.dep(),
-                color = config.iconColor,
-                shape = RoundedCornerShape(10.dep())
-            )
-            .clickable(
-                interactionSource = interactionSource,
-                indication = LocalIndication.current
-            ) {
-                onClick()
-            }
-            .semantics { this.contentDescription = contentDescription }
-    ) {
-        if(selected==TriState.INTERMEDIATE){
-            Icon(
-                modifier = Modifier
-                    .align(Center),
-                painter = painterResource(R.drawable.square),
-                contentDescription = "check icon",
-                tint = config.iconColor
-            )
-        }
-        else{
-            Icon(
-                modifier = Modifier
-                    .align(Center),
-                painter = painterResource(config.icon),
-                contentDescription = "check icon",
-                tint = Color.White
-            )
-        }
-    }
-}
-
-
-
-@Composable
-fun FontFamilyText(
-    modifier: Modifier = Modifier,
-    text: String = "",
-    annotatedString: AnnotatedString = AnnotatedString(""),
-    color: Color = Color.Unspecified,
-    fontSize: TextUnit = TextUnit.Unspecified,
-    fontStyle: FontStyle? = null,
-    fontWeight: FontWeight? = null,
-    fontFamily: FontFamily? = robotoFonts,
-    letterSpacing: TextUnit = TextUnit.Unspecified,
-    textDecoration: TextDecoration? = null,
-    textAlign: TextAlign? = null,
-    lineHeight: TextUnit = TextUnit.Unspecified,
-    overflow: TextOverflow = TextOverflow.Clip,
-    softWrap: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
-    onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current
-) {
-    if(annotatedString.isEmpty()) {
-        Text(
-            text = text,
-            modifier = modifier,
-            color = color,
-            fontSize = fontSize,
-            fontStyle = fontStyle,
-            fontWeight = fontWeight,
-            fontFamily = fontFamily,
-            letterSpacing = letterSpacing,
-            textDecoration = textDecoration,
-            textAlign = textAlign,
-            lineHeight = lineHeight,
-            overflow = overflow,
-            softWrap = softWrap,
-            maxLines = maxLines,
-            onTextLayout = onTextLayout,
-            style = style
-        )
-    }
-    else {
-        Text(
-            text = annotatedString,
-            modifier = modifier,
-            color = color,
-            fontSize = fontSize,
-            fontStyle = fontStyle,
-            fontWeight = fontWeight,
-            fontFamily = fontFamily,
-            letterSpacing = letterSpacing,
-            textDecoration = textDecoration,
-            textAlign = textAlign,
-            lineHeight = lineHeight,
-            overflow = overflow,
-            softWrap = softWrap,
-            maxLines = maxLines,
-            onTextLayout = onTextLayout,
-            style = style
-        )
-    }
-}
+import co.yore.splitnpay.ui.theme.Ghost80
+import co.yore.splitnpay.ui.theme.RadicalRed
+import co.yore.splitnpay.ui.theme.Turquoise1
 
 @Composable
 fun PeopleCard_eq3k8h(
@@ -218,16 +53,17 @@ fun PeopleCard_eq3k8h(
 
     val focused by remember {
         derivedStateOf {
-            _selected||isPressed||isCheckBoxPressed
+            _selected || isPressed || isCheckBoxPressed
         }
     }
 
     val computedBackgroundColor by remember(config) {
         derivedStateOf{
-            if (focused)
-                config.cardBackgroundColor 
-            else 
+            if (focused) {
+                config.cardBackgroundColor
+            } else {
                 config.cardUnselectedColor
+            }
         }
     }
     val animatedBackgroundColor by animateColorAsState(
@@ -236,10 +72,11 @@ fun PeopleCard_eq3k8h(
     )
     val computedBorderStroke by remember(config) {
         derivedStateOf{
-            if (focused)
+            if (focused) {
                 config.borderStroke
-            else
+            } else {
                 0f
+            }
         }
     }
     val animatedBorderStroke by animateFloatAsState(
@@ -248,10 +85,9 @@ fun PeopleCard_eq3k8h(
     )
     val computedStrokeColor by remember(config) {
         derivedStateOf {
-            if(focused){
+            if (focused){
                 config.borderColor
-            }
-            else{
+            } else {
                 Color.Transparent
             }
         }
@@ -262,7 +98,7 @@ fun PeopleCard_eq3k8h(
     )
     val showAmount by remember(data) {
         derivedStateOf {
-            data.willGet>0f||data.willPay>0f
+            data.willGet > 0f || data.willPay > 0f
         }
     }
     Box(
@@ -270,12 +106,12 @@ fun PeopleCard_eq3k8h(
             .fillMaxWidth()
             .height(config.cardHeight.dep())
             .coloredShadow(
-                color = GreyShadow,
+                color = Ghost80,
                 borderRadius = config.cornerRadius.dep(),
                 blurRadius = config.blurRadius.dep(),
                 spread = config.blurSpread,
                 offsetX = config.blurOffsetX.dep(),
-                offsetY = config.blurOffsetY.dep(),
+                offsetY = config.blurOffsetY.dep()
             )
             .clip(RoundedCornerShape(config.cornerRadius.dep()))
             .clickable(
@@ -310,12 +146,13 @@ fun PeopleCard_eq3k8h(
                 modifier = Modifier
                     .padding(start = 22.dep())
                     .then(
-                        if (showAmount)
+                        if (showAmount) {
                             Modifier.width(85.dep())
-                        else
+                        } else {
                             Modifier.weight(1f)
+                        }
                     )
-                    .align(Alignment.CenterVertically),
+                    .align(Alignment.CenterVertically)
             ) {
                 FontFamilyText(
                     text = data.name,
@@ -323,7 +160,7 @@ fun PeopleCard_eq3k8h(
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.darkblue),
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
+                    maxLines = 1
                 )
                 Spacer(modifier = Modifier.height(5.dep()))
                 FontFamilyText(
@@ -332,20 +169,22 @@ fun PeopleCard_eq3k8h(
                     fontWeight = FontWeight.Normal,
                     color = colorResource(R.color.lightblue5),
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
+                    maxLines = 1
                 )
             }
-            if(showAmount){
-                Spacer(modifier = Modifier
-                    .width(10.dep())
-                    .weight(1f))
+            if (showAmount){
+                Spacer(
+                    modifier = Modifier
+                        .width(10.dep())
+                        .weight(1f)
+                )
             }
             Column(
                 modifier = Modifier
                     .align(Alignment.Top)
                     .padding(top = 7.dep())
                     .wrapContentWidth(),
-                horizontalAlignment = Alignment.End,
+                horizontalAlignment = Alignment.End
             ) {
                 if (data.willGet > 0) {
                     val willGetSplitted by remember(data.willGet) {
@@ -355,7 +194,7 @@ fun PeopleCard_eq3k8h(
                     }
                     YoreAmount(
                         config = YoreAmountConfiguration(
-                            color = Lightgreen3,
+                            color = Turquoise1,
                             fontSize = 14,
                             currencyFontSize = 12,
                             decimalFontSize = 10,
@@ -373,7 +212,7 @@ fun PeopleCard_eq3k8h(
                     }
                     YoreAmount(
                         config = YoreAmountConfiguration(
-                            color = Pink,
+                            color = RadicalRed,
                             fontSize = 14,
                             currencyFontSize = 12,
                             decimalFontSize = 10,
@@ -386,10 +225,10 @@ fun PeopleCard_eq3k8h(
                 }
             }
             25.sx()
-            if(config.checkable){
+            if (config.checkable){
                 CheckBoxIcon_b6qwbf(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    selected = if(selected) TriState.CHECKED else TriState.UNCHECKED,
+                    selected = if (selected) TriState.CHECKED else TriState.UNCHECKED,
                     contentDescription = checkBoxContentDescription,
                     onClick = {
                         notifier.notify(DataIds.checkItem, data.id)
@@ -399,14 +238,13 @@ fun PeopleCard_eq3k8h(
                     }
                 )
                 14.sx()
-            }
-            else{
+            } else {
                 ArrowButton_ohezqf(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     contentDescription = "",
                     pressed = focused,
                     onClicked = {
-                        notifier.notify(DataIds.peopleCardGo,data)
+                        notifier.notify(DataIds.peopleCardGo, data)
                     },
                     onPressed = {
                         isCheckBoxPressed = it

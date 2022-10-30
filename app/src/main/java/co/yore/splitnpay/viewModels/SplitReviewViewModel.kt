@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.components.components.AllCategoriesBottomSheetModel
 import co.yore.splitnpay.components.components.BillTotalAndCategoryBottomSheetModel
 import co.yore.splitnpay.components.components.Kal
@@ -14,80 +13,40 @@ import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-interface SplitReviewRepository {
-    suspend fun getPaidByMembers(): List<MemberPayment>
-}
-class SplitReviewMock : SplitReviewRepository {
-    override suspend fun getPaidByMembers(): List<MemberPayment> {
-        return listOf(
-            MemberPayment(
-                0,
-                "You",
-                "8967114927",
-                image = "https://i.pravatar.cc/100"
-            ),
-            MemberPayment(
-                1,
-                "Manisha Roy",
-                "9456321025",
-                image = "https://i.pravatar.cc/100"
-            ),
-            MemberPayment(
-                2,
-                "Sushil Roy",
-                "9746310862",
-                image = "https://i.pravatar.cc/100"
-            ),
-            MemberPayment(
-                3,
-                "Sanjana Roy",
-                "8319764035",
-                image = "https://i.pravatar.cc/100"
-            ),
-            MemberPayment(
-                4,
-                "Ankita Roy",
-                "7614563289",
-                image = "https://i.pravatar.cc/100"
-            ),
-        )
-    }
-
-}
-
-
-
-
-
 class SplitReviewViewModel(
-    private val repo: SplitReviewRepository = SplitReviewMock(),
-    private val groupRepo: GroupRepository = GroupsMock()
+    private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustPan)
+
     @OptIn(ExperimentalMaterialApi::class)
 
     override val resolver = Resolver()
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()
+
     @OptIn(ExperimentalMaterialApi::class)
     override val sheeting = Sheeting(
         sheetMap = mapOf(
             Sheets.ImagePicker to PhotoSelectionBottomSheetModel(
-                object: PhotoSelectionBottomSheetModel.Callback{
+                object : PhotoSelectionBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
 
                     override fun onContinue(arg: Any?) {
                         mySheeting.hide()
-                        handleCameraOrGallery(arg as? String?:return)
+                        handleCameraOrGallery(arg as? String ?: return)
                     }
 
                     override fun close() {
@@ -96,11 +55,11 @@ class SplitReviewViewModel(
                 }
             ),
             Sheets.BillTotalAndCategories to BillTotalAndCategoryBottomSheetModel(
-                object: BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
+                object : BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
                     override suspend fun getCategories(): List<Category> {
-                        val categories = groupRepo.getAllCategories().toMutableList()
+                        val categories = repo.getAllCategories().toMutableList()
                         val index = categories.indexOfFirst { it.id == category.value.id }
-                        if(index!=-1){
+                        if (index != -1){
                             categories[index] = categories[index].copy(isSelected = true)
                         }
                         return categories
@@ -147,11 +106,11 @@ class SplitReviewViewModel(
                 }
             ),
             Sheets.CategoriesEdit to AllCategoriesBottomSheetModel(
-                object: AllCategoriesBottomSheetModel.Callback{
+                object : AllCategoriesBottomSheetModel.Callback{
                     override suspend fun getCategories(): List<Category> {
-                        val categories = groupRepo.getAllCategories().toMutableList()
+                        val categories = repo.getAllCategories().toMutableList()
                         val index = categories.indexOfFirst { it.id == category.value.id }
-                        if(index!=-1){
+                        if (index != -1){
                             categories[index] = categories[index].copy(isSelected = true)
                         }
                         return categories
@@ -172,7 +131,7 @@ class SplitReviewViewModel(
                 }
             ),
             Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
-                object: ExpenseDatePickerBottomSheetModel.Callback{
+                object : ExpenseDatePickerBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
@@ -191,7 +150,7 @@ class SplitReviewViewModel(
                         selectedYear: Int
                     ) {
                         mySheeting.hide()
-                        date.value = Kal.Date(selectedDay,selectedMonth,selectedYear)
+                        date.value = Kal.Date(selectedDay, selectedMonth, selectedYear)
                         _dateText.value = displayableDate(
                             date.value.day,
                             date.value.month,
@@ -206,11 +165,10 @@ class SplitReviewViewModel(
             )
         ),
         onVisibilityChanged = {
-            if(!it){
+            if (!it){
                 softInputMode.value = SoftInputMode.adjustPan
                 mySheeting.sheets.value = Sheets.None
-            }
-            else{
+            } else {
                 softInputMode.value = SoftInputMode.adjustNothing
             }
         },
@@ -223,10 +181,9 @@ class SplitReviewViewModel(
         updateAsMemberSelection()
     }
 
-    //////////////
+    // ////////////
 
-
-    //////////////////////////////////////////
+    // ////////////////////////////////////////
     private val _members = mutableStateListOf<MemberPayment>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("Office buddies")
@@ -239,75 +196,76 @@ class SplitReviewViewModel(
     private val selectedTabIndex = mutableStateOf(0)
     private val selectedListOption = mutableStateOf(0)
     private val receipt = mutableStateOf<Any?>(null)
-    //private val sheets = mutableStateOf(Sheets.None)
-    private val category = mutableStateOf(Category.blank)
-    private val date = mutableStateOf(Kal.Date(7,6,2022))
-    private var asGroup = false
-    ///////////////////
-    /////////////////////////////////////////
 
-    //////////////////////////////////////////
+    // private val sheets = mutableStateOf(Sheets.None)
+    private val category = mutableStateOf(Category.blank)
+    private val date = mutableStateOf(Kal.Date(7, 6, 2022))
+    private var asGroup = false
+    // /////////////////
+    // ///////////////////////////////////////
+
+    // ////////////////////////////////////////
     @OptIn(ExperimentalMaterialApi::class)
     override val notifier = NotificationService { id, arg ->
         when (id) {
             WirelessViewModelInterface.startupNotification -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    asGroup = getBoolean("asGroup",false)
+                    asGroup = getBoolean("asGroup", false)
                 }
             }
-            DataIds.deleteReceipt->{
+            DataIds.deleteReceipt -> {
                 receipt.value = null
             }
-            "${DataIds.back}split_review_page"->{
-                when(mySheeting.sheets.value){
+            "${DataIds.back}split_review_page" -> {
+                when (mySheeting.sheets.value){
                     Sheets.BillTotalAndCategories -> mySheeting.model(Sheets.BillTotalAndCategories)?.onBack()
                     Sheets.DatePicker -> mySheeting.model(Sheets.DatePicker)?.onBack()
-                    else->pageBack()
+                    else -> pageBack()
                 }
             }
-            DataIds.categoryEditClick->{
+            DataIds.categoryEditClick -> {
                 openBillTotalBottomSheet()
             }
-            DataIds.selectedTabIndex->{
-                selectedTabIndex.value = arg as? Int?:return@NotificationService
+            DataIds.selectedTabIndex -> {
+                selectedTabIndex.value = arg as? Int ?: return@NotificationService
             }
-            DataIds.selectedListOption->{
-                selectedListOption.value = arg as? Int?:return@NotificationService
+            DataIds.selectedListOption -> {
+                selectedListOption.value = arg as? Int ?: return@NotificationService
                 updateAsSelectedListOption()
             }
-            DataIds.memberPaymentCheck->{
+            DataIds.memberPaymentCheck -> {
                 val index = _members.indexOf(arg as? MemberPayment)
-                if(index<0){
+                if (index < 0){
                     return@NotificationService
                 }
                 val member = _members[index]
                 val selected = !member.selected
                 _members[index] = member.copy(selected = selected)
-                ///
+                // /
                 updateAsMemberSelection()
             }
-            DataIds.paidByAmount->{
-                if(arg !is Store){
+            DataIds.paidByAmount -> {
+                if (arg !is Store){
                     return@NotificationService
                 }
-                val member = arg["member"] as? MemberPayment?:return@NotificationService
-                val amount = arg["amount"] as? Double?:return@NotificationService
+                val member = arg["member"] as? MemberPayment ?: return@NotificationService
+                val amount = arg["amount"] as? Double ?: return@NotificationService
                 val index = _members.indexOf(member)
-                if(index<0){
+                if (index < 0){
                     return@NotificationService
                 }
                 _members[index] = _members[index].copy(paid = amount)
                 val paid = _members.sumOf { it.paid }.toFloat()
                 paidRemaining.value = _billTotal.value - paid
             }
-            DataIds.adjustByAmount->{
-                if(arg !is Store){
+            DataIds.adjustByAmount -> {
+                if (arg !is Store){
                     return@NotificationService
                 }
-                val member = arg["member"] as? MemberPayment?:return@NotificationService
-                val amount = arg["amount"] as? Double?:return@NotificationService
+                val member = arg["member"] as? MemberPayment ?: return@NotificationService
+                val amount = arg["amount"] as? Double ?: return@NotificationService
                 val index = _members.indexOf(member)
-                if(index<0){
+                if (index < 0){
                     return@NotificationService
                 }
                 _members[index] = _members[index].copy(toPay = amount)
@@ -320,12 +278,7 @@ class SplitReviewViewModel(
                 }
             }
             DataIds.selectPaidByMemberClick -> {
-                /*val index = _paidList.indexOf(arg as? MemberPayment?:return@NotificationService)
-                if(index==-1){
-                    return@NotificationService
-                }*/
-                /*_paidList[index] =
-                    _paidList[index].copy(isSelected = !_paidList[index].isSelected)*/
+
             }
             DataIds.editBillAmountClick -> {
                 openBillTotalBottomSheet()
@@ -343,7 +296,7 @@ class SplitReviewViewModel(
             DataIds.confirmSplitClick -> {
                 navigation.scope { navHostController, lifecycleOwner, toaster ->
                     navHostController.popBackStack("split_page", false)
-                    if(asGroup){
+                    if (asGroup){
                         navHostController.navigate("group_chat_page")
                     }
                 }
@@ -361,31 +314,31 @@ class SplitReviewViewModel(
         val selectedCount = _members.count {
             it.selected
         }
-        val contribute = (if(selectedCount==0){
-            0f
-        }
-        else{
-            (_billTotal.value/selectedCount)
-        }).toDouble()
+        val contribute = (
+            if (selectedCount == 0){
+                0f
+            } else {
+                (_billTotal.value / selectedCount)
+            }
+            ).toDouble()
         val count = _members.size
-        for(i in 0 until count){
+        for (i in 0 until count){
             val _member = _members[i]
             val _selected = _member.selected
-            if(_selected){
+            if (_selected){
                 _members[i] = _member.copy(paid = contribute)
-            }
-            else{
+            } else {
                 _members[i] = _member.copy(paid = 0.0)
             }
         }
-        paidRemaining.value = if(contribute==0.0) _billTotal.value else 0.0
+        paidRemaining.value = if (contribute == 0.0) _billTotal.value else 0.0
     }
 
     private fun updateAsSelectedListOption() {
-        if(selectedListOption.value==0){
+        if (selectedListOption.value == 0){
             val memberCount = _members.size
-            val contribute = _billTotal.value/memberCount
-            for(i in 0 until memberCount){
+            val contribute = _billTotal.value / memberCount
+            for (i in 0 until memberCount){
                 _members[i] = _members[i].copy(toPay = contribute)
             }
             adjustRemaining.value = 0.0
@@ -409,11 +362,11 @@ class SplitReviewViewModel(
     }
 
     private fun handleCameraOrGallery(arg: String) {
-        when(arg){
-            "Camera"->{
+        when (arg){
+            "Camera" -> {
                 capturePicture()
             }
-            "Gallery"->{
+            "Gallery" -> {
                 takePicture()
             }
         }
@@ -425,12 +378,11 @@ class SplitReviewViewModel(
         viewModelScope.launch {
             val p = Manifest.permission.CAMERA
             val state = permissionHandler.check(p)
-            if(state?.allPermissionsGranted==true){
+            if (state?.allPermissionsGranted == true){
                 receipt.value = resultingActivityHandler.takePicturePreview()
-            }
-            else{
+            } else {
                 val result = permissionHandler.request(p)
-                if(result?.get(p)==true){
+                if (result?.get(p) == true){
                     receipt.value = resultingActivityHandler.takePicturePreview()
                 }
             }
@@ -444,7 +396,7 @@ class SplitReviewViewModel(
         }
     }
 
-    /////////////////////////////////////////
+    // ///////////////////////////////////////
     init {
         resolver.addAll(
             DataIds.statusBarColor to _statusBarColor,
@@ -462,13 +414,13 @@ class SplitReviewViewModel(
             DataIds.receipt to receipt,
             DataIds.sheets to DataIds.sheets,
             DataIds.category to category,
-            //////////////////////////////
+            // ////////////////////////////
             DataIds.statusBarColor to _statusBarColor,
             DataIds.canProceedWithBillTotal to DataIds.canProceedWithBillTotal,
-            DataIds.canProceedWithCategory to DataIds.canProceedWithCategory,
+            DataIds.canProceedWithCategory to DataIds.canProceedWithCategory
         )
         viewModelScope.launch(Dispatchers.IO) {
-            val categories = groupRepo.getCategories()
+            val categories = repo.getCategories()
             withContext(Dispatchers.Main){
                 category.value = categories.first()
             }
@@ -480,16 +432,16 @@ class SplitReviewViewModel(
                 _members.addAll(
                     repo.getPaidByMembers()
                 )
-                ///////////////////////
+                // /////////////////////
                 val memberCount = _members.size
-                val contribute = _billTotal.value/memberCount
-                for(i in 0 until memberCount){
+                val contribute = _billTotal.value / memberCount
+                for (i in 0 until memberCount){
                     _members[i] = _members[i].copy(toPay = contribute)
                 }
             }
         }
         _statusBarColor.value = StatusBarColor(
-            color = StatusBarGreen,
+            color = RobinsEggBlue,
             darkIcons = true
         )
     }

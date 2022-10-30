@@ -4,25 +4,24 @@ import android.Manifest
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.models.StatusBarColor
-import co.yore.splitnpay.repo.Repo
-import co.yore.splitnpay.repo.RepoImpl
-import co.yore.splitnpay.ui.theme.MyColor6
+import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.BlackSqueeze
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class GroupCreationPageViewModel(
-    private val repo: Repo = RepoImpl()
+    private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     private val contacts = mutableStateListOf<ContactData>()
@@ -179,7 +178,7 @@ class GroupCreationPageViewModel(
             DataIds.contacts to contacts
         )
         _statusBarColor.value = StatusBarColor(
-            color = MyColor6,
+            color = BlackSqueeze,
             darkIcons = true
         )
     }

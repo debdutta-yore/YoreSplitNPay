@@ -15,14 +15,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.models.YouWillGetDetailsSingleTabItemConfiguration
-import co.yore.splitnpay.pages.Whitish6
-import co.yore.splitnpay.ui.theme.LightGreen3
-import co.yore.splitnpay.ui.theme.LightRedButton
-import co.yore.splitnpay.ui.theme.Pink
 
 @Composable
 fun YouWillGetDetailsSingleTabItem_7ozj5w(

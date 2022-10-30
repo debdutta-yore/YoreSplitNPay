@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -29,124 +28,16 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.PeopleCard_eq3k8h
-import co.yore.splitnpay.components.components.GroupCard_0msq1z
-import co.yore.splitnpay.components.components.coloredShadow
-import co.yore.splitnpay.components.configuration.*
+import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.split_page_components.ContactSearchBar
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
-@Composable
-fun SingleItem(
-    modifier: Modifier = Modifier,
-    icon: Painter,
-    text: String,
-    isSelected: Boolean = false
-) {
-    Row(
-        modifier = modifier
-            .background(
-                if (isSelected) {
-                    Lightblue1
-                }else Color.White
-            )
-            .padding(start = 31f.dep())
-            .fillMaxWidth()
-            .height(49f.dep()),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Icon(
-                modifier = Modifier.size(18.dp),
-                tint = Bluish,
-                painter = icon,
-                contentDescription = "selected photo icon"
-            )
-            Spacer(modifier = Modifier.width(15f.dep()))
-            Text(
-                text = text,
-                color = DarkBlue,
-                fontSize = 14.sp,
-                fontWeight = FontWeight(700)
-            )
-        }
-
-        if (isSelected) {
-            Icon(
-                modifier = Modifier,
-                //  .width(18f.dep())
-                tint = Bluish,
-                painter = painterResource(id = R.drawable.ic_sheet_selector),
-                contentDescription = "holder"
-            )
-        }
-
-    }
-
-}
-
-@Composable
-fun TopBarWithIcon_1t9xbo(
-    text: String,
-    onClick: () -> Unit,
-    config: TopbarWithIconConfiguration = TopbarWithIconConfiguration()
-) {
-    Column(
-        modifier = Modifier
-            .coloredShadow(
-                color = config.shadowColor,
-                blurRadius = config.blurRadius.dep(),
-                offsetY = config.offsetY.dep()
-            )
-            .fillMaxWidth()
-            .height(config.height.dep())
-            .background(config.backgroundColor),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.width((config.startPadding - 12).dep()))
-            Icon(
-                modifier = Modifier
-                    .size((config.iconSize + 12).dep())
-                    .clip(CircleShape)
-                    .clickable {
-                        onClick()
-                    }
-                    .padding(6.dep()),
-                painter = painterResource(config.icon),
-                contentDescription = "back arrow",
-                tint = config.iconTint
-            )
-            Spacer(modifier = Modifier.width((config.space - 6).dep()))
-            Text(
-                text = text,
-                fontSize = config.textSize.sep(),
-                fontWeight = config.fontWeight,
-                color = config.fontColor
-            )
-            Spacer(modifier = Modifier.weight(1f))
-        }
-    }
-}
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -159,7 +50,7 @@ fun MemberSelectionPage_g5024t(
         sheetContent = {
             sheeting.sheetContent()
         },
-        scrimColor = MyColor2,
+        scrimColor = CloudBurst8C,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
             topStart = 33.dep(),
@@ -255,20 +146,7 @@ fun SplitWithPageContent(
     }
 }
 
-@Composable
-fun NothingFoundUI() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        RobotoText(
-            "Nothing found",
-            fontSize = 13.sep(),
-            color = LightBlue4,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -404,9 +282,9 @@ fun SplitWithPageTabsSection(
             val computedColor by remember(selectedIndex) {
                 derivedStateOf {
                     if (selectedIndex == index) {
-                        DarkBlue
+                        CloudBurst
                     } else {
-                        LightBlue3
+                        Botticelli
                     }
                 }
             }
@@ -434,44 +312,7 @@ fun SplitWithPageTabsSection(
     }
 }
 
-@Composable
-fun PeopleImageItem_r02b97(
-    config: PeopleRowItemConfiguration = PeopleRowItemConfiguration(),
-    onDelete: () -> Unit,
-    friend: ContactData,
-    contentDescription: String
-) {
-    Box(
-        modifier = Modifier
-            .semantics { this.contentDescription = contentDescription }
-    ) {
-        AsyncImage(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(config.imageSize.dep()),
-            model = ImageRequest.Builder(LocalContext.current)
-                // TODO- update using friend.imageUrl
-                .data(friend.image)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.personactionbar),
-            contentScale = ContentScale.Crop,
-            contentDescription = ""
-        )
 
-        if (friend.deletable){
-            DeleteIcon_iw4d3p(
-                modifier = Modifier
-                    .radialBottomLeft(config.imageSize.dep()),
-                config = DeleteIconConfiguration(),
-                contentDescription = "",
-                onClick = {
-                    onDelete()
-                }
-            )
-        }
-    }
-}
 
 fun Modifier.radialBottomLeft(
     parentSize: Dp

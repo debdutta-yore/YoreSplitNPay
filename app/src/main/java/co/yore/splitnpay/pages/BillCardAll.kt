@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.components.components.RoundedLinearProgressIndicator
 import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.components.components.coloredShadow

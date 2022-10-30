@@ -1,4 +1,4 @@
-package co.yore.splitnpay.split_page_components.you_will_get_pay_card
+package co.yore.splitnpay.components.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size

@@ -2,27 +2,24 @@ package co.yore.splitnpay.viewModels
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.*
+import co.yore.splitnpay.components.components.AllCategoriesBottomSheetModel
+import co.yore.splitnpay.components.components.BillTotalAndCategoryBottomSheetModel
+import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
-import co.yore.splitnpay.repo.Repo
-import co.yore.splitnpay.repo.RepoImpl
-import co.yore.splitnpay.ui.theme.MyColor7
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.CeriseRed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
-
 class SplitPageViewModel(
-    private val repo: Repo = RepoImpl(),
-    private val groupRepo: GroupRepository = GroupsMock(),
-): ViewModel(), WirelessViewModelInterface {
+    private val repo: MasterRepo = MasterRepoImpl()
+) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
@@ -45,64 +42,65 @@ class SplitPageViewModel(
     private val _selectedTabIndex = mutableStateOf(0)
     private val _noGroup = mutableStateOf(false)
     private val _haveSplit = mutableStateOf(true)
-    ///////////////////////////////////////////////////////
-    private val _notificationService = NotificationService{id,arg->
-        when(id){
-            WirelessViewModelInterface.startupNotification->{
-                _statusBarColor.value = StatusBarColor(MyColor7,false)
+
+    // /////////////////////////////////////////////////////
+    private val _notificationService = NotificationService{id, arg ->
+        when (id){
+            WirelessViewModelInterface.startupNotification -> {
+                _statusBarColor.value = StatusBarColor(CeriseRed, false)
             }
-            DataIds.textInput ->{
-                _input.value = (arg as? String)?:return@NotificationService
+            DataIds.textInput -> {
+                _input.value = (arg as? String) ?: return@NotificationService
                 filter()
             }
-            DataIds.groupCard ->{
-                //Todo
+            DataIds.groupCard -> {
+                // Todo
             }
-            DataIds.peopleCard ->{
-                //Todo
+            DataIds.peopleCard -> {
+                // Todo
             }
-            DataIds.split ->{
+            DataIds.split -> {
                 mySheeting.change(Sheets.BillTotalAndCategories)
                 mySheeting.show()
             }
-            DataIds.groupCardGo ->{
+            DataIds.groupCardGo -> {
                 gotoGroupPage()
             }
-            DataIds.addGroup ->{
+            DataIds.addGroup -> {
                 gotoSplitWithPage()
             }
-            DataIds.peopleCardGo ->{
+            DataIds.peopleCardGo -> {
                 gotoIndividualPage()
             }
-            "${DataIds.back}split_page" ->{
-                when(mySheeting.sheets.value){
-                    Sheets.None->pageBack()
-                    else->mySheeting.onBack()
+            "${DataIds.back}split_page" -> {
+                when (mySheeting.sheets.value){
+                    Sheets.None -> pageBack()
+                    else -> mySheeting.onBack()
                 }
             }
-            DataIds.back->{
+            DataIds.back -> {
                 pageBack()
             }
-            DataIds.getCard ->{
-                //Todo
+            DataIds.getCard -> {
+                // Todo
             }
-            DataIds.payCard ->{
-                //Todo
+            DataIds.payCard -> {
+                // Todo
             }
-            DataIds.selectedTabIndex ->{
-                val index = (arg as? Int)?:return@NotificationService
-                if(_selectedTabIndex.value==index){
+            DataIds.selectedTabIndex -> {
+                val index = (arg as? Int) ?: return@NotificationService
+                if (_selectedTabIndex.value == index){
                     return@NotificationService
                 }
                 _selectedTabIndex.value = index
                 filter()
             }
-            "${DataIds.subTab}group"->{
-                _subTabGroup.value = (arg as? SplitPageTabs)?:return@NotificationService
+            "${DataIds.subTab}group" -> {
+                _subTabGroup.value = (arg as? SplitPageTabs) ?: return@NotificationService
                 filter()
             }
-            "${DataIds.subTab}people"->{
-                _subTabPeople.value = (arg as? SplitPageTabs)?:return@NotificationService
+            "${DataIds.subTab}people" -> {
+                _subTabPeople.value = (arg as? SplitPageTabs) ?: return@NotificationService
                 filter()
             }
         }
@@ -113,7 +111,7 @@ class SplitPageViewModel(
             Sheets.BillTotalAndCategories to BillTotalAndCategoryBottomSheetModel(
                 object : BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
                     override suspend fun getCategories(): List<Category> {
-                        val categories = groupRepo.getAllCategories().toMutableList()
+                        val categories = repo.getAllCategories().toMutableList()
                         categories[0] = categories[0].copy(isSelected = true)
                         return categories
                     }
@@ -157,7 +155,7 @@ class SplitPageViewModel(
             Sheets.CategoriesEdit to AllCategoriesBottomSheetModel(
                 object : AllCategoriesBottomSheetModel.Callback{
                     override suspend fun getCategories(): List<Category> {
-                        val categories = groupRepo.getAllCategories().toMutableList()
+                        val categories = repo.getAllCategories().toMutableList()
                         categories[0] = categories[0].copy(isSelected = true)
                         return categories
                     }
@@ -198,7 +196,7 @@ class SplitPageViewModel(
                         mySheeting.hide()
                     }
                 }
-            ),
+            )
         )
     )
 
@@ -253,7 +251,7 @@ class SplitPageViewModel(
             DataIds.noGroup to _noGroup,
             DataIds.haveSplit to _haveSplit,
             "${DataIds.subTab}group" to _subTabGroup,
-            "${DataIds.subTab}people" to _subTabPeople,
+            "${DataIds.subTab}people" to _subTabPeople
         )
         viewModelScope.launch(Dispatchers.IO) {
             _groupsAndPeoplesVault.addAll(repo.groupAndContacts())
@@ -272,16 +270,16 @@ class SplitPageViewModel(
 
     private fun itemFilter(it: GroupOrContact): Boolean {
         val tab = _selectedTabIndex.value
-        if((tab==0&&it !is GroupData)||(tab==1&&it !is ContactData)){
+        if ((tab == 0 && it !is GroupData) || (tab == 1 && it !is ContactData)){
             return false
         }
-        val owe = if(tab==0) _subTabGroup.value else _subTabPeople.value
-        if(
-            (owe==SplitPageTabs.YouOwe&&(it.willGet()>0f||it.willPay()==0f))
-            ||(owe==SplitPageTabs.YouAreOwed&&(it.willPay()>0f||it.willGet()==0f))
+        val owe = if (tab == 0) _subTabGroup.value else _subTabPeople.value
+        if (
+            (owe == SplitPageTabs.YouOwe && (it.willGet() > 0f || it.willPay() == 0f)) ||
+            (owe == SplitPageTabs.YouAreOwed && (it.willPay() > 0f || it.willGet() == 0f))
         ){
             return false
         }
-        return search(_input.value,it.searchables())
+        return search(_input.value, it.searchables())
     }
 }

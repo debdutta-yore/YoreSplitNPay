@@ -21,7 +21,6 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Conversation
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
-import co.yore.splitnpay.viewModels.*
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class,
     ExperimentalMotionApi::class
@@ -49,7 +48,7 @@ fun IndividualChatScreen(
                 sheeting[it]
             }
         },
-        scrimColor = Color(0x8C243257),
+        scrimColor = CloudBurst8C,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
             topStart = 33.dep(),
@@ -190,7 +189,7 @@ fun IndividualChatScreen(
                                 onClick = {
                                     notifier.notify(DataIds.settleSummaryManage)
                                 },
-                                rippleColor = Bluish
+                                rippleColor = CuriousBlue
                             )
                     )
                 }

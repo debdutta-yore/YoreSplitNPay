@@ -1,4 +1,4 @@
-package co.yore.splitnpay.split_page_components
+package co.yore.splitnpay.components.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,12 +15,11 @@ import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.models.SplitBackButtonConfiguration
 
-
 @Composable
 fun BackButton(
     config: SplitBackButtonConfiguration = SplitBackButtonConfiguration(),
     contentDescription: String,
-    onClick: ()->Unit
+    onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -30,7 +29,7 @@ fun BackButton(
             .size(config.boxSize.dep())
             .clip(CircleShape)
             .clickable {
-                       onClick()
+                onClick()
             },
         contentAlignment = Alignment.Center
     ) {

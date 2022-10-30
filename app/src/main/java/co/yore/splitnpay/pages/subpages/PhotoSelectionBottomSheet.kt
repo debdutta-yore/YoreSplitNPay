@@ -1,4 +1,4 @@
-package co.yore.splitnpay.components
+package co.yore.splitnpay.pages.subpages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,29 +25,31 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Item
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.Lightblue1
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.CuriousBlue
+import co.yore.splitnpay.ui.theme.Zumthor
 import kotlinx.coroutines.CoroutineScope
 
-class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
+class PhotoSelectionBottomSheetModel(val callback: Callback) : BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         fun onContinue(arg: Any?)
         fun close()
     }
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.cameraOrGallery->{
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.cameraOrGallery -> {
                 callback.onContinue(arg)
             }
         }
     }
-    //////////////////
+
+    // ////////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
+
     @Composable
     override fun Content() {
         PhotoSelectionBottomSheet()
@@ -64,7 +66,7 @@ class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
     override fun onBack() {
         callback.close()
     }
-    /////////////////////////
+    // ///////////////////////
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -82,7 +84,6 @@ fun PhotoSelectionBottomSheet(
 
     val listState = rememberLazyListState()
     var selectedIndex by remember { mutableStateOf(-1) }
-
 
     Column(
         modifier = Modifier
@@ -133,23 +134,23 @@ fun PhotoSelectionBottomSheet(
     }
 }
 
-
 @Composable
 fun SingleItem(
     modifier: Modifier = Modifier,
-    icon: Painter, text: String,
+    icon: Painter,
+    text: String,
     isSelected: Boolean = false
 ) {
     Row(
         modifier = modifier
             .background(
-                if (isSelected)
-                    Lightblue1 else Color.White
+                if (isSelected) {
+                    Zumthor 
+                }else Color.White
             )
             .padding(start = 31f.dep())
             .fillMaxWidth()
-            .height(49f.dep())
-            ,
+            .height(49f.dep()),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -161,13 +162,14 @@ fun SingleItem(
 
             Icon(
                 modifier = Modifier.size(18.dp),
-                tint = Bluish,
-                painter = icon, contentDescription = "selected photo icon"
+                tint = CuriousBlue,
+                painter = icon,
+                contentDescription = "selected photo icon"
             )
             Spacer(modifier = Modifier.width(15f.dep()))
             Text(
                 text = text,
-                color = DarkBlue,
+                color = CloudBurst,
                 fontSize = 14.sp,
                 fontWeight = FontWeight(700)
             )
@@ -185,7 +187,7 @@ fun SingleItem(
                             bottomStart = 6.dep()
                         )
                     )
-                    .background(Bluish)
+                    .background(CuriousBlue)
             ){
 
             }

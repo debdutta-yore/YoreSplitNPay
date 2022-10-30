@@ -3,264 +3,22 @@ package co.yore.splitnpay.viewModels
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.models.AccountType
-import co.yore.splitnpay.models.BillTransaction
-import co.yore.splitnpay.models.Category
-import co.yore.splitnpay.models.TransactionStatus
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
-import co.yore.splitnpay.ui.theme.MyColor4
-import co.yore.splitnpay.ui.theme.MyColor5
-import co.yore.splitnpay.ui.theme.MyColor6
-import co.yore.splitnpay.viewModels.MembersMock.transaction
+import co.yore.splitnpay.repo.*
+import co.yore.splitnpay.ui.theme.BlackSqueeze
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-interface SettleRepository {
-    suspend fun getWillGet(): List<Transaction>
-    suspend fun getWillPay(): List<Transaction>
-}
-
-class SettleRepositoryImpl : SettleRepository {
-    private val getList = listOf(
-        Transaction(
-            name = "You",
-            imageUrl = "https://i.pravatar.cc/300",
-            mobileNumber = "9563376942",
-            amount = 3000f,
-            transactionType = TransactionType.Paid
-        ),
-        Transaction(
-            name = "Sushil Roy",
-            imageUrl = "https://i.pravatar.cc/300",
-            mobileNumber = "9563376942",
-            amount = 1000f,
-            transactionType = TransactionType.Paid
-        ),
-        Transaction(
-            name = "Manisha Roy",
-            imageUrl = "https://i.pravatar.cc/300",
-            mobileNumber = "9563376942",
-            amount = 500f,
-            transactionType = TransactionType.Unspecified
-        ),
-        Transaction(
-            name = "Sanjanaa Ray",
-            imageUrl = "https://i.pravatar.cc/300",
-            mobileNumber = "9563376942",
-            amount = 0f,
-            transactionType = TransactionType.Unspecified
-        )
-    )
-
-    private val payList = listOf(
-        Transaction(
-            name = "You",
-            imageUrl = "https://i.pravatar.cc/300",
-            mobileNumber = "9563376942",
-            amount = 3000f,
-            transactionType = TransactionType.Paid
-        ),
-        Transaction(
-            name = "Sushil Roy",
-            imageUrl = "https://i.pravatar.cc/300",
-            mobileNumber = "9563376942",
-            amount = 100000f,
-            transactionType = TransactionType.Paid
-        )
-    )
-
-    override suspend fun getWillGet(): List<Transaction> {
-        return getList
-    }
-
-    override suspend fun getWillPay(): List<Transaction> {
-        return payList
-    }
-}
-object MembersMock {
-    val transaction = BillTransaction(
-        transactionType = TransactionType.Received,
-        transactionStatus = TransactionStatus.Started,
-        billTotal = 10000f,
-        allPaidReceivedTotal = 3500f,
-        paidReceived = 1000f,
-        willPayReceive = 3000f,
-        amountLeft = 6500f,
-        transactionTime = "12:56 pm",
-        totalTransactions = 5,
-        completedTransactions = 5,
-        isSingleChat = false,
-        category = Category(
-            id = 6,
-            name = "Trip",
-            color = 0xFFFF4077,
-            icon = R.drawable.ic_trip,
-            isSelected = true,
-            isEditable = false,
-            subCategory = "Business Trip"
-        ),
-        from = co.yore.splitnpay.models.Friend(
-            name = "Sushil Roy",
-            mobileNumber = "8989898989",
-            imageUrl = "https://i.pravatar.cc/300",
-            accountNumber = "12334456511",
-            bank = Bank(
-                name = "SBI",
-                imageUrl = "https://i.pravatar.cc/300"
-            ),
-            accountType = AccountType.Savings,
-            hasRead = false,
-            isSelected = true
-        ),
-        to = co.yore.splitnpay.models.Friend(
-            name = "Manisha Roy",
-            mobileNumber = "8989898989",
-            imageUrl = "https://i.pravatar.cc/300",
-            accountNumber = "34526378964",
-            accountType = AccountType.Savings,
-            bank = Bank(
-                name = "Axis Bank",
-                imageUrl = "https://i.pravatar.cc/300"
-            ),
-            hasRead = false,
-            isSelected = true
-        ),
-        paymentMethod = "UPI",
-        transactionDate = "9 May 2020"
-    )
-}
-
-interface GroupRepository {
-    suspend fun getBillTransactions(): List<BillTransaction>
-    suspend fun getCategories(): List<Category>
-    suspend fun getAllCategories(): List<Category>
-    suspend fun getBillTransactions(number: Int): List<BillTransaction>
-    suspend fun members(): List<SingleItem>
-}
-
-class GroupsMock : GroupRepository {
-    val groupsList = emptyList<GroupShort>()
-    val group = listOf<GroupShort>(
-        GroupShort("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f),
-        GroupShort("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f)
-    )
-
-    override suspend fun getBillTransactions(): List<BillTransaction> {
-        return listOf(transaction)
-    }
-
-    override suspend fun getBillTransactions(number: Int): List<BillTransaction> {
-        return listOf(transaction)
-    }
-
-    // ////////////
-    var categoryList =
-        listOf(
-            Category(
-                id = 0,
-                name = "Food",
-                0xFF1A79E5,
-                R.drawable.ic_food
-            ),
-            Category(
-                id = 1,
-                name = "Trip",
-                0xFFFF4077,
-                R.drawable.ic_trip
-            ),
-            Category(
-                id = 2,
-                name = "Rent",
-                0xFFF6CC00,
-                R.drawable.ic_rent
-            ),
-            Category(
-                id = 3,
-                name = "Party",
-                0xFF37D8CF,
-                R.drawable.ic_party
-            ),
-            Category(
-                id = 4,
-                name = "Medical",
-                0xFF37D8CF,
-                R.drawable.ic_medical
-            ),
-            Category(
-                id = 5,
-                name = "Emi",
-                0xFFF6CC00,
-                R.drawable.ic_emi
-            ),
-            Category(
-                id = 6,
-                name = "Bills",
-                0xFFFF4077,
-                R.drawable.ic_bills
-            )
-        )
-
-    override suspend fun getCategories(): List<Category> {
-        return categoryList.take(4)
-    }
-
-    override suspend fun getAllCategories(): List<Category> {
-        return categoryList
-    }
-
-    override suspend fun members(): List<SingleItem>{
-        return listOf(
-            SingleItem(
-                id = 1,
-                profilePic = "https://i.pravatar.cc/300",
-                userName = "You",
-                mobileNo = "9563376942",
-                isSelected = false
-            ),
-            SingleItem(
-                id = 2,
-                profilePic = "https://i.pravatar.cc/300",
-                userName = "Manisha Roy",
-                mobileNo = "9563376942",
-                isSelected = false
-            ),
-            SingleItem(
-                id = 3,
-                profilePic = "https://i.pravatar.cc/300",
-                userName = "Sushil Roy",
-                mobileNo = "9563376942",
-                isSelected = false
-            ),
-            SingleItem(
-                id = 4,
-                profilePic = "https://i.pravatar.cc/300",
-                userName = "Sanjana Ray",
-                mobileNo = "9563376942",
-                isSelected = false
-            ),
-            SingleItem(
-                id = 5,
-                profilePic = "https://i.pravatar.cc/300",
-                userName = "Ankita Ray",
-                mobileNo = "9563376942",
-                isSelected = false
-            )
-        )
-    }
-}
 
 class GroupChatViewModel(
-    private val repo: GroupRepository = GroupsMock(),
-    private val settleRepository: SettleRepository = SettleRepositoryImpl(),
-    private val groupChatRepository: TransactionRepository = GroupChatRepositoryImpl()
+    private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
@@ -413,11 +171,11 @@ class GroupChatViewModel(
                     }
 
                     override suspend fun getGetStat(): List<Transaction> {
-                        return settleRepository.getWillGet()
+                        return repo.getWillGet()
                     }
 
                     override suspend fun getPayStat(): List<Transaction> {
-                        return settleRepository.getWillPay()
+                        return repo.getWillPay()
                     }
 
                     override fun onGetContinue(transaction: Transaction) {
@@ -436,18 +194,7 @@ class GroupChatViewModel(
                     }
 
                     override suspend fun getUpis(): List<Upi> {
-                        return listOf(
-                            Upi("UPI-1", "fdfldf@ljl", "SBI", "User1", MyColor4, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
-                        )
+                        return repo.getUpis()
                     }
 
                     override suspend fun cashPaymentMobileNumber(): String {
@@ -474,43 +221,7 @@ class GroupChatViewModel(
                     }
 
                     override fun transaction(): TransactionReview {
-                        return TransactionReview(
-                            transactionType = TransactionType.Paid,
-                            paymentMethod = "UPI",
-                            amount = 10000f,
-                            from = Friend(
-                                name = "Rudra Dev",
-                                mobileNumber = "7896230125",
-                                accountNumber = "AC-123",
-                                accountType = AccountType.Current,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                bank = Bank(
-                                    name = "SBI",
-                                    imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/SBI-logo.svg/500px-SBI-logo.svg.png?20200329171950"
-                                ),
-                                isSelected = true,
-                                hasRead = false
-                            ),
-                            to = Friend(
-                                name = "Deb Pan",
-                                mobileNumber = "8954102365",
-                                accountNumber = "AC-124",
-                                accountType = AccountType.Current,
-                                imageUrl = "https://i.pravatar.cc/300",
-                                bank = Bank(
-                                    name = "Axis",
-                                    imageUrl = "https://is3-ssl.mzstatic.com/image/thumb/Purple112/v4/8f/77/e9/8f77e9ee-9cc9-a308-eeda-7b4cbbcdeda6/AppIcon-0-0-1x_U007emarketing-0-0-0-8-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/146x0w.webp"
-                                ),
-                                isSelected = true,
-                                hasRead = false
-                            ),
-                            category = Category(
-                                id = 0,
-                                name = "Category",
-                                color = 0xffff0000,
-                                icon = R.drawable.travel
-                            )
-                        )
+                        return repo.transactionData()
                     }
 
                     override fun onChangeReceiver() {
@@ -612,7 +323,7 @@ class GroupChatViewModel(
             }
             DataIds.search -> {
                 search.value = true
-                _statusBarColor.value = StatusBarColor(MyColor6, true)
+                _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
             }
             DataIds.filterDone -> {
                 mySheeting.hide()
@@ -624,7 +335,7 @@ class GroupChatViewModel(
 
             WirelessViewModelInterface.startupNotification -> {
                 _statusBarColor.value = StatusBarColor(
-                    color = StatusBarGreen,
+                    color = RobinsEggBlue,
                     darkIcons = true
                 )
             }
@@ -685,7 +396,7 @@ class GroupChatViewModel(
         if (search.value){
             search.value = false
             _statusBarColor.value = StatusBarColor(
-                color = StatusBarGreen,
+                color = RobinsEggBlue,
                 darkIcons = true
             )
             searchText.value = ""
@@ -725,80 +436,15 @@ class GroupChatViewModel(
         // ////////////////////////////////////
 
         _statusBarColor.value = StatusBarColor(
-            color = StatusBarGreen,
+            color = RobinsEggBlue,
             darkIcons = true
         )
         // ////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {
-            val billTransactions = groupChatRepository.getTransactions()
             withContext(Dispatchers.Main) {
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.MEMBER,
-                        data = MemberData(
-                            name = "Manisha Roy",
-                            profileImage = "https://i.pravatar.cc/100"
-                        )
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.DATE,
-                        data = "May 9th 2022"
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.CREATION,
-                        data = GroupCreationEvent(
-                            creator = "You",
-                            groupName = "Office buddies"
-                        )
-                    )
-                )
-                _conversations.addAll(
-                    billTransactions.map {
-                        Conversation(
-                            type = Conversation.Type.TRANSACTION,
-                            data = it
-                        )
-                    }
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.STATUS,
-                        data = ChatStatus(
-                            listOf(
-                                "https://i.pravatar.cc/100",
-                                "https://i.pravatar.cc/100",
-                                "https://i.pravatar.cc/100",
-                                "https://i.pravatar.cc/100"
-                            ),
-                            left = false
-                        )
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.CHAT,
-                        data = ChatData(
-                            content = "Hello, guy"
-                        )
-                    )
-                )
-                _conversations.add(
-                    Conversation(
-                        type = Conversation.Type.CHAT,
-                        data = ChatData(
-                            content = "Hello, guys",
-                            profileImage = "https://i.pravatar.cc/100"
-                        )
-                    )
-                )
+                _conversations.addAll(repo.conversations())
             }
         }
 
     }
 }
-
-

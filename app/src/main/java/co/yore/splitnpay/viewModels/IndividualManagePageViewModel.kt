@@ -5,17 +5,21 @@ import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class IndividualManagePageViewModel : ViewModel(), WirelessViewModelInterface {
+class IndividualManagePageViewModel(
+    val repo: MasterRepo = MasterRepoImpl()
+) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val sheeting = Sheeting(
@@ -79,7 +83,7 @@ class IndividualManagePageViewModel : ViewModel(), WirelessViewModelInterface {
     private val groups = mutableStateListOf<GroupData>()
     private val statusBarColor = mutableStateOf(
         StatusBarColor(
-            color = Color(0xff00CEC3),
+            color = RobinsEggBlue,
             darkIcons = false
         )
     )
@@ -94,41 +98,7 @@ class IndividualManagePageViewModel : ViewModel(), WirelessViewModelInterface {
             DataIds.statusBarColor to statusBarColor
         )
         groups.addAll(
-            listOf(
-                GroupData(
-                    id = 0,
-                    image = "https://i.pravatar.cc/300",
-                    name = "Tiger",
-                    members = listOf(
-                        ContactData(
-                            id = 0,
-                            image = "https://i.pravatar.cc/300",
-                            name = "Sanjana Roy",
-                            mobile = "7964210356"
-                        ),
-                        ContactData(
-                            id = 0,
-                            image = "https://i.pravatar.cc/300",
-                            name = "Sanjana Roy",
-                            mobile = "7964210356"
-                        ),
-                        ContactData(
-                            id = 0,
-                            image = "https://i.pravatar.cc/300",
-                            name = "Sanjana Roy",
-                            mobile = "7964210356"
-                        ),
-                        ContactData(
-                            id = 0,
-                            image = "https://i.pravatar.cc/300",
-                            name = "Sanjana Roy",
-                            mobile = "7964210356"
-                        )
-                    ),
-                    willGet = 1000f,
-                    willPay = 200f
-                )
-            )
+            repo.groupDatas()
         )
     }
 

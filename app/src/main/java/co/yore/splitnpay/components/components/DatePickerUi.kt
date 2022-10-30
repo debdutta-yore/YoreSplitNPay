@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.components.configuration.*
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.fadingEdge
 import co.yore.splitnpay.libs.sep

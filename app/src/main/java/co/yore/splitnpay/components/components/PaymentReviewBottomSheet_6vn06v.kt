@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -19,7 +18,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.CustomButton_3egxtx
@@ -140,7 +138,7 @@ fun PaymentReviewBottomSheet_6vn06v(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(LightBlue5)
+                .background(SteelBlue)
                 .align(Alignment.CenterHorizontally)
         )
         config.holderBottomPadding.sy()
@@ -161,7 +159,7 @@ fun PaymentReviewBottomSheet_6vn06v(
                 .padding(horizontal = 31.dep())
                 .fillMaxWidth()
                 .background(
-                    color = LightGrey2,
+                    color = Alabaster,
                     shape = RoundedCornerShape(8.dep())
                 )
                 .clip(RoundedCornerShape(8.dep()))
@@ -173,12 +171,12 @@ fun PaymentReviewBottomSheet_6vn06v(
                     notifier.notify(DataIds.paymentReviewSubCategory, it)
                 },
                 config = CustomTextFieldConfiguration(
-                    textColor = LightGrey
+                    textColor = DoveGray
                 ),
                 leadingIcon = R.drawable.ic_description,
                 placeHolderText = stringResource(id = R.string.note),
                 contentDescription = "CustomTextField",
-                iconTint = LightGrey
+                iconTint = DoveGray
             )
         }
         config.customTextBoxBottomPadding.sy()
@@ -188,12 +186,12 @@ fun PaymentReviewBottomSheet_6vn06v(
                 .fillMaxWidth()
                 .height(55.dep())
                 .clip(RoundedCornerShape(11.dep()))
-                .background(color = LightGrey2),
+                .background(color = Alabaster),
             contentAlignment = Alignment.Center
         ) {
             FontFamilyText(
                 text = stringResource(id = R.string.settle_confirm_note),
-                color = LightGrey3,
+                color = DustyGray,
                 fontSize = 11.sep(),
                 letterSpacing = (-0.33).sep(),
                 lineHeight = 12.89.sep()
@@ -238,7 +236,7 @@ fun AmountSection(
         derivedStateOf { transaction.transactionType == TransactionType.Paid }
     }
     val tintColor = remember {
-        derivedStateOf { if (isPaid.value) Pink else Bluish }
+        derivedStateOf { if (isPaid.value) RadicalRed else CuriousBlue }
     }
     val amountTrailingText = remember {
         derivedStateOf {
@@ -261,7 +259,7 @@ fun AmountSection(
         ) {
             FontFamilyText(
                 text = stringResource(id = R.string.amount) + ":",
-                color = DarkBlue,
+                color = CloudBurst,
                 fontSize = 14.sep(),
                 letterSpacing = 0.666667.sep(),
                 lineHeight = 16.sep()
@@ -299,19 +297,19 @@ fun AmountSection(
         3.sy()
         FontFamilyText(
             text = transaction.amount.numberToWords(),
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 12.sep()
         )
         20.sy()
         FontFamilyText(
             text = stringResource(R.string.payment_method) + ":",
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 14.sep()
         )
         9.sy()
         FontFamilyText(
             text = transaction.paymentMethod,
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 14.sep(),
             fontWeight = FontWeight.Bold
         )
@@ -329,7 +327,7 @@ fun FromToPortion(
         derivedStateOf { transaction.transactionType == TransactionType.Paid }
     }
     val tintColor = remember {
-        derivedStateOf { if (isPaid.value) Pink else Bluish }
+        derivedStateOf { if (isPaid.value) RadicalRed else CuriousBlue }
     }
     Row(
         modifier = Modifier
@@ -396,18 +394,18 @@ fun FromToPortion(
             Column() {
                 FontFamilyText(
                     text = stringResource(R.string.from) + ":",
-                    color = Bluish,
+                    color = CuriousBlue,
                     fontSize = 14.sep()
                 )
                 FontFamilyText(
                     text = transaction.from.name,
-                    color = Bluish,
+                    color = CuriousBlue,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
                 FontFamilyText(
                     text = transaction.from.mobileNumber,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -423,7 +421,7 @@ fun FromToPortion(
                 ) {
                     FontFamilyText(
                         text = stringResource(R.string.to) + ":",
-                        color = DarkBlue,
+                        color = CloudBurst,
                         fontSize = 14.sep()
                     )
                     EditIcon_gx6f1w(
@@ -437,19 +435,19 @@ fun FromToPortion(
                 }
                 FontFamilyText(
                     text = transaction.to.name,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
                 FontFamilyText(
                     text = "${transaction.to.accountNumber} (${transaction.to.accountType})",
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
                 FontFamilyText(
                     text = transaction.to.bank.name,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -476,7 +474,7 @@ fun EditIcon_gx6f1w(
                 config.backgroundColor
             )
             .clickable(
-                rippleColor = Bluish,
+                rippleColor = CuriousBlue,
                 onClick = {
                     onClick()
                 },
@@ -493,14 +491,14 @@ fun EditIcon_gx6f1w(
             modifier = Modifier.align(Alignment.CenterVertically),
             painter = painterResource(id = icon),
             contentDescription = "edit",
-            tint = Bluish
+            tint = CuriousBlue
         )
         5.sx()
         FontFamilyText(
             modifier = Modifier.align(Alignment.CenterVertically),
             text = text,
             fontSize = 12.sep(),
-            color = Bluish
+            color = CuriousBlue
         )
         10.sx()
     }
@@ -571,7 +569,7 @@ fun AmountSection(
         derivedStateOf { transaction.transactionType == TransactionType.Paid }
     }
     val tintColor = remember {
-        derivedStateOf { if (isPaid.value) Pink else Bluish }
+        derivedStateOf { if (isPaid.value) RadicalRed else CuriousBlue }
     }
     val amountTrailingText = remember {
         derivedStateOf {
@@ -594,7 +592,7 @@ fun AmountSection(
         ) {
             FontFamilyText(
                 text = stringResource(id = R.string.amount) + ":",
-                color = DarkBlue,
+                color = CloudBurst,
                 fontSize = 14.sep(),
                 letterSpacing = 0.666667.sep(),
                 lineHeight = 16.sep()
@@ -632,19 +630,19 @@ fun AmountSection(
         3.sy()
         FontFamilyText(
             text = transaction.willPayReceive.numberToWords(),
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 12.sep()
         )
         20.sy()
         FontFamilyText(
             text = stringResource(R.string.payment_method) + ":",
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 14.sep()
         )
         9.sy()
         FontFamilyText(
             text = transaction.paymentMethod,
-            color = DarkBlue,
+            color = CloudBurst,
             fontSize = 14.sep(),
             fontWeight = FontWeight.Bold
         )
@@ -662,7 +660,7 @@ fun FromToPortion(
         derivedStateOf { transaction.transactionType == TransactionType.Paid }
     }
     val tintColor = remember {
-        derivedStateOf { if (isPaid.value) Pink else Bluish }
+        derivedStateOf { if (isPaid.value) RadicalRed else CuriousBlue }
     }
     Row(
         modifier = Modifier
@@ -729,18 +727,18 @@ fun FromToPortion(
             Column() {
                 FontFamilyText(
                     text = stringResource(R.string.from) + ":",
-                    color = Bluish,
+                    color = CuriousBlue,
                     fontSize = 14.sep()
                 )
                 FontFamilyText(
                     text = transaction.from.name,
-                    color = Bluish,
+                    color = CuriousBlue,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
                 FontFamilyText(
                     text = transaction.from.mobileNumber,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -756,7 +754,7 @@ fun FromToPortion(
                 ) {
                     FontFamilyText(
                         text = stringResource(R.string.to) + ":",
-                        color = DarkBlue,
+                        color = CloudBurst,
                         fontSize = 14.sep()
                     )
                     EditIcon_gx6f1w(
@@ -770,19 +768,19 @@ fun FromToPortion(
                 }
                 FontFamilyText(
                     text = transaction.to.name,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
                 FontFamilyText(
                     text = "${transaction.to.accountNumber} (${transaction.to.accountType})",
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )
                 FontFamilyText(
                     text = transaction.to.bank.name,
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 14.sep(),
                     fontWeight = FontWeight.Bold
                 )

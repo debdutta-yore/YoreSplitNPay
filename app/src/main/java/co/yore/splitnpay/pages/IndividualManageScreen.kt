@@ -5,11 +5,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import co.yore.splitnpay.libs.Sheeting
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sheetContent
 import co.yore.splitnpay.libs.sheeting
+import co.yore.splitnpay.ui.theme.CloudBurst8C
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -26,7 +26,7 @@ fun IndividualManageScreen(
             topStart = 25f.dep(),
             topEnd = 25f.dep()
         ),
-        scrimColor = Color(0x8C243257)
+        scrimColor = CloudBurst8C
     ) {
         IndividualManagePage()
     }

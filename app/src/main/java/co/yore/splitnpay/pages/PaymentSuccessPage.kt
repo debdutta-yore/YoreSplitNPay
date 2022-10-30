@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 
@@ -33,7 +33,7 @@ fun PaymentSuccessScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = co.yore.splitnpay.ui.theme.Greenishblue)
+            .background(color = co.yore.splitnpay.ui.theme.OuterSpace)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

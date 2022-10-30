@@ -1,4 +1,5 @@
-package co.yore.splitnpay.friend_item
+package co.yore.splitnpay.components.components
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -24,8 +25,8 @@ fun ArrowButton_ohezqf(
     contentDescription: String,
     config: ArrowButtonConfiguration = ArrowButtonConfiguration(),
     pressed: Boolean,
-    onClicked: ()->Unit,
-    onPressed: (Boolean)->Unit,
+    onClicked: () -> Unit,
+    onPressed: (Boolean) -> Unit
 ){
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -44,7 +45,7 @@ fun ArrowButton_ohezqf(
                 if (!(isPressed || pressed)) config.iconBackgroundColor else config.iconPressedColor
             )
             .size(config.iconButtonSize.dep()),
-        onClick = onClicked,
+        onClick = onClicked
     ) {
         Icon(
             modifier = Modifier.size(config.iconSize.dep()),

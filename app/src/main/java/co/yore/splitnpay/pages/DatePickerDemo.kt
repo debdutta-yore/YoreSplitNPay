@@ -13,12 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.components.components.YoreDatePicker
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
@@ -648,7 +647,7 @@ fun DatePickerDemo(
                     .clip(RoundedCornerShape(50.dep()))
                     .height(2.dep())
                     .width(19.dep())
-                    .background(LightBlue5)
+                    .background(SteelBlue)
                     .align(Alignment.CenterHorizontally)
             )
             16.sy()
@@ -782,7 +781,7 @@ fun RowScope.FromToDash() {
             .weight(1f)
             .dashedBorder(
                 width = 1.dep(),
-                color = Color(0xff9EB1C8),
+                color = RockBlue,
                 shape = RoundedCornerShape(2.dep()),
                 on = 4.dep(),
                 off = 4.dep()
@@ -799,9 +798,9 @@ fun SingleFromToUI(
     val color by remember(selected) {
         derivedStateOf {
             if (selected) {
-                Bluish
+                CuriousBlue
             } else {
-                GreyBorder
+                RockBlue
             }
         }
     }
@@ -819,7 +818,7 @@ fun SingleFromToUI(
             .clip(shape = RoundedCornerShape(11.dep()))
             .clickable(
                 rippleRadius = 76.dep(),
-                rippleColor = Bluish,
+                rippleColor = CuriousBlue,
                 onClick = {
                     onClick()
                 }
@@ -882,9 +881,9 @@ fun SingleTab(
     val color by remember(selected) {
         derivedStateOf {
             if (selected) {
-                DarkBlue
+                CloudBurst
             } else {
-                GreyBorder
+                RockBlue
             }
         }
     }
@@ -923,11 +922,11 @@ fun DateResultDisplayUI(
     (15 * (1f - animatedShow)).sy()
     (14 * (animatedShow)).sy()
     val borderColor by animateColorAsState(
-        targetValue = if (data.error) Color(0xffFF4077) else LightGrey7,
+        targetValue = if (data.error) RadicalRed else BlackSqueeze1,
         tween(500)
     )
     val backgroundColor by animateColorAsState(
-        targetValue = if (data.error) Color(0xffFFF8FA) else LightGrey7,
+        targetValue = if (data.error) LavenderBlush2 else BlackSqueeze1,
         tween(500)
     )
     Row(
@@ -968,7 +967,7 @@ fun DateResultDisplayUI(
                             FontFamilyText(
                                 text = (if (it.range) stringResource(R.string.dates) else stringResource(R.string.date)) + ": ",
                                 fontSize = 12.sep(),
-                                color = LightGrey6
+                                color = Lynch
                             )
                             FontFamilyText(
                                 text = it.value,
@@ -981,7 +980,7 @@ fun DateResultDisplayUI(
                             FontFamilyText(
                                 text = it.duration,
                                 fontSize = 14.sep(),
-                                color = DarkBlue,
+                                color = CloudBurst,
                                 fontWeight = FontWeight(500)
                             )
                             15.sx()
@@ -1000,7 +999,7 @@ fun DateResultDisplayUI(
                             FontFamilyText(
                                 text = stringResource(R.string.from) + ":",
                                 fontSize = 12.sep(),
-                                color = LightGrey6
+                                color = Lynch
                             )
                             3.sx()
                             FontFamilyText(
@@ -1012,7 +1011,7 @@ fun DateResultDisplayUI(
                             FontFamilyText(
                                 text = stringResource(R.string.to) + ":",
                                 fontSize = 12.sep(),
-                                color = LightGrey6
+                                color = Lynch
                             )
                             3.sx()
                             FontFamilyText(
@@ -1029,7 +1028,7 @@ fun DateResultDisplayUI(
                         FontFamilyText(
                             text = it.duration,
                             fontSize = 14.sep(),
-                            color = DarkBlue,
+                            color = CloudBurst,
                             fontWeight = FontWeight(500)
                         )
                         15.sx()

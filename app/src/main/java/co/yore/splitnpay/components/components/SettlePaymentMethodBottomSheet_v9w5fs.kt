@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -24,7 +23,6 @@ import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
@@ -35,7 +33,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.CustomButton_3egxtx
@@ -180,7 +177,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
     val settleCashBackgroundColor = animateColorAsState(
         targetValue =
         if (isSettleViaCashPaymentSelected) {
-            LightBlue1
+            Zumthor
         } else {
             Color.White
         }
@@ -191,7 +188,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
         if (isSettleViaCashPaymentSelected) {
             Color.White
         } else {
-            LightBlue1
+            Zumthor
         }
     )
 
@@ -211,7 +208,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Color(0xff5A87BB))
+                .background(SteelBlue)
                 .align(CenterHorizontally)
         )
         config.bottomPaddingOfHolder.sy()
@@ -250,7 +247,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                 ) {
                     FontFamilyText(
                         text = stringResource(R.string.settle_as_cash),
-                        color = DarkBlue,
+                        color = CloudBurst,
                         fontSize = 14.sep(),
                         lineHeight = 16.sep(),
                         letterSpacing = 0.66.sep(),
@@ -259,7 +256,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                     6.sy()
                     FontFamilyText(
                         text = mobileNumber,
-                        color = Color(0xff5A87BB),
+                        color = SteelBlue,
                         fontSize = 14.sep(),
                         lineHeight = 16.sep()
                     )
@@ -277,7 +274,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                         .width(8.dep())
                         .fillMaxHeight()
                         .background(
-                            color = Bluish,
+                            color = CuriousBlue,
                             shape = RoundedCornerShape(
                                 topStart = 5.dep(),
                                 bottomStart = 5.dep()
@@ -311,7 +308,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                 14.sx()
                 FontFamilyText(
                     text = stringResource(R.string.settle_via_upi),
-                    color = DarkBlue,
+                    color = CloudBurst,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
                 )
@@ -328,7 +325,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                         .width(8.dep())
                         .fillMaxHeight()
                         .background(
-                            color = Bluish,
+                            color = CuriousBlue,
                             shape = RoundedCornerShape(
                                 topStart = 5.dep(),
                                 bottomStart = 5.dep()
@@ -413,7 +410,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                                 .padding(top = 16.dep())
                                 .offset(x = (animatedArrowCxx / density).dp - 7.5.dp)
                                 .size(15.dep())
-                                .background(AlabasterSolid, TriangleShape)
+                                .background(Alabaster2, TriangleShape)
                         ) {
                         }
                         Box(
@@ -421,12 +418,12 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                                 // .padding(top = 16.dep())
                                 .height(75.dep())
                                 .fillMaxWidth()
-                                .background(color = AlabasterSolid),
+                                .background(color = Alabaster2),
                             contentAlignment = Center
                         ) {
                             FontFamilyText(
                                 text = selectedUpiId,
-                                color = LightGrey,
+                                color = DoveGray,
                                 fontSize = 14.sep()
                             )
                         }
@@ -441,7 +438,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                             .height(52.dep())
                             .fillMaxWidth()
                             .background(
-                                color = LightGrey2,
+                                color = Alabaster,
                                 shape = RoundedCornerShape(8.dep())
                             )
                     ) {
@@ -453,7 +450,7 @@ fun SettlePaymentMethodBottomSheet_v9w5fs(
                             leadingIcon = R.drawable.ic_upi,
                             placeHolderText = stringResource(id = R.string.add_upi_id),
                             contentDescription = "",
-                            iconTint = Color(0xff656565)
+                            iconTint = DoveGray
                         )
                     }
                 }
@@ -559,7 +556,7 @@ fun UpiButton_fuhz6x(
                     )
             ) {
                 SelectedIcon_f9tfi6(
-                    config = SelectedIconConfiguration(backGroundColor = Bluish),
+                    config = SelectedIconConfiguration(backGroundColor = CuriousBlue),
                     contentDescription = "selectedIcon"
                 )
             }
@@ -624,7 +621,7 @@ fun OutlineButton_hargeg(
                 shape = config.shape
             )
             .clickable(
-                rippleColor = DarkBlue,
+                rippleColor = CloudBurst,
                 onClick = {
                     onClick()
                 }

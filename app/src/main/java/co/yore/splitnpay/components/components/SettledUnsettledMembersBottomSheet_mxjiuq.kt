@@ -13,21 +13,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.SettleOptions
 import co.yore.splitnpay.models.SettledUnsettledMembersBottomSheet
 import co.yore.splitnpay.models.SingleSettledOrUnsettledMember
 import co.yore.splitnpay.pages.*
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightBlue3
+import co.yore.splitnpay.ui.theme.Botticelli
+import co.yore.splitnpay.ui.theme.CloudBurst
+import co.yore.splitnpay.ui.theme.SteelBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -132,11 +131,11 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
         mutableStateOf(true)
     }
     val settledTabTextColor = animateColorAsState(
-        targetValue = if (isSettledMemberSelected) DarkBlue else LightBlue3,
+        targetValue = if (isSettledMemberSelected) CloudBurst else Botticelli,
         tween(700)
     )
     val unsettledTabTextColor = animateColorAsState(
-        targetValue = if (isSettledMemberSelected) LightBlue3 else DarkBlue,
+        targetValue = if (isSettledMemberSelected) Botticelli else CloudBurst,
         tween(700)
     )
 
@@ -150,7 +149,7 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Color(0xff5A87BB))
+                .background(SteelBlue)
                 .align(Alignment.CenterHorizontally)
         )
         config.holderBottomPadding.sy()
@@ -282,5 +281,3 @@ fun SettledUnsettledMembersBottomSheet_mxjiuq(
         25.sy()
     }
 }
-
-

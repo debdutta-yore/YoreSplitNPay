@@ -9,18 +9,17 @@ import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.*
+import co.yore.splitnpay.repo.MasterRepo
+import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-
-
 class GroupSummaryViewModel(
-    private val summaryRepo: GroupSummaryRepository = GroupSummaryRepositoryImpl(),
-    private val expenseRepository: ExpenseRepository = ExpenseRepositoryImpl(),
-    private val timeFilterRepo: TimeFilterRepository = TimeFilterRepositoryImpl()
+    private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     private val _resolver = Resolver()
@@ -410,9 +409,9 @@ class GroupSummaryViewModel(
 
     private fun populateMembers() {
         viewModelScope.launch(Dispatchers.IO) {
-            val members = summaryRepo.getMembers()
-            val willGetTransactions = summaryRepo.getWillGetTransactions()
-            val willPayTransactions = summaryRepo.getWillPayTransactions()
+            val members = repo.getMembers()
+            val willGetTransactions = repo.getWillGetTransactions()
+            val willPayTransactions = repo.getWillPayTransactions()
             withContext(Dispatchers.Main) {
                 _members.addAll(
                     members
@@ -429,10 +428,10 @@ class GroupSummaryViewModel(
 
     private fun populateExpenses() {
         viewModelScope.launch(Dispatchers.IO) {
-            val expenses = expenseRepository.getCategoryExpense()
-            val barChartData = expenseRepository.getBarChartData()
-            val pieChartData = expenseRepository.getPieChartData()
-            val datePickerData = expenseRepository.getDatePickerData()
+            val expenses = repo.getCategoryExpense()
+            val barChartData = repo.getBarChartData()
+            val pieChartData = repo.getPieChartData()
+            val datePickerData = repo.getDatePickerData()
             withContext(Dispatchers.Main) {
                 _expensesCategories.addAll(
                     expenses
@@ -479,14 +478,14 @@ class GroupSummaryViewModel(
 
     private fun setUpStatusBarColor() {
         _statusBarColor.value = StatusBarColor(
-            color = StatusBarGreen,
+            color = RobinsEggBlue,
             darkIcons = true
         )
     }
 
     private fun populateTimeFilterItems() {
         viewModelScope.launch(Dispatchers.IO) {
-            val items = timeFilterRepo.getItems()
+            val items = repo.getItems()
             withContext(Dispatchers.Main) {
                 _timeFilterItems.addAll(
                     items
