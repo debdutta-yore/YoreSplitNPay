@@ -39,10 +39,7 @@ import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.pages.LightBlue1
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightGreen3
+import co.yore.splitnpay.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -643,7 +640,7 @@ fun OutlineButton_hargeg(
 }
 
 
-val AlabasterSolid = Color(0xffFAFAFA)
+
 
 val TriangleShape = GenericShape { size, _ ->
     // 1)

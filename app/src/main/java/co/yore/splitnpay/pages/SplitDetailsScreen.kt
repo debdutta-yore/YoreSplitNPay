@@ -43,7 +43,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -57,6 +56,7 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.dashedBorder
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Category
@@ -64,7 +64,6 @@ import co.yore.splitnpay.ui.theme.*
 import co.yore.splitnpay.viewModels.MembersMock.transaction
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import co.yore.splitnpay.libs.dashedBorder
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -75,16 +74,13 @@ public inline fun <T, R> T?.elseLet(elseBlock: () -> R, block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    return if(this==null){
+    return if (this == null){
         elseBlock()
-    }
-    else{
+    } else {
         block(this)
     }
 
 }
-
-
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -108,14 +104,14 @@ fun SplitDetailsScreen(
 }
 
 
-val BluishGrey = Color(0xff8498AB)
+
 @Composable
 fun SplitTypeRowItem_yxqp10(
     selected: Boolean,
     onClick: () -> Unit,
     item: String,
     config: SplitTypeRowItem = SplitTypeRowItem(),
-    contentDescription:String
+    contentDescription: String
 ) {
 
     val optionColor = animateColorAsState(
@@ -159,6 +155,7 @@ fun SplitTypeRowItem_yxqp10(
         )
     }
 }
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SplitDetailsPage(
@@ -304,7 +301,7 @@ fun SplitDetailsPage(
                         shape = RoundedCornerShape(8.dep())
                     ),
                 value = subCategoryText,
-                onValueChange = { notifier.notify(DataIds.subCategoryText, it) },
+                onValueChange = { notifier.notify(DataIds.subCategoryText, it) }
             ) { innerTextField ->
                 TextFieldDefaults.TextFieldDecorationBox(
                     value = subCategoryText,
@@ -356,7 +353,7 @@ fun SplitDetailsPage(
                     FontFamilyText(
                         text = stringResource(R.string.date) + ":",
                         color = LightBlue4,
-                        fontSize = 15.sep(),
+                        fontSize = 15.sep()
                     )
                     12.sy()
                     DateSelectorCard_5b6qhm(contentDescription = "Date Selector")
@@ -386,17 +383,17 @@ fun SplitDetailsPage(
                 indicator = { tabPositions: List<TabPosition> ->
                     Box {}
                 },
-                divider = { TabRowDefaults.Divider(color = Color.Transparent) },
+                divider = { TabRowDefaults.Divider(color = Color.Transparent) }
             ) {
                 tabsList.forEachIndexed { index, text ->
-                    TabItemUI(selectedTabIndex,index,text){
-                        notifier.notify(DataIds.selectedTabIndex,it)
+                    TabItemUI(selectedTabIndex, index, text){
+                        notifier.notify(DataIds.selectedTabIndex, it)
                     }
                 }
             }
             22.sy()
             AnimatedVisibility(
-                visible = selectedTabIndex == 1,
+                visible = selectedTabIndex == 1
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth()
@@ -412,7 +409,7 @@ fun SplitDetailsPage(
                                 item = item.name,
                                 selected = selected,
                                 onClick = {
-                                    notifier.notify(DataIds.selectedListOption,index)
+                                    notifier.notify(DataIds.selectedListOption, index)
                                 },
                                 contentDescription = "Split Type item"
                             )
@@ -428,16 +425,15 @@ fun SplitDetailsPage(
             ) {
                 if (selectedTabIndex == 1) {
                     val editWidths = remember {
-                        mutableStateMapOf<Int,Int>()
+                        mutableStateMapOf<Int, Int>()
                     }
                     val maxEditWidth by remember {
                         derivedStateOf {
-                            if(editWidths.isNotEmpty()){
+                            if (editWidths.isNotEmpty()){
                                 editWidths.maxBy {
                                     it.value
                                 }.value
-                            }
-                            else{
+                            } else {
                                 0
                             }
                         }
@@ -485,7 +481,7 @@ fun SplitDetailsPage(
                                             notifier.notify(DataIds.confirmSplitClick)
                                         },
                                         contentDescription = "Confirm button",
-                                        enabled = paidRemaining==0.0 && adjustRemaining==0.0
+                                        enabled = paidRemaining == 0.0 && adjustRemaining == 0.0
                                     )
                                 }
                                 18.sy()
@@ -494,16 +490,15 @@ fun SplitDetailsPage(
                     }
                 } else {
                     val editWidths = remember {
-                        mutableStateMapOf<Int,Int>()
+                        mutableStateMapOf<Int, Int>()
                     }
                     val maxEditWidth by remember {
                         derivedStateOf {
-                            if(editWidths.isNotEmpty()){
+                            if (editWidths.isNotEmpty()){
                                 editWidths.maxBy {
                                     it.value
                                 }.value
-                            }
-                            else{
+                            } else {
                                 0
                             }
                         }
@@ -549,7 +544,7 @@ fun SplitDetailsPage(
                                     )
                             ) {
                                 CustomButton_3egxtx(
-                                    enabled = paidRemaining==0.0 && adjustRemaining==0.0,
+                                    enabled = paidRemaining == 0.0 && adjustRemaining == 0.0,
                                     text = "Confirm and Split",
                                     onClick = {
                                         notifier.notify(DataIds.confirmSplitClick)
@@ -582,7 +577,6 @@ fun SplitDetailsPage(
             )
         }
 
-
     }
 }
 
@@ -590,16 +584,13 @@ fun SplitDetailsPage(
 fun PaidMessage(remaining: Double) {
     val backgroundColor by remember(remaining) {
         derivedStateOf {
-            if(remaining==0.0){
+            if (remaining == 0.0){
                 Color(0xffF2FFFD)
-            }
-            else if(remaining>0f){
+            } else if (remaining > 0f){
                 Color(0xFFFFE2D3)
-            }
-            else if(remaining<0f){
+            } else if (remaining < 0f){
                 Color(0xffFFEFF4)
-            }
-            else{
+            } else {
                 Color.Transparent
             }
         }
@@ -607,32 +598,26 @@ fun PaidMessage(remaining: Double) {
     val animatedBackgroundColor by animateColorAsState(targetValue = backgroundColor)
     val message by remember(remaining) {
         derivedStateOf {
-            if(remaining==0.0){
+            if (remaining == 0.0){
                 "0 Remaining"
-            }
-            else if(remaining>0f){
+            } else if (remaining > 0f){
                 "₹ ${YoreAmountFormatter.decFormatter.format(remaining)} Remaining"
-            }
-            else if(remaining<0f){
+            } else if (remaining < 0f){
                 "₹ ${YoreAmountFormatter.decFormatter.format(-remaining)} Exceeded"
-            }
-            else{
+            } else {
                 ""
             }
         }
     }
     val color by remember(remaining) {
         derivedStateOf {
-            if(remaining==0.0){
+            if (remaining == 0.0){
                 Color(0xff37D8CF)
-            }
-            else if(remaining>0f){
+            } else if (remaining > 0f){
                 Color(0xFFFF5700)
-            }
-            else if(remaining<0f){
+            } else if (remaining < 0f){
                 Color(0xffFF4077)
-            }
-            else{
+            } else {
                 Color.Transparent
             }
         }
@@ -663,9 +648,9 @@ fun TabItemUI(
     selectedTabIndex: Int,
     index: Int,
     text: String,
-    onSelected: (Int)->Unit,
+    onSelected: (Int) -> Unit
 ) {
-    val color by remember(selectedTabIndex,index) {
+    val color by remember(selectedTabIndex, index) {
         derivedStateOf {
             if (selectedTabIndex == index) DarkBlue else LightBlue3
         }
@@ -686,17 +671,16 @@ fun TabItemUI(
         text = text,
         fontSize = 21f.sep(),
         color = animatedColor,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Bold
     )
 }
-
 
 @Composable
 fun SplitAdjustItem_eugo18(
     memberPayment: MemberPayment,
     isEditable: Boolean,
     config: SplitAdjustItemConfiguration = SplitAdjustItemConfiguration(),
-    contentDescription:String
+    contentDescription: String
 ) {
     Row(
         modifier = Modifier
@@ -719,7 +703,7 @@ fun SplitAdjustItem_eugo18(
                     )
                     .padding(config.borderStroke.dep()),
                 model = ImageRequest.Builder(LocalContext.current)
-                    //TODO - update using friend.imageUrl
+                    // TODO - update using friend.imageUrl
                     .data("https://i.pravatar.cc/300?" + memberPayment.name)
                     .crossfade(true)
                     .build(),
@@ -731,7 +715,8 @@ fun SplitAdjustItem_eugo18(
         22.sx()
         Column(
             modifier = Modifier
-                .padding(top = 7.dep())) {
+                .padding(top = 7.dep())
+        ) {
             FontFamilyText(
                 text = memberPayment.name,
                 fontSize = config.nameFontSize.sep(),
@@ -753,7 +738,7 @@ val WhitishGreen = Color(0xFFF2FFFD)
 fun SplitMembersRemainingBox(
     remaining: Int,
     config: SplitMembersRemainingBoxConfiguration = SplitMembersRemainingBoxConfiguration(),
-    contentDescription:String
+    contentDescription: String
 ){
     Box(
         modifier = Modifier
@@ -770,7 +755,7 @@ fun SplitMembersRemainingBox(
                     vertical = 10.dep(),
                     horizontal = 15.dep()
                 ),
-                text = remaining.toString() + " "+ stringResource(id = R.string.remaining),
+                text = remaining.toString() + " " + stringResource(id = R.string.remaining),
                 fontSize = config.fontSize.sep(),
                 color = config.textColor
             )
@@ -786,11 +771,11 @@ fun SplitMemberPaymentItem_z0nkzc(
     editable: Boolean = false,
     config: SplitPaidByItemConfiguration = SplitPaidByItemConfiguration(),
     maxEditWidth: Int? = null,
-    onEditWidth: (Int)->Unit = {},
+    onEditWidth: (Int) -> Unit = {},
     notificationId: Any,
     notifier: NotificationService = notifier()
 ) {
-    val selected by remember(memberPayment.selected,adjustable) {
+    val selected by remember(memberPayment.selected, adjustable) {
         derivedStateOf {
             memberPayment.selected && !adjustable
         }
@@ -848,7 +833,7 @@ fun SplitMemberPaymentItem_z0nkzc(
                 contentDescription = "ProfileImage"
             )
 
-            androidx.compose.animation.AnimatedVisibility (
+            androidx.compose.animation.AnimatedVisibility(
                 selected,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut()
@@ -875,9 +860,7 @@ fun SplitMemberPaymentItem_z0nkzc(
             )
         }
 
-
-
-        //SplitAdjustAmount_ppv64u(memberPayment.toPay, isAmountEditable = false)
+        // SplitAdjustAmount_ppv64u(memberPayment.toPay, isAmountEditable = false)
         var currentEditWidth by remember {
             mutableStateOf(0)
         }
@@ -887,24 +870,25 @@ fun SplitMemberPaymentItem_z0nkzc(
         }
         LaunchedEffect(key1 = maxEditWidth, key2 = currentEditWidth){
             maxEditWidth?.let {
-                endPaddingPx = if(it>currentEditWidth){
+                endPaddingPx = if (it > currentEditWidth){
                     it - currentEditWidth
-                } else{
+                } else {
                     0
                 }
             }
-            if(maxEditWidth==null){
+            if (maxEditWidth == null){
                 endPaddingPx = 0
             }
         }
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(10.dep())
-            .weight(1f)
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dep())
+                .weight(1f)
         )
         AmountField(
-            amount = if(adjustable) memberPayment.toPay else memberPayment.paid,
-            enabled = selected||editable,
+            amount = if (adjustable) memberPayment.toPay else memberPayment.paid,
+            enabled = selected || editable,
             modifier = Modifier
                 .animateContentSize()
                 .widthIn(min = 69.dep())
@@ -919,7 +903,8 @@ fun SplitMemberPaymentItem_z0nkzc(
                     .putAll(
                         "member" to memberPayment,
                         "amount" to it
-                    ))
+                    )
+            )
         }
         Box(
             modifier = Modifier
@@ -931,6 +916,7 @@ fun SplitMemberPaymentItem_z0nkzc(
         }
     }
 }
+
 @Composable
 fun TopBarWithIcon_1t9xbo(
     text: String,
@@ -1051,7 +1037,7 @@ fun EditIcon_gx6f1w(
             modifier = Modifier.align(Alignment.CenterVertically),
             painter = painterResource(id = icon),
             contentDescription = "edit",
-            tint = iconTint,
+            tint = iconTint
         )
         Spacer(modifier = Modifier.width(5.dep()))
         FontFamilyText(
@@ -1064,6 +1050,7 @@ fun EditIcon_gx6f1w(
     }
 
 }
+
 @Composable
 fun Any.amountAnnotatedString(
     isLeadingTextEnabled: Boolean = false,
@@ -1098,13 +1085,13 @@ fun Any.amountAnnotatedString(
                 fontWeight = leadingTextFontWeight,
                 color = leadingTextTextColor,
                 fontFamily = robotoFonts
-            ),
+            )
         ) {
             append(leadingText)
         }
     }
 
-    if(isCurrencySymbolEnabled){
+    if (isCurrencySymbolEnabled){
         withStyle(
             style = SpanStyle(
                 letterSpacing = (-0.333333).sep(),
@@ -1112,10 +1099,10 @@ fun Any.amountAnnotatedString(
                 fontWeight = currencyFontWeight,
                 color = currencyTextColor,
                 fontFamily = robotoFonts
-            ),
+            )
         ) {
             append(localCurrency.current)
-            if(isSpaceBetween){
+            if (isSpaceBetween){
                 append(" ")
             }
         }
@@ -1128,9 +1115,9 @@ fun Any.amountAnnotatedString(
             fontWeight = wholeNumberFontWeight,
             color = wholeNumberTextColor,
             fontFamily = robotoFonts
-        ),
+        )
     ) {
-        append(this@amountAnnotatedString.toString().toDouble().splitted().whole.toDouble().formatComma())
+        append(this@amountAnnotatedString.toString().toFloat().splitted().wholeString)
     }
     if (isDecimalEnabled) {
         withStyle(
@@ -1140,10 +1127,10 @@ fun Any.amountAnnotatedString(
                 fontWeight = decNumberFontWeight,
                 color = decNumberTextColor,
                 fontFamily = robotoFonts
-            ),
+            )
         ) {
             append('.')
-            append(this@amountAnnotatedString.toString().toDouble().splitted().dec)
+            append(this@amountAnnotatedString.toString().toFloat().splitted().decString)
         }
     }
 
@@ -1155,7 +1142,7 @@ fun Any.amountAnnotatedString(
                 fontWeight = trailingTextFontWeight,
                 color = trailingTextTextColor,
                 fontFamily = robotoFonts
-            ),
+            )
         )
         {
             append(trailingText)
@@ -1163,34 +1150,14 @@ fun Any.amountAnnotatedString(
     }
 }
 
-fun Number.splitted(): FloatSplitted1 {
-    val text = this.toString()
-    val parts = text.split(".")
-    var wholeText = parts[0]
-    var decText = parts[1]
-    val whole = wholeText.toInt()
-    if (whole < 10) {
-        wholeText = "0$whole"
-    }
-    if (decText.length < 2) {
-        decText = "${decText}0"
-    }
-    if (decText.length > 2) {
-        decText = decText.substring(0..1)
-    }
-    return FloatSplitted1(
-        wholeText,
-        decText
-    )
-}
 
 
-val RoundedBorderGrey = Color(0xffD1E5F4)
+
 
 @Composable
 fun CategorySelectorCard_owv32g(
     notifier: NotificationService = notifier(),
-    config: CategorySelectorCardConfiguration1 = CategorySelectorCardConfiguration1(),
+    config: CategorySelectorCardConfiguration = CategorySelectorCardConfiguration(),
     category: Category = tState<Category>(key = DataIds.category).value,
     contentDescription: String
 ) {
@@ -1227,7 +1194,7 @@ fun CategorySelectorCard_owv32g(
                     top = config.iconTopPadding.dep(),
                     bottom = config.iconBottomPadding.dep(),
                     start = config.iconStartPadding.dep()
-                ),
+                )
         )
         config.iconTextSpacer.sx()
         FontFamilyText(
@@ -1293,9 +1260,9 @@ fun DashedBorderIconButtonWithText_13ppr3(
     text: String,
     image: Any?,
     config: DashedBorderIconButtonConfiguration = DashedBorderIconButtonConfiguration(),
-    contentDescription:String,
-    onDelete: ()->Unit,
-    onClick: () -> Unit,
+    contentDescription: String,
+    onDelete: () -> Unit,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -1311,9 +1278,9 @@ fun DashedBorderIconButtonWithText_13ppr3(
                 shape = RoundedCornerShape(config.borderCorner.dep()),
                 on = config.borderCorner.dep(),
                 off = config.borderCorner.dep()
-            ),
+            )
     ) {
-        if(image==null){
+        if (image == null){
             14.sy()
             Icon(
                 modifier = Modifier
@@ -1333,8 +1300,7 @@ fun DashedBorderIconButtonWithText_13ppr3(
                 color = config.textColor
             )
             5.sy()
-        }
-        else{
+        } else {
             Box(
                 modifier = Modifier.fillMaxSize()
             ){
@@ -1367,6 +1333,7 @@ fun DashedBorderIconButtonWithText_13ppr3(
 }
 
 val GreyShade = Color(0xff8C93A2)
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SplitAdjustAmount_ppv64u(
@@ -1376,7 +1343,7 @@ fun SplitAdjustAmount_ppv64u(
 ) {
     val textColor = remember {
         derivedStateOf {
-            if(!isAmountEditable){
+            if (!isAmountEditable){
                 if (amount != 0.0) config.textColor else GreyShade
             } else config.textColor
         }
@@ -1412,7 +1379,8 @@ fun SplitAdjustAmount_ppv64u(
             BasicTextField(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
                 keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }),
+                    onDone = { focusManager.clearFocus() }
+                ),
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -1433,9 +1401,9 @@ fun SplitAdjustAmount_ppv64u(
                         modifier = Modifier
                             .fillMaxSize()
                             .align(Alignment.Center),
-                        contentAlignment = Alignment.Center,
+                        contentAlignment = Alignment.Center
 
-                        ) {
+                    ) {
                         innerTextField()
                     }
                 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.LightBlue1
 import co.yore.splitnpay.demos.expenseDemo.sx
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds

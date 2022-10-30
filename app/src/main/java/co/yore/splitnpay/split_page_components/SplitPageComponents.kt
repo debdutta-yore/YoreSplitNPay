@@ -33,7 +33,7 @@ import co.yore.splitnpay.models.ContactTabs
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.SplitPageState
 import co.yore.splitnpay.models.YoreAmountConfiguration
-import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.ui.theme.*
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -205,16 +205,16 @@ fun YouWillGetCard(
     val themeColor by remember {
         derivedStateOf {
             if (haveSplit) {
-                Color(0xff37D8CF)
+                LightGreen3
             } else {
-                Color(0xff859DBA)
+                MyColor3
             }
         }
     }
     val dep = 1.dep()
     val textColor by remember(progress) {
         derivedStateOf {
-            Color.blend(Color(0xff243257), Color(0xff839BB9), progress)
+            Color.blend(DarkBlue, LightBlue4, progress)
         }
     }
     MotionLayout(
@@ -228,7 +228,7 @@ fun YouWillGetCard(
             modifier = Modifier
                 .layoutId("get_card")
                 .coloredShadow(
-                    color = Color(0x80C6CFD8).copy(alpha = 1f - progress),
+                    color = Grey_shadow.copy(alpha = 1f - progress),
                     borderRadius = 15.dep(),
                     blurRadius = 33.dep(),
                     spread = 0f,
@@ -396,9 +396,9 @@ fun YouWillPayCard(
     val themeColor by remember {
         derivedStateOf {
             if (haveSplit) {
-                Color(0xffFF4077)
+                Pink
             } else {
-                Color(0xff859DBA)
+                MyColor3
             }
         }
     }
@@ -406,7 +406,7 @@ fun YouWillPayCard(
 
     val textColor by remember(progress) {
         derivedStateOf {
-            Color.blend(Color(0xff243257), Color(0xff839BB9), progress)
+            Color.blend(DarkBlue, Color(0xff839BB9), progress)
         }
     }
 

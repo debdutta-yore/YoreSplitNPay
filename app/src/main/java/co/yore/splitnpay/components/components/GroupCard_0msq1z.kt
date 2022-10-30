@@ -9,7 +9,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -26,13 +25,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.CheckBoxIcon_b6qwbf
-import co.yore.splitnpay.components.configuration.*
+import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.models.ArrowButtonConfiguration.Companion.group
-import co.yore.splitnpay.models.GroupMemberProfilePicsConfiguration.Companion.smaller
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.LightBlue4
 import coil.compose.AsyncImage
@@ -343,7 +340,7 @@ fun GroupMemberProfilePics(
                     .padding(start = (visibleImages.size * config.startPadding).dep())
             ) {
                 TransparentProfilePic_k7ibvr(
-                    member = Member(invisibleImagesCount),
+                    extraCount = invisibleImagesCount,
                     contentDescription = "TransparentExtraMemberCount",
                     config = if (config.smaller) {
                         TransparentProfilePicConfiguration.smaller
@@ -380,58 +377,22 @@ fun SingleGroupMemberProfilePic(
     )
 }
 
-/*@Composable
-fun ArrowButton_ohezqf(
-    contentDescription: String,
-    config: ArrowButtonConfiguration = ArrowButtonConfiguration(),
-    pressed: Boolean,
-    onClicked: () -> Unit,
-    onPressed: (Boolean) -> Unit,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val iconBackground = remember {
-        derivedStateOf {
-            if (!(isPressed || pressed))
-                config.iconBackgroundColor
-            else
-                config.iconPressedColor
-        }
-    }
-    LaunchedEffect(key1 = isPressed) {
-        onPressed(isPressed)
-    }
-
-    Box(
-        modifier = Modifier
-            .semantics {
-                this.contentDescription = contentDescription
-            }
-            .clip(RoundedCornerShape(config.iconButtonRadius.dep()))
-            .background(
-                iconBackground.value,
-                shape = RoundedCornerShape(config.iconButtonRadius.dep())
-            )
-            .size(config.iconButtonSize.dep())
-            .clickable { onClicked() },
-        contentAlignment = Center
-    ) {
-        Icon(
-            modifier = Modifier
-                .size(config.iconSize.dep()),
-            painter = painterResource(id = config.iconResource),
-            contentDescription = "",
-            tint = config.iconTint
-        )
-    }
-}*/
-
 @Composable
 fun TransparentProfilePic_k7ibvr(
-    member: Member,
+    extraCount: Int,
     config: TransparentProfilePicConfiguration = TransparentProfilePicConfiguration(),
     contentDescription: String
 ) {
+    val members = remember {
+        derivedStateOf {
+            if (extraCount > 9) {
+                "9+"
+            } else {
+                "$extraCount+"
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .size(config.imageSize.dep())
@@ -450,8 +411,8 @@ fun TransparentProfilePic_k7ibvr(
             .semantics { this.contentDescription = contentDescription },
         contentAlignment = Center
     ) {
-        Text(
-            "${member.extraMembers}+",
+        FontFamilyText(
+            text = members.value,
             color = config.fontColor,
             fontWeight = config.fontWeight,
             fontSize = config.fontSize.sep()

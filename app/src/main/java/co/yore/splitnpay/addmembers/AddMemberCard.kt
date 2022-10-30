@@ -40,39 +40,16 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.YoreAmount
 import co.yore.splitnpay.components.components.coloredShadow
 import co.yore.splitnpay.friend_item.ArrowButton_ohezqf
+import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.GreyShadow
+import co.yore.splitnpay.ui.theme.Lightgreen3
+import co.yore.splitnpay.ui.theme.Pink
 import co.yore.splitnpay.ui.theme.robotoFonts
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 
 
-@Composable
-fun ProfileImage_2hf7q0(
-    image: Any?,
-    config: ProfileImageConfiguration2 = ProfileImageConfiguration2(),
-    contentDescription: String
-) {
-    AsyncImage(
-        modifier = Modifier
-            .size(config.imageSize.dep())
-            .border(
-                width = config.borderStroke.dep(),
-                color = config.borderColor,
-                shape = config.shape
-            )
-            .padding(config.borderStroke.dep())
-            .clip(CircleShape),
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(image)
-            .crossfade(true)
-            .build(),
-        placeholder = painterResource(config.placeholder),
-        contentScale = config.contentScale,
-        contentDescription = contentDescription
-    )
-}
+
 
 
 
@@ -378,7 +355,7 @@ fun PeopleCard_eq3k8h(
                     }
                     YoreAmount(
                         config = YoreAmountConfiguration(
-                            color = Color(0xff37D8CF),
+                            color = Lightgreen3,
                             fontSize = 14,
                             currencyFontSize = 12,
                             decimalFontSize = 10,
@@ -396,7 +373,7 @@ fun PeopleCard_eq3k8h(
                     }
                     YoreAmount(
                         config = YoreAmountConfiguration(
-                            color = Color(0xffFF4077),
+                            color = Pink,
                             fontSize = 14,
                             currencyFontSize = 12,
                             decimalFontSize = 10,

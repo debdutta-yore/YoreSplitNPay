@@ -23,7 +23,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.CustomButtonConfiguration
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Transaction
-import co.yore.splitnpay.models.YouWillPayConfiguration
+import co.yore.splitnpay.models.YouWillPayChildPageConfiguration
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.LightBlue4
@@ -32,13 +32,13 @@ import co.yore.splitnpay.ui.theme.Pink
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun YouWillPay_m6awbp(
+fun YouWillPayChildPage_m6awbp(
     list: List<Transaction>,
     userName: String,
     total: Float,
     isWillPayTransactionSelected: Boolean,
     contentDescription: String,
-    config: YouWillPayConfiguration = YouWillPayConfiguration(),
+    config: YouWillPayChildPageConfiguration = YouWillPayChildPageConfiguration(),
     notifier: NotificationService = notifier()
 ) {
     if (list.isEmpty()) {

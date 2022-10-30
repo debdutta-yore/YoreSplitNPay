@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.components.components.LightBlue1
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.SheetItem
@@ -30,22 +29,24 @@ import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
 import kotlinx.coroutines.CoroutineScope
 
-class ExpenseFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
+class ExpenseFilterBottomSheetModel(val callback: Callback) : BottomSheetModel{
     interface Callback{
         fun scope(): CoroutineScope
         fun close()
         fun onOptionSelected(arg: Any?)
     }
-    /////////////////
+
+    // ///////////////
     private val _resolver = Resolver()
-    private val _notifier = NotificationService{id,arg->
-        when(id){
-            DataIds.expenseFilterOption->{
+    private val _notifier = NotificationService{id, arg ->
+        when (id){
+            DataIds.expenseFilterOption -> {
                 callback.onOptionSelected(arg)
             }
         }
     }
-    /////////////////
+
+    // ///////////////
     override val resolver = _resolver
     override val notifier = _notifier
     override val scope get() = callback.scope()
@@ -66,13 +67,12 @@ class ExpenseFilterBottomSheetModel(val callback: Callback): BottomSheetModel{
     override fun onBack() {
 
     }
-    ////////////
-    //data
-    ////////////
-    init {
-        _resolver.addAll(
 
-        )
+    // //////////
+    // data
+    // //////////
+    init {
+        _resolver.addAll()
     }
 }
 
@@ -170,17 +170,19 @@ fun ExpenseFilterBottomSheet(
 @Composable
 fun SingleItem1(
     modifier: Modifier = Modifier,
-    icon: Painter, text: String,
+    icon: Painter,
+    text: String,
     isSelected: Boolean = false,
     onClick: () -> Unit
 ) {
     Row(
         modifier = modifier
             .background(
-                if (isSelected)
+                if (isSelected) {
                     LightBlue1
-                else
+                } else {
                     Color.White
+                }
             )
             .fillMaxWidth()
             .height(49f.dep())
@@ -190,8 +192,7 @@ fun SingleItem1(
                 onClick = {
                     onClick()
                 }
-            )
-        ,
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -17,6 +17,7 @@ import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.notifier
 import co.yore.splitnpay.models.AddGroupButtonConfiguration
 import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.ui.theme.Pink
 
 @Composable
 fun AddGroupButton_kbf1at(
@@ -29,9 +30,9 @@ fun AddGroupButton_kbf1at(
             .background(color = config.backgroundColor)
             .size(config.size.dep())
             .clickable(
-                rippleColor = Color(0xffFF4077)
+                rippleColor = Pink
             ) {
-                       notifier.notify(DataIds.addGroup,null)
+                notifier.notify(DataIds.addGroup, null)
             },
         contentAlignment = Alignment.Center
     ) {

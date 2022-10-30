@@ -20,6 +20,7 @@ import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.droot2
 import co.yore.splitnpay.models.GroupImagePickerConfiguration
 import co.yore.splitnpay.ui.theme.DarkBlueShadow
+import co.yore.splitnpay.ui.theme.LightBlue3
 import co.yore.splitnpay.ui.theme.White
 import coil.compose.AsyncImage
 
@@ -49,7 +50,7 @@ fun GroupImagePicker_ncbmdg(
                     offsetY = 3.dep(),
                 )
                 .clip(CircleShape)
-                .background(Color(0xffCFD8E4))
+                .background(LightBlue3)
                 .border(
                     width = config.borderStroke.dep(),
                     color = config.borderColor,

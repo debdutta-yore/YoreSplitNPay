@@ -47,8 +47,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightBlue4
+import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -211,8 +210,6 @@ fun Modifier.maxHeightFactor(
             .heightIn(max = (screenHeight*factor).dp)
     }
 )
-val LightGrey2 = Color(0xffF8F8F8)
-val Grayish = Color(0xffF5F5F5)
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BillTotalAndCategoryBottomSheet(
@@ -278,14 +275,14 @@ fun BillTotalAndCategoryBottomSheet(
                 keyboardType = KeyboardType.Number,
                 visualTransformation = ThousandsTransformer(),
                 textStyle = TextStyle(
-                    color = Color(0xff243257),
+                    color = DarkBlue,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sep(),
                 ),
                 interceptor = {
                     it.replace("^0+".toRegex(),"").take(14)
                 },
-                iconTint = Color(0xff656565)
+                iconTint = Lightgrey
             )
         }
 
@@ -310,7 +307,7 @@ fun BillTotalAndCategoryBottomSheet(
                 placeHolderText = stringResource(R.string.add_description),
                 singleLine = true,
                 maxLines = 1,
-                iconTint = Color(0xff656565)
+                iconTint = Lightgrey
             )
         }
 
@@ -447,7 +444,7 @@ fun BillTotalAndCategoryBottomSheet(
                     contentDescription = "",
                     leadingIcon = categoryImage,
                     placeHolderText = categoryPlaceholder,
-                    iconTint = Color(0xff656565)
+                    iconTint = Lightgrey
                 )
             }
         }
@@ -594,11 +591,6 @@ fun CustomTextField_wangst(
         )
     }
 }
-val LightGrey = Color(0xff656565)
-val LightGrey4 = Color(0xffBCBCBC)
-
-///////////////////////////////////////
-val LightBlue3 = Color(0xffCFD8E4)
 
 @Composable
 fun SelectorIcon_ulkel8(

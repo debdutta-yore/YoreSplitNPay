@@ -15,6 +15,9 @@ import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.TransactionStatus
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.ui.theme.MyColor4
+import co.yore.splitnpay.ui.theme.MyColor5
+import co.yore.splitnpay.ui.theme.MyColor6
 import co.yore.splitnpay.viewModels.MembersMock.transaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -144,10 +147,10 @@ interface GroupRepository {
 }
 
 class GroupsMock : GroupRepository {
-    val groupsList = emptyList<Group>()
-    val group = listOf<Group>(
-        Group("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f),
-        Group("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f)
+    val groupsList = emptyList<GroupShort>()
+    val group = listOf<GroupShort>(
+        GroupShort("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f),
+        GroupShort("Office Buddies", "https://i.pravatar.cc/300", amount = 3000f)
     )
 
     override suspend fun getBillTransactions(): List<BillTransaction> {
@@ -217,35 +220,35 @@ class GroupsMock : GroupRepository {
         return listOf(
             SingleItem(
                 id = 1,
-                profilePic = R.drawable.ic_profilepic1,
+                profilePic = "https://i.pravatar.cc/300",
                 userName = "You",
                 mobileNo = "9563376942",
                 isSelected = false
             ),
             SingleItem(
                 id = 2,
-                profilePic = R.drawable.ic_profilepic1,
+                profilePic = "https://i.pravatar.cc/300",
                 userName = "Manisha Roy",
                 mobileNo = "9563376942",
                 isSelected = false
             ),
             SingleItem(
                 id = 3,
-                profilePic = R.drawable.ic_profilepic1,
+                profilePic = "https://i.pravatar.cc/300",
                 userName = "Sushil Roy",
                 mobileNo = "9563376942",
                 isSelected = false
             ),
             SingleItem(
                 id = 4,
-                profilePic = R.drawable.ic_profilepic1,
+                profilePic = "https://i.pravatar.cc/300",
                 userName = "Sanjana Ray",
                 mobileNo = "9563376942",
                 isSelected = false
             ),
             SingleItem(
                 id = 5,
-                profilePic = R.drawable.ic_profilepic1,
+                profilePic = "https://i.pravatar.cc/300",
                 userName = "Ankita Ray",
                 mobileNo = "9563376942",
                 isSelected = false
@@ -434,15 +437,16 @@ class GroupChatViewModel(
 
                     override suspend fun getUpis(): List<Upi> {
                         return listOf(
-                            Upi("UPI-1", "fdfldf@ljl", "SBI", "User1", Color(0xff008523), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false),
-                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", Color(0xff186ec4), false)
+                            Upi("UPI-1", "fdfldf@ljl", "SBI", "User1", MyColor4, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
+                            Upi("UPI-2", "fdfldf@ljl1", "Axis", "User2", MyColor5, false),
                         )
                     }
 
@@ -500,7 +504,8 @@ class GroupChatViewModel(
                                 isSelected = true,
                                 hasRead = false
                             ),
-                            category = Category1(
+                            category = Category(
+                                id = 0,
                                 name = "Category",
                                 color = 0xffff0000,
                                 icon = R.drawable.travel
@@ -607,7 +612,7 @@ class GroupChatViewModel(
             }
             DataIds.search -> {
                 search.value = true
-                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9), true)
+                _statusBarColor.value = StatusBarColor(MyColor6, true)
             }
             DataIds.filterDone -> {
                 mySheeting.hide()
@@ -796,4 +801,4 @@ class GroupChatViewModel(
     }
 }
 
-val StatusBarGreen = Color(0xff00CEC3)
+

@@ -18,8 +18,6 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,7 +25,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -45,7 +42,7 @@ import coil.request.ImageRequest
 
 @Composable
 fun ManageGroupCard(
-    group: Group1,
+    group: GroupDetailed,
     onClick: () -> Unit,
     config: GroupCardConfiguration = GroupCardConfiguration(),
     contentDescription: String
@@ -323,7 +320,7 @@ fun GroupMemberProfilePics(
                     .padding(start = 28.dep())
             ) {
                 TransparentProfilePic_k7ibvr(
-                    extraMembers = extraMembers,
+                    extraCount = extraMembers,
                     contentDescription = "TransparentExtraMemberCount"
                 )
             }
@@ -391,48 +388,7 @@ fun AddGroupIconButton(
     }
 }
 
-@Composable
-fun TransparentProfilePic_k7ibvr(
-    extraMembers: Int,
-    config: TransparentProfilePicConfiguration = TransparentProfilePicConfiguration(),
-    contentDescription: String
-) {
-    val members = remember {
-        derivedStateOf {
-            if (extraMembers > 9) {
-                "9+"
-            } else {
-                "$extraMembers+"
-            }
-        }
-    }
 
-    Box(
-        modifier = Modifier
-            .size(config.imageSize.dep())
-            .clip(CircleShape)
-            .background(
-                config.backGroundColor,
-                shape = CircleShape
-            )
-            .border(
-                BorderStroke(
-                    width = config.borderWidth.dep(),
-                    color = config.borderColor
-                ),
-                shape = CircleShape
-            )
-            .semantics { this.contentDescription = contentDescription },
-        contentAlignment = Center
-    ) {
-        FontFamilyText(
-            text = members.value,
-            color = config.fontColor,
-            fontWeight = config.fontWeight,
-            fontSize = config.fontSize.sep()
-        )
-    }
-}
 
 
 

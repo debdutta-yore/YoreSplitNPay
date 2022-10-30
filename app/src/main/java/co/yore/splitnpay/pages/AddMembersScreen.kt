@@ -40,7 +40,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.RobotoText
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.split_page_components.ContactSearchBar
-import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -55,7 +55,7 @@ fun SingleItem(
         modifier = modifier
             .background(
                 if (isSelected) {
-                    Color(237, 245, 255)
+                    Lightblue1
                 }else Color.White
             )
             .padding(start = 31f.dep())
@@ -72,14 +72,14 @@ fun SingleItem(
 
             Icon(
                 modifier = Modifier.size(18.dp),
-                tint = Color(26, 121, 229),
+                tint = Bluish,
                 painter = icon,
                 contentDescription = "selected photo icon"
             )
             Spacer(modifier = Modifier.width(15f.dep()))
             Text(
                 text = text,
-                color = Color(36, 50, 87),
+                color = DarkBlue,
                 fontSize = 14.sp,
                 fontWeight = FontWeight(700)
             )
@@ -89,7 +89,7 @@ fun SingleItem(
             Icon(
                 modifier = Modifier,
                 //  .width(18f.dep())
-                tint = Color(26, 121, 229),
+                tint = Bluish,
                 painter = painterResource(id = R.drawable.ic_sheet_selector),
                 contentDescription = "holder"
             )
@@ -159,7 +159,7 @@ fun MemberSelectionPage_g5024t(
         sheetContent = {
             sheeting.sheetContent()
         },
-        scrimColor = Color(0x8C243257),
+        scrimColor = MyColor2,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
             topStart = 33.dep(),
@@ -264,7 +264,7 @@ fun NothingFoundUI() {
         RobotoText(
             "Nothing found",
             fontSize = 13.sep(),
-            color = Color(0xff839BB9),
+            color = LightBlue4,
             fontWeight = FontWeight.Bold
         )
     }
@@ -404,9 +404,9 @@ fun SplitWithPageTabsSection(
             val computedColor by remember(selectedIndex) {
                 derivedStateOf {
                     if (selectedIndex == index) {
-                        Color(0xff243257)
+                        DarkBlue
                     } else {
-                        Color(0xffCFD8E4)
+                        LightBlue3
                     }
                 }
             }

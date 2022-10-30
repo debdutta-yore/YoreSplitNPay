@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,10 +20,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.splitted
 import co.yore.splitnpay.ui.theme.DarkBlue
 import co.yore.splitnpay.ui.theme.GreyShadow
 import java.text.DecimalFormat
@@ -150,9 +152,8 @@ fun SingleItemYouWillGetCard_3btamv(
     ) {
         Row(verticalAlignment = Alignment.Top) {
             ProfileImage_2hf7q0(
-                imageUrl = item.image,
+                image = item.image,
                 contentDescription = "",
-                config = ProfileImageConfiguration()
             )
             config.gapBetweenProfileImageAndUserName.sx()
             Column(modifier = Modifier) {
@@ -188,21 +189,18 @@ fun SingleItemYouWillGetCard_3btamv(
             fontSize = 10.sep(),
             fontWeight = FontWeight.Normal
         )
-        val wholeNumber =
-            item.amount.splitted().whole
-        // transaction.amount.toString().substringBefore(".").padStart(2, '0')
-        val decimalNumber =
-            item.amount.splitted().dec
-        // transaction.amount.toString().substringAfter(".").padStart(2, '0')
-
-        val formattedWholeNoDo = wholeNumber.toLong()
-        val formatter = DecimalFormat("#,###")
-        val formattedWholeNo = formattedWholeNoDo.formatDecimalSeparator()
-
-        // TODO: Fix this
+        val wholeNumber = remember(item.amount){
+            derivedStateOf {
+                item.amount.splitted().wholeString
+            }
+        }
+        val decimalNumber = remember(item.amount){
+            derivedStateOf {
+                item.amount.splitted().decString
+            }
+        }
         Box(
             modifier = Modifier,
-//                .width(60.dep())
             contentAlignment = Alignment.CenterStart
         ) {
             FontFamilyText(
@@ -213,11 +211,11 @@ fun SingleItemYouWillGetCard_3btamv(
                         append("${localCurrency.current} ")
                     }
                     withStyle(currencyScriptSmall) {
-                        append(formattedWholeNo.toString())
+                        append(wholeNumber.value)
                     }
                     withStyle(decimalScriptSmall) {
                         append(".")
-                        append(decimalNumber)
+                        append(decimalNumber.value)
                     }
                 },
                 fontSize = 14f.sep(),

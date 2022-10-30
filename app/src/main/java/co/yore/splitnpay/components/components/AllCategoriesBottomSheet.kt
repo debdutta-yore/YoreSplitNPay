@@ -31,9 +31,10 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
-import co.yore.splitnpay.pages.LightBlue1
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.LightGrey2
+import co.yore.splitnpay.ui.theme.Lightgrey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -327,7 +328,7 @@ fun AllCategoriesBottomSheet(
                     contentDescription = "",
                     leadingIcon = R.drawable.ic_description,
                     placeHolderText = "Custom category name",
-                    iconTint = Color(0xff656565)
+                    iconTint = Lightgrey
                 )
             }
         }

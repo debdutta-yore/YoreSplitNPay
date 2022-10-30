@@ -11,6 +11,7 @@ import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import co.yore.splitnpay.ui.theme.MyColor6
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -84,7 +85,7 @@ class MemberSelectionPageViewModel(
             WirelessViewModelInterface.startupNotification->{
                 getArguments()
                 purgeContacts()
-                _statusBarColor.value = StatusBarColor(Color(0xffEDF3F9),true)
+                _statusBarColor.value = StatusBarColor(MyColor6,true)
             }
             DataIds.proceedWithContacts->{
                 proceedWithContacts()

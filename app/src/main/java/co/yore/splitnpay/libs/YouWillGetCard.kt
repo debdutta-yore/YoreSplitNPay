@@ -23,6 +23,7 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.locals.localCurrency
 import co.yore.splitnpay.models.MemberTransact
 import co.yore.splitnpay.models.ProfileImageConfiguration
@@ -183,9 +184,8 @@ fun SingleItemYouWillGetCard_3btamv(
     ) {
         Row(verticalAlignment = Alignment.Top) {
             ProfileImage_2hf7q0(
-                imageUrl = transaction.image,
+                image = transaction.image,
                 contentDescription = "",
-                config = ProfileImageConfiguration()
             )
             config.gapBetweenProfileImageAndUserName.sx()
             Column(modifier = Modifier) {

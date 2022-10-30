@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,7 +37,6 @@ import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
-
 @Composable
 fun BillCard_s10zd7(
     transaction: BillTransaction,
@@ -47,10 +45,11 @@ fun BillCard_s10zd7(
 ) {
     val cardHeight = remember {
         derivedStateOf {
-            if (transaction.transactionStatus == TransactionStatus.AllSettled)
+            if (transaction.transactionStatus == TransactionStatus.AllSettled) {
                 config.allSettledCardHeight
-            else
+            } else {
                 config.cardHeight
+            }
         }
     }
 
@@ -68,37 +67,41 @@ fun BillCard_s10zd7(
 
     val youPaidReceivedText = remember {
         derivedStateOf {
-            if (isPaid.value)
+            if (isPaid.value) {
                 config.youPaidStatusText
-            else
+            } else {
                 config.youReceivedStatusText
+            }
         }
     }
 
     val paidReceivedText = remember {
         derivedStateOf {
-            if (isPaid.value)
+            if (isPaid.value) {
                 config.paidStatusText
-            else
+            } else {
                 config.receivedStatusText
+            }
         }
     }
 
     val willGetPayText = remember {
         derivedStateOf {
-            if (isPaid.value)
+            if (isPaid.value) {
                 config.payStatusText
-            else
+            } else {
                 config.receiveStatusText
+            }
         }
     }
 
     val allPaidReceivedText = remember {
         derivedStateOf {
-            if (isPaid.value)
+            if (isPaid.value) {
                 config.totalPaidText
-            else
+            } else {
                 config.totalReceivedText
+            }
         }
     }
 
@@ -110,19 +113,21 @@ fun BillCard_s10zd7(
 
     val progressColor = remember {
         derivedStateOf {
-            if (isPaid.value)
+            if (isPaid.value) {
                 config.paidProgressColor
-            else
+            } else {
                 config.receiveProgressColor
+            }
         }
     }
 
     val progressBackgroundColor = remember {
         derivedStateOf {
-            if (isPaid.value)
+            if (isPaid.value) {
                 config.paidProgressBackgroundColor
-            else
+            } else {
                 config.receiveProgressBackgroundColor
+            }
         }
     }
 
@@ -146,44 +151,48 @@ fun BillCard_s10zd7(
 
     val leftTextColor = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.receivedSelectedAmountTextColor
-            else if(transaction.isSingleChat)
+            } else if (transaction.isSingleChat) {
                 config.amountNormalTextColor
-            else if (isPaid.value)
+            } else if (isPaid.value) {
                 config.amountNormalTextColor
-            else
+            } else {
                 config.receivedSelectedAmountTextColor
+            }
         }
     }
 
     val rightTextColor = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.receivedSelectedAmountTextColor
-            else if (isPaid.value)
+            } else if (isPaid.value) {
                 config.paidSelectedAmountTextColor
-            else
+            } else {
                 config.amountNormalTextColor
+            }
         }
     }
 
     val billTotalRowStartPadding = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.billTotalRowStartAllSettledPadding
-            else if (isPaid.value)
+            } else if (isPaid.value) {
                 config.billTotalRowStartIsPaidPadding
-            else
+            } else {
                 config.billTotalRowStartPadding
+            }
         }
     }
     val progressBarTopSpacer = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.progressBarTopAllSettledSpacing
-            else
+            } else {
                 config.progressBarTopSpacing
+            }
         }
     }
 
@@ -215,10 +224,11 @@ fun BillCard_s10zd7(
 
     val arrowIconEndPadding = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.arrowIconEndAllSettledPadding
-            else
+            } else {
                 config.arrowIconEndPadding
+            }
         }
     }
 
@@ -226,10 +236,11 @@ fun BillCard_s10zd7(
         derivedStateOf {
             if (isAllSettled.value) {
                 config.columnStartAllSettledPadding
-            } else if (isPaid.value)
+            } else if (isPaid.value) {
                 config.columnStartPaidPadding
-            else
+            } else {
                 config.columnStartPadding
+            }
         }
     }
 
@@ -237,41 +248,45 @@ fun BillCard_s10zd7(
         derivedStateOf {
             if (isAllSettled.value) {
                 config.columnEndAllSettledPadding
-            } else if (isPaid.value)
+            } else if (isPaid.value) {
                 config.columnEndPaidPadding
-            else
+            } else {
                 config.columnEndReceivedPadding
+            }
         }
     }
 
     val allPaidReceivedTopPadding = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.allPaidReceivedTopAllSettledPadding
-            else
+            } else {
                 config.allPaidReceivedTopPadding
+            }
         }
     }
 
     val allPaidReceivedStartPadding = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.allPaidReceivedAllSettledStartPadding
-            else if (isPaid.value)
+            } else if (isPaid.value) {
                 config.allPaidReceivedPaidStartPadding
-            else
+            } else {
                 config.allPaidReceivedReceivedStartPadding
+            }
         }
     }
 
     val allPaidReceivedEndPadding = remember {
         derivedStateOf {
-            if (isAllSettled.value)
+            if (isAllSettled.value) {
                 config.allPaidReceivedAllSettledEndPadding
-            else if (isPaid.value)
+            } else if (isPaid.value) {
                 config.allPaidReceivedPaidEndPadding
-            else
+            } else {
                 config.allPaidReceivedReceivedEndPadding
+            }
         }
     }
 
@@ -284,21 +299,22 @@ fun BillCard_s10zd7(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            //.height((cardHeight.value+config.cardShadowOffsetY*2+config.cardShadowBlurRadius*2).dep()),
+        // .height((cardHeight.value+config.cardShadowOffsetY*2+config.cardShadowBlurRadius*2).dep()),
     ){
         Column(
             modifier = Modifier
                 .align(
-                    if (transaction.transactionType == TransactionType.Received)
+                    if (transaction.transactionType == TransactionType.Received) {
                         Alignment.CenterStart
-                    else
+                    } else {
                         Alignment.CenterEnd
+                    }
                 )
                 .width(
                     if (transaction.transactionStatus == TransactionStatus.AllSettled) 324.dep()
                     else if (transaction.transactionType == TransactionType.Received) (253 + 25).dep()
                     else (253).dep()
-                ),
+                )
         ) {
             Box(
                 modifier = Modifier
@@ -319,11 +335,11 @@ fun BillCard_s10zd7(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    Box() { //container for card and paid/received bar
+                    Box() { // container for card and paid/received bar
                         Column(
                             Modifier
                                 .fillMaxWidth()
-                                .background(color = config.cardBackground),
+                                .background(color = config.cardBackground)
                         ) {
                             config.cardInnerRowTopPadding.sy()
 
@@ -332,7 +348,7 @@ fun BillCard_s10zd7(
                                     .padding(
                                         start = billTotalRowStartPadding.value.dep()
                                     )
-                                    .fillMaxWidth(),
+                                    .fillMaxWidth()
                             ) {
                                 Row(
                                     horizontalArrangement = Arrangement.Start,
@@ -387,19 +403,20 @@ fun BillCard_s10zd7(
                                 )
                             }
 
-                            if (isAllSettled.value)
+                            if (isAllSettled.value) {
                                 config.firstRowVerticalAllSettledSpacing.sy()
-                            else if (isPaid.value)
+                            } else if (isPaid.value) {
                                 config.firstRowVerticalPaidSpacing.sy()
-                            else
+                            } else {
                                 config.firstRowVerticalReceivedSpacing.sy()
+                            }
 
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(
                                         start = columnPaddingStart.value.dep(),
-                                        end = columnPaddingEnd.value.dep(),
+                                        end = columnPaddingEnd.value.dep()
                                     ),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
@@ -410,7 +427,7 @@ fun BillCard_s10zd7(
                                         CircleBoxText_yl5a4b(stringResource(id = R.string.all_settled))
                                     } else if (transaction.isSingleChat && isPaid.value) {
                                         CategoryRow_a96p42(category = transaction.category)
-                                    }  else if (transaction.isSingleChat && isSettled.value) {
+                                    } else if (transaction.isSingleChat && isSettled.value) {
                                         CircleBoxText_yl5a4b(stringResource(id = R.string.settled))
                                     } else {
                                         FontFamilyText(
@@ -429,7 +446,7 @@ fun BillCard_s10zd7(
                                                 wholeNumberTextColor = leftTextColor.value,
                                                 wholeNumberFontWeight = FontWeight.Bold,
                                                 decNumberFontSize = config.leftAmountDecFontSize,
-                                                decNumberTextColor = leftTextColor.value,
+                                                decNumberTextColor = leftTextColor.value
                                             ),
                                             letterSpacing = (-0.235784).sep()
                                         )
@@ -452,7 +469,7 @@ fun BillCard_s10zd7(
                                             ),
                                             letterSpacing = config.completedTransactionLetterSpacing.sep()
                                         )
-                                    } else if (transaction.isSingleChat && !isPaid.value ) {
+                                    } else if (transaction.isSingleChat && !isPaid.value) {
                                         CategoryRow_a96p42(category = transaction.category)
                                     } else if (isSettled.value && !transaction.isSingleChat) {
                                         CircleBoxText_yl5a4b(text = stringResource(id = R.string.settled))
@@ -487,7 +504,7 @@ fun BillCard_s10zd7(
                                 modifier = Modifier
                                     .padding(
                                         start = columnPaddingStart.value.dep(),
-                                        end = columnPaddingEnd.value.dep(),
+                                        end = columnPaddingEnd.value.dep()
                                     )
                                     .fillMaxWidth()
                                     .height(config.progressBarHeight.dep()),
@@ -508,8 +525,8 @@ fun BillCard_s10zd7(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.Bottom
                             ) {
-                                if (transaction.isSingleChat ) {
-                                    if(!isPaid.value){
+                                if (transaction.isSingleChat) {
+                                    if (!isPaid.value){
                                         Spacer(modifier = Modifier.weight(1f))
                                     }
                                     FontFamilyText(
@@ -536,9 +553,9 @@ fun BillCard_s10zd7(
                                         annotatedString = transaction.allPaidReceivedTotal.amountAnnotatedString(
                                             isLeadingTextEnabled = true,
                                             leadingText =
-                                            if (!isAllSettled.value)
+                                            if (!isAllSettled.value) {
                                                 stringResource(allPaidReceivedText.value) + " "
-                                            else "",
+                                            } else "",
                                             leadingTextFontSize = config.allPaidReceivedFontSize,
                                             leadingTextTextColor = config.allPaidReceivedLeadingTextColor,
                                             isTrailingTextEnabled = isAllSettled.value,
@@ -619,8 +636,6 @@ fun BillCard_s10zd7(
     }
 }
 
-
-
 @Composable
 fun DateBox_rdu7a6(date: String, config: DateBoxConfiguration = DateBoxConfiguration()) {
     Box(
@@ -642,8 +657,6 @@ fun DateBox_rdu7a6(date: String, config: DateBoxConfiguration = DateBoxConfigura
     }
 
 }
-val LightBlue1 = Color(0xffEDF5FF)
-
 
 @Composable
 fun ChatMessageReadStatus_m1cy0j(
@@ -677,8 +690,6 @@ fun ChatMessageReadStatus_m1cy0j(
     )
 }
 
-
-
 @Composable
 fun CircleIconWithBackground_xyo2d4(
     icon: Int,
@@ -701,8 +712,6 @@ fun CircleIconWithBackground_xyo2d4(
     }
 }
 
-
-
 @Composable
 fun CategoryRow_a96p42(
     config: CategoryRowConfiguration = CategoryRowConfiguration(),
@@ -720,8 +729,6 @@ fun CategoryRow_a96p42(
     }
 
 }
-val LightGrayBackground = Color(0xffE7EEF6)
-
 
 @Composable
 fun CircleBoxText_yl5a4b(
@@ -742,14 +749,12 @@ fun CircleBoxText_yl5a4b(
             color = config.textColor,
             lineHeight = config.lineHeight.sep(),
             modifier = Modifier.padding(
-                horizontal = config.textInnerHorizontalPadding.dep(),
+                horizontal = config.textInnerHorizontalPadding.dep()
             ),
             letterSpacing = config.letterSpacing.sep()
         )
     }
 }
-
-
 
 @Composable
 fun SideBar_82fc28(
@@ -824,11 +829,10 @@ fun Modifier.rotateVertically(rotation: VerticalRotation) = then(
         override fun IntrinsicMeasureScope.maxIntrinsicWidth(measurable: IntrinsicMeasurable, height: Int): Int {
             return measurable.maxIntrinsicHeight(height)
         }
-    })
+    }
+)
     .then(rotate(rotation.value))
 
-
-val LightBlue = Color(0xff1B79E6)
 
 @Composable
 fun Dot_t8dyts(config: DotConfiguration = DotConfiguration()) {

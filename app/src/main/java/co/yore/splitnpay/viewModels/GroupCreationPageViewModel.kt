@@ -15,6 +15,7 @@ import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.models.StatusBarColor
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import co.yore.splitnpay.ui.theme.MyColor6
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -178,7 +179,7 @@ class GroupCreationPageViewModel(
             DataIds.contacts to contacts
         )
         _statusBarColor.value = StatusBarColor(
-            color = Color(0xffEDF3F9),
+            color = MyColor6,
             darkIcons = true
         )
     }

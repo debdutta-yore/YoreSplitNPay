@@ -12,6 +12,7 @@ import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.repo.Repo
 import co.yore.splitnpay.repo.RepoImpl
+import co.yore.splitnpay.ui.theme.MyColor7
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,7 +49,7 @@ class SplitPageViewModel(
     private val _notificationService = NotificationService{id,arg->
         when(id){
             WirelessViewModelInterface.startupNotification->{
-                _statusBarColor.value = StatusBarColor(Color(0xffDB3665),false)
+                _statusBarColor.value = StatusBarColor(MyColor7,false)
             }
             DataIds.textInput ->{
                 _input.value = (arg as? String)?:return@NotificationService

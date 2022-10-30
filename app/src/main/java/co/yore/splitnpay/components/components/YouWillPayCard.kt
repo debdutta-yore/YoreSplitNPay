@@ -20,7 +20,7 @@ import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sy
 import co.yore.splitnpay.models.MemberTransact
-import co.yore.splitnpay.models.YouWillPayConfiguration1
+import co.yore.splitnpay.models.YouWillPayConfiguration
 import co.yore.splitnpay.ui.theme.*
 
 @Composable
@@ -29,7 +29,7 @@ fun YouWillPayCard(
     total: Float,
     list: List<MemberTransact>,
     contentDescription: String,
-    config: YouWillPayConfiguration1 = YouWillPayConfiguration1()
+    config: YouWillPayConfiguration = YouWillPayConfiguration()
 ) {
     Box(
         modifier = Modifier

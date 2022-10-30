@@ -12,6 +12,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.libs.sx
 import co.yore.splitnpay.libs.sy
@@ -30,7 +31,7 @@ fun YouWillGetOrPayDetailsSingleRow_tby58h(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         ProfileImage_2hf7q0(
-            imageUrl = item.imageUrl,
+            image = item.imageUrl,
             contentDescription = "UserProfilePic"
         )
 

@@ -558,7 +558,7 @@ fun BankSymbolIcon_1a0qh2(
 // ////////////////////
 // ////////////////////
 // ////////////////////
-val LightGrey3 = Color(0xff989898)
+
 
 @Composable
 fun AmountSection(
@@ -791,7 +791,7 @@ fun FromToPortion(
     }
 }
 
-val LightBlue1 = Color(0xffEDF5FF)
+
 
 @Composable
 fun Number.numberToWords(): String {

@@ -20,11 +20,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 interface ManageRepository {
-    suspend fun getMembers(): List<Member1>
+    suspend fun getMembers(): List<Member>
 }
 class ManageRepositoryMockImpl : ManageRepository {
     val group = listOf(
-        Member1(
+        Member(
             id = 1,
             profilePic = "https://i.pravatar.cc/300",
             userName = "You",
@@ -32,28 +32,28 @@ class ManageRepositoryMockImpl : ManageRepository {
             isSelected = false,
             isGroupAdmin = true
         ),
-        Member1(
+        Member(
             id = 2,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Manisha Roy",
             mobileNo = "9563376942",
             isSelected = false
         ),
-        Member1(
+        Member(
             id = 3,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Sushil Roy",
             mobileNo = "9563376942",
             isSelected = false
         ),
-        Member1(
+        Member(
             id = 4,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Sanjana Ray",
             mobileNo = "9563376942",
             isSelected = false
         ),
-        Member1(
+        Member(
             id = 5,
             profilePic = "https://i.pravatar.cc/300",
             userName = "Ankita Ray",
@@ -62,7 +62,7 @@ class ManageRepositoryMockImpl : ManageRepository {
         )
     )
 
-    override suspend fun getMembers(): List<Member1> {
+    override suspend fun getMembers(): List<Member> {
         return group
     }
 
@@ -78,7 +78,7 @@ class ManageViewModel(
 
     // ////////////////////////////////////////
     private val _profileImage = mutableStateOf<Any?>(null)
-    private val _groupMembers = mutableStateListOf<Member1>()
+    private val _groupMembers = mutableStateListOf<Member>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("Office buddies")
     private val _numberOfGroupMembers = mutableStateOf(5)

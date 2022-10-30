@@ -19,8 +19,7 @@ import co.yore.splitnpay.components.PhotoSelectionBottomSheet
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.robotoFonts
+import co.yore.splitnpay.ui.theme.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -37,7 +36,7 @@ fun GroupCreationScreen(
             topStart = 25f.dep(),
             topEnd = 25f.dep()
         ),
-        scrimColor = Color(0x8C243257)
+        scrimColor = MyColor2
     ) {
         GroupCreationPageContent()
     }
@@ -147,7 +146,7 @@ fun GroupCreationPageContent(
                         end = 16.dep()
                     )
                     .clip(RoundedCornerShape(12.dep()))
-                    .background(color = Color(0xffE0E6ED)),
+                    .background(color = Lightgrey5),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -162,7 +161,7 @@ fun GroupCreationPageContent(
                     text = "*By continuing, you agree that members of this groups will abide by the Yore Payments user policies",
                     fontSize = 10.sep(),
                     fontWeight = FontWeight(400),
-                    color = Color(0xff5A87BB),
+                    color = Lightblue5,
                     maxLines = 2,
                     lineHeight = 13.sep(),
                     fontFamily = robotoFonts

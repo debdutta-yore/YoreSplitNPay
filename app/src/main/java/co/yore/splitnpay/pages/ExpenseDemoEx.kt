@@ -190,7 +190,7 @@ fun ExpenseDemo(
                                             .alignByBaseline()
                                     )
                                     RobotoText(
-                                        expensesOvertimeTotal.splitted().whole,
+                                        expensesOvertimeTotal.splitted().wholeString,
                                         fontSize = 15.sep(),
                                         color = Color(0xff243257),
                                         fontWeight = FontWeight.Bold,
@@ -198,7 +198,7 @@ fun ExpenseDemo(
                                             .alignByBaseline()
                                     )
                                     RobotoText(
-                                        text = ". ${expensesOvertimeTotal.splitted().dec}",
+                                        text = ". ${expensesOvertimeTotal.splitted().decString}",
                                         fontSize = 15.sep(),
                                         color = Color(0xff243257),
                                         modifier = Modifier
@@ -337,14 +337,14 @@ fun ExpenseDemo(
                                                 modifier = Modifier.alignByBaseline()
                                             )
                                             RobotoText(
-                                                numberFormatter.value.format(it.amount.splitted().whole.toFloat()),
+                                                it.amount.splitted().wholeString,
                                                 fontSize = 12.sep(),
                                                 color = Color(0xff243257),
                                                 fontWeight = FontWeight.Bold,
                                                 modifier = Modifier.alignByBaseline()
                                             )
                                             RobotoText(
-                                                ".${it.amount.splitted().dec}",
+                                                ".${it.amount.splitted().decString}",
                                                 color = Color(0xff243257),
                                                 fontSize = 6.sep(),
                                                 modifier = Modifier.alignByBaseline()
@@ -522,7 +522,7 @@ fun ExpenseDemo(
                                             modifier = Modifier.alignByBaseline()
                                         )
                                         RobotoText(
-                                            text = ".${expenseBarChartList[labelData!!.index].yAxis.splitted().dec}",
+                                            text = ".${expenseBarChartList[labelData!!.index].yAxis.splitted().decString}",
                                             color = Color(0xff243257),
                                             fontSize = 6.sep(),
                                             modifier = Modifier.alignByBaseline()
@@ -605,14 +605,14 @@ fun ExpenseDemo(
                                                             modifier = Modifier.alignByBaseline()
                                                         )
                                                         RobotoText(
-                                                            expensesOvertimeTotal.splitted().whole,
+                                                            expensesOvertimeTotal.splitted().wholeString,
                                                             fontWeight = FontWeight.Bold,
                                                             fontSize = 14.sep(),
                                                             color = Color(0xff243257),
                                                             modifier = Modifier.alignByBaseline()
                                                         )
                                                         RobotoText(
-                                                            ". ${expensesOvertimeTotal.splitted().dec}",
+                                                            ". ${expensesOvertimeTotal.splitted().decString}",
                                                             fontSize = 6.sep(),
                                                             color = Color(0xff243257),
                                                             modifier = Modifier.alignByBaseline()
@@ -796,7 +796,7 @@ fun ExpenseDemo(
                                                 modifier = Modifier.alignByBaseline()
                                             )
                                             RobotoText(
-                                                text = ".${it.amount.splitted().dec}",
+                                                text = ".${it.amount.splitted().decString}",
                                                 color = Color(0xff243257),
                                                 fontSize = 6.sep(),
                                                 modifier = Modifier.alignByBaseline()

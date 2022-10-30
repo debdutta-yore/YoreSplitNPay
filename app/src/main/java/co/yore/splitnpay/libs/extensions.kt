@@ -33,6 +33,8 @@ import androidx.navigation.NavGraphBuilder
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.FloatSplitted
 import co.yore.splitnpay.models.StatusBarColor
+import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.MyColor
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.math.BigDecimal
@@ -46,35 +48,8 @@ object YoreAmountFormatter{
     val decFormatter = DecimalFormat("#,##,###.##")
 }
 
-
-
-fun Float.splitted(): FloatSplitted {
-    val text = this.toString()
-    val parts = text.split(".")
-    var wholeText = parts[0]
-    var decText = parts[1]
-    val whole = wholeText.toInt()
-    if(whole<10){
-        wholeText = "0$whole"
-    }
-    else{
-        wholeText = YoreAmountFormatter.formatter.format(whole)
-    }
-    if(decText.length<2){
-        decText = "${decText}0"
-    }
-    if(decText.length>2){
-        decText = decText.substring(0..1)
-    }
-    return FloatSplitted(
-        wholeText,
-        decText,
-        whole,
-    )
-}
-
 var formatter = DecimalFormat("#,###")
-fun Number.formatComma():String{
+fun Number.formatComma(): String{
     return formatter.format(this)
 }
 
@@ -89,49 +64,48 @@ fun Modifier.fadingEdge(
 ) = this.then(
     drawWithContent {
         val colors = listOf(startingColor, endingColor)
-        val colors1 = listOf(starting1Color,ending1Color)
+        val colors1 = listOf(starting1Color, ending1Color)
         drawContent()
-        if(!horizontal){
+        if (!horizontal){
             drawRect(
-                brush = Brush.verticalGradient(colors, endY = length),
+                brush = Brush.verticalGradient(colors, endY = length)
             )
             drawRect(
                 brush = Brush.verticalGradient(
                     colors1,
                     startY = size.height - length1,
                     endY = size.height
-                ),
+                )
             )
-        }
-        else{
+        } else {
             drawRect(
-                brush = Brush.horizontalGradient(colors, endX = length),
+                brush = Brush.horizontalGradient(colors, endX = length)
             )
             drawRect(
                 brush = Brush.horizontalGradient(
                     colors1,
                     startX = size.width - length1,
                     endX = size.width
-                ),
+                )
             )
         }
     }
 )
 
-//34*1.dep() and 1.dep()*34 can be achieved by the following extensions
+// 34*1.dep() and 1.dep()*34 can be achieved by the following extensions
 operator fun Dp.times(number: Number): Dp {
-    return (this.value*number.toFloat()).dp
+    return (this.value * number.toFloat()).dp
 }
 operator fun Number.times(dp: Dp): Dp {
-    return (this.toFloat()*dp.value).dp
+    return (this.toFloat() * dp.value).dp
 }
 
-//34*1.dep() and 1.dep()*34 can be achieved by the following extensions
+// 34*1.dep() and 1.dep()*34 can be achieved by the following extensions
 operator fun TextUnit.times(number: Number): TextUnit {
-    return (this.value*number.toFloat()).sp
+    return (this.value * number.toFloat()).sp
 }
 operator fun Number.times(sp: TextUnit): TextUnit {
-    return (this.toFloat()*sp.value).sp
+    return (this.toFloat() * sp.value).sp
 }
 
 fun Color.Companion.blend(
@@ -150,9 +124,9 @@ fun Color.Companion.blend(
     val p = progress
     val q = 1f - progress
     return Color(
-        red = q*r1 + p*r2,
-        green = q*g1 + p*g2,
-        blue = q*b1 + p*b2,
+        red = q * r1 + p * r2,
+        green = q * g1 + p * g2,
+        blue = q * b1 + p * b2
     )
 }
 
@@ -167,7 +141,7 @@ fun lcs(a: String, b: String): String {
     for (ai in 0 until a.length) {
         for (len in a.length - ai downTo 1) {
             for (bi in 0 until b.length - len) {
-                if (a.regionMatches(ai, b, bi,len) && len > res.length) {
+                if (a.regionMatches(ai, b, bi, len) && len > res.length) {
                     res = a.substring(ai, ai + len)
                 }
             }
@@ -200,14 +174,14 @@ fun countFreq(pat: String, txt: String): Int {
 
 fun String.containsAny(vararg sub: String): Boolean{
     val s = sub.joinToString("|")
-    if(s.isEmpty()){
+    if (s.isEmpty()){
         return false
     }
     return this.contains(s.toRegex())
 }
 
 fun search(query: String, targets: List<String>): Boolean{
-    if(query.isEmpty()){
+    if (query.isEmpty()){
         return true
     }
     val q = query
@@ -217,9 +191,9 @@ fun search(query: String, targets: List<String>): Boolean{
 
     var matched = 0
     targets.forEach {
-        matched += if(it.containsAny(*(q.toTypedArray()))) 1 else 0
+        matched += if (it.containsAny(*(q.toTypedArray()))) 1 else 0
     }
-    return matched>0
+    return matched > 0
 }
 
 fun randomDate(start: Long, end: Long): Long {
@@ -227,8 +201,6 @@ fun randomDate(start: Long, end: Long): Long {
         .current()
         .nextLong(start, end)
 }
-
-
 
 @Composable
 fun StatusBarColorControl(
@@ -264,7 +236,7 @@ fun Modifier.clickable(
                 interactionSource = interactionSource,
                 indication = rememberRipple(
                     color = rippleColor,
-                    radius = rippleRadius,
+                    radius = rippleRadius
                 ),
                 enabled = enabled,
                 onClickLabel = onClickLabel,
@@ -284,15 +256,15 @@ data class NavAnimation @OptIn(ExperimentalAnimationApi::class) constructor(
         slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(duration))
     },
     val popEnterTransition: (
-    AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?
+        AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?
     )? = {
         slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(duration))
     },
     val popExitTransition: (
-    AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?
+        AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?
     )? = {
         slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(duration))
-    },
+    }
 )
 
 @ExperimentalAnimationApi
@@ -315,7 +287,7 @@ fun NavGraphBuilder.yoreComposable(
     )
 }
 
-fun <E>MutableCollection<E>.removeIfMy(filter: (E)->Boolean): Boolean{
+fun <E>MutableCollection<E>.removeIfMy(filter: (E) -> Boolean): Boolean{
     Objects.requireNonNull(filter)
     var removed = false
     val each: MutableIterator<E> = iterator()
@@ -400,9 +372,9 @@ class AmountStyle(private var sp: TextUnit) : VisualTransformation {
 
             override fun transformedToOriginal(offset: Int): Int {
                 return when (offset) {
-                    out.length+1->whole.length+1
-                    out.length+2->whole.length+2
-                    out.length+3->whole.length+3
+                    out.length + 1 -> whole.length + 1
+                    out.length + 2 -> whole.length + 2
+                    out.length + 3 -> whole.length + 3
                     else -> {
                         val totalCommas = ((whole.length - 1) / 3).coerceAtLeast(0)
                         val rightOffset = out.length - offset
@@ -418,23 +390,22 @@ class AmountStyle(private var sp: TextUnit) : VisualTransformation {
         )
     }
 
-    private fun buildAnnotatedStringWithColors(text:String): AnnotatedString{
+    private fun buildAnnotatedStringWithColors(text: String): AnnotatedString{
         val builder = AnnotatedString.Builder()
         val parts = text.split(".")
         val wholeInt = parts[0].toBigDecimal()
         whole = parts[0]
         out = YoreAmountFormatter.formatter.format(wholeInt)
         val dec = parts[1].toInt()
-        val color = if(wholeInt+dec.toBigDecimal()> BigDecimal(0)){
-            Color(0xff243257)
-        }
-        else{
-            Color(0xff8C93A2)
+        val color = if (wholeInt + dec.toBigDecimal() > BigDecimal(0)){
+            DarkBlue
+        } else {
+            MyColor
         }
         builder.withStyle(
             SpanStyle(
                 color = color,
-                fontSize = 14*sp,
+                fontSize = 14 * sp,
                 fontWeight = FontWeight.Bold
             )
         ){
@@ -443,7 +414,7 @@ class AmountStyle(private var sp: TextUnit) : VisualTransformation {
         builder.withStyle(
             SpanStyle(
                 color = color,
-                fontSize = 12*sp
+                fontSize = 12 * sp
             )
         ){
             append(".")
@@ -476,28 +447,27 @@ class ThousandsTransformer : VisualTransformation {
         return TransformedText(
             text = AnnotatedString(text.text.toLongOrNull().formatWithComma()),
             offsetMapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                val rightOffset = text.lastIndex - offset
-                val commasToTheRight = rightOffset / 3
-                return out.lastIndex - rightOffset - commasToTheRight
-            }
+                override fun originalToTransformed(offset: Int): Int {
+                    val rightOffset = text.lastIndex - offset
+                    val commasToTheRight = rightOffset / 3
+                    return out.lastIndex - rightOffset - commasToTheRight
+                }
 
-            override fun transformedToOriginal(offset: Int): Int {
-                val totalCommas = ((text.length - 1) / 3).coerceAtLeast(0)
-                val rightOffset = out.length - offset
-                val commasToTheRight = rightOffset / 4
-                return (offset - (totalCommas - commasToTheRight))
+                override fun transformedToOriginal(offset: Int): Int {
+                    val totalCommas = ((text.length - 1) / 3).coerceAtLeast(0)
+                    val rightOffset = out.length - offset
+                    val commasToTheRight = rightOffset / 4
+                    return (offset - (totalCommas - commasToTheRight))
+                }
             }
-        }
         )
     }
 }
 
 fun Long?.formatWithComma(): String {
-    if(this==null){
+    if (this == null){
         return ""
-    }
-    else {
+    } else {
         return NumberFormat.getNumberInstance(Locale.US).format(this)
     }
 }
@@ -512,15 +482,15 @@ fun Int.numberToWords(): String {
     )
 
     val tens = arrayOf(
-        "",  // 0
-        "",  // 1
-        "Twenty",  // 2
-        "Thirty",  // 3
-        "Forty",  // 4
-        "Fifty",  // 5
-        "Sixty",  // 6
-        "Seventy",  // 7
-        "Eighty",  // 8
+        "", // 0
+        "", // 1
+        "Twenty", // 2
+        "Thirty", // 3
+        "Forty", // 4
+        "Fifty", // 5
+        "Sixty", // 6
+        "Seventy", // 7
+        "Eighty", // 8
         "Ninety" // 9
     )
 
@@ -553,4 +523,50 @@ fun Int.numberToWords(): String {
     return convert(this@numberToWords) + " " + "Rupees"
 }
 
+// //////////////////
+/*fun Number.splitted(): FloatSplitted1 {
+    val text = this.toString()
+    val parts = text.split(".")
+    var wholeText = parts[0]
+    var decText = parts[1]
+    val whole = wholeText.toInt()
+    if (whole < 10) {
+        wholeText = "0$whole"
+    }
+    if (decText.length < 2) {
+        decText = "${decText}0"
+    }
+    if (decText.length > 2) {
+        decText = decText.substring(0..1)
+    }
+    return FloatSplitted1(
+        wholeText,
+        decText
+    )
+}*/
 
+fun Float.splitted(format: Boolean = true): FloatSplitted {
+    val text = this.toString()
+    val parts = text.split(".")
+    var wholeText = parts[0]
+    var decText = parts[1]
+    val whole = wholeText.toInt()
+    if (whole < 10){
+        wholeText = "0$whole"
+    } else {
+        if (format){
+            wholeText = YoreAmountFormatter.formatter.format(whole)
+        }
+    }
+    if (decText.length < 2){
+        decText = "${decText}0"
+    }
+    if (decText.length > 2){
+        decText = decText.substring(0..1)
+    }
+    return FloatSplitted(
+        wholeText,
+        decText,
+        whole
+    )
+}

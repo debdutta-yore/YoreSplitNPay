@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -19,19 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.CheckboxConfiguration
+import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.models.FilterSingleUserConfiguration
+import co.yore.splitnpay.models.SingleItem
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -212,7 +212,10 @@ private fun FilterSingleUser_ffkz81(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ProfileImage_2hf7q0(contentDescription = "userProfileImageFilter")
+        ProfileImage_2hf7q0(
+            contentDescription = "userProfileImageFilter",
+            image = item.profilePic
+        )
 
         config.spaceBetweenProfileImageAndUserName.sx()
 
@@ -280,27 +283,4 @@ fun SelectorIcon_ulkel8(
     }
 }
 
-@Composable
-fun ProfileImage_2hf7q0(
-    config: ProfileImageConfiguration = ProfileImageConfiguration(),
-    contentDescription: String
-) {
-    AsyncImage(
-        modifier = Modifier
-            .size(config.imageSize.dep())
-            .border(
-                width = config.borderStroke.dep(),
-                color = config.borderColor,
-                shape = config.shape
-            )
-            .padding(config.borderStroke.dep())
-            .clip(CircleShape),
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(config.imageUrl)
-            .crossfade(true)
-            .build(),
-        placeholder = painterResource(config.placeholder),
-        contentScale = config.contentScale,
-        contentDescription = contentDescription
-    )
-}
+

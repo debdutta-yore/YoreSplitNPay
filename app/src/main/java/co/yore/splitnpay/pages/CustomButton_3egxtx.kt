@@ -13,6 +13,7 @@ import co.yore.splitnpay.addmembers.FontFamilyText
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.models.CustomButtonConfiguration
+import co.yore.splitnpay.ui.theme.Lightblue4
 
 @Composable
 fun CustomButton_3egxtx(
@@ -42,7 +43,7 @@ fun CustomButton_3egxtx(
         shape = RoundedCornerShape(config.cornerRadius.dep()),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = config.buttonColor,
-            disabledBackgroundColor = Color(0xff839BB9),
+            disabledBackgroundColor = Lightblue4,
             disabledContentColor = config.fontColor,
             contentColor = config.fontColor
         )

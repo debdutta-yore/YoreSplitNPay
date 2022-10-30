@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.platform.debugInspectorInfo
@@ -48,21 +47,20 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.LightBlue3
 import co.yore.splitnpay.components.components.amountAnnotatedString
 import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Members(
     modifier: Modifier = Modifier,
-    groupMembers: List<Member1> = listState(key = DataIds.groupMembers),
+    groupMembers: List<Member> = listState(key = DataIds.groupMembers),
     notifier: NotificationService = notifier()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -231,7 +229,7 @@ fun SingleMember(
     }
 }
 
-val SheetScrim = Color(0x8C243257)
+
 
 @OptIn(
     ExperimentalMaterialApi::class,
@@ -245,7 +243,7 @@ fun GroupManagePage(
     groupCreatedBy: String = stringState(key = DataIds.groupCreatedBy).value,
     groupCreationDate: String = stringState(key = DataIds.groupCreationDate).value,
     groupImage: Any? = tState<Any?>(key = DataIds.groupImage).value,
-    groupMembers: List<Member1> = listState(key = DataIds.groupMembers),
+    groupMembers: List<Member> = listState(key = DataIds.groupMembers),
     notifier: NotificationService = notifier(),
     sheeting: Sheeting = sheeting()
 ) {
@@ -1143,8 +1141,6 @@ fun CustomRadioButton_2ofz97(
     }
 }
 
-val LightGrayShadow = Color(0xffE6E5E5)
-
 
 
 // //////////////////////////////
@@ -1226,6 +1222,7 @@ fun SettledOrUnsettledSingleRow_70d834(
             config.gapBetweenSelectorAndProfileImage.sx()
 
             ProfileImage_2hf7q0(
+                image = member.imageUrl,
                 contentDescription = "UserProfilePic"
             )
         }
@@ -1380,27 +1377,3 @@ fun SelectorIcon_ulkel8(
 val Whitish6 = Color(0xFFE7EEF6)
 
 // ///////////////////////
-@Composable
-fun ProfileImage_2hf7q0(
-    config: ProfileImageConfiguration = ProfileImageConfiguration(),
-    contentDescription: String
-) {
-    AsyncImage(
-        modifier = Modifier
-            .size(config.imageSize.dep())
-            .border(
-                width = config.borderStroke.dep(),
-                color = config.borderColor,
-                shape = config.shape
-            )
-            .padding(config.borderStroke.dep())
-            .clip(CircleShape),
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(config.imageUrl)
-            .crossfade(true)
-            .build(),
-        placeholder = painterResource(config.placeholder),
-        contentScale = config.contentScale,
-        contentDescription = contentDescription
-    )
-}

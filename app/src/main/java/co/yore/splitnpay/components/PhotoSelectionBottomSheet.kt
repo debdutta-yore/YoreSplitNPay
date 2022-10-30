@@ -25,6 +25,9 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Item
+import co.yore.splitnpay.ui.theme.Bluish
+import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.Lightblue1
 import kotlinx.coroutines.CoroutineScope
 
 class PhotoSelectionBottomSheetModel(val callback: Callback): BottomSheetModel{
@@ -141,7 +144,7 @@ fun SingleItem(
         modifier = modifier
             .background(
                 if (isSelected)
-                    Color(237, 245, 255) else Color.White
+                    Lightblue1 else Color.White
             )
             .padding(start = 31f.dep())
             .fillMaxWidth()
@@ -158,13 +161,13 @@ fun SingleItem(
 
             Icon(
                 modifier = Modifier.size(18.dp),
-                tint = Color(26, 121, 229),
+                tint = Bluish,
                 painter = icon, contentDescription = "selected photo icon"
             )
             Spacer(modifier = Modifier.width(15f.dep()))
             Text(
                 text = text,
-                color = Color(36, 50, 87),
+                color = DarkBlue,
                 fontSize = 14.sp,
                 fontWeight = FontWeight(700)
             )
@@ -182,7 +185,7 @@ fun SingleItem(
                             bottomStart = 6.dep()
                         )
                     )
-                    .background(Color(0xff1A79E5))
+                    .background(Bluish)
             ){
 
             }

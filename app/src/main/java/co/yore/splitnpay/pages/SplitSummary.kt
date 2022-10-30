@@ -22,11 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
-import co.yore.splitnpay.components.components.LightBlue3
 import co.yore.splitnpay.components.components.TriangleShape
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.LightBlue3
 import co.yore.splitnpay.ui.theme.White
 
 @Composable
@@ -42,7 +42,7 @@ fun SplitSummary() {
                 .verticalScroll(rememberScrollState())
         ) {
             BalanceExpenseTabs(
-                selected.value,
+                selected.value
             )
 
             if (selected.value == 0) {
@@ -80,7 +80,7 @@ fun SplitSummary() {
         ) {
             TopBarWithIcon_1t9xbo(
                 onClick = {
-                    //todo
+                    // todo
                 },
                 text = "Summary"
             )
@@ -119,7 +119,6 @@ fun BalanceExpenseTabs(
             .background(LightBlue6)
     ) {
         // triangle arrow
-
 
         Divider(
             modifier = Modifier
@@ -185,9 +184,9 @@ fun BalanceExpenseTabs(
                 .drawBehind {
                     drawPath(
                         Path().apply {
-                            moveTo(0f,size.height)
-                            lineTo(size.width/2f,0f)
-                            lineTo(size.width,size.height)
+                            moveTo(0f, size.height)
+                            lineTo(size.width / 2f, 0f)
+                            lineTo(size.width, size.height)
                         },
                         Color(0xffEAEEF3),
                         style = Stroke(

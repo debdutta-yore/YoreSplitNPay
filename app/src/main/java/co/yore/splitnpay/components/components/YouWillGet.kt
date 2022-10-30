@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -27,26 +25,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.addmembers.FontFamilyText
+import co.yore.splitnpay.friend_item.ProfileImage_2hf7q0
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.models.CheckboxConfiguration
 import co.yore.splitnpay.pages.*
-import co.yore.splitnpay.ui.theme.Bluish
-import co.yore.splitnpay.ui.theme.DarkBlue
-import co.yore.splitnpay.ui.theme.LightBlue4
-import co.yore.splitnpay.ui.theme.LightGreen3
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import co.yore.splitnpay.ui.theme.*
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun YouWillGet(
+fun YouWillGetChildPage(
     userName: String,
     total: Float,
     list: List<Transaction>,
     isWillGetTransactionSelected: Boolean,
     contentDescription: String,
-    config: YouWillGetConfiguration = YouWillGetConfiguration(),
+    config: YouWillGetChildPageConfiguration = YouWillGetChildPageConfiguration(),
     notifier: NotificationService = notifier()
 ) {
     if (list.isEmpty()) {
@@ -249,7 +242,7 @@ fun YouWillGetSingleItem_080weu(
         ) {
             Row() {
                 ProfileImage_2hf7q0(
-                    imageUrl = transaction.imageUrl,
+                    image = transaction.imageUrl,
                     contentDescription = "UserProfilePic"
                 )
                 config.profilePicEndPadding.sx()
@@ -264,7 +257,7 @@ fun YouWillGetSingleItem_080weu(
                     FontFamilyText(
                         text = transaction.mobileNumber,
                         fontSize = 11.sep(),
-                        color = Color(0xff5A87BB)
+                        color = Lightblue5
                     )
                 }
             }
@@ -295,28 +288,4 @@ fun YouWillGetSingleItem_080weu(
 
 }
 
-@Composable
-fun ProfileImage_2hf7q0(
-    imageUrl: Any?,
-    config: ProfileImageConfiguration = ProfileImageConfiguration(),
-    contentDescription: String
-) {
-    AsyncImage(
-        modifier = Modifier
-            .size(config.imageSize.dep())
-            .border(
-                width = config.borderStroke.dep(),
-                color = config.borderColor,
-                shape = config.shape
-            )
-            .padding(config.borderStroke.dep())
-            .clip(CircleShape),
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .crossfade(true)
-            .build(),
-        placeholder = painterResource(config.placeholder),
-        contentScale = config.contentScale,
-        contentDescription = contentDescription
-    )
-}
+

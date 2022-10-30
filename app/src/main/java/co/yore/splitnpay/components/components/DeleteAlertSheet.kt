@@ -23,6 +23,7 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.ui.theme.Bluish
 import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.LightGrey2
 import kotlinx.coroutines.CoroutineScope
 
 class DeleteAlertSheetModel(val callback: Callback): BottomSheetModel{

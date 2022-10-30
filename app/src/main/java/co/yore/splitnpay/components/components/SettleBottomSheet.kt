@@ -23,6 +23,8 @@ import co.yore.splitnpay.models.SettleBottomSheetTabs
 import co.yore.splitnpay.models.Transaction
 import co.yore.splitnpay.models.YouWillGetPayBottomSheetConfiguration
 import co.yore.splitnpay.ui.theme.DarkBlue
+import co.yore.splitnpay.ui.theme.LightBlue3
+import co.yore.splitnpay.ui.theme.Lightblue5
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -194,7 +196,7 @@ fun YouWillGetPayBottomSheet_al32sa(
                 .clip(RoundedCornerShape(50.dep()))
                 .height(2.dep())
                 .width(19.dep())
-                .background(Color(0xff5A87BB))
+                .background(Lightblue5)
                 .align(Alignment.CenterHorizontally)
         )
         config.bottomSheetHolderBottomPadding.sy()
@@ -242,7 +244,7 @@ fun YouWillGetPayBottomSheet_al32sa(
                 )
         ) {
             if (isGetTabSelected.value) {
-                YouWillGet(
+                YouWillGetChildPage(
                     userName = stringResource(R.string.you),
                     total = settleGetTotal,
                     list = getTransactions,
@@ -250,7 +252,7 @@ fun YouWillGetPayBottomSheet_al32sa(
                     contentDescription = "YouWillGetSection"
                 )
             } else {
-                YouWillPay_m6awbp(
+                YouWillPayChildPage_m6awbp(
                     userName = stringResource(R.string.you),
                     total = settlePayTotal,
                     list = payTransactions,

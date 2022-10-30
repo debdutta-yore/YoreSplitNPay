@@ -58,12 +58,11 @@ import co.yore.splitnpay.viewModels.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
-val LightGrey8 = Color(0xffD9D9D9)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    //searchText: String = stringState(key = DataIds.searchText).value,
+    // searchText: String = stringState(key = DataIds.searchText).value,
     notifier: NotificationService = notifier(),
     onFilter: () -> Unit
 ) {
@@ -91,7 +90,7 @@ fun SearchBar(
                 interactionSource = interactionSource,
                 colors = colors
             ),
-        interactionSource = interactionSource,
+        interactionSource = interactionSource
     ) { innerTextField ->
         Box(
             modifier = Modifier
@@ -113,14 +112,15 @@ fun SearchBar(
                         color = Color.Black,
                         letterSpacing = 0.17.sep(),
                         lineHeight = 25.sep(),
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center
                     )
                 },
                 colors = colors,
                 trailingIcon = {
                     Row {
-                        Spacer(modifier = Modifier
-                            .width(114.dep())
+                        Spacer(
+                            modifier = Modifier
+                                .width(114.dep())
                         )
                         Icon(
                             modifier = Modifier
@@ -153,6 +153,7 @@ fun SearchBar(
         }
     }
 }
+
 @Composable
 fun SearchField(
     config: ContactSearchBarConfiguration = ContactSearchBarConfiguration(),
@@ -186,7 +187,7 @@ fun SearchField(
                 ),
             value = text,
             onValueChange = {
-                notifier.notify(DataIds.searchTextInput,it)
+                notifier.notify(DataIds.searchTextInput, it)
             },
             textStyle = TextStyle(fontSize = config.fontSize.sep()),
             shape = RoundedCornerShape(config.borderRadius.dep()),
@@ -213,7 +214,7 @@ fun SearchField(
                     )
                     config.dividerRightSpace.sx()
                 }
-            },
+            }
         )
 
         AnimatedVisibility(
@@ -231,10 +232,11 @@ fun SearchField(
         }
     }
 }
+
 @Composable
 fun GroupSearchBar(
     modifier: Modifier = Modifier,
-    text: String,
+    text: String
 ) {
     Box(
         modifier = modifier
@@ -248,12 +250,6 @@ fun GroupSearchBar(
         )
     }
 }
-
-
-
-
-
-
 
 @Composable
 fun ContentUI(
@@ -269,7 +265,7 @@ fun ContentUI(
             .background(
                 color = Whitish,
                 shape = RoundedCornerShape(24.dep())
-            ),
+            )
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -314,16 +310,15 @@ fun HeaderUI(
 ) {
     val alpha by remember(searching) {
         derivedStateOf {
-            if(searching){
+            if (searching){
                 0f
-            }
-            else{
+            } else {
                 1f
             }
         }
     }
     val animatedAlpha by animateFloatAsState(targetValue = alpha)
-    if(alpha>0f){
+    if (alpha > 0f){
         UpperCut(
             modifier = Modifier
                 .layoutId("upperCut")
@@ -380,7 +375,7 @@ fun HeaderUI(
             color = Color.White,
             letterSpacing = 0.166667.sep()
         )
-        if(amountOrMobile is Float){
+        if (amountOrMobile is Float){
             FontFamilyText(
                 modifier = modifier
                     .layoutId("amount")
@@ -396,11 +391,10 @@ fun HeaderUI(
                         min = 24f
                     ),
                     wholeNumberFontWeight = FontWeight.Bold,
-                    decNumberFontSize = 14f,
+                    decNumberFontSize = 14f
                 )
             )
-        }
-        else if(amountOrMobile is String){
+        } else if (amountOrMobile is String){
             FontFamilyText(
                 modifier = modifier
                     .layoutId("amount")
@@ -417,7 +411,7 @@ fun HeaderUI(
                 .alpha(animatedAlpha),
             painter = painterResource(id = R.drawable.rupee_sign),
             onClick = {
-                //navController.navigate("split_card_details_screen")
+                // navController.navigate("split_card_details_screen")
                 notifier.notify(DataIds.settleClick)
             },
             backgroundColor = Color.Companion.blend(
@@ -447,7 +441,7 @@ fun HeaderUI(
                 .alpha(animatedAlpha),
             painter = painterResource(id = R.drawable.statement_icon),
             onClick = {
-                //navController.navigate("split_summary_balance")
+                // navController.navigate("split_summary_balance")
                 notifier.notify(DataIds.summaryClick)
             },
             progress = progress
@@ -520,12 +514,12 @@ fun normalEndConstraint(
         val searchField = createRefFor("searchField")
 
         constrain(searchField) {
-            top.linkTo(parent.top,71*dep)
+            top.linkTo(parent.top, 71 * dep)
         }
 
         constrain(typingIndicator) {
             centerHorizontallyTo(parent)
-            bottom.linkTo(bottomBar.top,3*dep)
+            bottom.linkTo(bottomBar.top, 3 * dep)
         }
         constrain(topBar) {
             top.linkTo(parent.top)
@@ -544,7 +538,7 @@ fun normalEndConstraint(
         }
 
         constrain(tabs) {
-            //top.linkTo(searchBar.bottom, 9 * dep)
+            // top.linkTo(searchBar.bottom, 9 * dep)
             top.linkTo(parent.top, endGap * dep)
         }
 
@@ -645,11 +639,11 @@ fun normalStartConstraint(
         val searchField = createRefFor("searchField")
 
         constrain(searchField) {
-            top.linkTo(parent.top,71*dep)
+            top.linkTo(parent.top, 71 * dep)
         }
         constrain(typingIndicator) {
             centerHorizontallyTo(parent)
-            bottom.linkTo(bottomBar.top,3*dep)
+            bottom.linkTo(bottomBar.top, 3 * dep)
         }
         constrain(topBar) {
             top.linkTo(parent.top)
@@ -665,7 +659,7 @@ fun normalStartConstraint(
             width = Dimension.fillToConstraints
         }
         constrain(tabs) {
-            //top.linkTo(searchBar.bottom, 9 * dep)
+            // top.linkTo(searchBar.bottom, 9 * dep)
             top.linkTo(parent.top, startGap * dep)
         }
         constrain(menuOverlay) {
@@ -733,8 +727,8 @@ fun TypingIndicator(
 ) {
     Box(
         modifier =
-            modifier
-                .layoutId("typingIndicator")
+        modifier
+            .layoutId("typingIndicator")
     ){
         AnimatedVisibility(
             typingMembers.isNotEmpty(),
@@ -769,9 +763,10 @@ fun TypingIndicator(
 
 @Composable
 fun ConversationItemUI(
-    it: Conversation, notifier: NotificationService
+    it: Conversation,
+    notifier: NotificationService
 ) {
-    when(it.type){
+    when (it.type){
         Conversation.Type.TRANSACTION -> {
             BillCard_s10zd7(
                 transaction = it.data as BillTransaction,
@@ -806,9 +801,9 @@ fun ConversationItemUI(
                             style = SpanStyle(
                                 fontSize = 13.sep(),
                                 color = Color(0xff5A87BB)
-                            ),
+                            )
                         ) {
-                            append(stringResource(R.string.x_created_group,(it.data as GroupCreationEvent).creator))
+                            append(stringResource(R.string.x_created_group, (it.data as GroupCreationEvent).creator))
                         }
                         append(" ")
                         withStyle(
@@ -816,7 +811,7 @@ fun ConversationItemUI(
                                 fontSize = 13.sep(),
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xff5A87BB)
-                            ),
+                            )
                         ) {
                             append((it.data as GroupCreationEvent).groupName)
                         }
@@ -830,10 +825,10 @@ fun ConversationItemUI(
             StatusUI(it)
         }
         Conversation.Type.CHAT -> {
-            ChatItemUI((it.data as? ChatData)?:return)
+            ChatItemUI((it.data as? ChatData) ?: return)
         }
         Conversation.Type.MEMBER -> {
-            MemberUI(it.data as? MemberData?:return)
+            MemberUI(it.data as? MemberData ?: return)
         }
     }
 }
@@ -925,10 +920,9 @@ fun MemberUI(memberData: MemberData) {
 
 @Composable
 fun ChatItemUI(chatData: ChatData) {
-    if(chatData.profileImage==null){
+    if (chatData.profileImage == null){
         MyChatUI(chatData.content)
-    }
-    else{
+    } else {
         PeerChatUI(chatData)
     }
 }
@@ -940,7 +934,7 @@ fun PeerChatUI(chatData: ChatData) {
         contentAlignment = Alignment.CenterStart
     ){
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         ){
             AsyncImage(
                 model = chatData.profileImage,
@@ -962,7 +956,7 @@ fun PeerChatUI(chatData: ChatData) {
                 modifier = Modifier
                     .align(Alignment.Top)
                     .padding(bottom = 10.67.dep())
-                    //.width(154.dep())
+                    // .width(154.dep())
                     .widthIn(max = 154.dep())
             ){
 
@@ -976,7 +970,7 @@ fun PeerChatUI(chatData: ChatData) {
                     contentAlignment = Alignment.CenterStart
                 ){
                     Text(
-                        chatData.content as? String?:"Not supported",
+                        chatData.content as? String ?: "Not supported",
                         fontSize = 9.sep(),
                         color = Color(0xff243257),
                         textAlign = TextAlign.Start
@@ -1017,7 +1011,7 @@ fun MyChatUI(content: Any) {
                 contentAlignment = Alignment.CenterEnd
             ){
                 Text(
-                    content as? String?:"Not supported",
+                    content as? String ?: "Not supported",
                     fontSize = 9.sep(),
                     color = Color(0xff243257),
                     textAlign = TextAlign.End
@@ -1042,7 +1036,7 @@ fun StatusUI(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = if((it.data as ChatStatus).left) Arrangement.Start else Arrangement.End
+        horizontalArrangement = if ((it.data as ChatStatus).left) Arrangement.Start else Arrangement.End
     ){
         Icon(
             painter = painterResource(id = R.drawable.status_seen),
@@ -1063,7 +1057,7 @@ fun TopBar(
     modifier: Modifier = Modifier,
     alpha: Float,
     notifier: NotificationService = notifier(),
-    text: String,
+    text: String
 ) {
     Row(
         modifier = modifier
@@ -1080,7 +1074,7 @@ fun TopBar(
                 }
                 .padding(6.dep()),
             painter = painterResource(id = R.drawable.ic_left_arrow),
-            tint = Color.blend(Color.White,Color.Black, 1-alpha),
+            tint = Color.blend(Color.White, Color.Black, 1 - alpha),
             contentDescription = "left arrow"
         )
 
@@ -1090,7 +1084,7 @@ fun TopBar(
             text = text,
             fontSize = 14.sep(),
             fontWeight = FontWeight.Bold,
-            color = Color.blend(Color.White,Color.Black, 1-alpha),
+            color = Color.blend(Color.White, Color.Black, 1 - alpha),
             letterSpacing = (-0.333333).sep()
         )
 
@@ -1099,7 +1093,7 @@ fun TopBar(
         Icon(
             modifier = Modifier.size(18.dep()),
             painter = painterResource(id = R.drawable.ic_heart),
-            tint = Color.blend(Color.White,Color.Black, 1-alpha),
+            tint = Color.blend(Color.White, Color.Black, 1 - alpha),
             contentDescription = "heart icon"
         )
 
@@ -1109,7 +1103,7 @@ fun TopBar(
             modifier = Modifier
                 .size(18.dep()),
             painter = painterResource(id = R.drawable.ic_share),
-            tint = Color.blend(Color.White,Color.Black, 1-alpha),
+            tint = Color.blend(Color.White, Color.Black, 1 - alpha),
             contentDescription = "share icon"
         )
     }
@@ -1151,19 +1145,20 @@ fun BottomCut(
             .background(
                 Color.White,
                 RoundedCornerShape(
-                    topEnd = 48.dep(),
+                    topEnd = 48.dep()
 
-                    )
+                )
             )
     ){
 
     }
 }
 
-fun minMaxRangeValue(percentage: Float, max: Float, min: Float) : Float {
+fun minMaxRangeValue(percentage: Float, max: Float, min: Float): Float {
     return (percentage * (max - min) / 100) + min
 }
-val CircleButtonShadow = Color(0x0756924f)
+
+
 @Composable
 fun SingleButton(
     modifier: Modifier = Modifier,
@@ -1179,7 +1174,7 @@ fun SingleButton(
                 borderRadius = 50.dep(),
                 blurRadius = 6.dep(),
                 offsetX = 0.dep(),
-                offsetY = 3.dep(),
+                offsetY = 3.dep()
             )
             .size(
                 minMaxRangeValue(
@@ -1202,14 +1197,10 @@ fun SingleButton(
                 .alpha(1 - progress),
             painter = painter,
             tint = Color.Unspecified,
-            contentDescription = "button section",
+            contentDescription = "button section"
         )
     }
 }
-
-
-
-
 
 @Composable
 fun GroupChatTabs_m5q49j(
@@ -1228,7 +1219,7 @@ fun GroupChatTabs_m5q49j(
             current = GroupChatTab.All,
             contentDescription = "tab",
             onClick = {
-                notifier.notify(DataIds.groupChantTab,GroupChatTab.All)
+                notifier.notify(DataIds.groupChantTab, GroupChatTab.All)
             }
         )
 
@@ -1238,7 +1229,7 @@ fun GroupChatTabs_m5q49j(
             current = GroupChatTab.Pending,
             contentDescription = "tab",
             onClick = {
-                notifier.notify(DataIds.groupChantTab,GroupChatTab.Pending)
+                notifier.notify(DataIds.groupChantTab, GroupChatTab.Pending)
             }
         )
 
@@ -1248,13 +1239,11 @@ fun GroupChatTabs_m5q49j(
             current = GroupChatTab.Settled,
             contentDescription = "tab",
             onClick = {
-                notifier.notify(DataIds.groupChantTab,GroupChatTab.Settled)
+                notifier.notify(DataIds.groupChantTab, GroupChatTab.Settled)
             }
         )
     }
 }
-
-
 
 @Composable
 fun GroupChatTabItem_yb6b5a(
@@ -1262,9 +1251,9 @@ fun GroupChatTabItem_yb6b5a(
     selected: GroupChatTab,
     current: GroupChatTab,
     contentDescription: String,
-    //config: GroupChatTabItemConfiguration = GroupChatTabItemConfiguration(),
+    // config: GroupChatTabItemConfiguration = GroupChatTabItemConfiguration(),
     config: SplitTabItemConfiguration = SplitTabItemConfiguration(),
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     /*val selectedBackground =
         remember(selected) {
@@ -1316,18 +1305,20 @@ fun GroupChatTabItem_yb6b5a(
     }*/
     val computedBackgroundColor by remember(selected) {
         derivedStateOf {
-            if (selected == current)
+            if (selected == current) {
                 config.selectedBackground
-            else
+            } else {
                 config.unSelectedBackground
+            }
         }
     }
     val computedColor by remember(selected) {
         derivedStateOf {
-            if (selected == current)
+            if (selected == current) {
                 config.selectedTextColor
-            else
+            } else {
                 config.unSelectedTextColor
+            }
         }
     }
     val animatedBackgroundColor by animateColorAsState(
@@ -1363,9 +1354,10 @@ fun GroupChatTabItem_yb6b5a(
         )
     }
 }
-////////
-val PinkShadow = Color(0x4FFF4077)
-val Blackish = Color(0x1A000000)
+
+// //////
+
+
 @Composable
 fun Message(
     modifier: Modifier = Modifier,
@@ -1376,7 +1368,7 @@ fun Message(
         modifier = modifier
             .navigationBarsPadding()
             .imePadding(),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.Top
     ) {
         FloatingActionButton(
             shape = CircleShape,
@@ -1414,7 +1406,7 @@ fun Message(
             onValueChange = {
                 notifier.notify(DataIds.chatMessage, it)
             },
-            decorationBox = {innerTextField->
+            decorationBox = {innerTextField ->
                 Box(
                     Modifier
                         .padding(end = 18.dep(), bottom = 14.dep())
@@ -1459,7 +1451,7 @@ fun Message(
                             contentDescription = "send"
                         )
                     }
-                    if(chatMessage.isEmpty()){
+                    if (chatMessage.isEmpty()){
                         Text(
                             "Message",
                             modifier = Modifier

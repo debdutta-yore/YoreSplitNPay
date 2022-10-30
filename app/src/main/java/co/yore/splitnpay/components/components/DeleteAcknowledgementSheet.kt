@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import co.yore.splitnpay.ui.theme.LightGrey2
 import kotlinx.coroutines.CoroutineScope
 
 class SuccessUndoSheetModel(val callback: Callback): BottomSheetModel{

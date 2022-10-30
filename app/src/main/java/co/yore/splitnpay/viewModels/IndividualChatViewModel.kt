@@ -260,7 +260,8 @@ class IndividualChatViewModel(
                                 isSelected = true,
                                 hasRead = false
                             ),
-                            category = Category1(
+                            category = Category(
+                                id = 0,
                                 name = "Category",
                                 color = 0xffff0000,
                                 icon = R.drawable.travel

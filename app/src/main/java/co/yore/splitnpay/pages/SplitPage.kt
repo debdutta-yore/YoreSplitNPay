@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.split_page_components.SplitPageContent
+import co.yore.splitnpay.ui.theme.MyColor2
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -26,7 +27,7 @@ fun SplitScreen(
         sheetContent = {
             sheeting.sheetContent()
         },
-        scrimColor = Color(0x8C243257),
+        scrimColor = MyColor2,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
             topStart = 33.dep(),

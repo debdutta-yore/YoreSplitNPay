@@ -22,6 +22,8 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.dep
 import co.yore.splitnpay.libs.sep
 import co.yore.splitnpay.models.TextFieldConfiguration
+import co.yore.splitnpay.ui.theme.Lightgrey
+import co.yore.splitnpay.ui.theme.Lightgrey4
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -98,14 +100,14 @@ fun GroupNameTextField(
                             .width(22f.dep())
                             .height(14f.dep()),
                         painter = painterResource(id = R.drawable.ic_group_icon),
-                        tint = Color(0xff656565),
+                        tint = Lightgrey,
                         contentDescription = "people icon"
                     )
 
                     Spacer(modifier = Modifier.width(9f.dep()))
 
                     Divider(
-                        color = Color(0xffBCBCBC),
+                        color = Lightgrey4,
                         modifier = Modifier
                             .width(1f.dep())
                             .height(13f.dep())
