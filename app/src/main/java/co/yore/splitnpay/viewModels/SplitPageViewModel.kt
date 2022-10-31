@@ -1,22 +1,33 @@
 package co.yore.splitnpay.viewModels
 
+import android.Manifest
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.AllCategoriesBottomSheetModel
-import co.yore.splitnpay.components.components.BillTotalAndCategoryBottomSheetModel
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.pages.subpages.AllCategoriesBottomSheetModel
+import co.yore.splitnpay.pages.subpages.BillTotalAndCategoryBottomSheetModel
+import co.yore.splitnpay.pages.subpages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
+import co.yore.splitnpay.ui.theme.BermudaGray
 import co.yore.splitnpay.ui.theme.CeriseRed
+import co.yore.splitnpay.ui.theme.RobinsEggBlue
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.math.abs
 
+@OptIn(ExperimentalPermissionsApi::class)
 class SplitPageViewModel(
     private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
@@ -24,16 +35,17 @@ class SplitPageViewModel(
     override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
     override val navigation = mutableStateOf<UIScope?>(null)
-    private val _whole = mutableStateOf("4,000")
-    private val _decimal = mutableStateOf("05")
-    private val _wholeGet = mutableStateOf("2,000")
-    private val _decimalGet = mutableStateOf("50")
-    private val _wholePay = mutableStateOf("500")
-    private val _decimalPay = mutableStateOf("30")
+
+    private val _whole = mutableStateOf("0")
+    private val _decimal = mutableStateOf("00")
+    private val _wholeGet = mutableStateOf("0")
+    private val _decimalGet = mutableStateOf("00")
+    private val _wholePay = mutableStateOf("0")
+    private val _decimalPay = mutableStateOf("00")
+
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _ultimateState = mutableStateOf(SplitPageState.PAY)
-    private val _willGetActive = mutableStateOf(false)
-    private val _willPayActive = mutableStateOf(false)
+
     private val _input = mutableStateOf("")
     private val _subTabGroup = mutableStateOf(SplitPageTabs.All)
     private val _subTabPeople = mutableStateOf(SplitPageTabs.All)
@@ -43,68 +55,75 @@ class SplitPageViewModel(
     private val _noGroup = mutableStateOf(false)
     private val _haveSplit = mutableStateOf(true)
 
+    private var splitPageData: SplitPageData = SplitPageData(
+        willPay = 0f,
+        willGet = 0f,
+        splitted = false
+    )
+
     // /////////////////////////////////////////////////////
-    private val _notificationService = NotificationService{id, arg ->
-        when (id){
-            WirelessViewModelInterface.startupNotification -> {
-                _statusBarColor.value = StatusBarColor(CeriseRed, false)
-            }
-            DataIds.textInput -> {
-                _input.value = (arg as? String) ?: return@NotificationService
-                filter()
-            }
-            DataIds.groupCard -> {
-                // Todo
-            }
-            DataIds.peopleCard -> {
-                // Todo
-            }
-            DataIds.split -> {
-                mySheeting.change(Sheets.BillTotalAndCategories)
-                mySheeting.show()
-            }
-            DataIds.groupCardGo -> {
-                gotoGroupPage()
-            }
-            DataIds.addGroup -> {
-                gotoSplitWithPage()
-            }
-            DataIds.peopleCardGo -> {
-                gotoIndividualPage()
-            }
-            "${DataIds.back}split_page" -> {
-                when (mySheeting.sheets.value){
-                    Sheets.None -> pageBack()
-                    else -> mySheeting.onBack()
+    private val _notificationService =
+        NotificationService { id, arg ->
+            when (id) {
+                WirelessViewModelInterface.startupNotification -> {
+                    updateSplitPageColor(splitPageData)
                 }
-            }
-            DataIds.back -> {
-                pageBack()
-            }
-            DataIds.getCard -> {
-                // Todo
-            }
-            DataIds.payCard -> {
-                // Todo
-            }
-            DataIds.selectedTabIndex -> {
-                val index = (arg as? Int) ?: return@NotificationService
-                if (_selectedTabIndex.value == index){
-                    return@NotificationService
+                DataIds.textInput -> {
+                    _input.value = (arg as? String) ?: return@NotificationService
+                    filter()
                 }
-                _selectedTabIndex.value = index
-                filter()
-            }
-            "${DataIds.subTab}group" -> {
-                _subTabGroup.value = (arg as? SplitPageTabs) ?: return@NotificationService
-                filter()
-            }
-            "${DataIds.subTab}people" -> {
-                _subTabPeople.value = (arg as? SplitPageTabs) ?: return@NotificationService
-                filter()
+                DataIds.groupCard -> {
+                    // Todo
+                }
+                DataIds.peopleCard -> {
+                    // Todo
+                }
+                DataIds.split -> {
+                    mySheeting.change(Sheets.BillTotalAndCategories)
+                    mySheeting.show()
+                }
+                DataIds.groupCardGo -> {
+                    gotoGroupPage()
+                }
+                DataIds.addGroup -> {
+                    gotoSplitWithPage()
+                }
+                DataIds.peopleCardGo -> {
+                    gotoIndividualPage()
+                }
+                "${DataIds.back}split_page" -> {
+                    when (mySheeting.sheets.value) {
+                        Sheets.None -> pageBack()
+                        else -> mySheeting.onBack()
+                    }
+                }
+                DataIds.back -> {
+                    pageBack()
+                }
+                DataIds.getCard -> {
+                    // Todo
+                }
+                DataIds.payCard -> {
+                    // Todo
+                }
+                DataIds.selectedTabIndex -> {
+                    val index = (arg as? Int) ?: return@NotificationService
+                    if (_selectedTabIndex.value == index) {
+                        return@NotificationService
+                    }
+                    _selectedTabIndex.value = index
+                    filter()
+                }
+                "${DataIds.subTab}group" -> {
+                    _subTabGroup.value = (arg as? SplitPageTabs) ?: return@NotificationService
+                    filter()
+                }
+                "${DataIds.subTab}people" -> {
+                    _subTabPeople.value = (arg as? SplitPageTabs) ?: return@NotificationService
+                    filter()
+                }
             }
         }
-    }
 
     override val sheeting = Sheeting(
         sheetMap = mapOf(
@@ -242,8 +261,6 @@ class SplitPageViewModel(
             DataIds.wholePay to _wholePay,
             DataIds.decimalPay to _decimalPay,
             DataIds.statusBarColor to _statusBarColor,
-            DataIds.willGetActive to _willGetActive,
-            DataIds.willPayActive to _willPayActive,
             DataIds.textInput to _input,
             DataIds.ultimateState to _ultimateState,
             DataIds.groupsAndPeoples to _groupsAndPeoples,
@@ -253,19 +270,111 @@ class SplitPageViewModel(
             "${DataIds.subTab}group" to _subTabGroup,
             "${DataIds.subTab}people" to _subTabPeople
         )
+        viewModelScope.launch(Dispatchers.Main) {
+            val p = Manifest.permission.READ_CONTACTS
+            val checked = permissionHandler.check(p)
+            if (checked?.allPermissionsGranted == true) {
+                fetchGroupAndContacts()
+            } else {
+                val requested = permissionHandler.request(p)
+                if (requested?.get(p) == true) {
+                    fetchGroupAndContacts()
+                }
+            }
+        }
+
+        updateAsSplitPageData(
+            SplitPageData(
+                willPay = 0f,
+                willGet = 0f,
+                splitted = false
+            )
+        )
         viewModelScope.launch(Dispatchers.IO) {
-            _groupsAndPeoplesVault.addAll(repo.groupAndContacts())
-            filter()
+            splitPageData = repo.splitPageData()
+            withContext(Dispatchers.Main) {
+                updateAsSplitPageData(splitPageData)
+            }
+        }
+    }
+
+    private fun fetchGroupAndContacts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main){
+                _noGroup.value = true
+            }
+            val items = repo.groupAndContacts()
+            withContext(Dispatchers.Main){
+                _groupsAndPeoplesVault.addAll(items)
+                _noGroup.value = false
+                filter()
+            }
+        }
+    }
+
+    private fun updateAsSplitPageData(data: SplitPageData) {
+        val value = data.willGet - data.willPay
+        val total = abs(value)
+        val getSplitted = data.willGet.splitted()
+        val paySplitted = data.willPay.splitted()
+        val totalSplitted = total.splitted()
+        _whole.value = totalSplitted.wholeString
+        _decimal.value = totalSplitted.decString
+
+        _wholeGet.value = getSplitted.wholeString
+        _decimalGet.value = getSplitted.decString
+
+        _wholePay.value = paySplitted.wholeString
+        _decimalPay.value = paySplitted.decString
+
+        updateSplitPageColor(data)
+    }
+
+    private fun updateSplitPageColor(data: SplitPageData) {
+        val value = data.willGet - data.willPay
+        if (data.splitted){
+            _ultimateState.value = if (value > 0f) {
+                _statusBarColor.value = StatusBarColor(
+                    color = RobinsEggBlue,
+                    darkIcons = false
+                )
+                SplitPageState.GET
+            } else if (value < 0f) {
+                _statusBarColor.value = StatusBarColor(
+                    color = CeriseRed,
+                    darkIcons = false
+                )
+                SplitPageState.PAY
+            } else {
+                _statusBarColor.value = StatusBarColor(
+                    color = BermudaGray,
+                    darkIcons = false
+                )
+                SplitPageState.NONE
+            }
+            _haveSplit.value = true
+        } else {
+            _statusBarColor.value = StatusBarColor(
+                color = BermudaGray,
+                darkIcons = false
+            )
+            _ultimateState.value = SplitPageState.NONE
+            _haveSplit.value = false
         }
     }
 
     fun filter(){
-        _groupsAndPeoples.clear()
-        _groupsAndPeoples.addAll(
-            _groupsAndPeoplesVault.filter {
+        viewModelScope.launch(Dispatchers.IO) {
+            _groupsAndPeoples.clear()
+            val filtered = _groupsAndPeoplesVault.filter {
                 itemFilter(it)
             }
-        )
+            withContext(Dispatchers.Main){
+                _groupsAndPeoples.addAll(
+                    filtered
+                )
+            }
+        }
     }
 
     private fun itemFilter(it: GroupOrContact): Boolean {

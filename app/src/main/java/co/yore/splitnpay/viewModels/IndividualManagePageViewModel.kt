@@ -8,6 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
@@ -47,24 +50,25 @@ class IndividualManagePageViewModel(
             }
         }
     )
-    override val notifier = NotificationService{id, arg ->
-        Log.d("lflfjdfdf", "$id")
-        when (id){
-            "${DataIds.back}individual_manage_page" -> {
-                when (mySheeting.sheets.value){
-                    Sheets.None -> pageHandleBack()
-                    else -> mySheeting.onBack()
+    override val notifier =
+        NotificationService { id, arg ->
+            Log.d("lflfjdfdf", "$id")
+            when (id) {
+                "${DataIds.back}individual_manage_page" -> {
+                    when (mySheeting.sheets.value) {
+                        Sheets.None -> pageHandleBack()
+                        else -> mySheeting.onBack()
+                    }
+                }
+                DataIds.groupNotificationSwitch -> {
+                    notificationOn.value = !notificationOn.value
+                }
+                DataIds.groupImageClick -> {
+                    mySheeting.change(Sheets.ImagePicker)
+                    mySheeting.show()
                 }
             }
-            DataIds.groupNotificationSwitch -> {
-                notificationOn.value = !notificationOn.value
-            }
-            DataIds.groupImageClick -> {
-                mySheeting.change(Sheets.ImagePicker)
-                mySheeting.show()
-            }
         }
-    }
 
     private fun pageHandleBack() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->

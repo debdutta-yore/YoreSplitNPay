@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.libs.sep
-import co.yore.splitnpay.locals.RobotoText
+import co.yore.splitnpay.libs.locals.RobotoText
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.ui.theme.WildBlueYonder
 
 @Composable

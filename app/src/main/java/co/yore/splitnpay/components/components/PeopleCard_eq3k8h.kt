@@ -23,6 +23,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.NotificationService
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.notifier
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.Ghost80
 import co.yore.splitnpay.ui.theme.RadicalRed

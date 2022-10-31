@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.BottomSheetModel
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Item
 import co.yore.splitnpay.ui.theme.CloudBurst
@@ -30,7 +32,7 @@ import co.yore.splitnpay.ui.theme.CuriousBlue
 import co.yore.splitnpay.ui.theme.Zumthor
 import kotlinx.coroutines.CoroutineScope
 
-class PhotoSelectionBottomSheetModel(val callback: Callback) : BottomSheetModel{
+class PhotoSelectionBottomSheetModel(val callback: Callback) : BottomSheetModel {
     interface Callback{
         fun scope(): CoroutineScope
         fun onContinue(arg: Any?)

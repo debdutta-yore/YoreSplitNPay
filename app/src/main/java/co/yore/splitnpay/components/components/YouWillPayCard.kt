@@ -15,8 +15,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
-import co.yore.splitnpay.libs.dep
-import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.coloredShadow
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.libs.sy
 import co.yore.splitnpay.models.MemberTransact
 import co.yore.splitnpay.models.YouWillPayConfiguration
@@ -55,7 +56,7 @@ fun YouWillPayCard(
                     modifier = Modifier.padding(
                         top = 26.dep()
                     ),
-                    text = stringResource(R.string.willpay,payeeName),
+                    text = stringResource(R.string.willpay, payeeName),
                     color = CloudBurst,
                     fontSize = 16.sep(),
                     fontWeight = FontWeight.Bold
@@ -66,21 +67,21 @@ fun YouWillPayCard(
                         item = transaction,
                         contentDescription = "SingleItem"
                     )
-                    if (index != list.lastIndex)
+                    if (index != list.lastIndex) {
                         18.sy()
+                    }
                 }
                 18.sy()
                 TotalCard_6re10h(
                     contentDescription = "TotalYouWillPayCard",
-                    text = stringResource(R.string.total)  + " " + stringResource(R.string.willpay,payeeName),
+                    text = stringResource(R.string.total) + " " + stringResource(R.string.willpay, payeeName),
                     amount = 0f,
                     borderColor = RadicalRed,
                     backgroundColor = LavenderBlush
                 )
                 28.sy()
             }
-        }
-        else {
+        } else {
             Column(){
                 FontFamilyText(
                     modifier = Modifier.padding(
@@ -122,7 +123,7 @@ fun YouWillPayCard(
 
                     TotalCard_6re10h(
                         contentDescription = "TotalYouWillPayCard",
-                        text = stringResource(R.string.total) + " " + stringResource(R.string.willpay,payeeName),
+                        text = stringResource(R.string.total) + " " + stringResource(R.string.willpay, payeeName),
                         amount = total,
                         borderColor = RadicalRed,
                         backgroundColor = LavenderBlush
@@ -145,4 +146,3 @@ fun YouWillPayCard(
         }
     }
 }
-

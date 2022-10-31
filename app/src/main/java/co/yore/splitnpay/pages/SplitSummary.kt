@@ -24,8 +24,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.FontFamilyText
-import co.yore.splitnpay.components.components.TriangleShape
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.NotificationService
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.notifier
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
 

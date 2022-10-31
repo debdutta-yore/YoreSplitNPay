@@ -19,15 +19,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.NotificationService
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.notifier
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.models.CustomButtonConfiguration
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.Transaction
 import co.yore.splitnpay.models.YouWillPayChildPageConfiguration
-import co.yore.splitnpay.pages.CustomButton_3egxtx
 import co.yore.splitnpay.ui.theme.CuriousBlue
-import co.yore.splitnpay.ui.theme.WildBlueYonder
 import co.yore.splitnpay.ui.theme.LavenderBlush
 import co.yore.splitnpay.ui.theme.RadicalRed
+import co.yore.splitnpay.ui.theme.WildBlueYonder
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

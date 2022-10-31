@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
@@ -14,39 +15,44 @@ class SplitCardDetailsViewModel(
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
-    override val notifier = NotificationService{id, arg ->
-        when (id){
-            DataIds.selectBalanceMember -> {
-                val member = arg as? SplitSelectableMember
-                val index = splitSelectableMembers.indexOf(member)
-                if (index == -1){
-                    return@NotificationService
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                DataIds.selectBalanceMember -> {
+                    val member = arg as? SplitSelectableMember
+                    val index = splitSelectableMembers.indexOf(member)
+                    if (index == -1) {
+                        return@NotificationService
+                    }
+                    splitSelectableMembers.forEachUpdate {
+                        it.copy(isSelected = false)
+                    }
+                    splitSelectableMembers[index] =
+                        splitSelectableMembers[index].copy(isSelected = true)
+                    val name = splitSelectableMembers[index].name
+                    selectedMemberName.value =
+                        if (name.lowercase() == "you") "$name'll" else "$name will"
                 }
-                splitSelectableMembers.forEachUpdate {
-                    it.copy(isSelected = false)
+                DataIds.transactionStatus -> {
+                    selectedGetOption.value =
+                        arg as? TransactionStatus1 ?: return@NotificationService
                 }
-                splitSelectableMembers[index] = splitSelectableMembers[index].copy(isSelected = true)
-                val name = splitSelectableMembers[index].name
-                selectedMemberName.value = if (name.lowercase() == "you") "$name'll" else "$name will"
-            }
-            DataIds.transactionStatus -> {
-                selectedGetOption.value = arg as? TransactionStatus1 ?: return@NotificationService
-            }
-            DataIds.payTransactionStatus -> {
-                selectedPayOption.value = arg as? YouWillPayTransactionStatus ?: return@NotificationService
-            }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+                DataIds.payTransactionStatus -> {
+                    selectedPayOption.value =
+                        arg as? YouWillPayTransactionStatus ?: return@NotificationService
                 }
-            }
-            "${DataIds.back}split_card_details" -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+                DataIds.back -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
+                }
+                "${DataIds.back}split_card_details" -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
                 }
             }
         }
-    }
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()

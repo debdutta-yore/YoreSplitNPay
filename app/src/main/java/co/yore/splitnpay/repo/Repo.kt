@@ -1,21 +1,24 @@
 package co.yore.splitnpay.repo
 
 import co.yore.splitnpay.R
+import co.yore.splitnpay.app.AppContext
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.Rand
+import co.yore.splitnpay.libs.contact.core.util.phoneList
 import co.yore.splitnpay.libs.randomDate
 import co.yore.splitnpay.libs.takeSome
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.object_box.Contact
 import co.yore.splitnpay.object_box.box
-import co.yore.splitnpay.pages.CategoryExpense
-import co.yore.splitnpay.pages.PieData
+import co.yore.splitnpay.pages.childpages.CategoryExpense
+import co.yore.splitnpay.pages.childpages.PieData
 import co.yore.splitnpay.ui.theme.CuriousBlue
 import co.yore.splitnpay.ui.theme.Denim
 import co.yore.splitnpay.ui.theme.FunGreen
 import co.yore.splitnpay.ui.theme.RadicalRed
 import io.github.serpro69.kfaker.Faker
+import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.random.Random
 
@@ -70,10 +73,13 @@ interface MasterRepo{
     fun singleSettledOrUnsettledMembers(): List<SingleSettledOrUnsettledMember>
     fun settledMembers(): List<SingleSettledOrUnsettledMember>
     fun unsettledMembers(): List<SingleSettledOrUnsettledMember>
+    suspend fun splitPageData(): SplitPageData
+    suspend fun groupChatPageData(): GroupChatPageData
 }
 
 class MasterRepoImpl : MasterRepo {
     override suspend fun groupAndContacts(): List<GroupOrContact> {
+        //delay(6000)
         val contacts = peoples()
         val groups = groups(contacts)
         val list = mutableListOf<GroupOrContact>()
@@ -106,7 +112,18 @@ class MasterRepoImpl : MasterRepo {
         }
     }
     override suspend fun peoples(count: Int): List<ContactData> {
-        val f = Faker()
+        return co.yore.splitnpay.libs.contact.core.Contacts(AppContext.app).query().find().map{
+            ContactData(
+                id = it.id,
+                name = it.displayNamePrimary?:"No name", // f.name.name(),
+                mobile = it.phoneList().firstOrNull()?.number?:"No phone",
+                image = it.photoUri,
+                lastActivity = randomDate(1643049000000L, 1664099455386L),
+                willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f),
+                willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f)
+            )
+        }
+        /*val f = Faker()
         val r = Random(System.nanoTime())
         var i = 0
         return MutableList(count){
@@ -119,7 +136,7 @@ class MasterRepoImpl : MasterRepo {
                 willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f),
                 willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f)
             )
-        }
+        }*/
     }
     override suspend fun saveContacts(contacts: List<String>) {
         Contact::class.java.box
@@ -1361,6 +1378,24 @@ class MasterRepoImpl : MasterRepo {
                 getAmount = 0f,
                 paidAmount = 600f
             )
+        )
+    }
+
+    override suspend fun splitPageData(): SplitPageData {
+        delay(6000)
+        return SplitPageData(
+            willGet = 3000f,
+            willPay = 2000f,
+            splitted = true
+        )
+    }
+
+    override suspend fun groupChatPageData(): GroupChatPageData {
+        delay(2000)
+        return GroupChatPageData(
+            name = "Office Buddies",
+            amount = 6000f,
+            image = "https://i.pravatar.cc/300"
         )
     }
 }

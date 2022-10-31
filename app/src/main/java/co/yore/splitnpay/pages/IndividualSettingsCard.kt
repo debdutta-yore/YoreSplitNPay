@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.*
 

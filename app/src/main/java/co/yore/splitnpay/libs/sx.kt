@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import co.yore.splitnpay.libs.jerokit.dep
 
 @Composable
 fun Number.sx(color: Color? = null){
-    if(color!=null){
+    if (color != null){
         Spacer(modifier = Modifier.width(this.dep()).height(5.dep()).background(color))
-    }
-    else{
+    } else {
         Spacer(modifier = Modifier.width(this.dep()))
     }
 }

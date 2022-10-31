@@ -50,6 +50,7 @@ import androidx.constraintlayout.compose.Dimension
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.BillTransaction
 import co.yore.splitnpay.ui.theme.*
@@ -1120,11 +1121,6 @@ fun BottomCut(
     }
 }
 
-fun minMaxRangeValue(percentage: Float, max: Float, min: Float): Float {
-    return (percentage * (max - min) / 100) + min
-}
-
-
 @Composable
 fun SingleButton(
     modifier: Modifier = Modifier,
@@ -1217,58 +1213,9 @@ fun GroupChatTabItem_yb6b5a(
     selected: GroupChatTab,
     current: GroupChatTab,
     contentDescription: String,
-    // config: GroupChatTabItemConfiguration = GroupChatTabItemConfiguration(),
     config: SplitTabItemConfiguration = SplitTabItemConfiguration(),
     onClick: () -> Unit
 ) {
-    /*val selectedBackground =
-        remember(selected) {
-            derivedStateOf {
-                if (selected == current)
-                    config.selectedBackground
-                else
-                    config.unSelectedBackground
-            }
-        }
-
-    val selectedTextColor =
-        remember(selected) {
-            derivedStateOf {
-                if (selected == current)
-                    config.selectedTextColor
-                else
-                    config.unSelectedTextColor
-            }
-        }
-
-
-    Box(
-        modifier = Modifier
-            .semantics { this.contentDescription = contentDescription }
-            .widthIn(config.minWidth.dep())
-            .clip(RoundedCornerShape(config.roundedCorner.dep()))
-            .background(selectedBackground.value)
-            .clickable(
-                interactionSource = MutableInteractionSource(),
-                indication = rememberRipple(bounded = false),
-                onClick = {
-                    onClick()
-                }
-            )
-            .padding(
-                vertical = config.paddingVertical.dep(),
-                horizontal = config.paddingHorizontal.dep(),
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        FontFamilyText(
-            text = text,
-            fontSize = config.textSize.sep(),
-            color = selectedTextColor.value,
-            lineHeight = 13.sep(),
-            letterSpacing = 0.166667.sep()
-        )
-    }*/
     val computedBackgroundColor by remember(selected) {
         derivedStateOf {
             if (selected == current) {
@@ -1320,9 +1267,6 @@ fun GroupChatTabItem_yb6b5a(
         )
     }
 }
-
-// //////
-
 
 @Composable
 fun Message(

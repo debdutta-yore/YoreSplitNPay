@@ -11,7 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.amountAnnotatedString
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.libs.sx
 import co.yore.splitnpay.libs.sy
 import co.yore.splitnpay.models.MemberWillGetOrPayDetailsSingleRowItem

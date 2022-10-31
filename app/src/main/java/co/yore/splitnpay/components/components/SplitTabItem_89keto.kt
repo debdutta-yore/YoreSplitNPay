@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import co.yore.splitnpay.libs.dep
-import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.models.SplitPageTabs
 import co.yore.splitnpay.models.SplitTabItemConfiguration
 

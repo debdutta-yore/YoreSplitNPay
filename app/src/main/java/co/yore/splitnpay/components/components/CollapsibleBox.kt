@@ -15,26 +15,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Velocity
-
-class DragRecord{
-    private var prev = 0
-    fun current(value: Int): Int{
-        val r = prev - value
-        var dir = 0
-        if (r < 0){
-            dir = -1
-        }
-        if (r > 0){
-            dir = 1
-        }
-        prev = value
-        return dir
-    }
-}
-enum class SwipingStates {
-    EXPANDED,
-    COLLAPSED
-}
+import co.yore.splitnpay.libs.DragRecord
+import co.yore.splitnpay.libs.SwipingStates
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

@@ -15,11 +15,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.libs.dep
-import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.ui.theme.robotoFonts
 
 @Composable
@@ -37,10 +36,12 @@ fun BackArrowText(text: String, onBack: () -> Unit) {
         verticalAlignment = CenterVertically
     ) {
 
-        IconButton(modifier = Modifier
-            .align(CenterVertically)
-            .then(Modifier.size(24.dp)),
-            onClick = { onBack() }) {
+        IconButton(
+            modifier = Modifier
+                .align(CenterVertically)
+                .then(Modifier.size(24.dp)),
+            onClick = { onBack() }
+        ) {
             Icon(
                 painter =
                 painterResource(id = R.drawable.ic_left_chevron),
@@ -56,14 +57,5 @@ fun BackArrowText(text: String, onBack: () -> Unit) {
             color = Color.White,
             fontFamily = robotoFonts
         )
-    }
-}
-
-
-@Preview
-@Composable
-fun BackArrowTextPreview() {
-    BackArrowText("split") {
-
     }
 }

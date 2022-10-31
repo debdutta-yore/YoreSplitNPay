@@ -5,42 +5,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.components.components.FontFamilyText
-import co.yore.splitnpay.components.components.PeopleImageItem_r02b97
+import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheet
 import co.yore.splitnpay.ui.theme.*
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun GroupCreationScreen(
-    sheeting: Sheeting = sheeting()
-) {
-    val state = sheeting.sheetHandler.handle()
-    ModalBottomSheetLayout(
-        sheetState = state,
-        sheetContent = {
-            PhotoSelectionBottomSheet()
-        },
-        sheetShape = RoundedCornerShape(
-            topStart = 25f.dep(),
-            topEnd = 25f.dep()
-        ),
-        scrimColor = CloudBurst8C
-    ) {
-        GroupCreationPageContent()
-    }
-}
 
 @Composable
 fun GroupCreationPageContent(

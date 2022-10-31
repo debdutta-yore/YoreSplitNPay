@@ -14,17 +14,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.*
-
-private val list = listOf(
-    MemberWillGetOrPayDetailsSingleRowItem(
-        imageUrl = "imageUrl",
-        userName = "Sushil Roy",
-        userPhNo = "9563376942",
-        getAmount = 600f,
-        paidAmount = 0f
-    )
-)
 
 @Composable
 fun YouWillPayDetails_8jaxv7(
@@ -108,7 +99,7 @@ fun YouWillPayDetails_8jaxv7(
                         item = it,
                         config = YouWillGetDetailsSingleRowConfiguration.variationOne
                     )
-                    if (index != list.lastIndex) {
+                    if (index != payMembers.lastIndex) {
                         config.gapBetweenTwoRowInLazyColumn.sy()
                     }
                 }

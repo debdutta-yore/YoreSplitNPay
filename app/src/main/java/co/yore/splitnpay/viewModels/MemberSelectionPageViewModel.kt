@@ -5,16 +5,16 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.SplitAsChoiceBottomSheetModel
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.pages.subpages.SplitAsChoiceBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BlackSqueeze
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MemberSelectionPageViewModel(
     private val repo: MasterRepo = MasterRepoImpl()
@@ -76,66 +76,68 @@ class MemberSelectionPageViewModel(
         }
     }
 
-    private val _notificationService = NotificationService{id, arg ->
-        when (id){
-            WirelessViewModelInterface.startupNotification -> {
-                getArguments()
-                purgeContacts()
-                _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
-            }
-            DataIds.proceedWithContacts -> {
-                proceedWithContacts()
-            }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+    private val _notificationService =
+        NotificationService { id, arg ->
+            when (id) {
+                WirelessViewModelInterface.startupNotification -> {
+                    getArguments()
+                    purgeContacts()
+                    _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
                 }
-            }
-            DataIds.textInput -> {
-                val query = (arg as? String) ?: return@NotificationService
-                splitWithInput.value = query
-                initiateSearch()
-            }
-            DataIds.deleteAdded -> {
-                if (arg == null){
-                    return@NotificationService
+                DataIds.proceedWithContacts -> {
+                    proceedWithContacts()
                 }
-                if (selectedContactIds.contains(arg)){
-                    removeMembersFromSelecteds(setOf(arg))
+                DataIds.back -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
                 }
-                updateCanProceed()
-            }
-            DataIds.checkItem -> {
-                if (arg == null){
-                    return@NotificationService
+                DataIds.textInput -> {
+                    val query = (arg as? String) ?: return@NotificationService
+                    splitWithInput.value = query
+                    initiateSearch()
                 }
-                if (selectedContactIds.contains(arg)){
-                    removeMembersFromSelecteds(setOf(arg))
-                } else {
-                    addMembersToSelecteds(setOf(arg))
+                DataIds.deleteAdded -> {
+                    if (arg == null) {
+                        return@NotificationService
+                    }
+                    if (selectedContactIds.contains(arg)) {
+                        removeMembersFromSelecteds(setOf(arg))
+                    }
+                    updateCanProceed()
                 }
-                updateCanProceed()
-            }
-            DataIds.checkGroupItem -> {
-                val groupId = arg ?: return@NotificationService
-                val checked = _groupsChecked[groupId] ?: TriState.UNCHECKED
-                val group = (groupsAndContacts.first { it.id() == groupId } as? GroupData) ?: return@NotificationService
-                val memberIds = group.members.map { it.id() }.toSet()
-                if (checked != TriState.UNCHECKED){
-                    removeMembersFromSelecteds(memberIds)
-                } else {
-                    addMembersToSelecteds(memberIds)
+                DataIds.checkItem -> {
+                    if (arg == null) {
+                        return@NotificationService
+                    }
+                    if (selectedContactIds.contains(arg)) {
+                        removeMembersFromSelecteds(setOf(arg))
+                    } else {
+                        addMembersToSelecteds(setOf(arg))
+                    }
+                    updateCanProceed()
                 }
-                updateCanProceed()
-            }
-            DataIds.selectedTabIndex -> {
-                if (arg is Int){
-                    selectedIndex.value = arg
-                    filter()
+                DataIds.checkGroupItem -> {
+                    val groupId = arg ?: return@NotificationService
+                    val checked = _groupsChecked[groupId] ?: TriState.UNCHECKED
+                    val group = (groupsAndContacts.first { it.id() == groupId } as? GroupData)
+                        ?: return@NotificationService
+                    val memberIds = group.members.map { it.id() }.toSet()
+                    if (checked != TriState.UNCHECKED) {
+                        removeMembersFromSelecteds(memberIds)
+                    } else {
+                        addMembersToSelecteds(memberIds)
+                    }
+                    updateCanProceed()
+                }
+                DataIds.selectedTabIndex -> {
+                    if (arg is Int) {
+                        selectedIndex.value = arg
+                        filter()
+                    }
                 }
             }
         }
-    }
 
     private fun getArguments() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -150,19 +152,23 @@ class MemberSelectionPageViewModel(
     override val notifier = _notificationService
 
     private fun proceedWithContacts() {
-        saveAddedContacts()
-        if (!forSplit){
-            gotoGroupCreationPage()
-        } else {
-            mySheeting.change(Sheets.SplitAsChoice)
-            mySheeting.show()
+        saveAddedContacts{
+            withContext(Dispatchers.Main){
+                if (!forSplit){
+                    gotoGroupCreationPage()
+                } else {
+                    mySheeting.change(Sheets.SplitAsChoice)
+                    mySheeting.show()
+                }
+            }
         }
     }
 
-    private fun saveAddedContacts() {
+    private fun saveAddedContacts(block: suspend () -> Unit) {
         val contacts = addedContacts.map { it.mobile }
         viewModelScope.launch(Dispatchers.IO) {
             repo.saveContacts(contacts)
+            block()
         }
     }
 

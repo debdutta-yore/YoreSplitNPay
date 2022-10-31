@@ -10,8 +10,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import co.yore.splitnpay.libs.dep
-import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.coloredShadow
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.libs.sy
 import co.yore.splitnpay.models.CategorySelectorCardConfiguration
 import co.yore.splitnpay.models.PaidCardConfiguration

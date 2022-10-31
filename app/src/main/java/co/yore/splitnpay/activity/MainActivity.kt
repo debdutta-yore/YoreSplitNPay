@@ -16,8 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import co.yore.splitnpay.app.YoreApp
-import co.yore.splitnpay.localKeyboardHeight
-import co.yore.splitnpay.locals.localDesignWidth
+import co.yore.splitnpay.libs.jerokit.localDesignWidth
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
 import java.lang.Integer.min
 
@@ -43,7 +42,6 @@ class MainActivity : ComponentActivity() {
             YoreSplitNPayTheme {
                 CompositionLocalProvider(
                     localDesignWidth provides 360f,
-                    localKeyboardHeight provides bottomHeight.value
                 ) {
                     Surface(
                         modifier = Modifier

@@ -1,15 +1,18 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.ContactData
 import co.yore.splitnpay.models.DataIds
-import co.yore.splitnpay.models.Sheets
 import co.yore.splitnpay.models.StatusBarColor
 import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
@@ -69,36 +72,37 @@ class GroupCreationPageViewModel(
 
     // ////////////////////////////////////////
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
-    override val notifier = NotificationService{ id, arg ->
-        when (id){
-            DataIds.proceed -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack("split_page", false)
-                    navHostController.navigate("group_chat_page")
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                DataIds.proceed -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack("split_page", false)
+                        navHostController.navigate("group_chat_page")
+                    }
                 }
-            }
-            DataIds.deleteAdded -> {
-                deleteItem(arg as? ContactData ?: return@NotificationService)
-            }
-            WirelessViewModelInterface.startupNotification -> {
-                fetchContacts()
-            }
-            DataIds.cameraOrGallery -> {
-                handleCameraOrGallery(arg as? String ?: return@NotificationService)
-            }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+                DataIds.deleteAdded -> {
+                    deleteItem(arg as? ContactData ?: return@NotificationService)
                 }
-            }
-            DataIds.pickImage -> {
-                mySheeting.show()
-            }
-            DataIds.groupName -> {
-                _groupName.value = (arg as? String) ?: ""
+                WirelessViewModelInterface.startupNotification -> {
+                    fetchContacts()
+                }
+                DataIds.cameraOrGallery -> {
+                    handleCameraOrGallery(arg as? String ?: return@NotificationService)
+                }
+                DataIds.back -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
+                }
+                DataIds.pickImage -> {
+                    mySheeting.show()
+                }
+                DataIds.groupName -> {
+                    _groupName.value = (arg as? String) ?: ""
+                }
             }
         }
-    }
 
     private fun deleteItem(contactData: ContactData) {
         if (contacts.size < 3){

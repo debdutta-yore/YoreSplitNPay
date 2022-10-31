@@ -1,21 +1,11 @@
 package co.yore.splitnpay.libs
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
@@ -26,73 +16,153 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDeepLink
-import androidx.navigation.NavGraphBuilder
-import co.yore.splitnpay.models.DataIds
+import co.yore.splitnpay.libs.jerokit.sep
+import co.yore.splitnpay.libs.locals.localCurrency
+import co.yore.splitnpay.models.Amount
 import co.yore.splitnpay.models.FloatSplitted
-import co.yore.splitnpay.models.StatusBarColor
 import co.yore.splitnpay.ui.theme.CloudBurst
 import co.yore.splitnpay.ui.theme.Manatee
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import co.yore.splitnpay.ui.theme.robotoFonts
 import java.math.BigDecimal
+import java.math.MathContext
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
+
+var formatter = DecimalFormat("#,###")
+
+@Composable
+fun Float.amountAnnotatedString(
+    isLeadingTextEnabled: Boolean = false,
+    leadingText: String = "",
+    leadingTextFontSize: Float = 9f,
+    leadingTextTextColor: Color = CloudBurst,
+    leadingTextFontWeight: FontWeight = FontWeight(400),
+    isTrailingTextEnabled: Boolean = false,
+    trailingText: String = "",
+    trailingTextFontSize: Float = 9f,
+    trailingTextTextColor: Color = CloudBurst,
+    trailingTextFontWeight: FontWeight = FontWeight(400),
+    isSpaceBetween: Boolean = false,
+    currencyFontSize: Float = 12f,
+    currencyTextColor: Color,
+    currencyFontWeight: FontWeight = FontWeight(400),
+    wholeNumberFontSize: Float = 12f,
+    wholeNumberTextColor: Color,
+    wholeNumberFontWeight: FontWeight = FontWeight(400),
+    decNumberFontSize: Float = 12f,
+    decNumberTextColor: Color,
+    decNumberFontWeight: FontWeight = FontWeight(400),
+    isDecimalEnabled: Boolean = true
+): AnnotatedString = buildAnnotatedString {
+
+    if (isLeadingTextEnabled) {
+        withStyle(
+            style = SpanStyle(
+                fontSize = leadingTextFontSize.sep(),
+                fontWeight = leadingTextFontWeight,
+                color = leadingTextTextColor,
+                fontFamily = robotoFonts
+            )
+        )
+        {
+            append(leadingText)
+        }
+    }
+    withStyle(
+        style = SpanStyle(
+            fontSize = currencyFontSize.sep(),
+            fontWeight = currencyFontWeight,
+            color = currencyTextColor,
+            fontFamily = robotoFonts
+        )
+    )
+    {
+        append(localCurrency.current)
+        if (isSpaceBetween){
+            append(" ")
+        }
+    }
+    withStyle(
+        style = SpanStyle(
+            fontSize = wholeNumberFontSize.sep(),
+            fontWeight = wholeNumberFontWeight,
+            color = wholeNumberTextColor,
+            fontFamily = robotoFonts
+        )
+    )
+    {
+        append(this@amountAnnotatedString.splitted().whole.toLong().formatComma())
+    }
+    if (isDecimalEnabled) {
+        withStyle(
+            style = SpanStyle(
+                fontSize = decNumberFontSize.sep(),
+                fontWeight = decNumberFontWeight,
+                color = decNumberTextColor,
+                fontFamily = robotoFonts
+            )
+        ) {
+            append('.')
+            append(this@amountAnnotatedString.splitted().decString)
+        }
+    }
+
+    if (isTrailingTextEnabled) {
+        withStyle(
+            style = SpanStyle(
+                fontSize = trailingTextFontSize.sep(),
+                fontWeight = trailingTextFontWeight,
+                color = trailingTextTextColor,
+                fontFamily = robotoFonts
+            )
+        )
+        {
+            append(trailingText)
+        }
+    }
+}
+
+fun String.amount(): Amount {
+    val text = this
+    val parts = text.split(".")
+    var wholeText = parts[0]
+    var decText = parts.getOrNull(1) ?: "0"
+    val whole = wholeText.toBigDecimal()
+    val dec = decText.toFloat()
+    wholeText = whole.toString() // YoreAmountFormatter.formatter.format(whole)
+    if (decText.length < 2) {
+        decText = "${decText}0"
+    }
+    if (decText.length > 2) {
+        decText = decText.substring(0..1)
+    }
+    return Amount(
+        wholeText,
+        decText,
+        whole,
+        dec
+    )
+}
+
+fun Float.amount(): Amount {
+    return this.toBigDecimal().toPlainString().amount()
+}
+
+fun Double.amount(): Amount {
+    return this.toBigDecimal(MathContext.UNLIMITED).toPlainString().amount()
+}
 
 object YoreAmountFormatter{
     val formatter = DecimalFormat("#,###")
     val decFormatter = DecimalFormat("#,##,###.##")
 }
 
-var formatter = DecimalFormat("#,###")
 fun Number.formatComma(): String{
     return formatter.format(this)
 }
 
-fun Modifier.fadingEdge(
-    startingColor: Color = Color.White,
-    endingColor: Color = Color.Transparent,
-    length: Float = 60f,
-    horizontal: Boolean = false,
-    starting1Color: Color = endingColor,
-    ending1Color: Color = startingColor,
-    length1: Float = length
-) = this.then(
-    drawWithContent {
-        val colors = listOf(startingColor, endingColor)
-        val colors1 = listOf(starting1Color, ending1Color)
-        drawContent()
-        if (!horizontal){
-            drawRect(
-                brush = Brush.verticalGradient(colors, endY = length)
-            )
-            drawRect(
-                brush = Brush.verticalGradient(
-                    colors1,
-                    startY = size.height - length1,
-                    endY = size.height
-                )
-            )
-        } else {
-            drawRect(
-                brush = Brush.horizontalGradient(colors, endX = length)
-            )
-            drawRect(
-                brush = Brush.horizontalGradient(
-                    colors1,
-                    startX = size.width - length1,
-                    endX = size.width
-                )
-            )
-        }
-    }
-)
-
-// 34*1.dep() and 1.dep()*34 can be achieved by the following extensions
 operator fun Dp.times(number: Number): Dp {
     return (this.value * number.toFloat()).dp
 }
@@ -100,7 +170,6 @@ operator fun Number.times(dp: Dp): Dp {
     return (this.toFloat() * dp.value).dp
 }
 
-// 34*1.dep() and 1.dep()*34 can be achieved by the following extensions
 operator fun TextUnit.times(number: Number): TextUnit {
     return (this.value * number.toFloat()).sp
 }
@@ -200,91 +269,6 @@ fun randomDate(start: Long, end: Long): Long {
     return ThreadLocalRandom
         .current()
         .nextLong(start, end)
-}
-
-@Composable
-fun StatusBarColorControl(
-    state: StatusBarColor? = safeTState<StatusBarColor>(DataIds.statusBarColor)?.value
-) {
-    val systemUiController = rememberSystemUiController()
-
-    DisposableEffect(systemUiController, state) {
-        state?.let {
-            val color = it.color
-            val darkIcons = it.darkIcons
-            systemUiController.setStatusBarColor(
-                color = color,
-                darkIcons = darkIcons
-            )
-        }
-        onDispose {}
-    }
-}
-
-fun Modifier.clickable(
-    rippleColor: Color,
-    rippleRadius: Dp = Dp.Unspecified,
-    enabled: Boolean = true,
-    onClickLabel: String? = null,
-    role: Role? = null,
-    onClick: () -> Unit
-) = composed(
-    factory = {
-        val interactionSource = remember { MutableInteractionSource() }
-        Modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = rememberRipple(
-                    color = rippleColor,
-                    radius = rippleRadius
-                ),
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                role = role,
-                onClick = onClick
-            )
-    }
-)
-
-data class NavAnimation @OptIn(ExperimentalAnimationApi::class) constructor(
-    val duration: Int = 700,
-    val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = {
-        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(duration))
-
-    },
-    val exitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = {
-        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(duration))
-    },
-    val popEnterTransition: (
-        AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?
-    )? = {
-        slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(duration))
-    },
-    val popExitTransition: (
-        AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?
-    )? = {
-        slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(duration))
-    }
-)
-
-@ExperimentalAnimationApi
-fun NavGraphBuilder.yoreComposable(
-    route: String,
-    arguments: List<NamedNavArgument> = emptyList(),
-    deepLinks: List<NavDeepLink> = emptyList(),
-    navAnimation: NavAnimation = NavAnimation(),
-    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
-){
-    composable(
-        route,
-        arguments,
-        deepLinks,
-        navAnimation.enterTransition,
-        navAnimation.exitTransition,
-        navAnimation.popEnterTransition,
-        navAnimation.popExitTransition,
-        content
-    )
 }
 
 fun <E>MutableCollection<E>.removeIfMy(filter: (E) -> Boolean): Boolean{
@@ -424,7 +408,6 @@ class AmountStyle(private var sp: TextUnit) : VisualTransformation {
     }
 }
 
-// format long to 123,456,789,9
 class NumberCommaTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         return TransformedText(
@@ -522,28 +505,6 @@ fun Int.numberToWords(): String {
     // TODO: search better approach for .replace("Indian ","")
     return convert(this@numberToWords) + " " + "Rupees"
 }
-
-// //////////////////
-/*fun Number.splitted(): FloatSplitted1 {
-    val text = this.toString()
-    val parts = text.split(".")
-    var wholeText = parts[0]
-    var decText = parts[1]
-    val whole = wholeText.toInt()
-    if (whole < 10) {
-        wholeText = "0$whole"
-    }
-    if (decText.length < 2) {
-        decText = "${decText}0"
-    }
-    if (decText.length > 2) {
-        decText = decText.substring(0..1)
-    }
-    return FloatSplitted1(
-        wholeText,
-        decText
-    )
-}*/
 
 fun Float.splitted(format: Boolean = true): FloatSplitted {
     val text = this.toString()

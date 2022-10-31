@@ -3,53 +3,29 @@ package co.yore.splitnpay.app
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.YoreScreen
 import co.yore.splitnpay.pages.*
+import co.yore.splitnpay.pages.screens.*
 import co.yore.splitnpay.viewModels.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
-inline fun <reified T : ViewModel>NavGraphBuilder.YoreScreen(
-    navController: NavHostController,
-    route: String,
-    arguments: List<NamedNavArgument> = emptyList(),
-    deepLinks: List<NavDeepLink> = emptyList(),
-    crossinline content: @Composable () -> Unit
-){
-    yoreComposable(
-        route,
-        arguments = arguments,
-        deepLinks = deepLinks
-    ){
-        YorePage(
-            navController,
-            suffix = route,
-            wvm = viewModel<T>() as? WirelessViewModelInterface ?: return@yoreComposable
-        ) {
-            content()
-        }
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun YoreApp() {
     val navController = rememberAnimatedNavController()
-    AnimatedNavHost(navController, startDestination = "main") {
-        YoreScreen<SplitPageViewModel>(
+    AnimatedNavHost(
+        navController,
+        startDestination = "main"
+    ) {
+        YoreScreen<MainViewModel>(
             navController = navController,
             route = "main"
         ) {
@@ -65,12 +41,6 @@ fun YoreApp() {
                 }
             }
         }
-        YoreScreen<SplitPageViewModel>(
-            navController = navController,
-            route = "split_page"
-        ) {
-            SplitScreen()
-        }
         YoreScreen<MemberSelectionPageViewModel>(
             navController = navController,
             route = "split_with_page?split={split}",
@@ -81,7 +51,13 @@ fun YoreApp() {
                 }
             )
         ) {
-            MemberSelectionPage_g5024t()
+            MemberSelectionScreen()
+        }
+        YoreScreen<SplitPageViewModel>(
+            navController = navController,
+            route = "split_page"
+        ) {
+            SplitScreen()
         }
         YoreScreen<GroupCreationPageViewModel>(
             navController = navController,
@@ -99,7 +75,7 @@ fun YoreApp() {
             navController = navController,
             route = "group_manage"
         ) {
-            GroupManagePage()
+            GroupManageScreen()
         }
         YoreScreen<SplitReviewViewModel>(
             navController = navController,
@@ -117,7 +93,7 @@ fun YoreApp() {
             navController = navController,
             route = "split_card_details"
         ) {
-            SplitCardDetailPage()
+            SplitCardDetailScreen()
         }
         YoreScreen<IndividualManagePageViewModel>(
             navController = navController,
@@ -129,7 +105,7 @@ fun YoreApp() {
             navController = navController,
             route = "individual_summary"
         ) {
-            IndividualSummary()
+            IndividualSummaryScreen()
         }
         YoreScreen<PaymentSuccessViewModel>(
             navController = navController,
@@ -147,9 +123,7 @@ fun YoreApp() {
             navController = navController,
             route = "group_split_summary"
         ) {
-            GroupSplitSummary()
+            GroupSplitSummaryScreen()
         }
     }
 }
-
-

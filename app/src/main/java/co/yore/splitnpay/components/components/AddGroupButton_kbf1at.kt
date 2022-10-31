@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import co.yore.splitnpay.libs.NotificationService
+import co.yore.splitnpay.libs.jerokit.NotificationService
 import co.yore.splitnpay.libs.clickable
-import co.yore.splitnpay.libs.dep
-import co.yore.splitnpay.libs.notifier
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.notifier
 import co.yore.splitnpay.models.AddGroupButtonConfiguration
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.ui.theme.RadicalRed

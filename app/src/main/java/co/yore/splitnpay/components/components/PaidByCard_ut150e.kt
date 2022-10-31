@@ -18,25 +18,13 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.locals.localCurrency
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.listState
+import co.yore.splitnpay.libs.jerokit.sep
+import co.yore.splitnpay.libs.locals.localCurrency
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.CloudBurst
 import co.yore.splitnpay.ui.theme.SteelBlue
-
-private val paidByList = listOf(
-    PaidBySingleItem(
-        name = "You",
-        imageUrl = "imageUrl",
-        mobileNumber = "9563376942",
-        amount = 5000f
-    ),
-    PaidBySingleItem(
-        name = "Manisha Roy",
-        imageUrl = "imageUrl",
-        mobileNumber = "9563376942",
-        amount = 5000f
-    )
-)
 
 @Composable
 fun PaidByCard_ut150e(
@@ -100,37 +88,6 @@ fun PaidByCard_ut150e(
         }
     }
 }
-private val paidList = listOf<Transaction>(
-    Transaction(
-        name = "You",
-        mobileNumber = "9563376942",
-        amount = 5000f,
-        transactionType = TransactionType.Paid,
-        imageUrl = "https://i.pravatar.cc/300?"
-    ),
-    Transaction(
-        name = "Manisha Roy",
-        mobileNumber = "9563376942",
-        amount = 5000f,
-        transactionType = TransactionType.Paid,
-        imageUrl = "https://i.pravatar.cc/300?"
-    ),
-    Transaction(
-        name = "Sushil Roy",
-        mobileNumber = "9563376942",
-        amount = 0f,
-        transactionType = TransactionType.Unspecified,
-        imageUrl = "https://i.pravatar.cc/300?"
-    ),
-    Transaction(
-        name = "Sanjanaa Ray",
-        mobileNumber = "9563376942",
-        amount = 0f,
-        transactionType = TransactionType.Unspecified,
-        imageUrl = "https://i.pravatar.cc/300?"
-    )
-)
-
 
 @Composable
 fun SingleItemYouWillGetCard_3btamv(
@@ -148,7 +105,7 @@ fun SingleItemYouWillGetCard_3btamv(
         Row(verticalAlignment = Alignment.Top) {
             ProfileImage_2hf7q0(
                 image = item.image,
-                contentDescription = "",
+                contentDescription = ""
             )
             config.gapBetweenProfileImageAndUserName.sx()
             Column(modifier = Modifier) {
@@ -221,11 +178,4 @@ fun SingleItemYouWillGetCard_3btamv(
     }
 }
 
-fun Number.formatDecimalSeparator(): String {
-    return toString()
-        .reversed()
-        .chunked(3)
-        .joinToString(",")
-        .reversed()
-}
 

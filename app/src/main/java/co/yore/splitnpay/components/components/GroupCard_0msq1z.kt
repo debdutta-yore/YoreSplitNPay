@@ -25,7 +25,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.locals.RobotoText
+import co.yore.splitnpay.libs.jerokit.NotificationService
+import co.yore.splitnpay.libs.jerokit.dep
+import co.yore.splitnpay.libs.jerokit.notifier
+import co.yore.splitnpay.libs.jerokit.sep
+import co.yore.splitnpay.libs.locals.RobotoText
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.CloudBurst
 import co.yore.splitnpay.ui.theme.WildBlueYonder
@@ -357,7 +361,7 @@ fun SingleGroupMemberProfilePic(
     config: SingleGroupMemberProfilePicConfiguration = SingleGroupMemberProfilePicConfiguration()
 ) {
     AsyncImage(
-        model = image,
+        model = image?:R.drawable.user_dummy4,
         contentDescription = contentDescription,
         modifier = Modifier
             .size(config.imageSize.dep())

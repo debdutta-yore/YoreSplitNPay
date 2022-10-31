@@ -15,33 +15,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.*
-
-private val list = listOf(
-    MemberWillGetOrPayDetailsSingleRowItem(
-        imageUrl = "imageUrl",
-        userName = "Sushil Roy",
-        userPhNo = "9563376942",
-        getAmount = 600f,
-        paidAmount = 0f
-    ),
-    MemberWillGetOrPayDetailsSingleRowItem(
-        imageUrl = "imageUrl",
-        userName = "Sanjana Ray",
-        userPhNo = "9563376942",
-        getAmount = 600f,
-        paidAmount = 0f
-    ),
-    MemberWillGetOrPayDetailsSingleRowItem(
-        imageUrl = "imageUrl",
-        userName = "Ankita Ray",
-        userPhNo = "9563376942",
-        getAmount = 600f,
-        paidAmount = 0f
-    )
-)
-
-
 
 @Composable
 fun YouWillGetDetails_o29zr4(
@@ -54,8 +29,6 @@ fun YouWillGetDetails_o29zr4(
     selectedGetOption: TransactionStatus1 = tState<TransactionStatus1>(key = DataIds.transactionStatus).value,
     notifier: NotificationService = notifier()
 ) {
-
-
     Box(
         modifier = modifier
             .semantics { this.contentDescription = contentDescription }
@@ -105,10 +78,10 @@ fun YouWillGetDetails_o29zr4(
 
                 YouWillGetDetailsTabRow(
                     status = selectedGetOption,
-                    contentDescription = "YouWillGetDetailsTabRow",
+                    contentDescription = "YouWillGetDetailsTabRow"
                 )
                 {
-                    notifier.notify(DataIds.transactionStatus,it)
+                    notifier.notify(DataIds.transactionStatus, it)
                 }
 
             }
@@ -125,13 +98,13 @@ fun YouWillGetDetails_o29zr4(
                         contentDescription = "YouWillGetDetailsSingleRow",
                         item = it
                     )
-                    if (index != list.lastIndex) {
+                    if (index != getMembers.lastIndex) {
                         config.gapBetweenTwoRowInLazyColumn.sy()
                     }
                 }
             }
 
-            ////////////
+            // //////////
             Box(
                 modifier = Modifier
                     .padding(
@@ -194,9 +167,3 @@ fun YouWillGetDetailsTabRow(
         }
     }
 }
-
-
-
-
-
-

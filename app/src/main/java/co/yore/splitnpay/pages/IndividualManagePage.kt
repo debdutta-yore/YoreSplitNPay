@@ -20,8 +20,9 @@ import androidx.compose.ui.text.withStyle
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.FontFamilyText
 import co.yore.splitnpay.components.components.GroupCard_0msq1z
-import co.yore.splitnpay.components.components.coloredShadow
+import co.yore.splitnpay.libs.coloredShadow
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.GroupCardConfiguration
 import co.yore.splitnpay.models.GroupData

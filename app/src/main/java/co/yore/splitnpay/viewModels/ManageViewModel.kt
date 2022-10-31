@@ -1,18 +1,18 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.DeleteAlertSheetModel
-import co.yore.splitnpay.components.components.SettledUnsettledMembersBottomSheetModel
-import co.yore.splitnpay.components.components.SuccessUndoSheetModel
-import co.yore.splitnpay.components.components.UnsettledMembersAlertSheetModel
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
+import co.yore.splitnpay.pages.subpages.*
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
@@ -197,58 +197,59 @@ class ManageViewModel(
     }
 
     // ////////////////////////////////////////
-    override val notifier = NotificationService { id, arg ->
-        when (id) {
-            DataIds.pickImage -> {
-                mySheeting.change(Sheets.ImagePicker)
-                mySheeting.show()
-            }
-            WirelessViewModelInterface.startupNotification -> {
-                setUpStatusBarColor()
-            }
-            "${DataIds.back}group_manage" -> {
-                when (mySheeting.sheets.value){
-                    Sheets.None -> {
-                        navigation.scope { navHostController, lifecycleOwner, toaster ->
-                            navHostController.popBackStack()
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                DataIds.pickImage -> {
+                    mySheeting.change(Sheets.ImagePicker)
+                    mySheeting.show()
+                }
+                WirelessViewModelInterface.startupNotification -> {
+                    setUpStatusBarColor()
+                }
+                "${DataIds.back}group_manage" -> {
+                    when (mySheeting.sheets.value) {
+                        Sheets.None -> {
+                            navigation.scope { navHostController, lifecycleOwner, toaster ->
+                                navHostController.popBackStack()
+                            }
+                        }
+                        else -> {
+                            mySheeting.map[mySheeting.sheets.value]?.onBack()
                         }
                     }
-                    else -> {
-                        mySheeting.map[mySheeting.sheets.value]?.onBack()
-                    }
                 }
-            }
-            DataIds.groupNotificationSwitch -> {
-                _groupNotificationSwitch.value = !_groupNotificationSwitch.value
-            }
-            DataIds.addMemberClick -> {
-                // TODO: click
-            }
-            DataIds.inviteViaLinkClick -> {
-                // TODO: click
-            }
-            DataIds.leaveGroupClick -> {
-                // TODO: click
-            }
-            DataIds.deleteGroupClick -> {
-                mySheeting.sheets.value = Sheets.UnsettledMembersAlert
-                mySheeting.show()
-            }
-            DataIds.selectMemberClick -> {
-                onSelectMemberClick(arg)
-            }
-            DataIds.deleteMembersClick -> {
-                mySheeting.change(Sheets.SettledUnsettledMembers)
-                mySheeting.show()
-                val count = _groupMembers.size
-                for (i in 0 until count){
-                    if (_groupMembers[i].isSelected){
-                        _groupMembers[i] = _groupMembers[i].copy(isSelected = false)
+                DataIds.groupNotificationSwitch -> {
+                    _groupNotificationSwitch.value = !_groupNotificationSwitch.value
+                }
+                DataIds.addMemberClick -> {
+                    // TODO: click
+                }
+                DataIds.inviteViaLinkClick -> {
+                    // TODO: click
+                }
+                DataIds.leaveGroupClick -> {
+                    // TODO: click
+                }
+                DataIds.deleteGroupClick -> {
+                    mySheeting.sheets.value = Sheets.UnsettledMembersAlert
+                    mySheeting.show()
+                }
+                DataIds.selectMemberClick -> {
+                    onSelectMemberClick(arg)
+                }
+                DataIds.deleteMembersClick -> {
+                    mySheeting.change(Sheets.SettledUnsettledMembers)
+                    mySheeting.show()
+                    val count = _groupMembers.size
+                    for (i in 0 until count) {
+                        if (_groupMembers[i].isSelected) {
+                            _groupMembers[i] = _groupMembers[i].copy(isSelected = false)
+                        }
                     }
                 }
             }
         }
-    }
 
     private fun setUpStatusBarColor() {
         _statusBarColor.value = StatusBarColor(

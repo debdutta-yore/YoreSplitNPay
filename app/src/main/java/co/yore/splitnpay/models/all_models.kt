@@ -7,6 +7,18 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.ui.theme.*
 import java.math.BigDecimal
 
+data class GroupChatPageData(
+    val name: String,
+    val amount: Float,
+    val image: Any?
+)
+
+data class SplitPageData(
+    val willGet: Float,
+    val willPay: Float,
+    val splitted: Boolean
+)
+
 data class Category(
     val id: Any,
     val name: String,

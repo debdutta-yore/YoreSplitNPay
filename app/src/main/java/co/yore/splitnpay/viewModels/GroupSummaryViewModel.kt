@@ -1,5 +1,6 @@
 package co.yore.splitnpay.viewModels
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -7,8 +8,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.*
+import co.yore.splitnpay.pages.childpages.CategoryExpense
+import co.yore.splitnpay.pages.childpages.PieData
+import co.yore.splitnpay.pages.childpages.TimeOptionData
+import co.yore.splitnpay.pages.subpages.DatePickerAdvancedBottomSheetModel
+import co.yore.splitnpay.pages.subpages.ExpenseFilterBottomSheetModel
+import co.yore.splitnpay.pages.subpages.TimeFilterBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
@@ -38,12 +48,13 @@ class GroupSummaryViewModel(
     private val _members = mutableStateListOf<SplitSelectableMember>()
     private val _willGetTransactions = mutableStateListOf<MemberTransact>()
     private val _willPayTransactions = mutableStateListOf<MemberTransact>()
-    private val _payTotal = mutableStateOf(0f)
-    private val _getTotal = mutableStateOf(4500f)
-    private val _payeeName = mutableStateOf("Sushil")
-    private val _payerName = mutableStateOf("You")
-    private val _selectedBalanceExpenseTab = mutableStateOf(0)
 
+    private val _payTotal = mutableStateOf(0f)
+    private val _getTotal = mutableStateOf(0f)
+    private val _payeeName = mutableStateOf("")
+    private val _payerName = mutableStateOf("")
+    ////////////////////////////////////////////////////////////////
+    private val _selectedBalanceExpenseTab = mutableStateOf(0)
     private val _expensesCategories = mutableStateListOf<CategoryExpense>()
     private val _expenseChartList = mutableStateListOf<ExpenseChartData>()
     private val _expensePieChartList = mutableStateListOf<PieData>()
@@ -52,17 +63,14 @@ class GroupSummaryViewModel(
     private val _expensesTimeFrameText = mutableStateOf("June")
     private val _filterTimeFrame = mutableStateOf<TimeOptionData>(TimeOptionData.Normal("All Time"))
     private val _expensesOvertimeTotalTransactions = mutableStateOf("1")
-
     private val _datePickerOption = mutableStateOf(DatePickerOption.Monthly)
     private val _datePickerDateRange = mutableStateOf(DatePickerRange.Date)
     private val _datePickerFromTo = mutableStateOf(DatePickerFromTo.From)
-
     private val _selectedFromYear = mutableStateOf(2022)
     private val _selectedFromMonth = mutableStateOf(1)
     private val _selectedFromDay = mutableStateOf(1)
     private val _numberOfSelectedTimeframe = mutableStateOf("1 Month")
     private val _selectedDates = mutableStateOf("")
-
     private val _selectedToYear = mutableStateOf(2022)
     private val _selectedToMonth = mutableStateOf(1)
     private val _selectedToDay = mutableStateOf(1)
@@ -107,112 +115,113 @@ class GroupSummaryViewModel(
         }
 
     @OptIn(ExperimentalMaterialApi::class)
-    override val notifier = NotificationService { id, arg ->
-        when (id) {
-            DataIds.year -> {
-                years[combineKey] = arg as? Int ?: return@NotificationService
-                updateDatePicker()
-            }
-            DataIds.month -> {
-                months[combineKey] = arg as? Int ?: return@NotificationService
-                updateDatePicker()
-            }
-            DataIds.day -> {
-                val day = arg as? Int ?: return@NotificationService
-                days[combineKey] = day
-                updateDatePicker()
-            }
-            DataIds.monthlyTab -> {
-                selectedMonthlyTab.value = arg as? String ?: return@NotificationService
-                if (selectedMonthlyTab.value == "Select Month Range"){
-                    _datePickerFromTo.value = DatePickerFromTo.From
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                DataIds.year -> {
+                    years[combineKey] = arg as? Int ?: return@NotificationService
+                    updateDatePicker()
                 }
-                updateDatePicker()
-            }
-            DataIds.weeklyTab -> {
-                selectedWeeklyTab.value = arg as? String ?: return@NotificationService
-                updateDatePicker()
-            }
-            WirelessViewModelInterface.startupNotification -> {
-                setUpStatusBarColor()
-            }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+                DataIds.month -> {
+                    months[combineKey] = arg as? Int ?: return@NotificationService
+                    updateDatePicker()
                 }
-            }
-            "${DataIds.back}group_split_summary" -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigateUp()
+                DataIds.day -> {
+                    val day = arg as? Int ?: return@NotificationService
+                    days[combineKey] = day
+                    updateDatePicker()
                 }
-            }
-            DataIds.selectBalanceMember -> {
-                onSelectMemberClick(arg)
-            }
-            DataIds.selectedBalanceExpenseTab -> {
-                onSelectTabClick(arg)
-            }
-            DataIds.expenseCategoryItemClick -> {
-                // TODO: Add click event
-            }
-            DataIds.expenseCategorySearchClick -> {
-                // TODO: Add click event
-            }
-            DataIds.expenseCategoryFilterClick -> {
-                // TODO: Add click event
-            }
-            DataIds.expenseTimeMode -> {
-                mySheeting.change(Sheets.TimeFilter)
-                mySheeting.show()
-            }
-            DataIds.timeFilterSelectionClick -> { // not inside date picker
-                selectItem(arg)
-            }
-            DataIds.monthlyOrWeekly -> {
-                handleDatePickerOption(arg = arg)
-            }
+                DataIds.monthlyTab -> {
+                    selectedMonthlyTab.value = arg as? String ?: return@NotificationService
+                    if (selectedMonthlyTab.value == "Select Month Range") {
+                        _datePickerFromTo.value = DatePickerFromTo.From
+                    }
+                    updateDatePicker()
+                }
+                DataIds.weeklyTab -> {
+                    selectedWeeklyTab.value = arg as? String ?: return@NotificationService
+                    updateDatePicker()
+                }
+                WirelessViewModelInterface.startupNotification -> {
+                    setUpStatusBarColor()
+                }
+                DataIds.back -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
+                }
+                "${DataIds.back}group_split_summary" -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.navigateUp()
+                    }
+                }
+                DataIds.selectBalanceMember -> {
+                    onSelectMemberClick(arg)
+                }
+                DataIds.selectedBalanceExpenseTab -> {
+                    onSelectTabClick(arg)
+                }
+                DataIds.expenseCategoryItemClick -> {
+                    // TODO: Add click event
+                }
+                DataIds.expenseCategorySearchClick -> {
+                    // TODO: Add click event
+                }
+                DataIds.expenseCategoryFilterClick -> {
+                    // TODO: Add click event
+                }
+                DataIds.expenseTimeMode -> {
+                    mySheeting.change(Sheets.TimeFilter)
+                    mySheeting.show()
+                }
+                DataIds.timeFilterSelectionClick -> { // not inside date picker
+                    selectItem(arg)
+                }
+                DataIds.monthlyOrWeekly -> {
+                    handleDatePickerOption(arg = arg)
+                }
 
-            DataIds.datePickerFromTo -> {
-                handleDatePickerFromTo(arg = arg)
-            }
-            DataIds.summaryMode -> {
-                mySheeting.change(Sheets.ExpenseFilter)
-                mySheeting.show()
-            }
+                DataIds.datePickerFromTo -> {
+                    handleDatePickerFromTo(arg = arg)
+                }
+                DataIds.summaryMode -> {
+                    mySheeting.change(Sheets.ExpenseFilter)
+                    mySheeting.show()
+                }
 
-            /*DataIds.datePickerDateRange -> {
-                handleDatePickerRange(arg = arg)
-            }*/
-
-            /*DataIds.selectedFromYear -> {
-                handleSelectionFromYear(arg = arg)
-            }
-            DataIds.selectedFromMonth -> {
-                handleSelectionFromMonth(arg = arg)
-            }
-            DataIds.selectedFromDay -> {
-                handleSelectionFromDay(arg = arg)
-            }
-
-            DataIds.selectedToYear -> {
-                handleSelectionToYear(arg = arg)
-            }
-
-            DataIds.selectedToMonth -> {
-                handleSelectionToMonth(arg = arg)
-            }
-            DataIds.selectedToDay -> {
-                handleSelectionToDay(arg = arg)
-            }*/
-            DataIds.datePickerContinueClick -> {
-                /*//TODO: Navigate
-                //_expensesCategories.filter { it.category}
-                sheetHandler.state {
-                    hide()
+                /*DataIds.datePickerDateRange -> {
+                    handleDatePickerRange(arg = arg)
                 }*/
+
+                /*DataIds.selectedFromYear -> {
+                    handleSelectionFromYear(arg = arg)
+                }
+                DataIds.selectedFromMonth -> {
+                    handleSelectionFromMonth(arg = arg)
+                }
+                DataIds.selectedFromDay -> {
+                    handleSelectionFromDay(arg = arg)
+                }
+
+                DataIds.selectedToYear -> {
+                    handleSelectionToYear(arg = arg)
+                }
+
+                DataIds.selectedToMonth -> {
+                    handleSelectionToMonth(arg = arg)
+                }
+                DataIds.selectedToDay -> {
+                    handleSelectionToDay(arg = arg)
+                }*/
+                DataIds.datePickerContinueClick -> {
+                    /*//TODO: Navigate
+                    //_expensesCategories.filter { it.category}
+                    sheetHandler.state {
+                        hide()
+                    }*/
+                }
             }
         }
-    }
 
     private fun updateDatePicker() {
         val ck = combineKey
@@ -422,6 +431,13 @@ class GroupSummaryViewModel(
                 _willPayTransactions.addAll(
                     willPayTransactions
                 )
+                if(_members.isNotEmpty()){
+                    _payeeName.value = "You"
+                    _payerName.value = "You"
+
+                    _getTotal.value = willGetTransactions.sumOf { it.amount.toDouble() }.toFloat()
+                    _payTotal.value = willPayTransactions.sumOf { it.amount.toDouble() }.toFloat()
+                }
             }
         }
     }
@@ -523,12 +539,3 @@ class GroupSummaryViewModel(
         calculateExpensesTotal()
     }
 }
-
-fun <K, V>Map<K, V>.getOrMyDefault(key: K, defualt: V): V {
-    return this[key] ?: defualt
-}
-
-val currentYear: Int
-    get(){
-        return Calendar.getInstance().get(Calendar.YEAR)
-    }

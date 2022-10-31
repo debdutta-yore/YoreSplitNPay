@@ -1,9 +1,11 @@
 package co.yore.splitnpay.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.MemberTransact
 import co.yore.splitnpay.models.SplitSelectableMember
@@ -17,33 +19,35 @@ class IndividualSummaryViewModel(
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
-    override val notifier = NotificationService{id, arg ->
-        when (id){
-            DataIds.selectBalanceMember -> {
-                val member = arg as? SplitSelectableMember
-                val index = splitSelectableMembers.indexOf(member)
-                if (index == -1){
-                    return@NotificationService
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                DataIds.selectBalanceMember -> {
+                    val member = arg as? SplitSelectableMember
+                    val index = splitSelectableMembers.indexOf(member)
+                    if (index == -1) {
+                        return@NotificationService
+                    }
+                    splitSelectableMembers.forEachUpdate {
+                        it.copy(isSelected = false)
+                    }
+                    splitSelectableMembers[index] =
+                        splitSelectableMembers[index].copy(isSelected = true)
+                    val name = splitSelectableMembers[index].name
+                    // selectedMemberName.value = if(name.lowercase()=="you") "$name'll" else "$name will"
                 }
-                splitSelectableMembers.forEachUpdate {
-                    it.copy(isSelected = false)
+                DataIds.back -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
                 }
-                splitSelectableMembers[index] = splitSelectableMembers[index].copy(isSelected = true)
-                val name = splitSelectableMembers[index].name
-                // selectedMemberName.value = if(name.lowercase()=="you") "$name'll" else "$name will"
-            }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
-                }
-            }
-            "${DataIds.back}individual_summary" -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+                "${DataIds.back}individual_summary" -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
                 }
             }
         }
-    }
     override val navigation = Navigation()
     override val permissionHandler = PermissionHandler()
     override val resultingActivityHandler = ResultingActivityHandler()

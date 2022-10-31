@@ -7,8 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.pages.subpages.*
 import co.yore.splitnpay.repo.*
 import co.yore.splitnpay.ui.theme.BlackSqueeze
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
@@ -290,9 +293,11 @@ class GroupChatViewModel(
     // ////////////////////////////////////////
     private val _conversations = mutableStateListOf<Conversation>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
-    private val _groupName = mutableStateOf("Office Buddies")
-    private val _groupImage = mutableStateOf("https://i.pravatar.cc/300")
-    private val _groupAmount = mutableStateOf(5000f)
+
+    private val _groupName = mutableStateOf("Group Name")
+    private val _groupImage = mutableStateOf<Any?>("")
+    private val _groupAmount = mutableStateOf(0f)
+
     private val _groupCreationDate = mutableStateOf("May 9th 2022")
     private val _isSingleChat = mutableStateOf(false)
     private val _filteredMemberImage = mutableStateOf("https://i.pravatar.cc/300")
@@ -309,88 +314,89 @@ class GroupChatViewModel(
     private var prevSelectedIndex = -1
 
     @OptIn(ExperimentalMaterialApi::class)
-    override val notifier = NotificationService { id, arg ->
-        when (id) {
-            DataIds.settleSummaryManage -> {
-                mySheeting.sheets.value = Sheets.SettleSummaryManage
-                mySheeting.show()
-            }
-            DataIds.searchTextInput -> {
-                searchText.value = arg as? String ?: return@NotificationService
-            }
-            DataIds.groupChantTab -> {
-                groupChatTab.value = arg as GroupChatTab ?: return@NotificationService
-            }
-            DataIds.search -> {
-                search.value = true
-                _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
-            }
-            DataIds.filterDone -> {
-                mySheeting.hide()
-            }
-            DataIds.split -> {
-                mySheeting.sheets.value = Sheets.BillTotalAndCategories
-                mySheeting.show()
-            }
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                DataIds.settleSummaryManage -> {
+                    mySheeting.sheets.value = Sheets.SettleSummaryManage
+                    mySheeting.show()
+                }
+                DataIds.searchTextInput -> {
+                    searchText.value = arg as? String ?: return@NotificationService
+                }
+                DataIds.groupChantTab -> {
+                    groupChatTab.value = arg as GroupChatTab ?: return@NotificationService
+                }
+                DataIds.search -> {
+                    search.value = true
+                    _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
+                }
+                DataIds.filterDone -> {
+                    mySheeting.hide()
+                }
+                DataIds.split -> {
+                    mySheeting.sheets.value = Sheets.BillTotalAndCategories
+                    mySheeting.show()
+                }
 
-            WirelessViewModelInterface.startupNotification -> {
-                _statusBarColor.value = StatusBarColor(
-                    color = RobinsEggBlue,
-                    darkIcons = true
-                )
-            }
-            DataIds.back -> {
-                pageBack()
-            }
-            "${DataIds.back}group_chat_page" -> {
-                when (mySheeting.sheets.value){
-                    Sheets.None -> pageBack()
-                    else -> mySheeting.onBack()
+                WirelessViewModelInterface.startupNotification -> {
+                    _statusBarColor.value = StatusBarColor(
+                        color = RobinsEggBlue,
+                        darkIcons = true
+                    )
                 }
-            }
-            DataIds.groupAmount -> {
-                _groupAmount.value = (arg as? Float) ?: 0f
-            }
-            DataIds.filter -> {
-                mySheeting.sheets.value = Sheets.MemberFilter
-                mySheeting.show()
-            }
-            DataIds.settleClick -> {
-                mySheeting.sheets.value = Sheets.Settle
-                mySheeting.show()
-            }
-            DataIds.summaryClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("group_split_summary")
+                DataIds.back -> {
+                    pageBack()
                 }
-            }
-            DataIds.manageClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("group_manage")
+                "${DataIds.back}group_chat_page" -> {
+                    when (mySheeting.sheets.value) {
+                        Sheets.None -> pageBack()
+                        else -> mySheeting.onBack()
+                    }
                 }
-                // _typingMembers.add("https://i.pravatar.cc/100")
-            }
-            DataIds.chatMessage -> {
-                _chatMessage.value = (arg as? String) ?: ""
-            }
-            DataIds.searchText -> {
-                _searchText.value = (arg as? String) ?: ""
-            }
-            DataIds.cardClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("split_card_details")
+                DataIds.groupAmount -> {
+                    _groupAmount.value = (arg as? Float) ?: 0f
                 }
-            }
-            // //////
+                DataIds.filter -> {
+                    mySheeting.sheets.value = Sheets.MemberFilter
+                    mySheeting.show()
+                }
+                DataIds.settleClick -> {
+                    mySheeting.sheets.value = Sheets.Settle
+                    mySheeting.show()
+                }
+                DataIds.summaryClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.navigate("group_split_summary")
+                    }
+                }
+                DataIds.manageClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.navigate("group_manage")
+                    }
+                    // _typingMembers.add("https://i.pravatar.cc/100")
+                }
+                DataIds.chatMessage -> {
+                    _chatMessage.value = (arg as? String) ?: ""
+                }
+                DataIds.searchText -> {
+                    _searchText.value = (arg as? String) ?: ""
+                }
+                DataIds.cardClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.navigate("split_card_details")
+                    }
+                }
+                // //////
 
-            DataIds.openAllCategories -> {
-                mySheeting.sheets.value = Sheets.CategoriesEdit
-            }
-            DataIds.billTotalContinueClick -> {
-                mySheeting.sheets.value = Sheets.DatePicker
+                DataIds.openAllCategories -> {
+                    mySheeting.sheets.value = Sheets.CategoriesEdit
+                }
+                DataIds.billTotalContinueClick -> {
+                    mySheeting.sheets.value = Sheets.DatePicker
+                }
             }
         }
-    }
 
     private fun pageBack() {
         if (search.value){
@@ -434,7 +440,7 @@ class GroupChatViewModel(
             DataIds.yoreDatePickerData to DataIds.yoreDatePickerData
         )
         // ////////////////////////////////////
-
+        fetchPageData()
         _statusBarColor.value = StatusBarColor(
             color = RobinsEggBlue,
             darkIcons = true
@@ -446,5 +452,16 @@ class GroupChatViewModel(
             }
         }
 
+    }
+
+    private fun fetchPageData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val pageData = repo.groupChatPageData()
+            withContext(Dispatchers.Main) {
+                _groupName.value = pageData.name
+                _groupAmount.value = pageData.amount
+                _groupImage.value = pageData.image
+            }
+        }
     }
 }

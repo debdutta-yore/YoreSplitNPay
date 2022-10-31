@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import co.yore.splitnpay.R
-import co.yore.splitnpay.libs.dep
+import co.yore.splitnpay.libs.jerokit.dep
 import co.yore.splitnpay.models.CheckboxConfiguration
 import co.yore.splitnpay.models.TriState
 

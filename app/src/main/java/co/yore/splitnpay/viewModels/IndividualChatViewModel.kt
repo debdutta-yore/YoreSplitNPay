@@ -1,5 +1,6 @@
 package co.yore.splitnpay.viewModels
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -7,8 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.pages.subpages.*
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BlackSqueeze
@@ -301,97 +305,98 @@ class IndividualChatViewModel(
     private var prevSelectedIndex = -1
 
     @OptIn(ExperimentalMaterialApi::class)
-    override val notifier = NotificationService { id, arg ->
-        when (id) {
-            DataIds.settleSummaryManage -> {
-                mySheeting.sheets.value = Sheets.SettleSummaryManage
-                mySheeting.show()
-            }
-            "${DataIds.back}group_chat_page" -> {
-                when (mySheeting.sheets.value){
-                    Sheets.None -> {}
-                    else -> mySheeting.map[mySheeting.sheets.value]?.onBack()
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                DataIds.settleSummaryManage -> {
+                    mySheeting.sheets.value = Sheets.SettleSummaryManage
+                    mySheeting.show()
+                }
+                "${DataIds.back}group_chat_page" -> {
+                    when (mySheeting.sheets.value) {
+                        Sheets.None -> {}
+                        else -> mySheeting.map[mySheeting.sheets.value]?.onBack()
+                    }
+
+                }
+                DataIds.searchTextInput -> {
+                    searchText.value = arg as? String ?: return@NotificationService
+                }
+                DataIds.groupChantTab -> {
+                    groupChatTab.value = arg as GroupChatTab ?: return@NotificationService
+                }
+                DataIds.search -> {
+                    search.value = true
+                    _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
+                }
+                DataIds.filterDone -> {
+                    mySheeting.hide()
+                }
+                DataIds.split -> {
+                    mySheeting.sheets.value = Sheets.BillTotalAndCategories
+                    mySheeting.show()
                 }
 
-            }
-            DataIds.searchTextInput -> {
-                searchText.value = arg as? String ?: return@NotificationService
-            }
-            DataIds.groupChantTab -> {
-                groupChatTab.value = arg as GroupChatTab ?: return@NotificationService
-            }
-            DataIds.search -> {
-                search.value = true
-                _statusBarColor.value = StatusBarColor(BlackSqueeze, true)
-            }
-            DataIds.filterDone -> {
-                mySheeting.hide()
-            }
-            DataIds.split -> {
-                mySheeting.sheets.value = Sheets.BillTotalAndCategories
-                mySheeting.show()
-            }
-
-            WirelessViewModelInterface.startupNotification -> {
-                _statusBarColor.value = StatusBarColor(
-                    color = RobinsEggBlue,
-                    darkIcons = true
-                )
-            }
-            DataIds.back -> {
-                if (search.value){
-                    search.value = false
+                WirelessViewModelInterface.startupNotification -> {
                     _statusBarColor.value = StatusBarColor(
                         color = RobinsEggBlue,
                         darkIcons = true
                     )
-                    searchText.value = ""
-                    return@NotificationService
                 }
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+                DataIds.back -> {
+                    if (search.value) {
+                        search.value = false
+                        _statusBarColor.value = StatusBarColor(
+                            color = RobinsEggBlue,
+                            darkIcons = true
+                        )
+                        searchText.value = ""
+                        return@NotificationService
+                    }
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
                 }
-            }
-            DataIds.filter -> {
-                mySheeting.sheets.value = Sheets.MemberFilter
-                mySheeting.show()
-            }
-            DataIds.settleClick -> {
-                mySheeting.sheets.value = Sheets.Settle
-                mySheeting.show()
-            }
-            DataIds.summaryClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("individual_summary")
+                DataIds.filter -> {
+                    mySheeting.sheets.value = Sheets.MemberFilter
+                    mySheeting.show()
                 }
-            }
-            DataIds.manageClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("individual_manage_page")
+                DataIds.settleClick -> {
+                    mySheeting.sheets.value = Sheets.Settle
+                    mySheeting.show()
                 }
-                // _typingMembers.add("https://i.pravatar.cc/100")
-            }
-            DataIds.chatMessage -> {
-                _chatMessage.value = (arg as? String) ?: ""
-            }
-            DataIds.searchText -> {
-                _searchText.value = (arg as? String) ?: ""
-            }
-            DataIds.cardClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.navigate("split_card_details")
+                DataIds.summaryClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.navigate("individual_summary")
+                    }
                 }
-            }
-            // //////
+                DataIds.manageClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.navigate("individual_manage_page")
+                    }
+                    // _typingMembers.add("https://i.pravatar.cc/100")
+                }
+                DataIds.chatMessage -> {
+                    _chatMessage.value = (arg as? String) ?: ""
+                }
+                DataIds.searchText -> {
+                    _searchText.value = (arg as? String) ?: ""
+                }
+                DataIds.cardClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.navigate("split_card_details")
+                    }
+                }
+                // //////
 
-            DataIds.openAllCategories -> {
-                mySheeting.sheets.value = Sheets.CategoriesEdit
-            }
-            DataIds.billTotalContinueClick -> {
-                mySheeting.sheets.value = Sheets.DatePicker
+                DataIds.openAllCategories -> {
+                    mySheeting.sheets.value = Sheets.CategoriesEdit
+                }
+                DataIds.billTotalContinueClick -> {
+                    mySheeting.sheets.value = Sheets.DatePicker
+                }
             }
         }
-    }
 
     // ///////////////////////////////////////
 

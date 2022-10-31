@@ -42,7 +42,7 @@ fun MarqueeText(
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current,
+    style: TextStyle = LocalTextStyle.current
 ) {
     val createText = @Composable { localModifier: Modifier ->
         Text(
@@ -61,7 +61,7 @@ fun MarqueeText(
             softWrap = softWrap,
             maxLines = 1,
             onTextLayout = onTextLayout,
-            style = style,
+            style = style
         )
     }
     var offset by remember { mutableStateOf(0) }
@@ -78,7 +78,7 @@ fun MarqueeText(
                     animation = tween(
                         durationMillis = duration,
                         delayMillis = 1000,
-                        easing = LinearEasing,
+                        easing = LinearEasing
                     ),
                     repeatMode = RepeatMode.Restart
                 ),
@@ -148,7 +148,8 @@ fun MarqueeText(
 
 @Composable
 private fun GradientEdge(
-    startColor: Color, endColor: Color,
+    startColor: Color,
+    endColor: Color
 ) {
     Box(
         modifier = Modifier
@@ -156,7 +157,8 @@ private fun GradientEdge(
             .fillMaxHeight()
             .background(
                 brush = Brush.horizontalGradient(
-                    0f to startColor, 1f to endColor,
+                    0f to startColor,
+                    1f to endColor
                 )
             )
     )

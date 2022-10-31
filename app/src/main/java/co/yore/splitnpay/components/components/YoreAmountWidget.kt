@@ -3,25 +3,20 @@ package co.yore.splitnpay.components.components
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
-import co.yore.splitnpay.locals.localCurrency
-import co.yore.splitnpay.ui.theme.robotoFonts
-import co.yore.splitnpay.libs.sep
+import co.yore.splitnpay.libs.locals.localCurrency
+import co.yore.splitnpay.libs.jerokit.sep
 import co.yore.splitnpay.models.YoreAmountConfiguration
-
 
 @Composable
 fun YoreAmount(
     modifier: Modifier = Modifier,
     config: YoreAmountConfiguration,
     whole: String,
-    decimal: String,
+    decimal: String
 ){
     Text(
         modifier = modifier,
@@ -35,7 +30,7 @@ fun YoreAmount(
                     fontWeight = config._currencyFontWeight
                 )
             ){
-                if(config.negative){
+                if (config.negative){
                     append("-")
                 }
                 append(localCurrency.current)
@@ -50,7 +45,7 @@ fun YoreAmount(
                 )
             ){
                 append(whole)
-                if(!config.decimalPointLocationInDecimalPart){
+                if (!config.decimalPointLocationInDecimalPart){
                     append(".")
                 }
             }
@@ -62,7 +57,7 @@ fun YoreAmount(
                     fontWeight = config._decimalFontWeight
                 )
             ){
-                if(config.decimalPointLocationInDecimalPart){
+                if (config.decimalPointLocationInDecimalPart){
                     append(".")
                 }
                 append(decimal)

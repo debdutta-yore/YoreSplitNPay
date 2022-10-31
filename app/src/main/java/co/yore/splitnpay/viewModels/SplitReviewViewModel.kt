@@ -6,13 +6,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.components.components.AllCategoriesBottomSheetModel
-import co.yore.splitnpay.components.components.BillTotalAndCategoryBottomSheetModel
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
+import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.pages.subpages.AllCategoriesBottomSheetModel
+import co.yore.splitnpay.pages.subpages.BillTotalAndCategoryBottomSheetModel
+import co.yore.splitnpay.pages.subpages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
@@ -206,109 +209,111 @@ class SplitReviewViewModel(
 
     // ////////////////////////////////////////
     @OptIn(ExperimentalMaterialApi::class)
-    override val notifier = NotificationService { id, arg ->
-        when (id) {
-            WirelessViewModelInterface.startupNotification -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    asGroup = getBoolean("asGroup", false)
-                }
-            }
-            DataIds.deleteReceipt -> {
-                receipt.value = null
-            }
-            "${DataIds.back}split_review_page" -> {
-                when (mySheeting.sheets.value){
-                    Sheets.BillTotalAndCategories -> mySheeting.model(Sheets.BillTotalAndCategories)?.onBack()
-                    Sheets.DatePicker -> mySheeting.model(Sheets.DatePicker)?.onBack()
-                    else -> pageBack()
-                }
-            }
-            DataIds.categoryEditClick -> {
-                openBillTotalBottomSheet()
-            }
-            DataIds.selectedTabIndex -> {
-                selectedTabIndex.value = arg as? Int ?: return@NotificationService
-            }
-            DataIds.selectedListOption -> {
-                selectedListOption.value = arg as? Int ?: return@NotificationService
-                updateAsSelectedListOption()
-            }
-            DataIds.memberPaymentCheck -> {
-                val index = _members.indexOf(arg as? MemberPayment)
-                if (index < 0){
-                    return@NotificationService
-                }
-                val member = _members[index]
-                val selected = !member.selected
-                _members[index] = member.copy(selected = selected)
-                // /
-                updateAsMemberSelection()
-            }
-            DataIds.paidByAmount -> {
-                if (arg !is Store){
-                    return@NotificationService
-                }
-                val member = arg["member"] as? MemberPayment ?: return@NotificationService
-                val amount = arg["amount"] as? Double ?: return@NotificationService
-                val index = _members.indexOf(member)
-                if (index < 0){
-                    return@NotificationService
-                }
-                _members[index] = _members[index].copy(paid = amount)
-                val paid = _members.sumOf { it.paid }.toFloat()
-                paidRemaining.value = _billTotal.value - paid
-            }
-            DataIds.adjustByAmount -> {
-                if (arg !is Store){
-                    return@NotificationService
-                }
-                val member = arg["member"] as? MemberPayment ?: return@NotificationService
-                val amount = arg["amount"] as? Double ?: return@NotificationService
-                val index = _members.indexOf(member)
-                if (index < 0){
-                    return@NotificationService
-                }
-                _members[index] = _members[index].copy(toPay = amount)
-                val paid = _members.sumOf { it.toPay }.toFloat()
-                adjustRemaining.value = _billTotal.value - paid
-            }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
-                }
-            }
-            DataIds.selectPaidByMemberClick -> {
-
-            }
-            DataIds.editBillAmountClick -> {
-                openBillTotalBottomSheet()
-            }
-            DataIds.categoryClick -> {
-
-            }
-            DataIds.dateClick -> {
-                mySheeting.sheets.value = Sheets.DatePicker
-                mySheeting.show()
-            }
-            DataIds.receiptClick -> {
-                showCameraOrGallery()
-            }
-            DataIds.confirmSplitClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack("split_page", false)
-                    if (asGroup){
-                        navHostController.navigate("group_chat_page")
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                WirelessViewModelInterface.startupNotification -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        asGroup = getBoolean("asGroup", false)
                     }
                 }
-            }
-            DataIds.scanClick -> {
+                DataIds.deleteReceipt -> {
+                    receipt.value = null
+                }
+                "${DataIds.back}split_review_page" -> {
+                    when (mySheeting.sheets.value) {
+                        Sheets.BillTotalAndCategories -> mySheeting.model(Sheets.BillTotalAndCategories)
+                            ?.onBack()
+                        Sheets.DatePicker -> mySheeting.model(Sheets.DatePicker)?.onBack()
+                        else -> pageBack()
+                    }
+                }
+                DataIds.categoryEditClick -> {
+                    openBillTotalBottomSheet()
+                }
+                DataIds.selectedTabIndex -> {
+                    selectedTabIndex.value = arg as? Int ?: return@NotificationService
+                }
+                DataIds.selectedListOption -> {
+                    selectedListOption.value = arg as? Int ?: return@NotificationService
+                    updateAsSelectedListOption()
+                }
+                DataIds.memberPaymentCheck -> {
+                    val index = _members.indexOf(arg as? MemberPayment)
+                    if (index < 0) {
+                        return@NotificationService
+                    }
+                    val member = _members[index]
+                    val selected = !member.selected
+                    _members[index] = member.copy(selected = selected)
+                    // /
+                    updateAsMemberSelection()
+                }
+                DataIds.paidByAmount -> {
+                    if (arg !is Store) {
+                        return@NotificationService
+                    }
+                    val member = arg["member"] as? MemberPayment ?: return@NotificationService
+                    val amount = arg["amount"] as? Double ?: return@NotificationService
+                    val index = _members.indexOf(member)
+                    if (index < 0) {
+                        return@NotificationService
+                    }
+                    _members[index] = _members[index].copy(paid = amount)
+                    val paid = _members.sumOf { it.paid }.toFloat()
+                    paidRemaining.value = _billTotal.value - paid
+                }
+                DataIds.adjustByAmount -> {
+                    if (arg !is Store) {
+                        return@NotificationService
+                    }
+                    val member = arg["member"] as? MemberPayment ?: return@NotificationService
+                    val amount = arg["amount"] as? Double ?: return@NotificationService
+                    val index = _members.indexOf(member)
+                    if (index < 0) {
+                        return@NotificationService
+                    }
+                    _members[index] = _members[index].copy(toPay = amount)
+                    val paid = _members.sumOf { it.toPay }.toFloat()
+                    adjustRemaining.value = _billTotal.value - paid
+                }
+                DataIds.back -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
+                }
+                DataIds.selectPaidByMemberClick -> {
 
-            }
-            DataIds.subCategoryText -> {
-                _subCategoryText.value = (arg as? String) ?: ""
+                }
+                DataIds.editBillAmountClick -> {
+                    openBillTotalBottomSheet()
+                }
+                DataIds.categoryClick -> {
+
+                }
+                DataIds.dateClick -> {
+                    mySheeting.sheets.value = Sheets.DatePicker
+                    mySheeting.show()
+                }
+                DataIds.receiptClick -> {
+                    showCameraOrGallery()
+                }
+                DataIds.confirmSplitClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack("split_page", false)
+                        if (asGroup) {
+                            navHostController.navigate("group_chat_page")
+                        }
+                    }
+                }
+                DataIds.scanClick -> {
+
+                }
+                DataIds.subCategoryText -> {
+                    _subCategoryText.value = (arg as? String) ?: ""
+                }
             }
         }
-    }
 
     private fun updateAsMemberSelection() {
         val selectedCount = _members.count {

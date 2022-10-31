@@ -3,11 +3,13 @@ package co.yore.splitnpay.viewModels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.StatusBarColor
 import co.yore.splitnpay.ui.theme.Shark
 
-class PaymentSuccessViewModel() : ViewModel(), WirelessViewModelInterface {
+class PaymentSuccessViewModel() : ViewModel(),
+    WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
     override val navigation = Navigation()
@@ -21,24 +23,25 @@ class PaymentSuccessViewModel() : ViewModel(), WirelessViewModelInterface {
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
 
     // ////////////////////////////////////////
-    override val notifier = NotificationService { id, arg ->
-        when (id) {
-            WirelessViewModelInterface.startupNotification -> {
-                setUpStatusBarColor()
-            }
-            DataIds.back -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    navHostController.popBackStack()
+    override val notifier =
+        NotificationService { id, arg ->
+            when (id) {
+                WirelessViewModelInterface.startupNotification -> {
+                    setUpStatusBarColor()
                 }
-            }
-            DataIds.paymentSuccessButtonClick -> {
-                navigation.scope { navHostController, lifecycleOwner, toaster ->
-                    // TODO: Navigate
+                DataIds.back -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        navHostController.popBackStack()
+                    }
+                }
+                DataIds.paymentSuccessButtonClick -> {
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        // TODO: Navigate
 //                    navHostController.navigate("")
+                    }
                 }
             }
         }
-    }
 
     // ///////////////////////////////////////
     init {
