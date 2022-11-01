@@ -1,10 +1,12 @@
 package co.yore.splitnpay.viewModels
 
+import android.Manifest
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
@@ -14,6 +16,7 @@ import co.yore.splitnpay.pages.subpages.SplitAsChoiceBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BlackSqueeze
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.*
 
 class MemberSelectionPageViewModel(
@@ -59,7 +62,7 @@ class MemberSelectionPageViewModel(
                         if (index == 1) {
                             gotoSplitReviewPage(false)
                         } else {
-                            gotoGroupCreationPage()
+                            gotoGroupCreationPage(true)
                         }
                     }
 
@@ -172,9 +175,13 @@ class MemberSelectionPageViewModel(
         }
     }
 
-    private fun gotoGroupCreationPage() {
+    private fun gotoGroupCreationPage(split: Boolean = false) {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
-            navHostController.navigate("group_creation")
+            if (split){
+                navHostController.navigate("${Routes.groupCreation.name}?split=true")
+            } else {
+                navHostController.navigate(Routes.groupCreation.name)
+            }
         }
     }
 
@@ -254,14 +261,34 @@ class MemberSelectionPageViewModel(
 
     private fun gotoSplitReviewPage(asGroup: Boolean) {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
-            navHostController.navigate("split_review_page?asGroup=$asGroup")
+            navHostController.navigate("${Routes.splitReviewPage.name}?asGroup=$asGroup")
         }
     }
 
+    @OptIn(ExperimentalPermissionsApi::class)
     private fun fetchGroupAndContacts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            groupsAndContacts.addAll(repo.groupAndContacts())
+        viewModelScope.launch(Dispatchers.Main) {
+            val p = Manifest.permission.READ_CONTACTS
+            val checked = permissionHandler.check(p)
+            if (checked?.allPermissionsGranted == true) {
+                reallyFetchGroupAndContacts()
+            } else {
+                val requested = permissionHandler.request(p)
+                if (requested?.get(p) == true) {
+                    reallyFetchGroupAndContacts()
+                }
+            }
             filter()
+        }
+    }
+
+    private fun reallyFetchGroupAndContacts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val items = repo.groupAndContacts()
+            withContext(Dispatchers.Main){
+                groupsAndContacts.addAll(items)
+                filter()
+            }
         }
     }
 

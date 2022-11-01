@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
@@ -131,6 +132,10 @@ class SplitReviewViewModel(
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
                 }
             ),
             Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
@@ -189,18 +194,17 @@ class SplitReviewViewModel(
     // ////////////////////////////////////////
     private val _members = mutableStateListOf<MemberPayment>()
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
-    private val _groupName = mutableStateOf("Office buddies")
-    private val _billTotal = mutableStateOf(10000.0)
+
+    private val _billTotal = mutableStateOf(0.0)
     private val _subCategoryText = mutableStateOf("")
-    private val _categoryText = mutableStateOf("Trip")
-    private val _dateText = mutableStateOf("7th June, 2022")
+    private val _dateText = mutableStateOf("")
+
+    // ///////////
     private val paidRemaining = mutableStateOf(0.0)
     private val adjustRemaining = mutableStateOf(0.0)
     private val selectedTabIndex = mutableStateOf(0)
     private val selectedListOption = mutableStateOf(0)
     private val receipt = mutableStateOf<Any?>(null)
-
-    // private val sheets = mutableStateOf(Sheets.None)
     private val category = mutableStateOf(Category.blank)
     private val date = mutableStateOf(Kal.Date(7, 6, 2022))
     private var asGroup = false
@@ -300,9 +304,16 @@ class SplitReviewViewModel(
                 }
                 DataIds.confirmSplitClick -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.popBackStack("split_page", false)
                         if (asGroup) {
-                            navHostController.navigate("group_chat_page")
+                            if (navHostController.backQueue.firstOrNull{ it.destination.route == Routes.groupChatPage.full} != null) {
+                                navHostController.popBackStack(Routes.groupChatPage.full, false)
+                            } else {
+                                navHostController.popBackStack(Routes.splitPage.full, false)
+                                navHostController.navigate(Routes.groupChatPage.name)
+                            }
+                        } else {
+                            navHostController.set(Routes.splitPage.full, "splitAdded", true)
+                            navHostController.popBackStack(Routes.splitPage.full, false)
                         }
                     }
                 }
@@ -405,12 +416,10 @@ class SplitReviewViewModel(
     init {
         resolver.addAll(
             DataIds.statusBarColor to _statusBarColor,
-            DataIds.groupName to _groupName,
             DataIds.paidList to _members,
             DataIds.adjustedList to _members,
             DataIds.billTotal to _billTotal,
             DataIds.subCategoryText to _subCategoryText,
-            DataIds.categoryText to _categoryText,
             DataIds.dateText to _dateText,
             DataIds.paidRemaining to paidRemaining,
             DataIds.adjustRemaining to adjustRemaining,
@@ -424,25 +433,29 @@ class SplitReviewViewModel(
             DataIds.canProceedWithBillTotal to DataIds.canProceedWithBillTotal,
             DataIds.canProceedWithCategory to DataIds.canProceedWithCategory
         )
-        viewModelScope.launch(Dispatchers.IO) {
-            val categories = repo.getCategories()
-            withContext(Dispatchers.Main){
-                category.value = categories.first()
-            }
-        }
 
         paidRemaining.value = _billTotal.value
         viewModelScope.launch(Dispatchers.IO) {
+            val members = repo.getPaidByMembers()
             withContext(Dispatchers.Main) {
-                _members.addAll(
-                    repo.getPaidByMembers()
-                )
+                _members.addAll(members)
                 // /////////////////////
                 val memberCount = _members.size
                 val contribute = _billTotal.value / memberCount
                 for (i in 0 until memberCount){
                     _members[i] = _members[i].copy(toPay = contribute)
                 }
+            }
+            val pageData = repo.splitReviewPageData()
+            withContext(Dispatchers.Main) {
+                _billTotal.value = pageData.amount.toDouble()
+                _subCategoryText.value = pageData.description
+                category.value = pageData.category
+                _dateText.value = displayableDate(
+                    y = pageData.date.year,
+                    m = pageData.date.month,
+                    d = pageData.date.day
+                )
             }
         }
         _statusBarColor.value = StatusBarColor(

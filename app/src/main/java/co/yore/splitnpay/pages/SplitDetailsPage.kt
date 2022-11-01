@@ -691,7 +691,6 @@ fun SplitAdjustItem_eugo18(
     }
 }
 
-
 @Composable
 fun SplitMembersRemainingBox(
     remaining: Int,
@@ -1108,10 +1107,6 @@ fun Any.amountAnnotatedString(
     }
 }
 
-
-
-
-
 @Composable
 fun CategorySelectorCard_owv32g(
     notifier: NotificationService = notifier(),
@@ -1133,17 +1128,6 @@ fun CategorySelectorCard_owv32g(
                 notifier.notify(DataIds.categoryEditClick)
             }
     ) {
-        /*Icon(
-            modifier = Modifier
-                .padding(
-                    top = config.iconTopPadding.dep(),
-                    bottom = config.iconBottomPadding.dep(),
-                    start = config.iconStartPadding.dep()
-                ),
-            painter = painterResource(id = config.icon),
-            contentDescription = "trip icon",
-            tint = Color.Unspecified
-        )*/
         AsyncImage(
             model = category.icon,
             contentDescription = "trip icon",
@@ -1289,8 +1273,6 @@ fun DashedBorderIconButtonWithText_13ppr3(
         }
     }
 }
-
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

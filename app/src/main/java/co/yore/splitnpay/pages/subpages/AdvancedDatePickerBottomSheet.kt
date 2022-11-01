@@ -55,7 +55,7 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback) : BottomSheetMo
         class Date(
             val year: Int,
             val month: Int,
-            day: Int,
+            val day: Int,
             private val display: String
         ) : Result() {
             override fun display(): String {
@@ -133,6 +133,15 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback) : BottomSheetMo
                         // ////////
                         var fromMonthString = monthNameShort(fromMonth)
                         var toMonthString = monthNameShort(toMonth)
+                        if (fromYear == toYear && fromMonth == toMonth) {
+                            result = Result.MonthYear(
+                                display = "$fromMonthString, $fromYear",
+                                year = fromYear,
+                                month = fromMonth
+                            )
+                            callback.onContinue(result)
+                            return@NotificationService
+                        }
                         var yearSuffix = ""
                         if (fromYear != toYear){
                             fromMonthString += " $fromYear"
@@ -158,10 +167,11 @@ class DatePickerAdvancedBottomSheetModel(val callback: Callback) : BottomSheetMo
                         val ck = combineKey
                         val year = years[ck] ?: currentYear
                         val month = months[ck] ?: 0
+                        val monthString = monthNameShort(month)
                         result = Result.MonthYear(
                             year = year,
                             month = month,
-                            display = "$month $year"
+                            display = "$monthString, $year"
                         )
                     }
                 } else {

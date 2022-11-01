@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
@@ -87,11 +88,11 @@ class GroupChatViewModel(
                         mySheeting.hide()
                         when (arg){
                             "Manage" -> navigation.scope { navHostController, lifecycleOwner, toaster ->
-                                navHostController.navigate("group_manage")
+                                navHostController.navigate(Routes.groupManagePage.name)
                             }
                             "Summary" -> {
                                 navigation.scope { navHostController, lifecycleOwner, toaster ->
-                                    navHostController.navigate("group_split_summary")
+                                    navHostController.navigate(Routes.groupSplitSummary.name)
                                 }
                             }
                             "Settle" -> {
@@ -142,6 +143,10 @@ class GroupChatViewModel(
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
                 }
             ),
             Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
@@ -160,6 +165,9 @@ class GroupChatViewModel(
                         selectedYear: Int
                     ) {
                         mySheeting.hide()
+                        navigation.scope { navHostController, lifecycleOwner, toaster ->
+                            navHostController.navigate("${Routes.splitReviewPage.name}?asGroup=true")
+                        }
                     }
 
                     override fun close() {
@@ -238,7 +246,7 @@ class GroupChatViewModel(
                     override fun onContinue() {
                         mySheeting.hide()
                         navigation.scope { navHostController, lifecycleOwner, toaster ->
-                            navHostController.navigate("payment_success")
+                            navHostController.navigate(Routes.paymentSuccess.name)
                         }
                     }
                 }
@@ -367,12 +375,12 @@ class GroupChatViewModel(
                 }
                 DataIds.summaryClick -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.navigate("group_split_summary")
+                        navHostController.navigate(Routes.groupSplitSummary.name)
                     }
                 }
                 DataIds.manageClick -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.navigate("group_manage")
+                        navHostController.navigate(Routes.groupManagePage.name)
                     }
                     // _typingMembers.add("https://i.pravatar.cc/100")
                 }
@@ -384,7 +392,7 @@ class GroupChatViewModel(
                 }
                 DataIds.cardClick -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.navigate("split_card_details")
+                        navHostController.navigate(Routes.splitCardDetailsPage.name)
                     }
                 }
                 // //////

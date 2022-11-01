@@ -7,6 +7,7 @@ import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.contact.core.util.phoneList
 import co.yore.splitnpay.models.*
+import co.yore.splitnpay.models.Date
 import co.yore.splitnpay.object_box.Contact
 import co.yore.splitnpay.object_box.box
 import co.yore.splitnpay.pages.childpages.CategoryExpense
@@ -74,6 +75,7 @@ interface MasterRepo{
     suspend fun splitPageData(): SplitPageData
     suspend fun groupChatPageData(): GroupChatPageData
     fun getSplits(): List<SplitBrief>
+    fun splitReviewPageData(): SplitReviewPageData
 }
 
 class MasterRepoImpl : MasterRepo {
@@ -111,7 +113,7 @@ class MasterRepoImpl : MasterRepo {
         }
     }
     override suspend fun peoples(count: Int): List<ContactData> {
-        return co.yore.splitnpay.libs.contact.core.Contacts(AppContext.app).query().find().map{
+        val realContacts = co.yore.splitnpay.libs.contact.core.Contacts(AppContext.app).query().find().map{
             ContactData(
                 id = it.id,
                 name = it.displayNamePrimary ?: "No name", // f.name.name(),
@@ -122,20 +124,23 @@ class MasterRepoImpl : MasterRepo {
                 willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f)
             )
         }
-        /*val f = Faker()
+        if (realContacts.size > 5){
+            return realContacts
+        }
+        val f = Faker()
         val r = Random(System.nanoTime())
         var i = 0
         return MutableList(count){
             ContactData(
                 id = newId,
-                name = "fdfdfdfdfd fdfdf12345678901234", // f.name.name(),
+                name = f.name.name(),
                 mobile = f.phoneNumber.cellPhone(),
                 image = "https://randomuser.me/api/portraits/men/${(++i) - 1}.jpg",
                 lastActivity = randomDate(1643049000000L, 1664099455386L),
                 willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f),
                 willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f)
             )
-        }*/
+        }
     }
     override suspend fun saveContacts(contacts: List<String>) {
         Contact::class.java.box
@@ -270,11 +275,11 @@ class MasterRepoImpl : MasterRepo {
         )
 
     override suspend fun getCategories(): List<Category> {
-        return categoryList.take(4)
+        return Category.list.take(4)
     }
 
     override suspend fun getAllCategories(): List<Category> {
-        return categoryList
+        return Category.list
     }
 
     override suspend fun members(): List<SingleItem>{
@@ -1434,6 +1439,19 @@ class MasterRepoImpl : MasterRepo {
             )
         }
         return list
+    }
+
+    override fun splitReviewPageData(): SplitReviewPageData {
+        return SplitReviewPageData(
+            amount = 10000.0f,
+            description = "Business Trip",
+            category = Category.rent,
+            date = Date(
+                year = 2022,
+                month = 7,
+                day = 7
+            )
+        )
     }
 }
 object MembersMock {

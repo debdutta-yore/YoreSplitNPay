@@ -48,6 +48,7 @@ class AllCategoriesBottomSheetModel(
         fun onCategoryAddContinue(name: String)
         fun onCategorySelectedContinue(category: Category)
         fun scope(): CoroutineScope
+        fun close()
     }
     private val _resolver = Resolver()
     private val _notifier = NotificationService { id, arg ->
@@ -122,7 +123,12 @@ class AllCategoriesBottomSheetModel(
     }
 
     override fun onBack() {
-
+        if (_isAddCategoryEnabled.value) {
+            _isAddCategoryEnabled.value = false
+            _addCategoryName.value = ""
+        } else {
+            callback.close()
+        }
     }
 
     init {

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
@@ -90,7 +91,7 @@ class IndividualChatViewModel(
                         mySheeting.hide()
                         when (arg){
                             "Manage" -> navigation.scope { navHostController, lifecycleOwner, toaster ->
-                                navHostController.navigate("group_manage")
+                                navHostController.navigate(Routes.groupManagePage.name)
                             }
                         }
                     }
@@ -135,6 +136,10 @@ class IndividualChatViewModel(
 
                     override fun scope(): CoroutineScope {
                         return viewModelScope
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
                     }
                 }
             ),
@@ -216,7 +221,7 @@ class IndividualChatViewModel(
                     override fun onContinue() {
                         mySheeting.hide()
                         navigation.scope { navHostController, lifecycleOwner, toaster ->
-                            navHostController.navigate("payment_success")
+                            navHostController.navigate(Routes.paymentSuccess.name)
                         }
                     }
                     override fun scope(): CoroutineScope {
@@ -367,12 +372,12 @@ class IndividualChatViewModel(
                 }
                 DataIds.summaryClick -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.navigate("individual_summary")
+                        navHostController.navigate(Routes.individualSummary.name)
                     }
                 }
                 DataIds.manageClick -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.navigate("individual_manage_page")
+                        navHostController.navigate(Routes.individualManagePage.name)
                     }
                     // _typingMembers.add("https://i.pravatar.cc/100")
                 }
@@ -384,7 +389,7 @@ class IndividualChatViewModel(
                 }
                 DataIds.cardClick -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.navigate("split_card_details")
+                        navHostController.navigate(Routes.splitCardDetailsPage.name)
                     }
                 }
                 // //////

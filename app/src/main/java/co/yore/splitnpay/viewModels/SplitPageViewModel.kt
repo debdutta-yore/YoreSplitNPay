@@ -1,11 +1,11 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
@@ -15,16 +15,14 @@ import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.subpages.AllCategoriesBottomSheetModel
 import co.yore.splitnpay.pages.subpages.BillTotalAndCategoryBottomSheetModel
 import co.yore.splitnpay.pages.subpages.ExpenseDatePickerBottomSheetModel
+import co.yore.splitnpay.pages.subpages.SuccessUndoSheetModel
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BermudaGray
 import co.yore.splitnpay.ui.theme.CeriseRed
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlin.math.abs
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -52,7 +50,7 @@ class SplitPageViewModel(
     private val _groupsAndPeoplesVault = mutableListOf<GroupOrContact>()
     private val _groupsAndPeoples = mutableStateListOf<GroupOrContact>()
     private val _selectedTabIndex = mutableStateOf(0)
-    private val _noGroup = mutableStateOf(false)
+    private val _noGroup = mutableStateOf(true)
     private val _haveSplit = mutableStateOf(true)
 
     private var splitPageData: SplitPageData = SplitPageData(
@@ -67,6 +65,17 @@ class SplitPageViewModel(
             when (id) {
                 WirelessViewModelInterface.startupNotification -> {
                     updateSplitPageColor(splitPageData)
+                    navigation.scope { navHostController, lifecycleOwner, toaster ->
+                        val added = navHostController.get<Boolean>("splitAdded")
+                        if (added == true) {
+                            mySheeting.change(Sheets.SuccessUndo)
+                            mySheeting.show()
+                            navHostController.currentBackStackEntry?.savedStateHandle?.remove<Boolean>("splitAdded")
+                        }
+                        if (navHostController.currentBackStackEntry?.arguments?.getBoolean("blank") != true){
+                            setupPage()
+                        }
+                    }
                 }
                 DataIds.textInput -> {
                     _input.value = (arg as? String) ?: return@NotificationService
@@ -91,7 +100,7 @@ class SplitPageViewModel(
                 DataIds.peopleCardGo -> {
                     gotoIndividualPage()
                 }
-                "${DataIds.back}split_page" -> {
+                "${DataIds.back}${Routes.splitPage.full}" -> {
                     when (mySheeting.sheets.value) {
                         Sheets.None -> pageBack()
                         else -> mySheeting.onBack()
@@ -190,6 +199,10 @@ class SplitPageViewModel(
                     override fun scope(): CoroutineScope {
                         return viewModelScope
                     }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
                 }
             ),
             Sheets.DatePicker to ExpenseDatePickerBottomSheetModel(
@@ -215,25 +228,57 @@ class SplitPageViewModel(
                         mySheeting.hide()
                     }
                 }
+            ),
+            Sheets.SuccessUndo to SuccessUndoSheetModel(
+                object : SuccessUndoSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun undo() {
+                        mySheeting.hide()
+                    }
+
+                    override fun timerEnded() {
+                        mySheeting.hide()
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                    override fun message(): String {
+                        return "Split as non-group successfully"
+                    }
+
+                    override fun timeMillis(): Int {
+                        return 60 * 1000
+                    }
+                }
             )
-        )
+        ),
+        onVisibilityChanged = {
+            if (!it){
+                mySheeting.change(Sheets.None)
+            }
+        }
     )
 
     private fun selectMembersForSplit() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
-            navHostController.navigate("split_with_page?split=true")
+            navHostController.navigate("${Routes.splitWithPage.name}?split=true")
         }
     }
 
     private fun gotoIndividualPage() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
-            navHostController.navigate("individual_chat")
+            navHostController.navigate(Routes.individualChat.name)
         }
     }
 
     private fun gotoGroupPage() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
-            navHostController.navigate("group_chat_page")
+            navHostController.navigate(Routes.groupChatPage.name)
         }
     }
 
@@ -245,7 +290,7 @@ class SplitPageViewModel(
 
     private fun gotoSplitWithPage() {
         navigation.scope{ navHostController, lifecycleOwner, toaster ->
-            navHostController.navigate("split_with_page")
+            navHostController.navigate(Routes.splitWithPage.name)
         }
     }
 
@@ -253,6 +298,16 @@ class SplitPageViewModel(
     private val _resolver = Resolver()
     override val resolver = _resolver
     init {
+        setupResolver()
+        // setupPage()
+    }
+
+    private fun setupPage() {
+        tryFetchGroupAndContacts()
+        tryUpdateSplitPage()
+    }
+
+    private fun setupResolver() {
         resolver.addAll(
             DataIds.whole to _whole,
             DataIds.decimal to _decimal,
@@ -270,19 +325,9 @@ class SplitPageViewModel(
             "${DataIds.subTab}group" to _subTabGroup,
             "${DataIds.subTab}people" to _subTabPeople
         )
-        viewModelScope.launch(Dispatchers.Main) {
-            val p = Manifest.permission.READ_CONTACTS
-            val checked = permissionHandler.check(p)
-            if (checked?.allPermissionsGranted == true) {
-                fetchGroupAndContacts()
-            } else {
-                val requested = permissionHandler.request(p)
-                if (requested?.get(p) == true) {
-                    fetchGroupAndContacts()
-                }
-            }
-        }
+    }
 
+    private fun tryUpdateSplitPage() {
         updateAsSplitPageData(
             SplitPageData(
                 willPay = 0f,
@@ -294,6 +339,21 @@ class SplitPageViewModel(
             splitPageData = repo.splitPageData()
             withContext(Dispatchers.Main) {
                 updateAsSplitPageData(splitPageData)
+            }
+        }
+    }
+
+    private fun tryFetchGroupAndContacts() {
+        viewModelScope.launch(Dispatchers.Main) {
+            val p = Manifest.permission.READ_CONTACTS
+            val checked = permissionHandler.check(p)
+            if (checked?.allPermissionsGranted == true) {
+                fetchGroupAndContacts()
+            } else {
+                val requested = permissionHandler.request(p)
+                if (requested?.get(p) == true) {
+                    fetchGroupAndContacts()
+                }
             }
         }
     }

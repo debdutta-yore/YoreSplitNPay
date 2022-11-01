@@ -8,6 +8,13 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.ui.theme.*
 import java.math.BigDecimal
 
+data class SplitReviewPageData(
+    val amount: Float,
+    val description: String,
+    val category: Category,
+    val date: Date
+)
+
 data class SplitCardDetailsPageData(
     val splitAmount: Float,
     val splitBalance: Float,

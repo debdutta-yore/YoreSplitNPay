@@ -53,7 +53,8 @@ fun ExpenseDemo(
     expenseBarChartList: List<ExpenseChartData> = listState(key = DataIds.expenseBarChartList),
     expensePieChartList: List<PieData> = listState(key = DataIds.expensePieChartList),
     expensesOvertimeTotal: Float = floatState(key = DataIds.expensesOvertimeTotal).value,
-    expensesTimeFrameText: String = stringState(key = DataIds.expensesTimeFrameText).value,
+    // expensesTimeFrameText: TimeOptionData = stringState(key = DataIds.expensesTimeFrameText).value,
+    // expensesTimeFrameText: String = stringState(key = DataIds.expensesTimeFrameText).value,
     expensesOvertimeTotalTransactions: String = stringState(key = DataIds.expensesOvertimeTotalTransactions).value,
     expenseTimeFrame: String = stringState(key = DataIds.expenseTimeFrame).value,
     timeOption: TimeOptionData = tState<TimeOptionData>(key = DataIds.filterTimeFrame).value,
@@ -433,11 +434,11 @@ fun ExpenseDemo(
                                     xValuesCount = expenseBarChartList.size,
                                     xValueCallback = {
 //                                        (it + 1) * 5000f
-                                        expenseBarChartList[it].yAxis
+                                        expenseBarChartList.getOrNull(it)?.yAxis ?: 0f
                                     },
                                     xAxisLabelCallback = {
 //                                        xAxisLabels[it]
-                                        expenseBarChartList[it].xAxis
+                                        expenseBarChartList.getOrNull(it)?.xAxis ?: ""
                                     },
                                     xLabelCallback = {
                                         // ((it+1)*5000f).toString()
@@ -464,8 +465,8 @@ fun ExpenseDemo(
                                     highlightedXLabelColor = PictonBlue,
                                     disabledTextColor = Color.LightGray,
                                     enabled = {
-                                        expenseBarChartList[it].enabled
-                                    },
+                                        expenseBarChartList.getOrNull(it)?.enabled ?: false
+                                    }
                                 )
                             ) { index, touchArea ->
                                 labelData = if (index == -1) {
@@ -637,7 +638,7 @@ fun ExpenseDemo(
                                                     )
                                                     10.sy()
                                                     myText(
-                                                        expensesTimeFrameText,
+                                                        timeOption.text,
                                                         12,
                                                         0xff243257
                                                     )
@@ -1125,10 +1126,9 @@ fun BarGraph(
                 axisLabelPaint.apply {
                     color = if (selected) {
                         data.highlightedXLabelColor.native
-                    } else if(!data.enabled(i)){
+                    } else if (!data.enabled(i)){
                         data.disabledTextColor.native
-                    }
-                    else {
+                    } else {
                         data.xAxisLabelColor(i).native
                     }
                 }

@@ -49,3 +49,28 @@ suspend fun MutableState<UIScope?>.forward(
 }
 
 fun Navigation() = mutableStateOf<UIScope?>(null)
+
+fun NavHostController.set(
+    route: String,
+    key: String,
+    value: Any?,
+    last: Boolean = false
+){
+    if (last){
+        backQueue
+            .lastOrNull{ it.destination.route == route }
+            ?.savedStateHandle
+            ?.set(key, value)
+    } else {
+        backQueue
+            .firstOrNull{ it.destination.route == route }
+            ?.savedStateHandle
+            ?.set(key, value)
+    }
+}
+
+operator fun <T> NavHostController.get(key: String): T? {
+    return currentBackStackEntry
+        ?.savedStateHandle
+        ?.get<T>(key)
+}

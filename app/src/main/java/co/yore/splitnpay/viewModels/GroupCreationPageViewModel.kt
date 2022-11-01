@@ -1,12 +1,12 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
@@ -77,8 +77,12 @@ class GroupCreationPageViewModel(
             when (id) {
                 DataIds.proceed -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.popBackStack("split_page", false)
-                        navHostController.navigate("group_chat_page")
+                        navHostController.popBackStack(Routes.splitPage.full, false)
+                        if (this.getBoolean("split")) {
+                            navHostController.navigate("${Routes.splitReviewPage.name}?asGroup=true")
+                        } else {
+                            navHostController.navigate(Routes.groupChatPage.name)
+                        }
                     }
                 }
                 DataIds.deleteAdded -> {
