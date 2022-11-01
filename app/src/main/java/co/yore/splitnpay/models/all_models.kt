@@ -3,9 +3,30 @@ package co.yore.splitnpay.models
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import co.yore.splitnpay.R
 import co.yore.splitnpay.ui.theme.*
 import java.math.BigDecimal
+
+data class SplitCardDetailsPageData(
+    val splitAmount: Float,
+    val splitBalance: Float,
+    val splitStatusMessage: String,
+    val splitProgress: Float,
+    val splitPaidMark: String,
+    val splitTransacted: Float,
+    val splitCardDetailsData: SplitCardDetailsData
+)
+
+data class SplitBrief(
+    val id: Any,
+    val amount: Float,
+    val description: String,
+    val date: SplitBrief.Date,
+    val category: Category
+){
+    data class Date(val year: Int, val month: Int, val day: Int)
+}
 
 data class GroupChatPageData(
     val name: String,
@@ -29,11 +50,72 @@ data class Category(
     val subCategory: String = "Business trip"
 ) {
     companion object {
+        operator fun get(id: Any) = when (id) {
+            "trip" -> trip
+            "food" -> food
+            "rent" -> rent
+            "party" -> party
+            "medical" -> medical
+            "emi" -> emi
+            "bills" -> bills
+            else -> blank
+        }
         val blank = Category(
             id = -1,
             name = "",
             color = 0,
             icon = null
+        )
+        val trip = Category(
+            id = "trip",
+            name = "Trip",
+            color = RadicalRed.toArgb().toLong(),
+            icon = R.drawable.ic_trip
+        )
+        val food = Category(
+            id = "food",
+            name = "Food",
+            color = CuriousBlue.toArgb().toLong(),
+            icon = R.drawable.ic_food
+        )
+        val rent = Category(
+            id = "rent",
+            name = "Rent",
+            color = Supernova.toArgb().toLong(),
+            icon = R.drawable.ic_rent
+        )
+        val party = Category(
+            id = "party",
+            name = "Party",
+            color = Turquoise1.toArgb().toLong(),
+            icon = R.drawable.ic_party
+        )
+        val medical = Category(
+            id = "medical",
+            name = "Medical",
+            color = Turquoise.toArgb().toLong(),
+            icon = R.drawable.ic_medical
+        )
+        val emi = Category(
+            id = "emi",
+            name = "EMI",
+            color = BuddhaGold.toArgb().toLong(),
+            icon = R.drawable.ic_emi
+        )
+        val bills = Category(
+            id = "bills",
+            name = "Bills",
+            color = Amaranth.toArgb().toLong(),
+            icon = R.drawable.ic_bills
+        )
+        val list = listOf(
+            food,
+            trip,
+            rent,
+            party,
+            medical,
+            emi,
+            bills
         )
     }
 }
@@ -527,7 +609,9 @@ enum class TransactionStatus1 {
 data class ExpenseChartData(
     val xAxis: String,
     val yAxis: Float,
-    val year: Int
+    val year: Int,
+    val description: String = "",
+    val enabled: Boolean = true
 )
 
 interface DateDisplayData {
@@ -581,7 +665,9 @@ data class BarGraphData(
     val strokeWidth: Float,
     val axisLabelFontSize: Float,
     val highlightedBarColor: Color,
-    val highlightedXLabelColor: Color
+    val highlightedXLabelColor: Color,
+    val disabledTextColor: Color,
+    val enabled: (Int) -> Boolean,
 )
 
 data class TouchArea(

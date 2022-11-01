@@ -10,3 +10,13 @@ val currentYear: Int
     get(){
         return Calendar.getInstance().get(Calendar.YEAR)
     }
+
+val currentMonth: Int
+    get(){
+        return Calendar.getInstance().get(Calendar.MONTH)+1
+    }
+
+val currentDay: Int
+    get(){
+        return Calendar.getInstance().get(Calendar.DATE)
+    }

@@ -3,12 +3,16 @@ package co.yore.splitnpay.viewModels
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SplitCardDetailsViewModel(
     val repo: MasterRepo = MasterRepoImpl()
@@ -61,11 +65,11 @@ class SplitCardDetailsViewModel(
     private val splitNote = mutableStateOf("Business trip")
     private val splitAmount = mutableStateOf(10000f)
 
-    private val splitBalance = mutableStateOf(5000f)
-    private val splitStatusMessage = mutableStateOf("Partially Paid / Received")
-    private val splitProgress = mutableStateOf(0.3f)
-    private val splitPaidMark = mutableStateOf("5 of 5 Paid")
-    private val splitTransacted = mutableStateOf(3000f)
+    private val splitBalance = mutableStateOf(0f)
+    private val splitStatusMessage = mutableStateOf("")
+    private val splitProgress = mutableStateOf(0f)
+    private val splitPaidMark = mutableStateOf("")
+    private val splitTransacted = mutableStateOf(0f)
 
     private val splitCardDetailsData = mutableStateOf(SplitCardDetailsData.blank)
 
@@ -115,21 +119,41 @@ class SplitCardDetailsViewModel(
             DataIds.statusBarColor to statusBarColor
         )
 
-        splitCardDetailsData.value = repo.sampleSplitCardDetails()
-        splitSelectableMembers.addAll(
-            repo.splitSelectableMembers()
-        )
-        getMembers.addAll(
-            repo.splitCardGetMembers()
-        )
-        payMembers.addAll(
-            repo.splitCardPayMembers()
-        )
-        paidList.addAll(
-            repo.splitCardPaidList()
-        )
-        splitAmong.addAll(
-            repo.splitCardSplitAmong()
-        )
+        viewModelScope.launch(Dispatchers.IO) {
+            val pageData = repo.sampleSplitCardDetails()
+            withContext(Dispatchers.Main) {
+                splitCardDetailsData.value = pageData.splitCardDetailsData
+                splitBalance.value = pageData.splitBalance
+                splitStatusMessage.value = pageData.splitStatusMessage
+                splitProgress.value = pageData.splitProgress
+                splitPaidMark.value = pageData.splitPaidMark
+                splitTransacted.value = pageData.splitTransacted
+                splitAmount.value = pageData.splitAmount
+            }
+            val _splitSelectableMembers = repo.splitSelectableMembers()
+            withContext(Dispatchers.Main) {
+                splitSelectableMembers.addAll(
+                    _splitSelectableMembers
+                )
+            }
+            val _getMembers = repo.splitCardGetMembers()
+            withContext(Dispatchers.Main) {
+                getMembers.addAll(_getMembers)
+            }
+
+            val _payMembers = repo.splitCardPayMembers()
+            withContext(Dispatchers.Main) {
+                payMembers.addAll(_payMembers)
+            }
+            val _splitCardPaidList = repo.splitCardPaidList()
+            withContext(Dispatchers.Main) {
+                paidList.addAll(_splitCardPaidList)
+            }
+
+            val _splitAmong = repo.splitCardSplitAmong()
+            withContext(Dispatchers.Main) {
+                splitAmong.addAll(_splitAmong)
+            }
+        }
     }
 }

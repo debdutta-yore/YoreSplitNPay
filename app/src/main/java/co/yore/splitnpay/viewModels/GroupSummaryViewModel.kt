@@ -1,9 +1,9 @@
 package co.yore.splitnpay.viewModels
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.components.components.YoreDatePickerData
@@ -53,7 +53,8 @@ class GroupSummaryViewModel(
     private val _getTotal = mutableStateOf(0f)
     private val _payeeName = mutableStateOf("")
     private val _payerName = mutableStateOf("")
-    ////////////////////////////////////////////////////////////////
+
+    // //////////////////////////////////////////////////////////////
     private val _selectedBalanceExpenseTab = mutableStateOf(0)
     private val _expensesCategories = mutableStateListOf<CategoryExpense>()
     private val _expenseChartList = mutableStateListOf<ExpenseChartData>()
@@ -431,7 +432,7 @@ class GroupSummaryViewModel(
                 _willPayTransactions.addAll(
                     willPayTransactions
                 )
-                if(_members.isNotEmpty()){
+                if (_members.isNotEmpty()){
                     _payeeName.value = "You"
                     _payerName.value = "You"
 
@@ -459,6 +460,99 @@ class GroupSummaryViewModel(
                     pieChartData
                 )
                 _datePickerToData.value = datePickerData
+            }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            val splits = repo.getSplits()
+            withContext(Dispatchers.Main) {
+                _expensesOvertimeTotal.value = splits.sumOf {
+                    it.amount.toDouble()
+                }.toFloat()
+                _expensesCategories.clear()
+                val expenseCategories = splits.groupBy { it.category.id }.map {
+                    val category = Category[it.key]
+                    CategoryExpense(
+                        icon = category.icon,
+                        category = category.name,
+                        description = it.value.firstOrNull()?.description ?: "No description",
+                        count = it.value.size,
+                        amount = it.value.sumOf {
+                            it.amount.toDouble()
+                        }.toFloat(),
+                        tint = Color(category.color)
+                    )
+                }
+                _expensesCategories.addAll(expenseCategories)
+                _expensesOvertimeTotalTransactions.value = "${splits.size}"
+                _expensePieChartList.clear()
+                _expensePieChartList.addAll(
+                    expenseCategories.map {
+                        PieData(
+                            color = it.tint,
+                            portion = it.amount / _expensesOvertimeTotal.value
+                        )
+                    }
+                )
+                var dateSortedSplits = splits.sortedWith(
+                    compareBy<SplitBrief> {
+                        it.date.year
+                    }.thenBy {
+                        it.date.month
+                    }.thenBy {
+                        it.date.day
+                    }
+                ).groupBy {
+                    pack(it.date.year, it.date.month)
+                }.map {
+                    Pair(it.key, it.value.sumOf { it.amount.toDouble() }.toFloat())
+                }.sortedBy { it.first }.toMap().toMutableMap()
+                val minDate = dateSortedSplits.minByOrNull { it.key }?.key ?: 0
+                val maxDate = dateSortedSplits.maxByOrNull { it.key }?.key ?: 0
+                val minYear = unpack(minDate).first
+                val maxYear = unpack(maxDate).first
+                for (year in minYear..maxYear) {
+                    for (month in 1..12){
+                        val packedValue = pack(year, month)
+                        if (!dateSortedSplits.contains(packedValue)){
+                            dateSortedSplits[packedValue] = 0f
+                        }
+                    }
+                }
+                _expenseChartList.clear()
+                if (
+                    minDate != 0 && maxDate != 0
+                ) {
+                    val dateSortedSplits2 = dateSortedSplits.map { it ->
+                        Pair(it.key, it.value)
+                    }.sortedBy { it.first }.toMutableList()
+                    val cy = currentMonth
+                    val cm = currentMonth
+                    for (i in dateSortedSplits.size - 1..0){
+                        val date = unpack(dateSortedSplits2[i].first)
+                        val y = date.first
+                        val m = date.second
+                        if (y > cy || m > cm){
+                            dateSortedSplits2[i] = dateSortedSplits2[i].copy(
+                                second = -1f
+                            )
+                        }
+                    }
+                    _expenseChartList.addAll(
+                        dateSortedSplits2.map {
+                            val ym = unpack(it.first)
+                            val year = ym.first
+                            val month = ym.second
+                            val monthName = shortMonth(month)
+                            ExpenseChartData(
+                                xAxis = monthName,
+                                yAxis = it.second,
+                                year = year,
+                                description = "$monthName | $year",
+                                enabled = it.second != -1f
+                            )
+                        }
+                    )
+                }
             }
         }
     }

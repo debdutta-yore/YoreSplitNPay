@@ -4,10 +4,8 @@ import co.yore.splitnpay.R
 import co.yore.splitnpay.app.AppContext
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
-import co.yore.splitnpay.libs.Rand
+import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.contact.core.util.phoneList
-import co.yore.splitnpay.libs.randomDate
-import co.yore.splitnpay.libs.takeSome
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.object_box.Contact
 import co.yore.splitnpay.object_box.box
@@ -58,7 +56,7 @@ interface MasterRepo{
     suspend fun getDatePickerData(): YoreDatePickerData
 
     suspend fun getItems(): List<SheetItem>
-    fun sampleSplitCardDetails(): SplitCardDetailsData
+    fun sampleSplitCardDetails(): SplitCardDetailsPageData
     fun splitSelectableMembers(): Collection<SplitSelectableMember>
     fun splitCardGetMembers(): Collection<MemberWillGetOrPayDetailsSingleRowItem>
     fun splitCardPayMembers(): Collection<MemberWillGetOrPayDetailsSingleRowItem>
@@ -75,11 +73,12 @@ interface MasterRepo{
     fun unsettledMembers(): List<SingleSettledOrUnsettledMember>
     suspend fun splitPageData(): SplitPageData
     suspend fun groupChatPageData(): GroupChatPageData
+    fun getSplits(): List<SplitBrief>
 }
 
 class MasterRepoImpl : MasterRepo {
     override suspend fun groupAndContacts(): List<GroupOrContact> {
-        //delay(6000)
+        // delay(6000)
         val contacts = peoples()
         val groups = groups(contacts)
         val list = mutableListOf<GroupOrContact>()
@@ -115,8 +114,8 @@ class MasterRepoImpl : MasterRepo {
         return co.yore.splitnpay.libs.contact.core.Contacts(AppContext.app).query().find().map{
             ContactData(
                 id = it.id,
-                name = it.displayNamePrimary?:"No name", // f.name.name(),
-                mobile = it.phoneList().firstOrNull()?.number?:"No phone",
+                name = it.displayNamePrimary ?: "No name", // f.name.name(),
+                mobile = it.phoneList().firstOrNull()?.number ?: "No phone",
                 image = it.photoUri,
                 lastActivity = randomDate(1643049000000L, 1664099455386L),
                 willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f),
@@ -902,8 +901,8 @@ class MasterRepoImpl : MasterRepo {
             xAxis = "Sep",
             yAxis = 35000f,
             year = 2026
-        )
-        /*ExpenseChartData(
+        ),
+        ExpenseChartData(
             xAxis = "Oct",
             yAxis = 0f,
             year = 2026
@@ -917,7 +916,7 @@ class MasterRepoImpl : MasterRepo {
             xAxis = "Dec",
             yAxis = 20000f,
             year = 2026
-        )*/
+        )
     )
 
     private val pieChartData = listOf(
@@ -970,15 +969,23 @@ class MasterRepoImpl : MasterRepo {
         return itemList
     }
 
-    override fun sampleSplitCardDetails(): SplitCardDetailsData {
-        return SplitCardDetailsData(
-            status = "Partially Paid",
-            splitMethod = "Unequal",
-            categories = "Trip",
-            createdBy = "You",
-            createdOn = "9th May, 2022",
-            noOfMembers = 5,
-            categoryIcon = R.drawable.ic_trip
+    override fun sampleSplitCardDetails(): SplitCardDetailsPageData {
+        return SplitCardDetailsPageData(
+            splitAmount = 12000f,
+            splitBalance = 5000f,
+            splitStatusMessage = "Partially Paid / Received",
+            splitProgress = 0.3f,
+            splitPaidMark = "5 of 5 paid",
+            splitTransacted = 3000f,
+            splitCardDetailsData = SplitCardDetailsData(
+                status = "Partially Paid",
+                splitMethod = "Unequal",
+                categories = "Trip",
+                createdBy = "You",
+                createdOn = "9th May, 2022",
+                noOfMembers = 5,
+                categoryIcon = R.drawable.ic_trip
+            )
         )
     }
 
@@ -1397,6 +1404,36 @@ class MasterRepoImpl : MasterRepo {
             amount = 6000f,
             image = "https://i.pravatar.cc/300"
         )
+    }
+
+    override fun getSplits(): List<SplitBrief> {
+        val list = mutableListOf<SplitBrief>()
+        val count = Rand.nextFloat(2f, 20f).toInt()
+        val currentYear = currentYear
+        val currentMonth = currentMonth
+        val currentDay = currentDay
+        val categoryCount = Category.list.size
+        for (i in 0 until count) {
+            val category = Category.list[Rand.nextFloat(0, categoryCount - 1).toInt()]
+            val year = Rand.nextFloat(currentYear - 2, currentYear).toInt()
+            val month = Rand.nextFloat(1, 12).toInt()
+                .coerceIn(1, if (year == currentYear) currentMonth else 12)
+            val day = Rand.nextFloat(1, 28).toInt().coerceIn(1, if (year == currentYear && month == currentMonth) currentDay else 28)
+            list.add(
+                SplitBrief(
+                    id = i,
+                    amount = Rand.nextFloat(500f, 30000f),
+                    date = SplitBrief.Date(
+                        year,
+                        month,
+                        day
+                    ),
+                    category = category,
+                    description = "My ${category.name}"
+                )
+            )
+        }
+        return list
     }
 }
 object MembersMock {

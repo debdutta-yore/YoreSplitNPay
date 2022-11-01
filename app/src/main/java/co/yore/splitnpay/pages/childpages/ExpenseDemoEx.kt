@@ -2,14 +2,12 @@ package co.yore.splitnpay.pages.childpages
 
 import android.graphics.Paint
 import android.text.TextPaint
+import android.view.MotionEvent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -28,7 +27,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,14 +35,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
-import co.yore.splitnpay.libs.coloredShadow
 import co.yore.splitnpay.libs.*
+import co.yore.splitnpay.libs.coloredShadow
 import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.libs.locals.RobotoText
 import co.yore.splitnpay.libs.locals.localCurrency
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
 import coil.compose.AsyncImage
+import java.lang.Math.sqrt
 import java.text.DecimalFormat
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
@@ -248,6 +248,8 @@ fun ExpenseDemo(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .fadingEdge(),
+                            contentPadding = PaddingValues(vertical = 8.dep())
                         ) {
                             items(expensesCategories) {
                                 Row(
@@ -356,7 +358,7 @@ fun ExpenseDemo(
                                             modifier = Modifier
                                                 .size(20.dep())
                                                 .clip(CircleShape)
-                                                .background(CuriousBlue)
+                                                .background(it.tint)
                                                 .clickable {
 
                                                 }
@@ -423,6 +425,9 @@ fun ExpenseDemo(
                             }
                             BarGraph(
                                 modifier = Modifier.fillMaxSize(),
+                                onDrag = {
+                                    dragX += it
+                                },
                                 data = BarGraphData(
                                     xAxisGap = 5f,
                                     xValuesCount = expenseBarChartList.size,
@@ -456,7 +461,11 @@ fun ExpenseDemo(
                                     axisColor = Color.Gray,
                                     axisLabelFontSize = 11f,
                                     highlightedBarColor = CuriousBlue2,
-                                    highlightedXLabelColor = Color.Blue
+                                    highlightedXLabelColor = PictonBlue,
+                                    disabledTextColor = Color.LightGray,
+                                    enabled = {
+                                        expenseBarChartList[it].enabled
+                                    },
                                 )
                             ) { index, touchArea ->
                                 labelData = if (index == -1) {
@@ -483,10 +492,10 @@ fun ExpenseDemo(
                                             x = ((popupX.toInt() + dragX) / density).dp,
                                             y = ((popupY.toInt() - 250) / density).dp
                                         )
-                                        .draggable(
+                                        /*.draggable(
                                             rememberDraggableState(onDelta = { dragX += it }),
                                             Orientation.Horizontal
-                                        )
+                                        )*/
                                         .coloredShadow(
                                             color = BaliHai,
                                             borderRadius = 5.dep(),
@@ -500,7 +509,7 @@ fun ExpenseDemo(
                                 ) {
 //                                    Text(chartList.value.getOrNull(labelData?.index ?: 0)?.toString() ?: "")
                                     RobotoText(
-                                        text = expenseBarChartList[labelData!!.index].xAxis + " | " + expenseBarChartList[labelData!!.index].year,
+                                        text = expenseBarChartList[labelData!!.index].description,
                                         fontSize = 12.sep(),
                                         color = Lynch,
                                         letterSpacing = 0.67.sep()
@@ -969,10 +978,12 @@ val Any.ensureColor: Color
         }
     }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun BarGraph(
     modifier: Modifier = Modifier,
     data: BarGraphData,
+    onDrag: (Float) -> Unit,
     onBarClick: (Int, TouchArea?) -> Unit
 ) {
     val sepx = with(LocalDensity.current) {
@@ -987,16 +998,70 @@ fun BarGraph(
     var selectedIndex by remember {
         mutableStateOf(-1)
     }
+
+    var touchState = remember { TouchState() }
+    val dragOffset = remember { mutableStateOf(Offset.Zero) }
     Canvas(
         modifier = modifier
-            .pointerInput(Unit) {
+            .pointerInteropFilter { it ->
+                val x = it.x
+                val y = it.y
+                when (it.action){
+                    MotionEvent.ACTION_MOVE -> {
+                        if (touchState.lastAction != null){
+                            val dx = x - (touchState.lastPoint?.x ?: 0f)
+                            val dy = y - (touchState.lastPoint?.y ?: 0f)
+                            dragOffset.value = Offset(dragOffset.value.x + dx, dragOffset.value.y + dy)
+                            onDrag(dx)
+                        }
+                        touchState.lastPoint = TouchState.Point(x, y)
+                        touchState.lastAction = MotionEvent.ACTION_MOVE
+                        true
+                    }
+                    MotionEvent.ACTION_CANCEL -> {
+                        touchState.lastAction = null
+                        touchState.lastPoint = null
+                        touchState.firstPoint = null
+                        true
+                    }
+                    MotionEvent.ACTION_DOWN -> {
+                        touchState.firstPoint = TouchState.Point(x, y)
+                        touchState.lastPoint = TouchState.Point(x, y)
+                        touchState.lastAction = MotionEvent.ACTION_DOWN
+                        true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        if (
+                            (touchState.firstPoint != null) && (touchState.firstPoint?.distance(x, y) ?: 0f < 5f)
+                        ) {
+                            val offset = Offset(x, y)
+                            selectedIndex = touchAreas.indexOfFirst {
+                                it.contains(offset)
+                            }
+                            onBarClick(selectedIndex, touchAreas.getOrNull(selectedIndex))
+                        }
+                        touchState.lastAction = null
+                        touchState.lastPoint = null
+                        touchState.firstPoint = null
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+            /*.pointerInput(Unit) {
                 detectTapGestures { offset ->
                     selectedIndex = touchAreas.indexOfFirst {
                         it.contains(offset)
                     }
                     onBarClick(selectedIndex, touchAreas.getOrNull(selectedIndex))
                 }
-            }
+                detectDragGestures { change, dragAmount ->
+                    Log.d("fjldjfld", "$dragAmount")
+                    change.consume()
+                }
+            }*/
     ) {
         if (touchAreas.isEmpty()) {
             touchAreas.addAll(
@@ -1016,6 +1081,90 @@ fun BarGraph(
         val axisInitialGap = canvasWidth * axisInitialGapFactor
         val axisPadding = canvasWidth * axisPaddingFactor
         val axisBottomY = canvasHeight - axisPadding
+        val axisLabelPaint = TextPaint().apply {
+            color = data.yAxisLabelColor().native
+            textSize = data.axisLabelFontSize * sepx
+        }
+        val divs = data.yAxisLabelCount
+        val f = (1f / divs.toFloat())
+        val pack = data.maxYAxisValue / divs
+        val avh = canvasHeight - axisPadding - axisInitialGap - data.strokeWidth / 2
+        val yAxisHeight = canvasHeight - axisPadding
+        /*drawLine(
+            data.axisColor,
+            start = Offset(axisPadding, 0f),
+            end = Offset(axisPadding, axisBottomY),
+            strokeWidth = data.strokeWidth
+        )
+        drawLine(
+            data.axisColor,
+            start = Offset(axisPadding, axisBottomY),
+            end = Offset(canvasWidth, axisBottomY),
+            strokeWidth = data.strokeWidth
+        )
+        for (i in 1..divs) {
+            myDrawText(
+                data.yAxisLabelCallback(i * pack),
+                0f,
+                yAxisHeight - f * avh * i,
+                axisLabelPaint
+            )
+        }*/
+        val gap = data.xAxisGap * depx
+        val xValuesCount = data.xValuesCount
+        // val labelSize = (canvasWidth - axisPadding - axisInitialGap - gap * (xValuesCount - 1)) / xValuesCount
+        val labelSize = 32 * depx
+        val maxYAxisValue = data.maxYAxisValue
+        (0 until xValuesCount).forEach { i ->
+            val xAxisLabelX = axisPadding + axisInitialGap + i * labelSize + i * gap
+            val selected = selectedIndex == i
+            myDrawText(
+                data.xAxisLabelCallback(i),
+                xAxisLabelX + dragOffset.value.x,
+                canvasHeight,
+                axisLabelPaint.apply {
+                    color = if (selected) {
+                        data.highlightedXLabelColor.native
+                    } else if(!data.enabled(i)){
+                        data.disabledTextColor.native
+                    }
+                    else {
+                        data.xAxisLabelColor(i).native
+                    }
+                }
+            )
+            val height = ((data.xValueCallback(i) / maxYAxisValue) * avh).coerceAtMost(avh)
+            val barLeft = axisPadding + axisInitialGap + i * (labelSize + gap)
+            val barTop = canvasHeight - axisPadding - height - data.strokeWidth / 2f
+            drawRect(
+                color = if (selected) data.highlightedBarColor else data.barGraphColorCallback(i),
+                topLeft = Offset(barLeft + dragOffset.value.x, barTop),
+                size = Size(labelSize, height)
+            )
+            if (selected) {
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(barLeft + dragOffset.value.x + labelSize, 0f),
+                    end = Offset(barLeft + dragOffset.value.x + labelSize, canvasHeight - axisPadding),
+                    strokeWidth = 5f,
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f))
+                )
+            }
+            touchAreas[i] = TouchArea(
+                Offset(barLeft + dragOffset.value.x, barTop),
+                Size(labelSize, height)
+            )
+            val label = data.xLabelCallback(i)
+            if (label.isNotEmpty()) {
+                myDrawText(
+                    label,
+                    axisPadding + dragOffset.value.x + axisInitialGap + i * labelSize + i * gap,
+                    canvasHeight - axisPadding - height - 10f,
+                    axisLabelPaint
+                )
+            }
+        }
+
         drawLine(
             data.axisColor,
             start = Offset(axisPadding, 0f),
@@ -1028,15 +1177,6 @@ fun BarGraph(
             end = Offset(canvasWidth, axisBottomY),
             strokeWidth = data.strokeWidth
         )
-        val axisLabelPaint = TextPaint().apply {
-            color = data.yAxisLabelColor().native
-            textSize = data.axisLabelFontSize * sepx
-        }
-        val divs = data.yAxisLabelCount
-        val f = (1f / divs.toFloat())
-        val pack = data.maxYAxisValue / divs
-        val avh = canvasHeight - axisPadding - axisInitialGap - data.strokeWidth / 2
-        val yAxisHeight = canvasHeight - axisPadding
         for (i in 1..divs) {
             myDrawText(
                 data.yAxisLabelCallback(i * pack),
@@ -1045,60 +1185,21 @@ fun BarGraph(
                 axisLabelPaint
             )
         }
-        val gap = data.xAxisGap * depx
-        val xValuesCount = data.xValuesCount
-        val labelSize =
-            (canvasWidth - axisPadding - axisInitialGap - gap * (xValuesCount - 1)) / xValuesCount
-        val maxYAxisValue = data.maxYAxisValue
-        (0 until xValuesCount).forEach { i ->
-            val xAxisLabelX = axisPadding + axisInitialGap + i * labelSize + i * gap
-            val selected = selectedIndex == i
-            myDrawText(
-                data.xAxisLabelCallback(i),
-                xAxisLabelX,
-                canvasHeight,
-                axisLabelPaint.apply {
-                    color = if (selected) {
-                        data.highlightedXLabelColor.native
-                    } else {
-                        data.xAxisLabelColor(i).native
-                    }
-                }
-            )
-            val height = ((data.xValueCallback(i) / maxYAxisValue) * avh).coerceAtMost(avh)
-            val barLeft = axisPadding + axisInitialGap + i * (labelSize + gap)
-            val barTop = canvasHeight - axisPadding - height - data.strokeWidth / 2f
-            drawRect(
-                color = if (selected) data.highlightedBarColor else data.barGraphColorCallback(i),
-                topLeft = Offset(barLeft, barTop),
-                size = Size(labelSize, height)
-            )
-            if (selected) {
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(barLeft + labelSize, 0f),
-                    end = Offset(barLeft + labelSize, canvasHeight - axisPadding),
-                    strokeWidth = 5f,
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f))
-                )
-            }
-            touchAreas[i] = TouchArea(
-                Offset(barLeft, barTop),
-                Size(labelSize, height)
-            )
-            val label = data.xLabelCallback(i)
-            if (label.isNotEmpty()) {
-                myDrawText(
-                    label,
-                    axisPadding + axisInitialGap + i * labelSize + i * gap,
-                    canvasHeight - axisPadding - height - 10f,
-                    axisLabelPaint
-                )
-            }
+    }
+}
+data class TouchState(
+    var firstPoint: TouchState.Point? = null,
+    var lastPoint: TouchState.Point? = null,
+    var lastAction: Int? = null
+){
+    data class Point(val x: Float, val y: Float){
+        fun distance(x: Float, y: Float): Float {
+            val dx = x - this.x
+            val dy = y - this.y
+            return kotlin.math.sqrt(dx * dx + dy * dy)
         }
     }
 }
-
 val Color.native: Int
     get() {
         return -0x1000000 or
