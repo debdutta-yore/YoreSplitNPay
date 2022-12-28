@@ -1,5 +1,6 @@
 package co.yore.splitnpay.app
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.*
+import co.yore.splitnpay.GrpcServer
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.YoreScreen
 import co.yore.splitnpay.pages.*
@@ -18,6 +20,9 @@ import co.yore.splitnpay.pages.screens.*
 import co.yore.splitnpay.viewModels.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object Routes{
     data class Route(
@@ -73,6 +78,130 @@ fun YoreApp() {
                         navController.navigate("${Routes.splitPage.name}?blank=true")
                     }) {
                         Text("Split Blank")
+                    }
+                    Button(onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val result = GrpcServer.ExpenseService.createExpense(
+                                accountId = "8967114927",
+                                categoryId = "d856f982-f4a3-4beb-9031-1a9750b01dc6",
+                                shareType = GrpcServer.ShareType.Unequal,
+                                amount = 10000.0,
+                                description = "Weekend Food",
+                                receiptUrl = "",
+                                calculationMethod = GrpcServer.CalculationMethod.Proportionate,
+                                expenseMembers = listOf(
+                                    GrpcServer.ExpenseMember(
+                                        phone = "8967114927",
+                                        name = "Debdutta Panda",
+                                        image = "",
+                                        initialPaidAmount = 6000.0,
+                                        shareAmount = 2000.0,
+                                        toPay = listOf()
+                                    ),
+                                    GrpcServer.ExpenseMember(
+                                        phone = "6290721134",
+                                        name = "Suman",
+                                        image = "",
+                                        initialPaidAmount = 4000.0,
+                                        shareAmount = 2000.0,
+                                        toPay = listOf()
+                                    ),
+                                    GrpcServer.ExpenseMember(
+                                        phone = "1234567890",
+                                        name = "Raju",
+                                        image = "",
+                                        initialPaidAmount = 0.0,
+                                        shareAmount = 2000.0,
+                                        toPay = listOf()
+                                    ),
+                                    GrpcServer.ExpenseMember(
+                                        phone = "1234567891",
+                                        name = "Minu",
+                                        image = "",
+                                        initialPaidAmount = 0.0,
+                                        shareAmount = 2000.0,
+                                        toPay = listOf()
+                                    ),
+                                    GrpcServer.ExpenseMember(
+                                        phone = "1234567892",
+                                        name = "Hemu",
+                                        image = "",
+                                        initialPaidAmount = 0.0,
+                                        shareAmount = 2000.0,
+                                        toPay = listOf()
+                                    )
+                                ),
+                                groupId = "",
+                                groupName = "",
+                                groupImageUrl = ""
+                            )
+                            Log.d("fldfdlfdfd","${result.eid},${result.gid}")
+                            /*val response = GrpcServer.ExpenseService.getSettlementPreview(
+                                GrpcServer.CalculationMethod.Proportionate,
+                                listOf(
+                                    GrpcServer.ExpenseMember(
+                                        phone = "8967114927",
+                                        initialPaidAmount = 6000.0,
+                                        shareAmount = 2000.0
+                                    ),
+                                    GrpcServer.ExpenseMember(
+                                        phone = "8967114928",
+                                        initialPaidAmount = 0.0,
+                                        shareAmount = 2000.0
+                                    )
+                                )
+                            )*/
+                            /*val response = GrpcServer.GroupService.updateGroup(
+                                groupId = "d89260dc-82d5-4a20-aeee-6d910d9fa4a7",
+                                accountId = "8967114927",
+                                groupName = "MyNewGroupName",
+                                groupImageUrl = ""
+                            )*/
+                            /*val response = GrpcServer
+                                .CategoryService
+                                .createCategory(
+                                    accountId = "1234567890",
+                                    name = "MyCategory",
+                                    isEnabled = true
+                                )
+                            Log.d("fldfdfd","${response.id}")*/
+
+                            /*val response = GrpcServer
+                                .GroupService
+                                .createGroup(
+                                    accountId = "1234567890",
+                                    groupName = "MyGroup",
+                                    groupImageUrl = "image_url",
+                                    members = listOf(
+                                        GrpcServer.ExpenseMember(
+                                            phone = "1234567890",
+                                            name = "member_name1",
+                                            image = "image_url1"
+                                        ),
+                                        GrpcServer.ExpenseMember(
+                                            phone = "1234567891",
+                                            name = "member_name2",
+                                            image = "image_url2"
+                                        ),
+                                        GrpcServer.ExpenseMember(
+                                            phone = "1234567892",
+                                            name = "member_name3",
+                                            image = "image_url3"
+                                        )
+                                    )
+                                )
+                            Log.d("fldfdfd","${response.id}")*/
+
+                            val response = GrpcServer
+                                .ExpenseService
+                                .splitDetails(
+                                    accountId = "1234567890",
+                                    expenseId = "fdfd"
+                                )
+                            Log.d("fldfdfd","${response.result}")
+                        }
+                    }) {
+                        Text("Grpc Test")
                     }
                 }
             }

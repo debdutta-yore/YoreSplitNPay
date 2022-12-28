@@ -1,5 +1,6 @@
 package co.yore.splitnpay.components.components
 
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
@@ -1072,6 +1073,7 @@ fun MonthDayPicker(
                     return@LaunchedEffect
                 }
                 onDaySelected(currentItem + 1)
+                Log.d("fdljfldk","$currentItem")
             }
         }
     }

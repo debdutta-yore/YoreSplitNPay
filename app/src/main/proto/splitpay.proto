@@ -1,0 +1,757 @@
+syntax = "proto3";
+
+package splitpay;
+
+//import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+//import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+// import "github.com/infobloxopen/protoc-gen-gorm/proto/options/gorm.proto";
+//import "protoc-gen-openapiv2/options/annotations.proto";
+
+
+option go_package = "github.com/yore-backend/splitpay/pkg/pb;pb";
+
+
+// --- common ----
+
+message OperationCodeResponse {
+  uint64 code = 1;
+}
+
+
+// ---------------------------------- Category new ----------------------------------
+
+
+message Category {
+  string accoundId = 1;
+  string name = 2;
+  string id = 3;
+  bool IsEnabled = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+}
+
+// Create
+message CreateCategoryRequest {
+  Category payload = 1;
+}
+
+message CreateCategoryResponse {
+  string id = 1;
+}
+
+// Update
+message UpdateCategoryRequest {
+  Category payload = 1;
+}
+
+// List
+message ListCategoryRequest {
+  string accountId = 1;
+  uint64 offset = 2;
+  uint64 pageSize = 3;
+}
+
+message ListCategoryResponse {
+  repeated Category result = 1;
+}
+
+// Delete
+
+message DeleteCategoryRequest {
+  string id = 1; //[(validate.rules).string = {uuid: true}];
+}
+
+service CategoryService {
+  // option (gorm.server).autogen = true;
+  rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse) {
+    /*option (google.api.http) = {
+      post: "/category"
+      body: "*"
+    };*/
+  }
+
+  rpc UpdateCategory (UpdateCategoryRequest) returns (OperationCodeResponse) {
+    /*option (google.api.http) = {
+      put: "/category"
+      body: "*"
+    };*/
+  }
+
+  rpc ListCategory (ListCategoryRequest) returns (ListCategoryResponse) {
+    /*option (google.api.http) = {
+      get: "/category"
+    };*/
+  }
+
+  rpc DeleteCategory (DeleteCategoryRequest) returns (OperationCodeResponse) {
+    // option (gorm.method).object_type = "Category";
+    /*option (google.api.http) = {
+      delete: "/category"
+    };*/
+  }
+}
+
+// ---------------------------------- User new ----------------------------------
+
+message User {
+  string id = 1;
+  string accountId = 2;
+  string imageUrl = 3;
+  string fullName = 4;
+  string phoneNumber = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+  double willPay = 8;
+  double willGet = 9;
+  double InitialPaidAmount = 10;
+  double ShareAmount = 11;
+  repeated PaybleFromToAmounts toPay = 19;
+}
+
+message CreateUserRequest {
+  User payload = 1;
+}
+
+message CreateUserResponse {
+  string id = 1;
+}
+
+message UpdateUserRequest {
+  User payload = 1;
+}
+
+message ListUserRequest {
+  string accountId = 1;
+  uint64 offset = 2;
+  uint64 pageSize = 3;
+  bool createdByMe = 4;
+  bool createdByOthers = 5;
+  bool onlyUnsettled = 6;
+}
+//TODO how to fetch recent users and from every table, also merge and squash data
+
+message ListUserResponse {
+  repeated User results = 1;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// message UnsettledUserRequest {
+//   string accountId = 1; // caller
+//   repeated string userIds = 2; // if not empty then fetch these users only
+//   uint64 offset = 3;
+//   uint64 pageSize = 4;
+// }
+
+// message UnsettledUserResponse {
+//   repeated User result = 1;
+// }
+
+message UserDataRequest {
+  string accountId = 1;
+  bool needSplitTotal = 2; // to fetch/calculate willPay and willGet info
+}
+message UserDataResponse {
+  User user = 1;
+}
+
+service UserService {
+ // option (gorm.server).autogen = true;
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    /*option (google.api.http) = {
+      post: "/user"
+      body: "*"
+    };*/
+  }
+
+  rpc UpdateUser (UpdateUserRequest) returns (OperationCodeResponse) {
+    /*option (google.api.http) = {
+      put: "/user"
+      body: "*"
+    };*/
+  }
+
+  rpc ListUser (ListUserRequest) returns (ListUserResponse) {
+    /*option (google.api.http) = {
+      get: "/user"
+    };*/
+  }
+
+  rpc DeleteUser (DeleteUserRequest) returns (OperationCodeResponse) {
+    // option (gorm.method).object_type = "User";
+    /*option (google.api.http) = {
+      delete: "/user"
+    };*/
+  }
+
+  // rpc UnsettledUsers (UnsettledUserRequest) returns (UnsettledUserResponse) {
+  //   option (google.api.http) = {
+  //     get: "/unsettledUsers"
+  //   };
+  // }
+
+  rpc UserData (UserDataRequest) returns (UserDataResponse) {
+    /*option (google.api.http) = {
+      get: "/userData"
+    };*/
+  }
+
+}
+
+
+// ---------------------------------- Group new (may not use)  ----------------------------------
+
+message Group {
+  string id = 1;
+  string name = 2;
+  string imageUrl = 3;
+  google.protobuf.Timestamp createdAt = 4;
+  google.protobuf.Timestamp updatedAt = 5;
+  repeated User members = 6; // how much i will pay to each member and get from each member
+  // create members if not present
+  string accountId = 7;
+  double willGet = 8; // how much will i get from this group
+  double willPay = 9; // how much i will pay to this group
+}
+
+message CreateGroupRequest {
+  Group payload = 1;
+}
+
+message CreateGroupResponse {
+  string id = 1;
+}
+
+message UpdateGroupRequest {
+  Group payload = 1;
+}
+
+message ListGroupRequest {
+  string accountId = 1;
+  uint64 offset = 2;
+  uint64 pageSize = 3;
+  bool createdByMe = 4;
+  bool createdByOthers = 5;
+  string uid = 6;
+  //if uid is present then against that specific user in different groups
+
+  // TODO: other fields to be added later
+}
+
+message ListGroupResponse {
+  repeated Group results = 1;
+}
+
+message DeleteGroupRequest {
+  string id = 1;
+}
+
+message GroupDetailRequest {
+  string gid = 1;// [(validate.rules).string = {uuid: true}];
+  string uid = 2;// [(validate.rules).string = {uuid: true}]; // whose perspective we are looking from, fetch details according to that person
+  string accountId = 3; // who is making the call, used only for validation // validate that the requester is the creator or a member
+  bool needGetPay = 4;
+  
+}
+
+message GroupDetailResponse {
+  Group result = 1;
+}
+
+message RemoveUsersRequest {
+  string gid = 1;// [(validate.rules).string = {uuid: true}];
+  string uid = 2;// [(validate.rules).string = {uuid: true}];
+  string accountId = 3;
+  string extra = 4; // “cash_payment | force_delete | individual_split”
+  // TODO: protobuf Enum can be used here
+}
+
+// TODO: make this API in expenses ...
+// message ListGroupSplitsRequest {
+//   string gid = 1 [(validate.rules).string = {uuid: true}];
+//   string accountId = 2 [(validate.rules).string = {uuid: true}]; // who is making the call, used only for validation
+//   // TODO: other fields to be added later
+// }
+
+// message ListGroupSplitsResponse {
+//   repeated Group results = 1;
+//   uint64 totalSize = 2;
+// }
+
+// message DeleteGroupResponse {
+// }
+
+service GroupService {
+ // option (gorm.server).autogen = true;
+  rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
+    /*option (google.api.http) = {
+      post: "/group"
+      body: "*"
+    };*/
+  }
+
+  rpc UpdateGroup (UpdateGroupRequest) returns (OperationCodeResponse) {
+    /*option (google.api.http) = {
+      put: "/group"
+      body: "*"
+    };*/
+  }
+
+  rpc ListGroup (ListGroupRequest) returns (ListGroupResponse) {
+    /*option (google.api.http) = {
+      get: "/group"
+    };*/
+  }
+
+  rpc DeleteGroup (DeleteGroupRequest) returns (OperationCodeResponse) {
+    // option (gorm.method).object_type = "Group";
+    /*option (google.api.http) = {
+      delete: "/group"
+    };*/
+  }
+  
+  rpc GroupDetail (GroupDetailRequest) returns (GroupDetailResponse) {
+    /*option (google.api.http) = {
+      get: "/groupDetail"
+    };*/
+  }
+
+  rpc RemoveUsers (RemoveUsersRequest) returns (OperationCodeResponse) {
+    /*option (google.api.http) = {
+      post: "/removeUsers"
+    };*/
+  }
+
+}
+
+// ---------------------------------- UserGroupExpenses (may not use) ----------------------------------
+
+message UserGroupExpenses {
+  string gid = 1;// [(validate.rules).string = {uuid: true}];
+  string uid = 2;// [(validate.rules).string = {uuid: true}];
+  string eid = 3;// [(validate.rules).string = {uuid: true}];
+  double initialPaidAmount = 4;
+  double splitAmount = 5;
+}
+
+message CreateUserGroupExpensesRequest {
+  repeated UserGroupExpenses payload = 1; // validations done in the backend
+}
+
+message CreateUserGroupExpensesResponse {
+  repeated UserGroupExpenses result = 1;
+}
+
+message UpdateUserGroupExpensesRequest {
+  UserGroupExpenses payload = 1;
+}
+
+message UpdateUserGroupExpensesResponse {
+  UserGroupExpenses result = 1;
+}
+
+message ListUserGroupExpensesRequest {
+  string gid = 1;
+  string uid = 2;
+  string eid = 3;
+  uint64 offset = 4;
+  uint64 pageSize = 5;
+}
+
+message ListUserGroupExpensesResponse {
+  repeated UserGroupExpenses results = 1;
+}
+
+message DeleteUserGroupExpensesRequest {
+  string id = 1;
+}
+
+// message DeleteUserGroupExpensesResponse {
+// }
+
+service UserGroupExpensesService {
+//  option (gorm.server).autogen = true;
+  rpc CreateUserGroupExpenses (CreateUserGroupExpensesRequest) returns (CreateUserGroupExpensesResponse) {
+    /*option (google.api.http) = {
+      post: "/userGroupExpenses"
+      body: "*"
+    };*/
+  }
+
+  rpc UpdateUserGroupExpenses (UpdateUserGroupExpensesRequest) returns (UpdateUserGroupExpensesResponse) {
+    /*option (google.api.http) = {
+      put: "/userGroupExpenses"
+      body: "*"
+    };*/
+  }
+
+  rpc ListUserGroupExpenses (ListUserGroupExpensesRequest) returns (ListUserGroupExpensesResponse) {
+    /*option (google.api.http) = {
+      get: "/userGroupExpenses"
+    };*/
+  }
+
+  rpc DeleteUserGroupExpenses (DeleteUserGroupExpensesRequest) returns (OperationCodeResponse) {
+    // option (gorm.method).object_type = "UserGroupExpenses";
+    /*option (google.api.http) = {
+      delete: "/userGroupExpenses"
+    };*/
+  }
+
+}
+
+// ---------------------------------- UserExpenses ----------------------------------
+
+message UserExpenses {
+  string uid = 1;// [(validate.rules).string = {uuid: true}];
+  string eid = 2;// [(validate.rules).string = {uuid: true}];
+  double initialPaidAmount = 3;
+  double splitAmount = 4;
+}
+
+
+message CreateUserExpensesRequest {
+  UserExpenses payload = 1;
+}
+
+message CreateUserExpensesResponse {
+  UserExpenses result = 1;
+}
+
+message UpdateUserExpensesRequest {
+  UserExpenses payload = 1;
+}
+
+message UpdateUserExpensesResponse {
+  UserExpenses result = 1;
+}
+
+message ListUserExpensesRequest {
+  string accountId = 1;
+  bool recent = 2; //sorted by updated at desc
+  uint64 offset = 3;
+  uint64 pageSize = 4;
+}
+
+message ListUserExpensesResponse {
+  repeated UserExpenses results = 1;
+}
+
+message DeleteUserExpensesRequest {
+  string id = 1;
+}
+
+// message DeleteUserExpensesResponse { 
+// }
+
+service UserExpensesService {
+//  option (gorm.server).autogen = true;
+  rpc CreateUserExpenses (CreateUserExpensesRequest) returns (CreateUserExpensesResponse) {
+    /*option (google.api.http) = {
+      post: "/userExpenses"
+      body: "*"
+    };*/
+  }
+
+  rpc UpdateUserExpenses (UpdateUserExpensesRequest) returns (UpdateUserExpensesResponse) {
+    /*option (google.api.http) = {
+      put: "/userExpenses"
+      body: "*"
+    };*/
+  }
+
+  rpc ListUserExpenses (ListUserExpensesRequest) returns (ListUserExpensesResponse) {
+    /*option (google.api.http) = {
+      get: "/userExpenses"
+    };*/
+  }
+
+  rpc DeleteUserExpenses (DeleteUserExpensesRequest) returns (OperationCodeResponse) {
+    // option (gorm.method).object_type = "UserExpenses";
+    /*option (google.api.http) = {
+      delete: "/userExpenses"
+    };*/
+  }
+
+}
+
+// ---------------------------------- Expense  new----------------------------------
+
+message Expense {
+  string id = 1;
+  string cid = 2;// [(validate.rules).string = {uuid: true}];
+  string type = 3; // TODO enum
+  string accountId = 4;
+  double amount = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+  string description = 8;
+  string receipt_url = 9;
+  repeated User members = 10;
+  double got = 11; // how much i got wrt accountId
+  double paid = 12; // how much i paid wrt accountId
+  double settledAmount = 13; // populate from settlement table
+  double myTotalTransactable = 14;
+  double meTransacted = 15;
+  double totalPayble = 16; // mainly for group
+  double myShare = 17;
+  string calculationMethod = 18 ; //[(validate.rules) = {one_of: "proportionate, optimal.automatic, optimal.desirable"}]
+}
+
+message CreateExpenseRequest {
+  Expense payload = 1;
+  Group group = 2; // if null then treat individual expense
+}
+
+message CreateExpenseResponse {
+  string eid = 1;
+  string gid = 2; // if group was created
+}
+
+message UpdateExpenseRequest {
+  Expense payload = 1;
+}
+
+message UpdateExpenseResponse {
+  string id = 1;
+}
+
+message ListExpenseRequest {
+  string accountId = 1;// caller account id
+  string gid = 2 ; // validate that the caller is member of the grp, list expenses according to this gid
+  string uid = 3 ; //[(validate.rules).string = {uuid: true}]; the user against whom we are fetching all the expenses
+  uint64 offset = 4;
+  uint64 pageSize = 5;
+}
+
+message ListExpenseResponse {
+  repeated Expense results = 1;
+}
+
+message DeleteExpenseRequest {
+  string id = 1;
+}
+
+message PaybleFromToAmounts{
+  string from = 1;
+  string to = 2;
+  double payble = 3;
+  double paid = 4;
+}
+
+message ExpenseDetailRequest {
+  string eid = 1; // TODO validate
+  //string otherAccountId = 2; // wrt to which user we are watching the detail
+  string accountId = 3; // caller id to validate
+}
+message ExpenseDetailResponse {
+  Expense result = 1;
+  repeated PaybleFromToAmounts fromtoamounts = 2;
+}
+
+message GetSettlementPreviewRequest {
+  repeated User users = 1;
+  string method = 2; //[(validate.rules) = {one_of: "proportionate, optimal.automatic, optimal.desirable"}]
+}
+
+message GetSettlementPreviewResponse {
+  repeated PaybleFromToAmounts fromtoamounts = 2;
+}
+
+// message DeleteExpenseResponse {
+// }
+
+service ExpenseService {
+//  option (gorm.server).autogen = true;
+  rpc CreateExpense (CreateExpenseRequest) returns (CreateExpenseResponse) {
+    /*option (google.api.http) = {
+      post: "/expense"
+      body: "*"
+    };*/
+  }
+
+  rpc UpdateExpense (UpdateExpenseRequest) returns (UpdateExpenseResponse) {
+    /*option (google.api.http) = {
+      put: "/expense"
+      body: "*"
+    };*/
+  }
+
+  rpc ListExpense (ListExpenseRequest) returns (ListExpenseResponse) {
+    /*option (google.api.http) = {
+      get: "/expense"
+    };*/
+  }
+
+  rpc DeleteExpense (DeleteExpenseRequest) returns (OperationCodeResponse) {
+    // option (gorm.method).object_type = "Expense";
+    /*option (google.api.http) = {
+      delete: "/expense"
+    };*/
+  }
+
+  rpc ExpenseDetail (ExpenseDetailRequest) returns (ExpenseDetailResponse) {
+    /*option (google.api.http) = {
+      get: "/expenseDetail"
+    };*/
+  }
+
+  rpc GetPayAmountsForGroupExpense (GroupDetailRequest) returns (ListUserResponse) {
+    /*option (google.api.http) = {
+      get: "/getPayAmountsForGroupExpense"
+    };*/
+  }
+
+  rpc getSettlementPreview (GetSettlementPreviewRequest) returns (GetSettlementPreviewResponse) {
+    /*option (google.api.http) = {
+      get: "/settlementPreview"
+    };*/
+  }
+
+}
+
+
+// ---------------------------------- Settlement  new----------------------------------
+
+
+message Settlement {
+  string id = 1;
+  string eid = 2;// [(validate.rules).string = {uuid: true}];
+  string from = 3;// [(validate.rules).string = {uuid: true}];
+  string to = 4;// [(validate.rules).string = {uuid: true}];
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+  double amount = 7;
+  uint64 is_paid = 8;
+}
+
+// Create
+message CreateSettlementRequest {
+  Settlement payload = 1;
+}
+
+message CreateSettlementResponse {
+  string id = 1;
+}
+
+
+// List
+message ListSettlementRequest {
+  string from = 1;// [(validate.rules).string = {uuid: true}];
+  string to = 2;// [(validate.rules).string = {uuid: true}];
+  string eid = 3;// [(validate.rules).string = {uuid: true}];
+  uint64 offset = 4;
+  uint64 pageSize = 5;
+}
+
+message ListSettlementResponse {
+  repeated Settlement result = 1;
+}
+
+service SettlementService {
+  // option (gorm.server).autogen = true;
+  rpc CreateSetttlement (CreateSettlementRequest) returns (CreateCategoryResponse) {
+    /*option (google.api.http) = {
+      post: "/settlement"
+      body: "*"
+    };*/
+  }
+
+  rpc ListSettlement (ListCategoryRequest) returns (ListCategoryResponse) {
+    /*option (google.api.http) = {
+      get: "/settlement"
+    };*/
+  }
+}
+
+
+// ------- upi --------
+
+
+message UsersUpi {
+  string id = 1;
+  string accoundId = 2;
+  string uid = 3;// [(validate.rules).string = {uuid: true}];
+  string upiId = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+}
+
+// Create
+message CreateUsersUpiRequest {
+  UsersUpi payload = 1;
+}
+
+message CreateUsersUpiResponse {
+  string id = 1;
+}
+
+// Update
+message UpdateUsersUpiRequest {
+  UsersUpi payload = 1;
+}
+
+// List
+message ListUsersUpiRequest {
+  string accountId = 1;
+  uint64 offset = 2;
+  uint64 pageSize = 3;
+}
+
+message ListUsersUpiResponse {
+  repeated UsersUpi result = 1;
+}
+
+// Delete
+
+message DeleteUsersUpiRequest {
+  string id = 1;// [(validate.rules).string = {uuid: true}];
+}
+
+
+service UsersUpiService {
+  // option (gorm.server).autogen = true;
+  rpc CreateUsersUpi (CreateUsersUpiRequest) returns (CreateUsersUpiResponse) {
+    /*option (google.api.http) = {
+      post: "/usersUpi"
+      body: "*"
+    };*/
+  }
+
+  rpc UpdateUsersUpi (UpdateUsersUpiRequest) returns (OperationCodeResponse) {
+    /*option (google.api.http) = {
+      put: "/usersUpi"
+      body: "*"
+    };*/
+  }
+
+  rpc ListUsersUpi (ListUsersUpiRequest) returns (ListUsersUpiResponse) {
+    /*option (google.api.http) = {
+      get: "/usersUpi"
+    };*/
+  }
+
+  rpc DeleteUsersUpi (DeleteUsersUpiRequest) returns (OperationCodeResponse) {
+    // option (gorm.method).object_type = "Category";
+    /*option (google.api.http) = {
+      delete: "/usersUpi"
+    };*/
+  }
+}
+
+
+// option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+//     info: {
+//       title: "YORE Split Pay Service"
+//       description: "YORE Split Pay Service provides CRUD API for Split Pay between Users"
+//       version: "1.0"
+//     };
+//     schemes: HTTP;
+//     schemes: HTTPS;
+//     base_path: "/splitPay/v1/";
+//     consumes: "application/json";
+//     produces: "application/json";
+// }; 

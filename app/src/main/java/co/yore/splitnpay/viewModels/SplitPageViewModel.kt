@@ -1,10 +1,13 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
+import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.GrpcServer
 import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
@@ -22,13 +25,21 @@ import co.yore.splitnpay.ui.theme.BermudaGray
 import co.yore.splitnpay.ui.theme.CeriseRed
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import io.grpc.ManagedChannel
+import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.*
+import splitpay.CategoryServiceGrpc
+import splitpay.CategoryServiceGrpc.CategoryServiceBlockingStub
+import splitpay.Splitpay
+import splitpay.Splitpay.ListCategoryRequest
+import splitpay.Splitpay.ListCategoryResponse
 import kotlin.math.abs
 
 @OptIn(ExperimentalPermissionsApi::class)
 class SplitPageViewModel(
     private val repo: MasterRepo = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
+    ///////////////////////////////
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resultingActivityHandler = ResultingActivityHandler()
     override val permissionHandler = PermissionHandler()
