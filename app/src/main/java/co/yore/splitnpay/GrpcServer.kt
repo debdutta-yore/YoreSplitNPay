@@ -6,6 +6,7 @@ import splitpay.CategoryServiceGrpc
 import splitpay.ExpenseServiceGrpc
 import splitpay.GroupServiceGrpc
 import splitpay.Splitpay
+import splitpay.UserServiceGrpc
 
 class GrpcServer{
     enum class ShareType{
@@ -268,6 +269,20 @@ class GrpcServer{
                 .build()
             val blockingStub = GroupServiceGrpc.newBlockingStub(channel)
             return blockingStub.listGroup(request)
+        }
+    }
+    object UserService{
+        suspend fun userData(
+            accountId: String,
+            needSplitTotal: Boolean
+        ): Splitpay.UserDataResponse{
+            ensureSeverRunning()
+            val request = Splitpay.UserDataRequest.newBuilder()
+                .setAccountId(accountId)
+                .setNeedSplitTotal(needSplitTotal)
+                .build()
+            val blockingStub = UserServiceGrpc.newBlockingStub(channel)
+            return blockingStub.userData(request)
         }
     }
     companion object{

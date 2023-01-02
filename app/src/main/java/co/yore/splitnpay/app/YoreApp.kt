@@ -81,7 +81,7 @@ fun YoreApp() {
                     }
                     Button(onClick = {
                         CoroutineScope(Dispatchers.IO).launch {
-                            val result = GrpcServer.ExpenseService.createExpense(
+                            /*val result = GrpcServer.ExpenseService.createExpense(
                                 accountId = "8967114927",
                                 categoryId = "d856f982-f4a3-4beb-9031-1a9750b01dc6",
                                 shareType = GrpcServer.ShareType.Unequal,
@@ -135,7 +135,7 @@ fun YoreApp() {
                                 groupName = "",
                                 groupImageUrl = ""
                             )
-                            Log.d("fldfdlfdfd","${result.eid},${result.gid}")
+                            Log.d("fldfdlfdfd","${result.eid},${result.gid}")*/
                             /*val response = GrpcServer.ExpenseService.getSettlementPreview(
                                 GrpcServer.CalculationMethod.Proportionate,
                                 listOf(
@@ -194,11 +194,11 @@ fun YoreApp() {
 
                             val response = GrpcServer
                                 .ExpenseService
-                                .splitDetails(
-                                    accountId = "1234567890",
-                                    expenseId = "fdfd"
+                                .userData(
+                                    accountId = "8967114927",
+                                    needSplitTotal = true
                                 )
-                            Log.d("fldfdfd","${response.result}")
+                            Log.d("fldfdfd","${response.user}")
                         }
                     }) {
                         Text("Grpc Test")
