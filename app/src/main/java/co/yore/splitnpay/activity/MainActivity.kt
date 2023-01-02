@@ -1,8 +1,11 @@
 package co.yore.splitnpay.activity
 
 import android.annotation.SuppressLint
+import android.database.ContentObserver
 import android.graphics.Rect
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,9 +19,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import co.yore.splitnpay.app.YoreApp
+import co.yore.splitnpay.libs.EventBus
 import co.yore.splitnpay.libs.jerokit.localDesignWidth
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Integer.min
+
 
 class MainActivity : ComponentActivity() {
     private val bottomHeight = mutableStateOf(0)
@@ -38,6 +46,14 @@ class MainActivity : ComponentActivity() {
             minBottomHeight = min(minBottomHeight, keypadHeight)
             bottomHeight.value = keypadHeight - minBottomHeight
         }
+
+        val contentObserver = MyContentObserver()
+        applicationContext.contentResolver.registerContentObserver(
+            ContactsContract.Contacts.CONTENT_URI,
+            true,
+            contentObserver
+        )
+
         setContent {
             YoreSplitNPayTheme {
                 CompositionLocalProvider(
@@ -52,6 +68,16 @@ class MainActivity : ComponentActivity() {
                         YoreApp()
                     }
                 }
+            }
+        }
+    }
+
+    internal class MyContentObserver : ContentObserver(null) {
+        override fun onChange(selfChange: Boolean) {
+            super.onChange(selfChange)
+            Log.d("jflflfdfd","content changed")
+            CoroutineScope(Dispatchers.IO).launch {
+                EventBus.publish("content" to null)
             }
         }
     }

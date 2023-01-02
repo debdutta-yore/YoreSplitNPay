@@ -1,28 +1,33 @@
 package co.yore.splitnpay.app
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.*
-import co.yore.splitnpay.GrpcServer
+import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
-import co.yore.splitnpay.libs.jerokit.YoreScreen
+import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.kontakts.Kontakts
+import co.yore.splitnpay.libs.kontakts.MergedContact
 import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.pages.screens.*
 import co.yore.splitnpay.viewModels.*
+import coil.compose.AsyncImage
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 object Routes{
     data class Route(
@@ -192,17 +197,18 @@ fun YoreApp() {
                                 )
                             Log.d("fldfdfd","${response.id}")*/
 
-                            val response = GrpcServer
+                            /*val response = GrpcServer
                                 .ExpenseService
-                                .userData(
+                                .listExpenses(
                                     accountId = "8967114927",
                                     needSplitTotal = true
                                 )
-                            Log.d("fldfdfd","${response.user}")
+                            Log.d("fldfdfd","${response.resultsCount}")*/
                         }
                     }) {
                         Text("Grpc Test")
                     }
+                    ContactUI()
                 }
             }
         }
@@ -305,6 +311,49 @@ fun YoreApp() {
             route = Routes.groupSplitSummary.full
         ) {
             GroupSplitSummaryScreen()
+        }
+    }
+}
+
+@Composable
+fun ContactUI(
+    notifier: NotificationService = notifier(),
+    list: List<MergedContact> = listState(key = "contacts")
+){
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Button(onClick = {
+            notifier.notify("contacts")
+        }) {
+            Text("Contacts")
+        }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ){
+            items(
+                list,
+                key = {
+                    it.phone
+                }
+            ){
+                Column {
+                    Text(
+                        it.name,
+                        fontSize = if(it.name == "Asdd") 40.sep() else 14.sep()
+                    )
+                    Text(it.phone)
+                    Text(it.email)
+                    AsyncImage(
+                        model = it.image?: R.drawable.user_dummy4,
+                        contentDescription = "",
+                        placeholder = painterResource(id = R.drawable.user_dummy4),
+                        modifier = Modifier.size(75.dep())
+                    )
+                    Divider()
+                }
+
+            }
         }
     }
 }

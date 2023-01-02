@@ -123,6 +123,8 @@ fun notifier(): NotificationService {
     return LocalNotificationService.current
 }
 
+
+
 interface WirelessViewModelInterface{
     val softInputMode: MutableState<Int>
     val resolver: Resolver
@@ -134,5 +136,6 @@ interface WirelessViewModelInterface{
     val mySheeting get() = sheeting
     companion object{
         const val startupNotification = -10000
+        const val lifecycleEvent = -9999
     }
 }

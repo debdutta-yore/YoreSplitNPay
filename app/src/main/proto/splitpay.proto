@@ -48,18 +48,20 @@ message UpdateCategoryRequest {
 // List
 message ListCategoryRequest {
   string accountId = 1;
-  uint64 offset = 2;
-  uint64 pageSize = 3;
+  int64 offset = 2;
+  int64 pageSize = 3;
 }
 
 message ListCategoryResponse {
   repeated Category result = 1;
+  int64 count = 2;
 }
 
 // Delete
 
 message DeleteCategoryRequest {
-  string id = 1; //[(validate.rules).string = {uuid: true}];
+  string accoundId = 1;
+  string id = 2;// [(validate.rules).string = {uuid: true}];
 }
 
 service CategoryService {
@@ -159,7 +161,7 @@ message UserDataResponse {
 }
 
 service UserService {
- // option (gorm.server).autogen = true;
+  // option (gorm.server).autogen = true;
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
     /*option (google.api.http) = {
       post: "/user"
@@ -231,8 +233,8 @@ message UpdateGroupRequest {
 
 message ListGroupRequest {
   string accountId = 1;
-  uint64 offset = 2;
-  uint64 pageSize = 3;
+  int64 offset = 2;
+  int64 pageSize = 3;
   bool createdByMe = 4;
   bool createdByOthers = 5;
   string uid = 6;
@@ -243,6 +245,7 @@ message ListGroupRequest {
 
 message ListGroupResponse {
   repeated Group results = 1;
+  int64 count = 2;
 }
 
 message DeleteGroupRequest {
@@ -254,7 +257,7 @@ message GroupDetailRequest {
   string uid = 2;// [(validate.rules).string = {uuid: true}]; // whose perspective we are looking from, fetch details according to that person
   string accountId = 3; // who is making the call, used only for validation // validate that the requester is the creator or a member
   bool needGetPay = 4;
-  
+
 }
 
 message GroupDetailResponse {
@@ -285,7 +288,7 @@ message RemoveUsersRequest {
 // }
 
 service GroupService {
- // option (gorm.server).autogen = true;
+  // option (gorm.server).autogen = true;
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
     /*option (google.api.http) = {
       post: "/group"
@@ -312,7 +315,7 @@ service GroupService {
       delete: "/group"
     };*/
   }
-  
+
   rpc GroupDetail (GroupDetailRequest) returns (GroupDetailResponse) {
     /*option (google.api.http) = {
       get: "/groupDetail"
@@ -373,7 +376,7 @@ message DeleteUserGroupExpensesRequest {
 // }
 
 service UserGroupExpensesService {
-//  option (gorm.server).autogen = true;
+  //  option (gorm.server).autogen = true;
   rpc CreateUserGroupExpenses (CreateUserGroupExpensesRequest) returns (CreateUserGroupExpensesResponse) {
     /*option (google.api.http) = {
       post: "/userGroupExpenses"
@@ -444,11 +447,11 @@ message DeleteUserExpensesRequest {
   string id = 1;
 }
 
-// message DeleteUserExpensesResponse { 
+// message DeleteUserExpensesResponse {
 // }
 
 service UserExpensesService {
-//  option (gorm.server).autogen = true;
+  //  option (gorm.server).autogen = true;
   rpc CreateUserExpenses (CreateUserExpensesRequest) returns (CreateUserExpensesResponse) {
     /*option (google.api.http) = {
       post: "/userExpenses"
@@ -565,7 +568,7 @@ message GetSettlementPreviewResponse {
 // }
 
 service ExpenseService {
-//  option (gorm.server).autogen = true;
+  //  option (gorm.server).autogen = true;
   rpc CreateExpense (CreateExpenseRequest) returns (CreateExpenseResponse) {
     /*option (google.api.http) = {
       post: "/expense"
