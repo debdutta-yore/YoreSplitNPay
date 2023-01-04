@@ -1,10 +1,22 @@
-package co.yore.splitnpay.libs.kontakts
+package co.yore.splitnpay.libs.kontakts.suit
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.room.*
+import co.yore.splitnpay.libs.kontakts.core.Equals
+import co.yore.splitnpay.libs.kontakts.core.GreaterThanOrEqual
+import co.yore.splitnpay.libs.kontakts.core.Kontakts
+import co.yore.splitnpay.libs.kontakts.core.forEach
+import co.yore.splitnpay.libs.kontakts.database.ContactDatabase
+import co.yore.splitnpay.libs.kontakts.datastore.getContactFetchedTimestamp
+import co.yore.splitnpay.libs.kontakts.datastore.getContactSkippedCount
+import co.yore.splitnpay.libs.kontakts.datastore.setContactFetchedTimestamp
+import co.yore.splitnpay.libs.kontakts.datastore.setContactSkippedCount
+import co.yore.splitnpay.libs.kontakts.models.Contact
+import co.yore.splitnpay.libs.kontakts.models.MergedContact
 
 val Pair<String,List<MergedContact>>.toMergedContact get(): MergedContact {
     return MergedContact(
@@ -46,92 +58,6 @@ val List<Contact>.toSingles get(): List<MergedContact>{
     return r
 }
 
-data class Contact(
-        val id: String,
-        val name: String,
-        val phones: List<Phone>,
-        val emails: List<Email>,
-        val image: String
-    ){
-    val toContactEntity get() = ContactEntity(
-        id = id,
-        phone = phones.joinToString(","),
-        name = name,
-        email = emails.joinToString(","),
-        image = image
-    )
-
-    data class Phone(
-        val phone: String,
-        val label: String
-    ){
-        override fun toString(): String {
-            return "$label:$phone"
-        }
-    }
-    data class Email(
-        val email: String,
-        val label: String
-    ){
-        override fun toString(): String {
-            return "$label:$email"
-        }
-    }
-
-    val toSingles get(): List<MergedContact>{
-        val email = emails.sortedBy { it.email }.joinToString(",")
-        val phss = mutableListOf<Phone>()
-        phones.forEach {
-            val r = phone(it.phone)
-            if(r!=null){
-                phss.add(it.copy(phone = r))
-            }
-        }
-        val labelNeeded = phones.count() > 1
-        return phss.map {
-            MergedContact(
-                name = if(labelNeeded) "$name (${it.label})" else name,
-                phone = it.phone,
-                email = email,
-                image = image
-            )
-        }
-    }
-
-    companion object{
-        fun fromEntity(entity: ContactEntity): Contact{
-            return Contact(
-                id = entity.id,
-                name = entity.name,
-                phones = entity
-                    .phone
-                    .split(",")
-                    .map {
-                        val parts = it.split(":")
-                        if(parts.size!=2){
-                            return@map Contact.Phone("","")
-                        }
-                        Phone(phone = parts[1], label = parts[0])
-                    },
-                emails = entity
-                    .email
-                    .split(",")
-                    .map {
-                        if(it.isEmpty()){
-                            return@map Email("","")
-                        }
-                        val parts = it.split(":")
-                        if(parts.size!=2){
-                            return@map Contact.Email("","")
-                        }
-                        Email(email = parts[1], label = parts[0])
-                    },
-                image = entity.image
-            )
-        }
-    }
-}
-
 suspend fun suitNamePhoneEmailImage(context: Context): List<MergedContact>{
     var contactsFromDevice = mutableListOf<Contact>()
     val currentTimestamp = System.currentTimeMillis()
@@ -139,12 +65,14 @@ suspend fun suitNamePhoneEmailImage(context: Context): List<MergedContact>{
 
     val db = Room.databaseBuilder(
         context.applicationContext,
-        AppDatabase::class.java, "contact-database"
+        ContactDatabase::class.java, "contact-database"
     )
         .build()
 
     if(prevTimestamp == 0L){
-        contactsFromDevice.addAll(getAllContacts(context))
+        val allContacts = getAllContacts(context)
+        setContactSkippedCount(context, allContacts.first)
+        contactsFromDevice.addAll(allContacts.second)
         db.contactEntityDao().insertAll(contactsFromDevice.map { it.toContactEntity })
         setContactFetchedTimestamp(context, currentTimestamp)
     }
@@ -157,6 +85,17 @@ suspend fun suitNamePhoneEmailImage(context: Context): List<MergedContact>{
         db.contactEntityDao().deleteByIds(deleteds)
 
         contactsFromDevice.addAll(db.contactEntityDao().getAll().map { Contact.fromEntity(it) })
+        val got = contactsFromDevice.size
+        val skipped = getContactSkippedCount(context)
+        val real = getAllContactsCount(context)
+        if(got + skipped != real){
+            contactsFromDevice.clear()
+            val allContacts = getAllContacts(context)
+            setContactSkippedCount(context, allContacts.first)
+            contactsFromDevice.addAll(allContacts.second)
+            db.clearAllTables()
+            db.contactEntityDao().insertAll(contactsFromDevice.map { it.toContactEntity })
+        }
         setContactFetchedTimestamp(context, currentTimestamp)
     }
 
@@ -171,7 +110,7 @@ private fun deletedContacts(
     val list = mutableListOf<String>()
     Kontakts()
         .from(Kontakts.Deleted)
-        .where(ContactsContract.DeletedContacts.CONTACT_DELETED_TIMESTAMP gte timestamp)
+        .where(ContactsContract.DeletedContacts.CONTACT_DELETED_TIMESTAMP GreaterThanOrEqual timestamp)
         .build(context.contentResolver)
         .forEach {
             val id = getString(
@@ -184,9 +123,21 @@ private fun deletedContacts(
     return list
 }
 
+private fun getAllContactsCount(context: Context): Int {
+    val start = System.currentTimeMillis()
+    val r = Kontakts()
+        .from(Kontakts.Contacts)
+        .build(context.contentResolver)
+        ?.count?:0
+    val end = System.currentTimeMillis()
+    Log.d("fldkfldf","${end-start}")
+    return r
+}
+
 @SuppressLint("Range")
-private fun getAllContacts(context: Context): List<Contact> {
+private fun getAllContacts(context: Context): Pair<Int,List<Contact>> {
     val list = mutableListOf<Contact>()
+    var skipped = 0
     Kontakts()
         .from(Kontakts.Contacts)
         .sortBy(ContactsContract.Contacts.DISPLAY_NAME)
@@ -205,7 +156,7 @@ private fun getAllContacts(context: Context): List<Contact> {
             val phones = mutableListOf<Contact.Phone>()
             Kontakts()
                 .from(Kontakts.Email)
-                .where(ContactsContract.CommonDataKinds.Email.CONTACT_ID equals id)
+                .where(ContactsContract.CommonDataKinds.Email.CONTACT_ID Equals id)
                 .build(context.contentResolver)
                 .forEach {
                     val email = getString(getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA))
@@ -218,7 +169,7 @@ private fun getAllContacts(context: Context): List<Contact> {
                 }?.close()
             Kontakts()
                 .from(Kontakts.Phone)
-                .where(ContactsContract.CommonDataKinds.Phone.CONTACT_ID equals id)
+                .where(ContactsContract.CommonDataKinds.Phone.CONTACT_ID Equals id)
                 .build(context.contentResolver)
                 .forEach {
                     val phone = getString(getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA))
@@ -244,9 +195,12 @@ private fun getAllContacts(context: Context): List<Contact> {
                     )
                 )
             }
+            else{
+                skipped++
+            }
         }?.close()
 
-    return list
+    return Pair(skipped,list)
 }
 
 @SuppressLint("Range")
@@ -257,7 +211,7 @@ private fun getUpdates(
     val list = mutableListOf<Contact>()
     Kontakts()
         .from(Kontakts.Contacts)
-        .where(ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP gte timestamp)
+        .where(ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP GreaterThanOrEqual  timestamp)
         .build(context.contentResolver)
         .forEach {
             val id = getString(
@@ -273,7 +227,7 @@ private fun getUpdates(
             val phones = mutableListOf<Contact.Phone>()
             Kontakts()
                 .from(Kontakts.Email)
-                .where(ContactsContract.CommonDataKinds.Email.CONTACT_ID equals id)
+                .where(ContactsContract.CommonDataKinds.Email.CONTACT_ID Equals id)
                 .build(context.contentResolver)
                 .forEach {
                     val email = getString(getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA))
@@ -286,7 +240,7 @@ private fun getUpdates(
                 }?.close()
             Kontakts()
                 .from(Kontakts.Phone)
-                .where(ContactsContract.CommonDataKinds.Phone.CONTACT_ID equals id)
+                .where(ContactsContract.CommonDataKinds.Phone.CONTACT_ID Equals id)
                 .build(context.contentResolver)
                 .forEach {
                     val phone = getString(getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA))
@@ -315,18 +269,3 @@ private fun getUpdates(
     return list
 }
 
-data class MergedContact(
-    val name: String,
-    val phone: String,
-    val email: String,
-    val image: String
-){
-
-    companion object{
-        fun fromEntity(entity: ContactEntity): MergedContact{
-            return MergedContact(
-                entity.name,entity.phone,entity.email,entity.image
-            )
-        }
-    }
-}

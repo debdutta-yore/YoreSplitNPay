@@ -1,13 +1,10 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
-import android.util.Log
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.yore.splitnpay.GrpcServer
 import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
@@ -20,24 +17,19 @@ import co.yore.splitnpay.pages.subpages.BillTotalAndCategoryBottomSheetModel
 import co.yore.splitnpay.pages.subpages.ExpenseDatePickerBottomSheetModel
 import co.yore.splitnpay.pages.subpages.SuccessUndoSheetModel
 import co.yore.splitnpay.repo.MasterRepo
-import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BermudaGray
 import co.yore.splitnpay.ui.theme.CeriseRed
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import io.grpc.ManagedChannel
-import io.grpc.ManagedChannelBuilder
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import splitpay.CategoryServiceGrpc
-import splitpay.CategoryServiceGrpc.CategoryServiceBlockingStub
-import splitpay.Splitpay
-import splitpay.Splitpay.ListCategoryRequest
-import splitpay.Splitpay.ListCategoryResponse
+import javax.inject.Inject
 import kotlin.math.abs
 
 @OptIn(ExperimentalPermissionsApi::class)
-class SplitPageViewModel(
-    private val repo: MasterRepo = MasterRepoImpl()
+@HiltViewModel
+class SplitPageViewModel @Inject constructor(
+    private val repo: MasterRepo
 ) : ViewModel(), WirelessViewModelInterface {
     ///////////////////////////////
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
@@ -70,6 +62,7 @@ class SplitPageViewModel(
         splitted = false
     )
 
+    private var billTotalAndCategoryTotalData: BillTotalAndCategoryBottomSheetModel.Data? = null
     // /////////////////////////////////////////////////////
     private val _notificationService =
         NotificationService { id, arg ->
@@ -151,19 +144,22 @@ class SplitPageViewModel(
                 object : BillTotalAndCategoryBottomSheetModel.BillTotalBottomSheetModelCallback{
                     override suspend fun getCategories(): List<Category> {
                         val categories = repo.getAllCategories().toMutableList()
-                        categories[0] = categories[0].copy(isSelected = true)
+                        if(categories.isNotEmpty()){
+                            categories[0] = categories[0].copy(isSelected = true)
+                        }
                         return categories
                     }
 
                     override suspend fun getBillTotalAmount(): String {
-                        return ""
+                        return billTotalAndCategoryTotalData?.amount?:""
                     }
 
                     override suspend fun getDescription(): String {
-                        return ""
+                        return billTotalAndCategoryTotalData?.description?:""
                     }
 
                     override fun openAllCategories() {
+                        billTotalAndCategoryTotalData = (mySheeting.model(Sheets.BillTotalAndCategories) as? BillTotalAndCategoryBottomSheetModel)?.currentData
                         mySheeting.sheets.value = Sheets.CategoriesEdit
                     }
 
@@ -183,11 +179,18 @@ class SplitPageViewModel(
                         category: Category,
                         name: String
                     ) {
-
+                        viewModelScope.launch(Dispatchers.IO) {
+                            repo.renameCategory(category,name)
+                            mySheeting.model(Sheets.BillTotalAndCategories)?.initialize()
+                        }
                     }
 
                     override fun scope(): CoroutineScope {
                         return viewModelScope
+                    }
+
+                    override fun initialized() {
+
                     }
                 }
             ),
@@ -195,16 +198,29 @@ class SplitPageViewModel(
                 object : AllCategoriesBottomSheetModel.Callback{
                     override suspend fun getCategories(): List<Category> {
                         val categories = repo.getAllCategories().toMutableList()
-                        categories[0] = categories[0].copy(isSelected = true)
+                        if(categories.isNotEmpty()){
+                            if(billTotalAndCategoryTotalData!=null){
+                                val index = categories.indexOfFirst { it.id == billTotalAndCategoryTotalData?.Category?.id }
+                                if(index > -1){
+                                    val item = categories.removeAt(index)
+                                    categories.add(0,item.copy(isSelected = true))
+                                }
+                            }
+                            categories[0] = categories[0].copy(isSelected = true)
+                        }
                         return categories
                     }
 
                     override fun onCategoryAddContinue(name: String) {
-                        mySheeting.hide()
+                        createCategory(name)
+                        //mySheeting.hide()
                     }
 
                     override fun onCategorySelectedContinue(category: Category) {
-                        mySheeting.sheets.value = Sheets.DatePicker
+                        //mySheeting.sheets.value = Sheets.DatePicker
+                        (mySheeting.model(Sheets.BillTotalAndCategories) as? BillTotalAndCategoryBottomSheetModel)?.setSelected(category)
+                        mySheeting.change(Sheets.BillTotalAndCategories)
+                        mySheeting.show()
                     }
 
                     override fun scope(): CoroutineScope {
@@ -274,6 +290,16 @@ class SplitPageViewModel(
             }
         }
     )
+
+    private fun createCategory(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.createCategory(name)
+            withContext(Dispatchers.Main){
+                mySheeting.change(Sheets.BillTotalAndCategories)
+                mySheeting.show()
+            }
+        }
+    }
 
     private fun selectMembersForSplit() {
         navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -376,6 +402,7 @@ class SplitPageViewModel(
             }
             val items = repo.groupAndContacts()
             withContext(Dispatchers.Main){
+                _groupsAndPeoplesVault.clear()
                 _groupsAndPeoplesVault.addAll(items)
                 _noGroup.value = false
                 filter()
@@ -455,8 +482,8 @@ class SplitPageViewModel(
         }
         val owe = if (tab == 0) _subTabGroup.value else _subTabPeople.value
         if (
-            (owe == SplitPageTabs.YouOwe && (it.willGet() > 0f || it.willPay() == 0f)) ||
-            (owe == SplitPageTabs.YouAreOwed && (it.willPay() > 0f || it.willGet() == 0f))
+            (owe == SplitPageTabs.YouOwe && (it.willGet() > 0f || it.willPay() == 0.0)) ||
+            (owe == SplitPageTabs.YouAreOwed && (it.willPay() > 0f || it.willGet() == 0.0))
         ){
             return false
         }

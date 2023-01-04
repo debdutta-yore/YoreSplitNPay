@@ -198,7 +198,7 @@ fun GroupCard_0msq1z(
                         if (data.willGet > 0) {
                             val willGetSplitted by remember(data.willGet) {
                                 derivedStateOf {
-                                    data.willGet.splitted()
+                                    data.willGet.toFloat().splitted()
                                 }
                             }
                             YoreAmount(
@@ -210,7 +210,7 @@ fun GroupCard_0msq1z(
                         if (data.willPay > 0) {
                             val willPaySplitted by remember(data.willPay) {
                                 derivedStateOf {
-                                    data.willPay.splitted()
+                                    data.willPay.toFloat().splitted()
                                 }
                             }
                             YoreAmount(
@@ -360,22 +360,59 @@ fun SingleGroupMemberProfilePic(
     contentDescription: String,
     config: SingleGroupMemberProfilePicConfiguration = SingleGroupMemberProfilePicConfiguration()
 ) {
-    AsyncImage(
-        model = image?:R.drawable.user_dummy4,
-        contentDescription = contentDescription,
-        modifier = Modifier
-            .size(config.imageSize.dep())
-            .border(
-                BorderStroke(
-                    width = config.borderWidth.dep(),
-                    color = config.borderColor
-                ),
-                shape = CircleShape
+    if(image is String && image.startsWith("name://")){
+        val name = image.replace("name://","")
+        val colors = colorsFromHumanName(name)
+        Box(
+            modifier = Modifier
+                .size(config.imageSize.dep())
+                .clip(CircleShape)
+                .background(colors.first)
+                .border(
+                    BorderStroke(
+                        width = config.borderWidth.dep(),
+                        color = config.borderColor
+                    ),
+                    shape = CircleShape
+                )
+                .padding(config.borderWidth.dep())
+                .clip(CircleShape),
+            contentAlignment = Alignment.Center
+        ){
+            RobotoText(
+                text = String(
+                    name
+                        .split("/|\\s+".toRegex())
+                        .map { it.firstOrNull() }
+                        .filterNotNull()
+                        .filter { it.isDigit() || it.isLetter() || it == '+' }
+                        .take(2)
+                        .toCharArray()
+                ).uppercase(),
+                color = colors.second,
+                fontSize = 10.sep(),
+                fontWeight = FontWeight.Bold
             )
-            .padding(config.borderWidth.dep())
-            .clip(CircleShape),
-        placeholder = painterResource(id = config.placeholder)
-    )
+        }
+    }
+    else{
+        AsyncImage(
+            model = image?:R.drawable.user_dummy4,
+            contentDescription = contentDescription,
+            modifier = Modifier
+                .size(config.imageSize.dep())
+                .border(
+                    BorderStroke(
+                        width = config.borderWidth.dep(),
+                        color = config.borderColor
+                    ),
+                    shape = CircleShape
+                )
+                .padding(config.borderWidth.dep())
+                .clip(CircleShape),
+            placeholder = painterResource(id = config.placeholder)
+        )
+    }
 }
 
 @Composable

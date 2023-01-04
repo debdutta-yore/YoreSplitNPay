@@ -1,54 +1,57 @@
-package co.yore.splitnpay.kontakts
+package co.yore.splitnpay.libs.kontakts.core
 
 import android.content.ContentResolver
 import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
 
-class Kontakts(private val block: Kontakts.()->Unit){
+infix fun String.Equals(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.Equals, value)
+}
+infix fun String.like(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.Like, "%$value%")
+}
+infix fun String.likePost(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.Like, "%$value")
+}
+infix fun String.likePre(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.Like, "$value%")
+}
+infix fun String.gt(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.GreaterThan, value)
+}
+infix fun String.lt(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.LessThan, value)
+}
+infix fun String.GreaterThanOrEqual(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.GreaterThanOrEqual, value)
+}
+infix fun String.lte(value: Any): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.LessThanOrEqual, value)
+}
+infix fun Kontakts.Expression.and(right: Kontakts.Expression): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.And, right)
+}
+infix fun Kontakts.Expression.or(right: Kontakts.Expression): Kontakts.Expression {
+    return Kontakts.Expression(this, Kontakts.Expression.Operator.Or, right)
+}
 
-    infix fun String.equals(value: Any): Expression{
-        return Expression(this, Expression.Operator.Equals,value)
+fun Cursor?.forEach(block: Cursor.(Int)->Unit): Cursor?{
+    var index = -1
+    this?.let{
+        while(it.moveToNext()){
+            block(it, ++index)
+        }
     }
-    infix fun String.like(value: Any): Expression{
-        return Expression(this, Expression.Operator.Like,"%$value%")
-    }
-    infix fun String.likePost(value: Any): Expression{
-        return Expression(this, Expression.Operator.Like,"%$value")
-    }
-    infix fun String.likePre(value: Any): Expression{
-        return Expression(this, Expression.Operator.Like,"$value%")
-    }
-    infix fun String.gt(value: Any): Expression{
-        return Expression(this, Expression.Operator.Gt,value)
-    }
-    infix fun String.lt(value: Any): Kontakts.Expression{
-        return Expression(this, Expression.Operator.Lt,value)
-    }
-    infix fun String.gte(value: Any): Expression{
-        return Expression(this, Expression.Operator.Gte,value)
-    }
-    infix fun String.lte(value: Any): Kontakts.Expression{
-        return Expression(this, Expression.Operator.Lte,value)
-    }
-    infix fun Expression.and(right: Expression): Expression{
-        return Expression(this, Expression.Operator.And,right)
-    }
-    infix fun Expression.or(right: Expression): Expression{
-        return Expression(this, Expression.Operator.Or,right)
-    }
+    return this
+}
+
+class Kontakts(block: (Kontakts.()->Unit)? = null){
+
+
 
     val Cursor?.columns get(): List<String> = this?.columnNames?.toList()?: emptyList<String>()
-    val Cursor?.count get() = this?.count?:0
-    fun Cursor?.forEach(block: Cursor.(Int)->Unit): Cursor?{
-        var index = -1
-        this?.let{
-            while(it.moveToNext()){
-                block(it, ++index)
-            }
-        }
-        return this
-    }
+    val Cursor?.size get() = this?.count?:0
 
     val String.asc get() = "$this ASC"
     val String.desc get() = "$this DESC"
@@ -57,7 +60,7 @@ class Kontakts(private val block: Kontakts.()->Unit){
     val String.prePost get() = "%$this%"
 
     init {
-        block()
+        block?.invoke(this)
     }
     class Expression(
         val left: Any,
@@ -67,10 +70,10 @@ class Kontakts(private val block: Kontakts.()->Unit){
         sealed class Operator(val value: String){
             object Equals: Operator("=")
             object Like: Operator("LIKE")
-            object Gt: Operator(">")
-            object Lt: Operator("lt")
-            object Gte: Operator(">=")
-            object Lte: Operator("<=")
+            object GreaterThan: Operator(">")
+            object LessThan: Operator("lt")
+            object GreaterThanOrEqual: Operator(">=")
+            object LessThanOrEqual: Operator("<=")
             object And: Operator("AND")
             object Or: Operator("OR")
         }
@@ -106,39 +109,39 @@ class Kontakts(private val block: Kontakts.()->Unit){
         private var _selections = mutableListOf<Expression>()
         private var rawSelection:Pair<String,List<String>>? = null
         private var sorts = mutableListOf<String>()
-        fun from(uri: Uri): Contents{
+        fun from(uri: Uri): Contents {
             _from = uri
             return this
         }
-        fun select(vararg fields: String): Contents{
+        fun select(vararg fields: String): Contents {
             _fields.addAll(fields)
             return this
         }
-        fun select(fields: List<String>): Contents{
+        fun select(fields: List<String>): Contents {
             _fields.addAll(fields)
             return this
         }
-        fun where(vararg expression: Expression): Contents{
+        fun where(vararg expression: Expression): Contents {
             _selections.addAll(expression)
             return this
         }
-        fun where(expressions: List<Expression>): Contents{
+        fun where(expressions: List<Expression>): Contents {
             _selections.addAll(expressions)
             return this
         }
         fun where(
             whereClause: String,
             args: List<String> = emptyList()
-        ): Contents{
+        ): Contents {
             rawSelection = Pair(whereClause, args)
             return this
         }
-        fun sortBy(vararg fieldDir: String): Contents{
+        fun sortBy(vararg fieldDir: String): Contents {
             sorts.addAll(fieldDir)
             return this
         }
 
-        fun sortBy(fieldDirs: List<String>): Contents{
+        fun sortBy(fieldDirs: List<String>): Contents {
             sorts.addAll(fieldDirs)
             return this
         }
@@ -166,11 +169,12 @@ class Kontakts(private val block: Kontakts.()->Unit){
     }
     companion object{
         val Contacts = ContactsContract.Contacts.CONTENT_URI
+        val Deleted = ContactsContract.DeletedContacts.CONTENT_URI
         val Phone = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         val Email = ContactsContract.CommonDataKinds.Email.CONTENT_URI
     }
 
-    fun from(uri: Uri): Contents{
+    fun from(uri: Uri): Contents {
         return Contents().from(uri)
     }
 }

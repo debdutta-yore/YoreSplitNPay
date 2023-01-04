@@ -54,9 +54,11 @@ data class Category(
     val icon: Any?,
     val isSelected: Boolean = false,
     val isEditable: Boolean = false,
-    val subCategory: String = "Business trip"
+    val subCategory: String = "Business trip",
+    val timestamp: Long = 0
 ) {
     companion object {
+
         operator fun get(id: Any) = when (id) {
             "trip" -> trip
             "food" -> food
@@ -67,6 +69,13 @@ data class Category(
             "bills" -> bills
             else -> blank
         }
+        fun custom(name: String, id: Any, timestamp: Long) = Category(
+            id = id,
+            name = name,
+            color = CuriousBlue1.toArgb().toLong(),
+            icon = R.drawable.ic_category,
+            timestamp = timestamp
+        )
         val blank = Category(
             id = -1,
             name = "",
@@ -133,8 +142,8 @@ interface GroupOrContact {
     fun id(): Any
     fun lastActivity(): Long
     fun searchables(): List<String>
-    fun willGet(): Float
-    fun willPay(): Float
+    fun willGet(): Double
+    fun willPay(): Double
 }
 
 data class Member(
@@ -194,11 +203,11 @@ data class Friend(
 
 data class ContactData(
     val id: Any,
-    val image: Any?,
+    var image: Any?,
     val name: String,
     val mobile: String,
-    val willPay: Float = 0.0f,
-    val willGet: Float = 0.0f,
+    var willPay: Double = 0.0,
+    var willGet: Double = 0.0,
     val selected: Boolean = false,
     val lastActivity: Long = 0,
     val deletable: Boolean = true
@@ -218,11 +227,11 @@ data class ContactData(
         )
     }
 
-    override fun willGet(): Float {
+    override fun willGet(): Double {
         return willGet
     }
 
-    override fun willPay(): Float {
+    override fun willPay(): Double {
         return willPay
     }
 }
@@ -232,8 +241,8 @@ data class GroupData(
     val image: Any?,
     val name: String,
     val members: List<ContactData>,
-    val willGet: Float = 0.0f,
-    val willPay: Float = 0.0f,
+    val willGet: Double = 0.0,
+    val willPay: Double = 0.0,
     val showGroupBalance: Boolean = willGet > 0f || willPay > 0f,
     val lastActivity: Long = 0
 ) : GroupOrContact {
@@ -251,11 +260,11 @@ data class GroupData(
         )
     }
 
-    override fun willGet(): Float {
+    override fun willGet(): Double {
         return willGet
     }
 
-    override fun willPay(): Float {
+    override fun willPay(): Double {
         return willPay
     }
 }

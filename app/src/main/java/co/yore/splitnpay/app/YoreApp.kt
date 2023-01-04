@@ -16,8 +16,7 @@ import androidx.navigation.*
 import co.yore.splitnpay.R
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
-import co.yore.splitnpay.libs.kontakts.Kontakts
-import co.yore.splitnpay.libs.kontakts.MergedContact
+import co.yore.splitnpay.libs.kontakts.models.MergedContact
 import co.yore.splitnpay.pages.*
 import co.yore.splitnpay.pages.screens.*
 import co.yore.splitnpay.viewModels.*

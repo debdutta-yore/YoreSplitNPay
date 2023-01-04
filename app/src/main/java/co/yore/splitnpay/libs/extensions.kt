@@ -1,6 +1,5 @@
 package co.yore.splitnpay.libs
 
-import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -530,4 +529,13 @@ fun Float.splitted(format: Boolean = true): FloatSplitted {
         decText,
         whole
     )
+}
+
+
+val Throwable.root get(): Throwable?{
+    var rootCause: Throwable? = this
+    while (rootCause?.cause != null && rootCause.cause != rootCause) {
+        rootCause = rootCause.cause
+    }
+    return rootCause
 }

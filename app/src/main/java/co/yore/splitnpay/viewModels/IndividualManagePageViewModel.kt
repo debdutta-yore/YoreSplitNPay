@@ -17,11 +17,14 @@ import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class IndividualManagePageViewModel(
-    val repo: MasterRepo = MasterRepoImpl()
+@HiltViewModel
+class IndividualManagePageViewModel @Inject constructor(
+    val repo: MasterRepo// = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()

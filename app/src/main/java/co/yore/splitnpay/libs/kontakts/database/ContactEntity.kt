@@ -1,4 +1,4 @@
-package co.yore.splitnpay.libs.kontakts
+package co.yore.splitnpay.libs.kontakts.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,11 +1,16 @@
 package co.yore.splitnpay.repo
 
+import android.util.Log
+import co.yore.splitnpay.AccountService
+import co.yore.splitnpay.ApiService
 import co.yore.splitnpay.R
 import co.yore.splitnpay.app.AppContext
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.contact.core.util.phoneList
+import co.yore.splitnpay.libs.kontakts.phone
+import co.yore.splitnpay.libs.kontakts.repo.ContactRepo
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Date
 import co.yore.splitnpay.object_box.Contact
@@ -18,7 +23,9 @@ import co.yore.splitnpay.ui.theme.FunGreen
 import co.yore.splitnpay.ui.theme.RadicalRed
 import io.github.serpro69.kfaker.Faker
 import kotlinx.coroutines.delay
+import java.lang.Long.max
 import java.util.*
+import javax.inject.Inject
 import kotlin.random.Random
 
 interface MasterRepo{
@@ -76,27 +83,112 @@ interface MasterRepo{
     suspend fun groupChatPageData(): GroupChatPageData
     fun getSplits(): List<SplitBrief>
     fun splitReviewPageData(): SplitReviewPageData
+    suspend fun createCategory(name: String)
+    suspend fun renameCategory(category: Category, name: String)
 }
 
-class MasterRepoImpl : MasterRepo {
+class MasterRepoImpl @Inject constructor(
+    val contactRepo: ContactRepo,
+    val apiService: ApiService,
+    val accountService: AccountService
+) : MasterRepo {
     override suspend fun groupAndContacts(): List<GroupOrContact> {
         // delay(6000)
-        val contacts = peoples()
+        val list = mutableListOf<GroupOrContact>()
+        val contacts = deviceContactsNative().toMutableList()
+        val users = apiService.users().toMutableList()
+        contacts.forEach {
+            val userIndex = users.indexOfFirst { user ->  user.phoneNumber.takeLast(10) == it.mobile.takeLast(10) }
+            if(userIndex > -1){
+                val user = users.removeAt(userIndex)
+                it.willGet = user.willGet
+                it.willPay = user.willPay
+                if(it.image == null || it.image == ""){
+                    it.image = if(user.imageUrl.startsWith("https://")) user.imageUrl else "name://${it.name}"
+                }
+            }
+            else{
+                if(it.image == null || it.image == ""){
+                    it.image = "name://${it.name}"
+                }
+            }
+        }
+        while(users.isNotEmpty()){
+            val user = users.removeAt(0)
+            val phone = phone(user.phoneNumber)
+            Log.d("fkdkldfdf","$phone")
+            if(phone!=null){
+                contacts.add(
+                    ContactData(
+                        id = phone,
+                        image = if(user.imageUrl.startsWith("https://")) user.imageUrl else "name://${user.fullName}",
+                        name = user.fullName,
+                        mobile = phone,
+                        willPay = user.willPay,
+                        willGet = user.willPay,
+                        selected = false,
+                        lastActivity = 0L,
+                        deletable = false
+                    )
+                )
+            }
+        }
+        val accountId = accountService.getAccountId()
+        contacts.removeIfMy { it.mobile.takeLast(10) == accountId }
+        list.addAll(contacts)
+        val groups = apiService.groups().resultsList.map {
+            GroupData(
+                id = it.id,
+                image = it.imageUrl,
+                name = it.name,
+                members = it.membersList.map {
+                    ContactData(
+                        id = it.phoneNumber,
+                        image = if(it.imageUrl.startsWith("https://")) it.imageUrl else "name://${it.fullName}",
+                        name = it.fullName,
+                        mobile = it.phoneNumber,
+                    )
+                },
+                willGet = it.willGet,
+                willPay = it.willPay
+            )
+        }
+        list.addAll(groups)
+        return list
+        /*val contacts = peoples()
         val groups = groups(contacts)
         val list = mutableListOf<GroupOrContact>()
         list.addAll(contacts)
         list.addAll(groups)
         list.shuffle()
-        return list
+        return list*/
     }
+
+    private suspend fun deviceContactsNative(): List<ContactData> {
+        val contacts = contactRepo.contacts()
+        return contacts.map {
+            ContactData(
+                id = it.phone,
+                image = it.image,
+                name = it.name,
+                mobile = it.phone,
+                willPay = 0.0,
+                willGet = 0.0,
+                selected = false,
+                lastActivity = 0L,
+                deletable = false
+            )
+        }
+    }
+
     override suspend fun groups(contacts: List<ContactData>): List<GroupData> {
         val f = Faker()
         val r = Random(System.nanoTime())
         var i = 0
         return MutableList(50){
             val members = contacts.takeSome(2, 5).toList()
-            val willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f)
-            val willPay = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f)
+            val willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f).toDouble()
+            val willPay = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f).toDouble()
             val name = f.animal.name()
             val now = System.currentTimeMillis()
             val dif: Long = 365 * 24 * 3600 * 1000L
@@ -120,8 +212,8 @@ class MasterRepoImpl : MasterRepo {
                 mobile = it.phoneList().firstOrNull()?.number ?: "No phone",
                 image = it.photoUri,
                 lastActivity = randomDate(1643049000000L, 1664099455386L),
-                willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f),
-                willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f)
+                willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f).toDouble(),
+                willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f).toDouble()
             )
         }
         if (realContacts.size > 5){
@@ -137,8 +229,8 @@ class MasterRepoImpl : MasterRepo {
                 mobile = f.phoneNumber.cellPhone(),
                 image = "https://randomuser.me/api/portraits/men/${(++i) - 1}.jpg",
                 lastActivity = randomDate(1643049000000L, 1664099455386L),
-                willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f),
-                willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f)
+                willGet = Rand.nextFloat(0f, 10000f, reseed = true, biased = 0f).toDouble(),
+                willPay = Rand.nextFloat(0f, 1000f, reseed = true, biased = 0f).toDouble()
             )
         }
     }
@@ -279,7 +371,20 @@ class MasterRepoImpl : MasterRepo {
     }
 
     override suspend fun getAllCategories(): List<Category> {
-        return Category.list
+        //return Category.list
+        val accountId = accountService.getAccountId()
+        return apiService.categories().resultList.map {
+            if(it.accoundId=="system"){
+                return@map Category[it.name.lowercase()]
+            }
+            else{
+                if(accountId == it.accoundId){
+                    return@map Category.custom(it.name, it.id, max(it.createdAt.seconds, it.updatedAt.seconds))
+                }
+                return@map null
+            }
+        }.filterNotNull()
+            .sortedBy { -it.timestamp }
     }
 
     override suspend fun members(): List<SingleItem>{
@@ -1264,8 +1369,8 @@ class MasterRepoImpl : MasterRepo {
                         mobile = "7964210356"
                     )
                 ),
-                willGet = 1000f,
-                willPay = 200f
+                willGet = 1000.0,
+                willPay = 200.0
             )
         )
     }
@@ -1394,12 +1499,27 @@ class MasterRepoImpl : MasterRepo {
     }
 
     override suspend fun splitPageData(): SplitPageData {
-        delay(6000)
+        val userData = apiService.userData()
+        return if (userData!=null){
+            SplitPageData(
+                willGet = userData.user.willGet.toFloat(),
+                willPay = userData.user.willPay.toFloat(),
+                splitted = false
+            )
+        } else{
+            SplitPageData(
+                willGet = 0f,
+                willPay = 0f,
+                splitted = false
+            )
+        }
+
+        /*delay(6000)
         return SplitPageData(
             willGet = 3000f,
             willPay = 2000f,
             splitted = true
-        )
+        )*/
     }
 
     override suspend fun groupChatPageData(): GroupChatPageData {
@@ -1452,6 +1572,14 @@ class MasterRepoImpl : MasterRepo {
                 day = 7
             )
         )
+    }
+
+    override suspend fun createCategory(name: String) {
+        apiService.createCategory(name)
+    }
+
+    override suspend fun renameCategory(category: Category, name: String) {
+        apiService.renameCategory(category, name)
     }
 }
 object MembersMock {

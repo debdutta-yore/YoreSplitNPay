@@ -18,13 +18,16 @@ import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BlackSqueeze
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class IndividualChatViewModel(
-    private val repo: MasterRepo = MasterRepoImpl()
+@HiltViewModel
+class IndividualChatViewModel @Inject constructor(
+    private val repo: MasterRepo// = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
 
@@ -78,6 +81,10 @@ class IndividualChatViewModel(
 
                     override fun scope(): CoroutineScope {
                         return viewModelScope
+                    }
+
+                    override fun initialized() {
+
                     }
                 }
             ),

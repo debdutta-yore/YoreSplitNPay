@@ -23,14 +23,17 @@ import co.yore.splitnpay.pages.subpages.TimeFilterBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import javax.inject.Inject
 
-class GroupSummaryViewModel(
-    private val repo: MasterRepo = MasterRepoImpl()
+@HiltViewModel
+class GroupSummaryViewModel @Inject constructor(
+    private val repo: MasterRepo// = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     private val _resolver = Resolver()

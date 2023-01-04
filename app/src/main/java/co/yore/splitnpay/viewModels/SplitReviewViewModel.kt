@@ -22,13 +22,16 @@ import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SplitReviewViewModel(
-    private val repo: MasterRepo = MasterRepoImpl()
+@HiltViewModel
+class SplitReviewViewModel @Inject constructor(
+    private val repo: MasterRepo// = MasterRepoImpl()
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustPan)
 
@@ -106,6 +109,10 @@ class SplitReviewViewModel(
 
                     override fun scope(): CoroutineScope {
                         return viewModelScope
+                    }
+
+                    override fun initialized() {
+                        TODO("Not yet implemented")
                     }
                 }
             ),

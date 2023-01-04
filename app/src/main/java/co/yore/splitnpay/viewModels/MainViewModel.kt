@@ -6,11 +6,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yore.splitnpay.libs.EventBus
-import co.yore.splitnpay.libs.kontakts.Kontakts
 import co.yore.splitnpay.libs.jerokit.*
-import co.yore.splitnpay.libs.kontakts.MergedContact
-import co.yore.splitnpay.libs.kontakts.suitNamePhoneEmailImage
-import co.yore.splitnpay.libs.kontakts.toSingles
+import co.yore.splitnpay.libs.kontakts.models.MergedContact
+import co.yore.splitnpay.libs.kontakts.suit.suitNamePhoneEmailImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest

@@ -65,6 +65,7 @@ class BillTotalAndCategoryBottomSheetModel(
         )
 
         fun scope(): CoroutineScope
+        fun initialized()
     }
     private val _resolver = Resolver()
     private val _notifier = NotificationService{id,arg->
@@ -90,6 +91,14 @@ class BillTotalAndCategoryBottomSheetModel(
                 callback.openAllCategories()
             }
             DataIds.renamePressed->{
+                for(i in 0 until _categories.size){
+                    _categories[i] =
+                        _categories[i].copy(isSelected = false)
+                }
+                val index = arg as? Int?:return@NotificationService
+                _categories[index] =
+                    _categories[index].copy(isSelected = true)
+
                 canProceedWithBillTotal.value = false
                 _renamePressed.value = arg as? Int?:return@NotificationService
                 val category = _categories[arg as? Int?:return@NotificationService]
@@ -138,11 +147,29 @@ class BillTotalAndCategoryBottomSheetModel(
     override fun initialize(){
         clear()
         scope.launch(Dispatchers.IO) {
-            _categories.addAll(callback.getCategories())
+            val cats = callback.getCategories().toMutableList()
             _billTotalAmount.value = callback.getBillTotalAmount()
             _billTotalDescription.value = callback.getDescription()
+            updateAsAuthorizedSelected(cats)
+            _categories.addAll(cats)
             updateCanProceed()
         }
+        callback.initialized()
+    }
+
+    private fun updateAsAuthorizedSelected(cats: MutableList<Category>) {
+        if(authorizedSelected != null){
+            for(i in 0 until cats.size){
+                cats[i] =
+                    cats[i].copy(isSelected = false)
+            }
+            val index = cats.indexOfFirst { it.id == authorizedSelected?.id }
+            if(index > -1){
+                val item = cats.removeAt(index)
+                cats.add(0,item.copy(isSelected = true))
+            }
+        }
+        authorizedSelected = null
     }
 
     override fun clear() {
@@ -166,6 +193,19 @@ class BillTotalAndCategoryBottomSheetModel(
             callback.close()
         }
     }
+
+    private var authorizedSelected: Category? = null
+    fun setSelected(category: Category) {
+        authorizedSelected = category
+    }
+
+    data class Data(
+        val amount: String,
+        val description: String,
+        val Category: Category
+    )
+
+    val currentData get() = Data(_billTotalAmount.value, _billTotalDescription.value, _categories.first { it.isSelected })
 
     ///////////////
     private val _categories = mutableStateListOf<Category>()

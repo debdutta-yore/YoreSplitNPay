@@ -195,35 +195,40 @@ fun GiveTakeTypeTabs(
 fun FriendsContent(
     peoples: List<GroupOrContact> = listState(DataIds.groupsAndPeoples)
 ) {
-    val state = rememberLazyListState()
-    LazyColumn(
-        state = state,
-        modifier = Modifier
-            .fillMaxSize()
-            .fadingEdge(),
-        contentPadding = PaddingValues(
-            start = 17.dep(),
-            end = 17.dep(),
-            bottom = 85.dep()
-        )
-    ) {
-        items(
-            peoples,
-            key = {
-                it.id()
-            }
+    if(peoples.isEmpty()){
+        NothingFoundUI()
+    }
+    else{
+        val state = rememberLazyListState()
+        LazyColumn(
+            state = state,
+            modifier = Modifier
+                .fillMaxSize()
+                .fadingEdge(),
+            contentPadding = PaddingValues(
+                start = 17.dep(),
+                end = 17.dep(),
+                bottom = 85.dep()
+            )
         ) {
-            if (it is ContactData) {
-                PeopleCard_eq3k8h(
-                    modifier = Modifier
-                        .animateItemPlacement()
-                        .padding(top = 13.dep()),
-                    data = it,
-                    contentDescription = "",
-                    checkBoxContentDescription = "",
-                    profileImageContentDescription = "",
-                    config = PeopleCardConfiguration.unCheckable
-                )
+            items(
+                peoples,
+                key = {
+                    it.id()
+                }
+            ) {
+                if (it is ContactData) {
+                    PeopleCard_eq3k8h(
+                        modifier = Modifier
+                            .animateItemPlacement()
+                            .padding(top = 13.dep()),
+                        data = it,
+                        contentDescription = "",
+                        checkBoxContentDescription = "",
+                        profileImageContentDescription = "",
+                        config = PeopleCardConfiguration.unCheckable
+                    )
+                }
             }
         }
     }

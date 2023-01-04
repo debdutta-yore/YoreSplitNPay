@@ -22,12 +22,14 @@ import co.yore.splitnpay.app.YoreApp
 import co.yore.splitnpay.libs.EventBus
 import co.yore.splitnpay.libs.jerokit.localDesignWidth
 import co.yore.splitnpay.ui.theme.YoreSplitNPayTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Integer.min
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val bottomHeight = mutableStateOf(0)
     private var minBottomHeight = Int.MAX_VALUE
@@ -47,12 +49,12 @@ class MainActivity : ComponentActivity() {
             bottomHeight.value = keypadHeight - minBottomHeight
         }
 
-        val contentObserver = MyContentObserver()
+        /*val contentObserver = MyContentObserver()
         applicationContext.contentResolver.registerContentObserver(
             ContactsContract.Contacts.CONTENT_URI,
             true,
             contentObserver
-        )
+        )*/
 
         setContent {
             YoreSplitNPayTheme {

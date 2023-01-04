@@ -193,7 +193,7 @@ fun PeopleCard_eq3k8h(
                 if (data.willGet > 0) {
                     val willGetSplitted by remember(data.willGet) {
                         derivedStateOf {
-                            data.willGet.splitted()
+                            data.willGet.toFloat().splitted()
                         }
                     }
                     YoreAmount(
@@ -211,7 +211,7 @@ fun PeopleCard_eq3k8h(
                 if (data.willPay > 0) {
                     val willPaySplitted by remember(data.willPay) {
                         derivedStateOf {
-                            data.willPay.splitted()
+                            data.willPay.toFloat().splitted()
                         }
                     }
                     YoreAmount(

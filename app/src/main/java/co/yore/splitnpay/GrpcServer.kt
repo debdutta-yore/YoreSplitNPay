@@ -284,6 +284,29 @@ class GrpcServer{
             val blockingStub = UserServiceGrpc.newBlockingStub(channel)
             return blockingStub.userData(request)
         }
+
+        suspend fun listUser(
+            accountId: String,
+            createdByMe: Boolean,
+            createdByOthers: Boolean,
+            onlyUnsettled: Boolean,
+            offset: Long,
+            pageSize: Long
+        ): Splitpay.ListUserResponse{
+            ensureSeverRunning()
+            val request = Splitpay
+                .ListUserRequest
+                .newBuilder()
+                .setAccountId(accountId)
+                .setCreatedByMe(createdByMe)
+                .setCreatedByOthers(createdByOthers)
+                .setOnlyUnsettled(onlyUnsettled)
+                .setOffset(offset)
+                .setPageSize(pageSize)
+                .build()
+            val blockingStub = UserServiceGrpc.newBlockingStub(channel)
+            return blockingStub.listUser(request)
+        }
     }
     companion object{
         private var channel: ManagedChannel? = null
