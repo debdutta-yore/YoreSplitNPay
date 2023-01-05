@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package yore_file_upload;
+
+// import "google/api/annotations.proto";
+// import "google/protobuf/timestamp.proto";
+// import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+// import "protoc-gen-openapiv2/options/annotations.proto";
+
+
+option go_package = "github.com/yore-fin/yore-file-upload/pkg/pb;pb";
+
+service YoreFileUpload {
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse) {}
+}
+
+message UploadFileRequest {
+  string object_name = 2;
+  bytes file_contents = 3;
+}
+
+message UploadFileResponse {
+  string file_url = 1;
+  string download_url = 2;
+}

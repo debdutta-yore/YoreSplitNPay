@@ -23,6 +23,7 @@ fun GroupCreationPageContent(
     friends: List<ContactData> = listState(DataIds.contacts),
     groupName: String = stringState(DataIds.groupName).value,
     groupImage: Any? = stringState(DataIds.profileImage).value,
+    canProceed: Boolean = boolState(DataIds.canProceed).value,
     notifier: NotificationService = notifier()
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -160,7 +161,8 @@ fun GroupCreationPageContent(
                     onClick = {
                         notifier.notify(DataIds.proceed)
                     },
-                    contentDescription = "Continue Button"
+                    contentDescription = "Continue Button",
+                    enabled = canProceed
                 )
             }
             Spacer(modifier = Modifier.height(17.dep()))

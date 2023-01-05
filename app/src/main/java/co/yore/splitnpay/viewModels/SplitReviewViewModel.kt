@@ -261,7 +261,7 @@ class SplitReviewViewModel @Inject constructor(
                     updateAsMemberSelection()
                 }
                 DataIds.paidByAmount -> {
-                    if (arg !is Store) {
+                    /*if (arg !is Store) {
                         return@NotificationService
                     }
                     val member = arg["member"] as? MemberPayment ?: return@NotificationService
@@ -272,10 +272,10 @@ class SplitReviewViewModel @Inject constructor(
                     }
                     _members[index] = _members[index].copy(paid = amount)
                     val paid = _members.sumOf { it.paid }.toFloat()
-                    paidRemaining.value = _billTotal.value - paid
+                    paidRemaining.value = _billTotal.value - paid*/
                 }
                 DataIds.adjustByAmount -> {
-                    if (arg !is Store) {
+                    /*if (arg !is Store) {
                         return@NotificationService
                     }
                     val member = arg["member"] as? MemberPayment ?: return@NotificationService
@@ -286,7 +286,7 @@ class SplitReviewViewModel @Inject constructor(
                     }
                     _members[index] = _members[index].copy(toPay = amount)
                     val paid = _members.sumOf { it.toPay }.toFloat()
-                    adjustRemaining.value = _billTotal.value - paid
+                    adjustRemaining.value = _billTotal.value - paid*/
                 }
                 DataIds.back -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->

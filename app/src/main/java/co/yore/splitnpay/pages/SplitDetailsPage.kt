@@ -854,14 +854,14 @@ fun SplitMemberPaymentItem_z0nkzc(
                     onEditWidth(currentEditWidth)
                 }
         ){
-            notifier.notify(
+            /*notifier.notify(
                 notificationId,
                 Store()
                     .putAll(
                         "member" to memberPayment,
                         "amount" to it
                     )
-            )
+            )*/
         }
         Box(
             modifier = Modifier

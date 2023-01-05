@@ -109,33 +109,33 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
     //implementation("androidx.navigation:navigation-compose:2.5.1")
 
-    implementation("io.coil-kt:coil-compose:2.2.1")
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
 
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha03"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha05"
 
     //implementation "dev.chrisbanes.snapper:snapper:0.3.0"
 
-    debugImplementation "androidx.compose.ui:ui-tooling:1.2.1"
-    implementation "androidx.compose.ui:ui-tooling-preview:1.2.1"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.3.2"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.3.2"
 
     //compose navigation
-    implementation "androidx.navigation:navigation-compose:2.5.2"
+    implementation "androidx.navigation:navigation-compose:2.5.3"
 
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.26.4-beta"
 
     implementation 'io.github.serpro69:kotlin-faker:1.11.0'
 
-    debugImplementation("io.objectbox:objectbox-android-objectbrowser:$objectboxVersion")
-    releaseImplementation("io.objectbox:objectbox-android:$objectboxVersion")
+    //debugImplementation("io.objectbox:objectbox-android-objectbrowser:$objectboxVersion")
+    //releaseImplementation("io.objectbox:objectbox-android:$objectboxVersion")
 
     implementation "com.google.accompanist:accompanist-navigation-animation:0.28.0"
 
@@ -179,4 +179,4 @@ kapt {
     correctErrorTypes true
 }
 
-apply plugin: 'io.objectbox'
+//apply plugin: 'io.objectbox'

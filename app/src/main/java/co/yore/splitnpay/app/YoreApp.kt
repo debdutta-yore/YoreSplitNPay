@@ -39,7 +39,7 @@ object Routes{
     val splitPage = Route("split_page", "?splitAdded={splitAdded}&blank={blank}")
     val splitWithPage = Route("split_with_page", "?split={split}")
     val groupCreation = Route("group_creation","?split={split}")
-    val groupChatPage = Route("group_chat_page")
+    val groupChatPage = Route("group_chat_page","/{id}")
     val groupManagePage = Route("group_manage")
     val splitReviewPage = Route("split_review_page", "?asGroup={asGroup}")
     val splitCardDetailsPage = Route("split_card_details")
@@ -253,7 +253,13 @@ fun YoreApp() {
         }
         YoreScreen<GroupChatViewModel>(
             navController = navController,
-            route = Routes.groupChatPage.full
+            route = Routes.groupChatPage.full,
+            arguments = listOf(
+                navArgument("id"){
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
         ) {
             GroupChatScreen()
         }

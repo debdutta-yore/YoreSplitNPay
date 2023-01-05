@@ -1,8 +1,11 @@
 package co.yore.splitnpay
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.util.Log
 import co.yore.splitnpay.libs.root
 import co.yore.splitnpay.models.Category
+import co.yore.splitnpay.models.ContactData
 import io.grpc.StatusRuntimeException
 import splitpay.Splitpay
 import javax.inject.Inject
@@ -78,5 +81,29 @@ class ApiService @Inject constructor(
                 name = name,
                 isEnabled = true
             )
+    }
+
+    suspend fun createGroup(members: List<ContactData>, groupName: String, image: Bitmap?): String? {
+        if(image!=null){
+            val url = GrpcServer.FileService.upload(image).fileUrl
+            val imageUploadedMembers = members.map {
+                it.copy(
+                    image = (if(it.image is Bitmap) GrpcServer.FileService.upload(it.image as Bitmap).fileUrl else "")
+                )
+            }
+            return GrpcServer.GroupService.createGroup(
+                accountService.getAccountId(),
+                groupName,
+                url,
+                imageUploadedMembers.map {
+                    GrpcServer.ExpenseMember(
+                        phone = it.mobile,
+                        name = it.name,
+                        image = (it.image as? String)?:"",
+                    )
+                }
+            ).id
+        }
+        return null
     }
 }

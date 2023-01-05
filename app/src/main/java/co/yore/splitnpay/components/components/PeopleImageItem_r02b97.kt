@@ -88,7 +88,7 @@ fun PeopleImageItem_r02b97(
             )
         }
 
-        if (/*friend.deletable*/true){
+        if (friend.deletable){
             DeleteIcon_iw4d3p(
                 modifier = Modifier
                     .radialBottomLeft(config.imageSize.dep()),

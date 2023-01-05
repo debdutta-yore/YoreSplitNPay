@@ -1,5 +1,6 @@
 package co.yore.splitnpay.object_box
 
+/*
 import android.content.Context
 import android.util.Log
 import co.yore.splitnpay.BuildConfig
@@ -38,4 +39,4 @@ object ObjectBox {
     }
 }
 
-val <T>Class<T>.box get() = ObjectBox.get().boxFor(this)
+val <T>Class<T>.box get() = ObjectBox.get().boxFor(this)*/

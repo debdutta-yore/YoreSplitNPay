@@ -1,12 +1,15 @@
 package co.yore.splitnpay
 
+import android.graphics.Bitmap
+import com.google.protobuf.ByteString
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
-import splitpay.CategoryServiceGrpc
-import splitpay.ExpenseServiceGrpc
-import splitpay.GroupServiceGrpc
-import splitpay.Splitpay
-import splitpay.UserServiceGrpc
+import splitpay.*
+import yore_file_upload.YoreFileUploadGrpc
+import java.io.ByteArrayOutputStream
+import java.util.UUID
+import kotlin.random.Random
+
 
 class GrpcServer{
     enum class ShareType{
@@ -229,6 +232,30 @@ class GrpcServer{
             return blockingStub.createGroup(request)
         }
 
+        /*{
+            "gid": "6672cd76-dcb6-4dba-98cf-de545d26b1f3",
+            "uid": "",
+            "accountId": "8967114927",
+            "needGetPay": true
+        }*/
+
+        suspend fun groupDetails(
+            accountId: String,
+            uid: String,
+            gid: String,
+            needGetPay: Boolean
+        ): Splitpay.GroupDetailResponse{
+            ensureSeverRunning()
+            val request = Splitpay.GroupDetailRequest.newBuilder()
+                .setAccountId(accountId)
+                .setUid(uid)
+                .setGid(gid)
+                .setNeedGetPay(needGetPay)
+                .build()
+            val blockingStub = GroupServiceGrpc.newBlockingStub(channel)
+            return blockingStub.groupDetail(request)
+        }
+
         suspend fun updateGroup(
             groupId: String,
             accountId: String,
@@ -308,11 +335,38 @@ class GrpcServer{
             return blockingStub.listUser(request)
         }
     }
+    object FileService{
+        suspend fun upload(
+            bitmap: Bitmap
+        ): yore_file_upload.File.UploadFileResponse{
+
+            val out = ByteArrayOutputStream()
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 20, out)) {
+                out.flush()
+                out.close()
+            }
+            val byteArray = out.toByteArray()
+            val uuid = UUID.nameUUIDFromBytes(byteArray)
+            val timestamp = System.currentTimeMillis()
+            val rand = Random(System.nanoTime()).nextInt(1000,10000)
+            val name = "${uuid}_${timestamp}_${rand}.jpeg"
+            ensureSeverRunning()
+            val request = yore_file_upload.File.UploadFileRequest.newBuilder()
+                .setObjectName(name)
+                .setFileContents(ByteString.copyFrom(byteArray))
+                .build()
+            val blockingStub = YoreFileUploadGrpc.newBlockingStub(fileChannel)
+            return blockingStub.uploadFile(request)
+        }
+    }
     companion object{
         private var channel: ManagedChannel? = null
-        private val ip = "10.0.2.2"
+        private var fileChannel: ManagedChannel? = null
+        private val ip = "192.168.0.102"
         private val port = 9090
+        private val file_port = 9091
         private var status = false
+        private var file_status = false
 
         fun start() {
             try {
@@ -323,14 +377,29 @@ class GrpcServer{
             }
         }
 
+        fun startFile() {
+            try {
+                fileChannel = ManagedChannelBuilder.forAddress(ip, file_port).usePlaintext().build()
+                file_status = true
+            } catch (e: Exception) {
+                file_status = false
+            }
+        }
+
         fun stop() {
             channel?.shutdown()
             status = false
         }
 
+        fun stopFile() {
+            fileChannel?.shutdown()
+            file_status = false
+        }
+
         private fun ensureSeverRunning() {
             if(!status){
                 start()
+                startFile()
             }
             if(!status){
                 throw GrpcServerNotRunningException()

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.DataBank
 import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
@@ -152,30 +153,32 @@ class MemberSelectionPageViewModel @Inject constructor(
     }
 
     private fun updateCanProceed() {
-        proceedWithContacts.value = addedContacts.size > 1
+        proceedWithContacts.value = addedContacts.size > 0
     }
 
     override val notifier = _notificationService
 
     private fun proceedWithContacts() {
-        saveAddedContacts{
-            withContext(Dispatchers.Main){
+        saveAddedContacts()
+        //saveAddedContacts{
+            //withContext(Dispatchers.Main){
                 if (!forSplit){
                     gotoGroupCreationPage()
                 } else {
                     mySheeting.change(Sheets.SplitAsChoice)
                     mySheeting.show()
                 }
-            }
-        }
+            //}
+        //}
     }
 
-    private fun saveAddedContacts(block: suspend () -> Unit) {
+    private fun saveAddedContacts(/*block: suspend () -> Unit*/) {
         val contacts = addedContacts.map { it.mobile }
-        viewModelScope.launch(Dispatchers.IO) {
+        DataBank.once[DataBank.Key.members] = addedContacts.toList()
+        /*viewModelScope.launch(Dispatchers.IO) {
             repo.saveContacts(contacts)
             block()
-        }
+        }*/
     }
 
     private fun gotoGroupCreationPage(split: Boolean = false) {

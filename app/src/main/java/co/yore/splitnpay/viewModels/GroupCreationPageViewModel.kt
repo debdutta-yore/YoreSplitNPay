@@ -1,11 +1,18 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
+import android.R
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.DataBank
 import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
@@ -23,11 +30,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class GroupCreationPageViewModel @Inject constructor(
-    private val repo: MasterRepo// = MasterRepoImpl()
+    private val repo: MasterRepo,
+    private val media: Media
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     private val contacts = mutableStateListOf<ContactData>()
@@ -72,6 +82,54 @@ class GroupCreationPageViewModel @Inject constructor(
     // ////////////////////////////////////////
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
     private val _groupName = mutableStateOf("")
+    private val canProceed = mutableStateOf(false)
+
+    private fun createGroup(){
+        val members = contacts.map {
+            it.copy(
+                image = getImage(it.image)
+            )
+        }
+        val groupName = _groupName.value
+        val image = getImage(profileImage.value)
+        viewModelScope.launch(Dispatchers.IO) {
+            val id = repo.createGroup(members, groupName, image)
+            if(id != null){
+                onGroupCreated(id)
+            }
+            else{
+                onGroupCreateFailed()
+            }
+        }
+    }
+
+    private fun onGroupCreateFailed() {
+
+    }
+
+    private fun onGroupCreated(id: String) {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            navHostController.popBackStack(Routes.splitPage.name,false)
+            if (this.getBoolean("split")) {
+                navHostController.navigate("${Routes.splitReviewPage.name}?asGroup=true")
+            } else {
+                navHostController.navigate("${Routes.groupChatPage.name}/$id")
+            }
+        }
+    }
+
+    private fun getImage(image: Any?): Bitmap? {
+        if(image is Uri){
+            return media.decodeBitmapFromUri(image)
+        }
+        if(image is Bitmap){
+            return image
+        }
+        if(image is String && image.startsWith("content://")){
+            return media.decodeBitmapFromUri(Uri.parse(image))
+        }
+        return null
+    }
 
     // ////////////////////////////////////////
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
@@ -80,11 +138,12 @@ class GroupCreationPageViewModel @Inject constructor(
             when (id) {
                 DataIds.proceed -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        navHostController.popBackStack(Routes.splitPage.full, false)
+                        //navHostController.popBackStack(Routes.splitPage.full, false)
                         if (this.getBoolean("split")) {
                             navHostController.navigate("${Routes.splitReviewPage.name}?asGroup=true")
                         } else {
-                            navHostController.navigate(Routes.groupChatPage.name)
+                            createGroup()
+                            //navHostController.navigate(Routes.groupChatPage.name)
                         }
                     }
                 }
@@ -107,9 +166,14 @@ class GroupCreationPageViewModel @Inject constructor(
                 }
                 DataIds.groupName -> {
                     _groupName.value = (arg as? String) ?: ""
+                    updateCanProceed()
                 }
             }
         }
+
+    private fun updateCanProceed() {
+        canProceed.value = _groupName.value.isNotEmpty()
+    }
 
     private fun deleteItem(contactData: ContactData) {
         if (contacts.size < 3){
@@ -136,9 +200,11 @@ class GroupCreationPageViewModel @Inject constructor(
 
     private fun fetchContacts() {
         viewModelScope.launch(Dispatchers.IO) {
-            val c = repo.contacts()
-            contacts.clear()
-            contacts.addAll(repo.deviceContacts(c))
+            //val c = repo.contacts()
+            //contacts.clear()
+            val list = DataBank.once[DataBank.Key.members] as? List<ContactData>?: emptyList()
+            contacts.addAll(/*repo.deviceContacts(c)*/list.map { it.copy(deletable = true) })
+            contacts.add(repo.mySelfContact())
             adjustDeletable()
         }
     }
@@ -168,6 +234,7 @@ class GroupCreationPageViewModel @Inject constructor(
                     profileImage.value = resultingActivityHandler.takePicturePreview()
                 }
             }
+            updateCanProceed()
         }
     }
 
@@ -177,6 +244,7 @@ class GroupCreationPageViewModel @Inject constructor(
         viewModelScope.launch {
             val uri = resultingActivityHandler.getContent("image/*")
             profileImage.value = uri
+            updateCanProceed()
         }
     }
 
@@ -186,7 +254,8 @@ class GroupCreationPageViewModel @Inject constructor(
             DataIds.statusBarColor to _statusBarColor,
             DataIds.groupName to _groupName,
             DataIds.profileImage to profileImage,
-            DataIds.contacts to contacts
+            DataIds.contacts to contacts,
+            DataIds.canProceed to canProceed,
         )
         _statusBarColor.value = StatusBarColor(
             color = BlackSqueeze,

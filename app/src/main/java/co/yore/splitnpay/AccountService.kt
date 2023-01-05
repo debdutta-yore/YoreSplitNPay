@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 val accountIdKey = stringPreferencesKey("accountId")
+val accountImage = stringPreferencesKey("accountImage")
+val accountName = stringPreferencesKey("accountName")
 val Context.accountDataStore: DataStore<Preferences> by preferencesDataStore(name = "accountPreference")
 
 class AccountService @Inject constructor(
@@ -27,7 +29,19 @@ class AccountService @Inject constructor(
 
     suspend fun getAccountId(): String {
         return context.accountDataStore.data.map {
-            it[accountIdKey]?:"8967114927"
+            it[accountIdKey]?:"+918967114927"
+        }.first()
+    }
+
+    suspend fun getAccountImage(): String {
+        return context.accountDataStore.data.map {
+            it[accountImage]?:"name://${getAccountName()}"
+        }.first()
+    }
+
+    suspend fun getAccountName(): String {
+        return context.accountDataStore.data.map {
+            it[accountName]?:"Debdutta Panda"
         }.first()
     }
 }

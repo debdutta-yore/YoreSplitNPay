@@ -1,8 +1,11 @@
 package co.yore.splitnpay.repo
 
+import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import co.yore.splitnpay.AccountService
 import co.yore.splitnpay.ApiService
+import co.yore.splitnpay.GrpcServer
 import co.yore.splitnpay.R
 import co.yore.splitnpay.app.AppContext
 import co.yore.splitnpay.components.components.Kal
@@ -13,8 +16,8 @@ import co.yore.splitnpay.libs.kontakts.phone
 import co.yore.splitnpay.libs.kontakts.repo.ContactRepo
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.models.Date
-import co.yore.splitnpay.object_box.Contact
-import co.yore.splitnpay.object_box.box
+//import co.yore.splitnpay.object_box.Contact
+//import co.yore.splitnpay.object_box.box
 import co.yore.splitnpay.pages.childpages.CategoryExpense
 import co.yore.splitnpay.pages.childpages.PieData
 import co.yore.splitnpay.ui.theme.CuriousBlue
@@ -29,6 +32,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 interface MasterRepo{
+    suspend fun mySelfContact(): ContactData
     suspend fun groupAndContacts(): List<GroupOrContact>
     suspend fun groups(contacts: List<ContactData>): List<GroupData>
     suspend fun peoples(count: Int = 20): List<ContactData>
@@ -85,6 +89,8 @@ interface MasterRepo{
     fun splitReviewPageData(): SplitReviewPageData
     suspend fun createCategory(name: String)
     suspend fun renameCategory(category: Category, name: String)
+    suspend fun createGroup(members: List<ContactData>, groupName: String, image: Bitmap?): String?
+    suspend fun groupDetails(groupId: String): GroupData
 }
 
 class MasterRepoImpl @Inject constructor(
@@ -92,6 +98,17 @@ class MasterRepoImpl @Inject constructor(
     val apiService: ApiService,
     val accountService: AccountService
 ) : MasterRepo {
+    override suspend fun mySelfContact(): ContactData {
+        val phone = accountService.getAccountId()
+        return ContactData(
+            id = phone,
+            image = accountService.getAccountImage(),
+            name = accountService.getAccountName(),
+            deletable = false,
+            mobile = phone
+        )
+    }
+
     override suspend fun groupAndContacts(): List<GroupOrContact> {
         // delay(6000)
         val list = mutableListOf<GroupOrContact>()
@@ -142,13 +159,14 @@ class MasterRepoImpl @Inject constructor(
                 image = it.imageUrl,
                 name = it.name,
                 members = it.membersList.map {
+                    val phone = phone(it.phoneNumber) ?: return@map null
                     ContactData(
-                        id = it.phoneNumber,
+                        id = phone,
                         image = if(it.imageUrl.startsWith("https://")) it.imageUrl else "name://${it.fullName}",
                         name = it.fullName,
-                        mobile = it.phoneNumber,
+                        mobile = phone,
                     )
-                },
+                }.filterNotNull(),
                 willGet = it.willGet,
                 willPay = it.willPay
             )
@@ -235,27 +253,28 @@ class MasterRepoImpl @Inject constructor(
         }
     }
     override suspend fun saveContacts(contacts: List<String>) {
-        Contact::class.java.box
+        /*Contact::class.java.box
             .put(
                 contacts.map {
                     Contact(
                         mobile = it
                     )
                 }
-            )
+            )*/
     }
     override suspend fun purgeContacts() {
-        Contact::class.java
+        /*Contact::class.java
             .box
-            .removeAll()
+            .removeAll()*/
     }
     override suspend fun contacts(): List<String> {
-        return Contact::class.java
+        return emptyList()
+        /*return Contact::class.java
             .box
             .all
             .map {
                 it.mobile
-            }
+            }*/
     }
     override fun deviceContacts(contacts: List<String>): List<ContactData> {
         var i = 0
@@ -1580,6 +1599,40 @@ class MasterRepoImpl @Inject constructor(
 
     override suspend fun renameCategory(category: Category, name: String) {
         apiService.renameCategory(category, name)
+    }
+
+    override suspend fun createGroup(members: List<ContactData>, groupName: String, image: Bitmap?): String? {
+        return apiService.createGroup(members, groupName, image)
+    }
+
+    override suspend fun groupDetails(groupId: String): GroupData {
+        var group = GrpcServer.GroupService.groupDetails(
+            accountId = accountService.getAccountId(),
+            uid = "",
+            gid = groupId,
+            needGetPay = true
+        ).result
+        return GroupData(
+            id = group.id,
+            image = group.imageUrl,
+            name = group.name,
+            members = group.membersList.map {
+                ContactData(
+                    id = it.id,
+                    image = it.imageUrl,
+                    name = it.fullName,
+                    mobile = it.phoneNumber,
+                    willPay = it.willPay,
+                    willGet = it.willGet,
+                    createdAt = it.createdAt.seconds*1000,
+                    updatedAt = it.updatedAt.seconds*1000
+                )
+            },
+            willGet = group.willGet,
+            willPay = group.willPay,
+            createdAt = group.createdAt.seconds*1000,
+            updatedAt = group.updatedAt.seconds*1000
+        )
     }
 }
 object MembersMock {

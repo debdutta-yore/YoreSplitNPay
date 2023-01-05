@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupChatViewModel @Inject constructor(
-    private val repo: MasterRepo// = MasterRepoImpl()
+    private val repo: MasterRepo
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
@@ -469,14 +469,25 @@ class GroupChatViewModel @Inject constructor(
 
     }
 
+    private var groupId = ""
     private fun fetchPageData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        navigation.scope { navHostController, lifecycleOwner, activityService ->
+            groupId = this.getString("id")?:""
+            fetchGroup(groupId)
+        }
+        /*viewModelScope.launch(Dispatchers.IO) {
             val pageData = repo.groupChatPageData()
             withContext(Dispatchers.Main) {
                 _groupName.value = pageData.name
                 _groupAmount.value = pageData.amount
                 _groupImage.value = pageData.image
             }
+        }*/
+    }
+
+    private fun fetchGroup(groupId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.groupDetails(groupId)
         }
     }
 }

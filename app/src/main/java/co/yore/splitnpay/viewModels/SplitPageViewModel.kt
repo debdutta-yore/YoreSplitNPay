@@ -23,6 +23,7 @@ import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import splitpay.Splitpay.Group
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -96,7 +97,7 @@ class SplitPageViewModel @Inject constructor(
                     mySheeting.show()
                 }
                 DataIds.groupCardGo -> {
-                    gotoGroupPage()
+                    gotoGroupPage((arg as? GroupData?:return@NotificationService).id)
                 }
                 DataIds.addGroup -> {
                     gotoSplitWithPage()
@@ -313,9 +314,11 @@ class SplitPageViewModel @Inject constructor(
         }
     }
 
-    private fun gotoGroupPage() {
-        navigation.scope { navHostController, lifecycleOwner, toaster ->
-            navHostController.navigate(Routes.groupChatPage.name)
+    private fun gotoGroupPage(id: Any?) {
+        if(id is String && id.isNotEmpty()){
+            navigation.scope { navHostController, lifecycleOwner, toaster ->
+                navHostController.navigate("${Routes.groupChatPage.name}/$id")
+            }
         }
     }
 

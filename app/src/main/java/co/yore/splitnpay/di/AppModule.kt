@@ -3,6 +3,7 @@ package co.yore.splitnpay.di
 import android.content.Context
 import co.yore.splitnpay.AccountService
 import co.yore.splitnpay.ApiService
+import co.yore.splitnpay.libs.Media
 import co.yore.splitnpay.libs.kontakts.repo.ContactRepo
 import co.yore.splitnpay.repo.MasterRepo
 import co.yore.splitnpay.repo.MasterRepoImpl
@@ -49,6 +50,12 @@ object DetailModule {
     @ViewModelScoped
     fun provideAccountService(@ApplicationContext context: Context): AccountService {
         return AccountService(context)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideMedia(@ApplicationContext context: Context): Media {
+        return Media(context)
     }
 
     @Provides

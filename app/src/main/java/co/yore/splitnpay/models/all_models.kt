@@ -210,7 +210,9 @@ data class ContactData(
     var willGet: Double = 0.0,
     val selected: Boolean = false,
     val lastActivity: Long = 0,
-    val deletable: Boolean = true
+    val deletable: Boolean = true,
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0
 ) : GroupOrContact {
     override fun id(): Any {
         return this.id
@@ -244,7 +246,9 @@ data class GroupData(
     val willGet: Double = 0.0,
     val willPay: Double = 0.0,
     val showGroupBalance: Boolean = willGet > 0f || willPay > 0f,
-    val lastActivity: Long = 0
+    val lastActivity: Long = 0,
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0
 ) : GroupOrContact {
     override fun id(): Any {
         return this.id
