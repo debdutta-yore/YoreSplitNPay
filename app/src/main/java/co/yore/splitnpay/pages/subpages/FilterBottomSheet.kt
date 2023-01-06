@@ -222,14 +222,16 @@ private fun FilterSingleUser_ffkz81(
 
         config.spaceBetweenProfileImageAndUserName.sx()
 
-        Column {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             FontFamilyText(
                 text = item.userName,
                 color = CloudBurst,
                 fontSize = 12.sep(),
                 fontWeight = FontWeight.Bold,
                 lineHeight = 14.sep(),
-                letterSpacing = 0.2.sep()
+                letterSpacing = 0.2.sep(),
             )
 
             config.spaceBetweenUserNameAndPhoneNo.sy()
@@ -243,7 +245,7 @@ private fun FilterSingleUser_ffkz81(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(0.1f))
 
         SelectorIcon_ulkel8(
             selected = item.isSelected,

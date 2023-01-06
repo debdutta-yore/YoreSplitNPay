@@ -4,7 +4,14 @@ object DataBank {
     private val _once = mutableMapOf<Key,Any?>()
     private val _ever = mutableMapOf<Key,Any?>()
     enum class Key{
-        members
+        Members,
+        BillTotal,
+        SplitDescription,
+        SplitCategory,
+        ExpenseData,
+        SplitMembers,
+        GroupName,
+        GroupImage
     }
     object once{
         operator fun set(key: Key, value: Any?){

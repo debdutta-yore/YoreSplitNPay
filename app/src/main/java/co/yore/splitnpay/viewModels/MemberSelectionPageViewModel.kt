@@ -15,7 +15,6 @@ import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.pages.subpages.SplitAsChoiceBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
-import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BlackSqueeze
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -174,7 +173,7 @@ class MemberSelectionPageViewModel @Inject constructor(
 
     private fun saveAddedContacts(/*block: suspend () -> Unit*/) {
         val contacts = addedContacts.map { it.mobile }
-        DataBank.once[DataBank.Key.members] = addedContacts.toList()
+        DataBank.once[DataBank.Key.Members] = addedContacts.toList()
         /*viewModelScope.launch(Dispatchers.IO) {
             repo.saveContacts(contacts)
             block()

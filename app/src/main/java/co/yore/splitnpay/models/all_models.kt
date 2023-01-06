@@ -55,7 +55,8 @@ data class Category(
     val isSelected: Boolean = false,
     val isEditable: Boolean = false,
     val subCategory: String = "Business trip",
-    val timestamp: Long = 0
+    val timestamp: Long = 0,
+    val uid: String = ""
 ) {
     companion object {
 

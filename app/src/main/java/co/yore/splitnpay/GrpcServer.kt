@@ -14,12 +14,34 @@ import kotlin.random.Random
 class GrpcServer{
     enum class ShareType{
         Equal,
-        Unequal
+        Unequal;
+
+        companion object{
+            fun fromString(value: String): ShareType{
+                return when(value.lowercase()){
+                    "equal"-> Equal
+                    "unequal"-> Unequal
+                    else-> throw IllegalArgumentException("Unknown value passed for ShareType. Allowed values are ${values().joinToString(", ")}")
+                }
+            }
+        }
+
     }
     sealed class CalculationMethod(val value: String){
         object Proportionate: CalculationMethod("proportionate")
         object OptimalAutomatic: CalculationMethod("optimal.automatic")
         object OptimalDesirable: CalculationMethod("optimal.desirable")
+
+        companion object{
+            fun fromString(value: String): CalculationMethod{
+                return when(value.lowercase()){
+                    "proportionate"-> Proportionate
+                    "optimal.automatic"->OptimalAutomatic
+                    "optimal.desirable"->OptimalDesirable
+                    else-> throw IllegalArgumentException("Unknown value passed for ShareType. Allowed values are ${ShareType.values().joinToString(", ")}")
+                }
+            }
+        }
     }
     data class ExpenseMember(
         val phone: String,

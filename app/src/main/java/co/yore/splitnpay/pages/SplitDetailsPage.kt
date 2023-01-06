@@ -50,12 +50,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.yore.splitnpay.R
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
 import co.yore.splitnpay.libs.jerokit.*
+import co.yore.splitnpay.libs.locals.RobotoText
 import co.yore.splitnpay.libs.locals.localCurrency
 import co.yore.splitnpay.models.*
 import co.yore.splitnpay.ui.theme.*
@@ -723,7 +725,7 @@ fun SplitMembersRemainingBox(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SplitMemberPaymentItem_z0nkzc(
-    memberPayment: MemberPayment,
+    item: MemberPayment,
     adjustable: Boolean = false,
     editable: Boolean = false,
     config: SplitPaidByItemConfiguration = SplitPaidByItemConfiguration(),
@@ -732,9 +734,9 @@ fun SplitMemberPaymentItem_z0nkzc(
     notificationId: Any,
     notifier: NotificationService = notifier()
 ) {
-    val selected by remember(memberPayment.selected, adjustable) {
+    val selected by remember(item.selected, adjustable) {
         derivedStateOf {
-            memberPayment.selected && !adjustable
+            item.selected && !adjustable
         }
     }
 
@@ -749,7 +751,8 @@ fun SplitMemberPaymentItem_z0nkzc(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() } // This is mandatory
                 ) {
-                    notifier.notify(DataIds.selectPaidByMemberClick)
+                    //notifier.notify(DataIds.selectPaidByMemberClick, item)
+                    notifier.notify(DataIds.memberPaymentCheck, item)
                 },
             contentAlignment = Alignment.TopEnd
         ) {
@@ -765,30 +768,64 @@ fun SplitMemberPaymentItem_z0nkzc(
                 }
             }
             val animatedBorderColor by animateColorAsState(targetValue = borderColor)
-            AsyncImage(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .fillMaxSize()
-                    .border(
-                        width = animatedBorderStroke.dep(),
-                        color = animatedBorderColor,
-                        shape = CircleShape
+            if(item.image is String && (item.image as String).startsWith("name://")){
+                val name = (item.image as String).replace("name://","")
+                val colors = colorsFromHumanName(name)
+                Box(
+                    modifier = Modifier
+                        .size(config.imageSize.dep())
+                        .clip(CircleShape)
+                        .background(colors.first)
+                        .border(
+                            width = animatedBorderStroke.dep(),
+                            color = animatedBorderColor,
+                            shape = CircleShape
+                        )
+                        .padding(animatedBorderStroke.dep()),
+                    contentAlignment = Alignment.Center
+                ){
+                    RobotoText(
+                        text = String(
+                            name
+                                .split("/|\\s+".toRegex())
+                                .map { it.firstOrNull() }
+                                .filterNotNull()
+                                .filter { it.isDigit() || it.isLetter() || it == '+' }
+                                .take(2)
+                                .toCharArray()
+                        ).uppercase(),
+                        color = colors.second,
+                        fontSize = 20.sep(),
+                        fontWeight = FontWeight.Bold
                     )
-                    .clip(CircleShape)
-                    .clickable {
-                        if (!adjustable) {
-                            notifier.notify(DataIds.memberPaymentCheck, memberPayment)
+                }
+            }
+            else{
+                AsyncImage(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .fillMaxSize()
+                        .border(
+                            width = animatedBorderStroke.dep(),
+                            color = animatedBorderColor,
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape)
+                        .clickable {
+                            if (!adjustable) {
+                                notifier.notify(DataIds.memberPaymentCheck, item)
+                            }
                         }
-                    }
-                    .padding(animatedBorderStroke.dep()),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://i.pravatar.cc/300?")
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(config.placeholder),
-                contentScale = ContentScale.Crop,
-                contentDescription = "ProfileImage"
-            )
+                        .padding(animatedBorderStroke.dep()),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("https://i.pravatar.cc/300?")
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(config.placeholder),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "ProfileImage"
+                )
+            }
 
             androidx.compose.animation.AnimatedVisibility(
                 selected,
@@ -806,12 +843,14 @@ fun SplitMemberPaymentItem_z0nkzc(
 
         Column(modifier = Modifier.padding(top = 7.dep())) {
             FontFamilyText(
-                text = memberPayment.name,
+                text = item.name,
                 fontSize = config.nameFontSize.sep(),
-                color = config.nameTextColor
+                color = config.nameTextColor,
+                modifier = Modifier.widthIn(max = 154.dep()),
+                overflow = TextOverflow.Ellipsis
             )
             FontFamilyText(
-                text = memberPayment.mobile,
+                text = item.mobile,
                 fontSize = config.phoneNumberFontSize.sep(),
                 color = config.phoneNumberTextColor
             )
@@ -844,7 +883,7 @@ fun SplitMemberPaymentItem_z0nkzc(
                 .weight(1f)
         )
         AmountField(
-            amount = if (adjustable) memberPayment.toPay else memberPayment.paid,
+            amount = if (adjustable) item.toPay else item.paid,
             enabled = selected || editable,
             modifier = Modifier
                 .animateContentSize()
@@ -854,14 +893,13 @@ fun SplitMemberPaymentItem_z0nkzc(
                     onEditWidth(currentEditWidth)
                 }
         ){
-            /*notifier.notify(
+            notifier.notify(
                 notificationId,
-                Store()
-                    .putAll(
-                        "member" to memberPayment,
-                        "amount" to it
-                    )
-            )*/
+                Store(
+                    "member" to item,
+                    "amount" to it
+                )
+            )
         }
         Box(
             modifier = Modifier

@@ -1,11 +1,14 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.DataBank
 import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.Kal
 import co.yore.splitnpay.components.components.YoreDatePickerData
@@ -14,12 +17,8 @@ import co.yore.splitnpay.libs.jerokit.*
 import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheeting
 import co.yore.splitnpay.libs.jerokit.bottom_sheet.Sheets
 import co.yore.splitnpay.models.*
-import co.yore.splitnpay.pages.subpages.AllCategoriesBottomSheetModel
-import co.yore.splitnpay.pages.subpages.BillTotalAndCategoryBottomSheetModel
-import co.yore.splitnpay.pages.subpages.ExpenseDatePickerBottomSheetModel
-import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
+import co.yore.splitnpay.pages.subpages.*
 import co.yore.splitnpay.repo.MasterRepo
-import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.RobinsEggBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +30,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplitReviewViewModel @Inject constructor(
-    private val repo: MasterRepo// = MasterRepoImpl()
+    private val repo: MasterRepo,
+    private val media: Media
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustPan)
 
@@ -45,6 +45,23 @@ class SplitReviewViewModel @Inject constructor(
     @OptIn(ExperimentalMaterialApi::class)
     override val sheeting = Sheeting(
         sheetMap = mapOf(
+            Sheets.CalculationMethod to CalculationMethodSelectionBottomSheetModel(
+                object : CalculationMethodSelectionBottomSheetModel.Callback{
+                    override fun scope(): CoroutineScope {
+                        return viewModelScope
+                    }
+
+                    override fun onContinue(arg: Any?) {
+                        mySheeting.hide()
+                        onCalculationMethodSelected(arg as? String?:return)
+                    }
+
+                    override fun close() {
+                        mySheeting.hide()
+                    }
+
+                }
+            ),
             Sheets.ImagePicker to PhotoSelectionBottomSheetModel(
                 object : PhotoSelectionBottomSheetModel.Callback{
                     override fun scope(): CoroutineScope {
@@ -77,7 +94,7 @@ class SplitReviewViewModel @Inject constructor(
                     }
 
                     override suspend fun getDescription(): String {
-                        return _subCategoryText.value
+                        return _description.value
                     }
 
                     override fun openAllCategories() {
@@ -97,7 +114,7 @@ class SplitReviewViewModel @Inject constructor(
                         _billTotal.value = billTotal.toDouble()
                         onBillTotalChanged()
                         this@SplitReviewViewModel.category.value = category
-                        _subCategoryText.value = billDescription
+                        _description.value = billDescription
                     }
 
                     override fun onRenameContinue(
@@ -191,6 +208,61 @@ class SplitReviewViewModel @Inject constructor(
             true
         }
     )
+
+    private fun onCalculationMethodSelected(s: String) {
+        if(s == "Proportionate"){
+            viewModelScope.launch {
+                val response = repo.createExpense(
+                    categoryId = category.value.uid,
+                    shareType = when(adjustMethod.value){
+                        0-> "equal"
+                        else -> "unequal"
+                    },
+                    amount = _billTotal.value,
+                    description = _description.value,
+                    receiptUrl = getImage(receipt),
+                    calculationMethod = "proportionate",
+                    members = _members.toList(),
+                    groupId = "",
+                    groupName = DataBank.once[DataBank.Key.GroupName] as? String?:"",
+                    groupImage = getImage(DataBank.once[DataBank.Key.GroupImage])
+                )
+                val eid = response.first
+                val gid = response.second
+                leaveScreen(gid)
+            }
+        }
+    }
+
+    private fun leaveScreen(gid: String) {
+        navigation.scope { navHostController, lifecycleOwner, toaster ->
+            if (asGroup) {
+                if (navHostController.backQueue.firstOrNull{ it.destination.route == Routes.groupChatPage.full} != null) {
+                    navHostController.popBackStack("${Routes.groupChatPage.name}/$gid", false)
+                } else {
+                    navHostController.popBackStack(Routes.splitPage.full, false)
+                    navHostController.navigate("${Routes.groupChatPage.name}/$gid")
+                }
+            } else {
+                navHostController.set(Routes.splitPage.full, "splitAdded", true)
+                navHostController.popBackStack(Routes.splitPage.full, false)
+            }
+        }
+    }
+
+    private fun getImage(image: Any?): Bitmap? {
+        if(image is Uri){
+            return media.decodeBitmapFromUri(image)
+        }
+        if(image is Bitmap){
+            return image
+        }
+        if(image is String && image.startsWith("content://")){
+            return media.decodeBitmapFromUri(Uri.parse(image))
+        }
+        return null
+    }
+
     private fun onBillTotalChanged() {
         updateAsSelectedListOption()
         updateAsMemberSelection()
@@ -203,14 +275,14 @@ class SplitReviewViewModel @Inject constructor(
     private val _statusBarColor = mutableStateOf<StatusBarColor?>(null)
 
     private val _billTotal = mutableStateOf(0.0)
-    private val _subCategoryText = mutableStateOf("")
+    private val _description = mutableStateOf("")
     private val _dateText = mutableStateOf("")
 
     // ///////////
     private val paidRemaining = mutableStateOf(0.0)
     private val adjustRemaining = mutableStateOf(0.0)
-    private val selectedTabIndex = mutableStateOf(0)
-    private val selectedListOption = mutableStateOf(0)
+    private val paidByOrAdjustSplitMode = mutableStateOf(0)
+    private val adjustMethod = mutableStateOf(0)
     private val receipt = mutableStateOf<Any?>(null)
     private val category = mutableStateOf(Category.blank)
     private val date = mutableStateOf(Kal.Date(7, 6, 2022))
@@ -243,10 +315,10 @@ class SplitReviewViewModel @Inject constructor(
                     openBillTotalBottomSheet()
                 }
                 DataIds.selectedTabIndex -> {
-                    selectedTabIndex.value = arg as? Int ?: return@NotificationService
+                    paidByOrAdjustSplitMode.value = arg as? Int ?: return@NotificationService
                 }
                 DataIds.selectedListOption -> {
-                    selectedListOption.value = arg as? Int ?: return@NotificationService
+                    adjustMethod.value = arg as? Int ?: return@NotificationService
                     updateAsSelectedListOption()
                 }
                 DataIds.memberPaymentCheck -> {
@@ -261,7 +333,7 @@ class SplitReviewViewModel @Inject constructor(
                     updateAsMemberSelection()
                 }
                 DataIds.paidByAmount -> {
-                    /*if (arg !is Store) {
+                    if (arg !is Store) {
                         return@NotificationService
                     }
                     val member = arg["member"] as? MemberPayment ?: return@NotificationService
@@ -272,10 +344,10 @@ class SplitReviewViewModel @Inject constructor(
                     }
                     _members[index] = _members[index].copy(paid = amount)
                     val paid = _members.sumOf { it.paid }.toFloat()
-                    paidRemaining.value = _billTotal.value - paid*/
+                    paidRemaining.value = _billTotal.value - paid
                 }
                 DataIds.adjustByAmount -> {
-                    /*if (arg !is Store) {
+                    if (arg !is Store) {
                         return@NotificationService
                     }
                     val member = arg["member"] as? MemberPayment ?: return@NotificationService
@@ -286,7 +358,7 @@ class SplitReviewViewModel @Inject constructor(
                     }
                     _members[index] = _members[index].copy(toPay = amount)
                     val paid = _members.sumOf { it.toPay }.toFloat()
-                    adjustRemaining.value = _billTotal.value - paid*/
+                    adjustRemaining.value = _billTotal.value - paid
                 }
                 DataIds.back -> {
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
@@ -294,7 +366,14 @@ class SplitReviewViewModel @Inject constructor(
                     }
                 }
                 DataIds.selectPaidByMemberClick -> {
-
+                    val selected = paidByOrAdjustSplitMode.value
+                    if(selected == 0){
+                        val item = arg as? MemberPayment?:return@NotificationService
+                        val index = _members.indexOfFirst { it.id == item.id }
+                        if(index > -1){
+                            _members[index] = item.copy(selected = item.selected.not())
+                        }
+                    }
                 }
                 DataIds.editBillAmountClick -> {
                     openBillTotalBottomSheet()
@@ -310,25 +389,14 @@ class SplitReviewViewModel @Inject constructor(
                     showCameraOrGallery()
                 }
                 DataIds.confirmSplitClick -> {
-                    navigation.scope { navHostController, lifecycleOwner, toaster ->
-                        if (asGroup) {
-                            if (navHostController.backQueue.firstOrNull{ it.destination.route == Routes.groupChatPage.full} != null) {
-                                navHostController.popBackStack(Routes.groupChatPage.full, false)
-                            } else {
-                                navHostController.popBackStack(Routes.splitPage.full, false)
-                                navHostController.navigate(Routes.groupChatPage.name)
-                            }
-                        } else {
-                            navHostController.set(Routes.splitPage.full, "splitAdded", true)
-                            navHostController.popBackStack(Routes.splitPage.full, false)
-                        }
-                    }
+                    mySheeting.sheets.value = Sheets.CalculationMethod
+                    mySheeting.show()
                 }
                 DataIds.scanClick -> {
 
                 }
                 DataIds.subCategoryText -> {
-                    _subCategoryText.value = (arg as? String) ?: ""
+                    _description.value = (arg as? String) ?: ""
                 }
             }
         }
@@ -358,7 +426,7 @@ class SplitReviewViewModel @Inject constructor(
     }
 
     private fun updateAsSelectedListOption() {
-        if (selectedListOption.value == 0){
+        if (adjustMethod.value == 0){
             val memberCount = _members.size
             val contribute = _billTotal.value / memberCount
             for (i in 0 until memberCount){
@@ -426,12 +494,12 @@ class SplitReviewViewModel @Inject constructor(
             DataIds.paidList to _members,
             DataIds.adjustedList to _members,
             DataIds.billTotal to _billTotal,
-            DataIds.subCategoryText to _subCategoryText,
+            DataIds.subCategoryText to _description,
             DataIds.dateText to _dateText,
             DataIds.paidRemaining to paidRemaining,
             DataIds.adjustRemaining to adjustRemaining,
-            DataIds.selectedTabIndex to selectedTabIndex,
-            DataIds.selectedListOption to selectedListOption,
+            DataIds.selectedTabIndex to paidByOrAdjustSplitMode,
+            DataIds.selectedListOption to adjustMethod,
             DataIds.receipt to receipt,
             DataIds.sheets to DataIds.sheets,
             DataIds.category to category,
@@ -443,9 +511,19 @@ class SplitReviewViewModel @Inject constructor(
 
         paidRemaining.value = _billTotal.value
         viewModelScope.launch(Dispatchers.IO) {
-            val members = repo.getPaidByMembers()
+            val members = DataBank.once[DataBank.Key.SplitMembers] as List<ContactData>//repo.getPaidByMembers()
             withContext(Dispatchers.Main) {
-                _members.addAll(members)
+                _members.addAll(members.map {
+                    MemberPayment(
+                        id = it.id,
+                        name = it.name,
+                        mobile = it.mobile,
+                        image = it.image,
+                        paid = 0.0,
+                        toPay = 0.0,
+                        selected = false
+                    )
+                })
                 // /////////////////////
                 val memberCount = _members.size
                 val contribute = _billTotal.value / memberCount
@@ -453,15 +531,17 @@ class SplitReviewViewModel @Inject constructor(
                     _members[i] = _members[i].copy(toPay = contribute)
                 }
             }
-            val pageData = repo.splitReviewPageData()
+            //val pageData = repo.splitReviewPageData()
             withContext(Dispatchers.Main) {
-                _billTotal.value = pageData.amount.toDouble()
-                _subCategoryText.value = pageData.description
-                category.value = pageData.category
+                val billTotal = DataBank.once[DataBank.Key.BillTotal] as? String?:return@withContext
+                _billTotal.value = billTotal.toDouble()//pageData.amount.toDouble()
+                _description.value = DataBank.once[DataBank.Key.SplitDescription] as? String?:return@withContext//pageData.description
+                category.value = DataBank.once[DataBank.Key.SplitCategory] as? Category?:return@withContext//pageData.category
+                val date = DataBank.once[DataBank.Key.ExpenseData] as? Date?:return@withContext
                 _dateText.value = displayableDate(
-                    y = pageData.date.year,
-                    m = pageData.date.month,
-                    d = pageData.date.day
+                    y = date.year,
+                    m = date.month,
+                    d = date.day
                 )
             }
         }

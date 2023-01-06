@@ -19,5 +19,6 @@ enum class Sheets {
     ExpenseFilter,
     TimeFilter,
     AdvancedDatePicker,
-    SplitAsChoice
+    SplitAsChoice,
+    CalculationMethod,
 }

@@ -1,6 +1,5 @@
 package co.yore.splitnpay.models
 
-/*
 class Store {
     private val map = mutableMapOf<Any,Any>()
 
@@ -17,7 +16,11 @@ class Store {
         return this
     }
 
+    constructor(vararg pairs: Pair<Any,Any>){
+        map.putAll(pairs)
+    }
+
     fun getAll(): Map<Any,Any>{
         return map
     }
-}*/
+}

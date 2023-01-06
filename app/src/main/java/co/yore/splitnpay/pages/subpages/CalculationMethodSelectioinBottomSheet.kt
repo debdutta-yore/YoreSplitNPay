@@ -32,7 +32,7 @@ import co.yore.splitnpay.ui.theme.CuriousBlue
 import co.yore.splitnpay.ui.theme.Zumthor
 import kotlinx.coroutines.CoroutineScope
 
-class PhotoSelectionBottomSheetModel(val callback: Callback) : BottomSheetModel {
+class CalculationMethodSelectionBottomSheetModel(val callback: Callback) : BottomSheetModel {
     interface Callback{
         fun scope(): CoroutineScope
         fun onContinue(arg: Any?)
@@ -54,7 +54,7 @@ class PhotoSelectionBottomSheetModel(val callback: Callback) : BottomSheetModel 
 
     @Composable
     override fun Content() {
-        PhotoSelectionBottomSheet()
+        CalculationMethodSelectionBottomSheet()
     }
 
     override fun initialize() {
@@ -73,14 +73,14 @@ class PhotoSelectionBottomSheetModel(val callback: Callback) : BottomSheetModel 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PhotoSelectionBottomSheet(
+fun CalculationMethodSelectionBottomSheet(
     notifier: NotificationService = notifier()
 ) {
 
     val itemList = remember {
         listOf(
-            Item(id = 0, R.drawable.ic_camera_blue, "Camera"),
-            Item(id = 1, R.drawable.ic_gallery_blue, "Gallery")
+            Item(id = 0, R.drawable.ic_proportionate, "Proportionate"),
+            Item(id = 1, R.drawable.ic_gallery_blue, "Optimal")
         )
     }
 
@@ -131,67 +131,6 @@ fun PhotoSelectionBottomSheet(
                     text = itemList[index].name,
                     isSelected = itemList[index].id == selectedIndex
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun SingleItem(
-    modifier: Modifier = Modifier,
-    icon: Painter,
-    text: String,
-    isSelected: Boolean = false
-) {
-    Row(
-        modifier = modifier
-            .background(
-                if (isSelected) {
-                    Zumthor 
-                }else Color.White
-            )
-            .padding(start = 31f.dep())
-            .fillMaxWidth()
-            .height(49f.dep()),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Icon(
-                modifier = Modifier.size(18.dp),
-                tint = Color.Unspecified,
-                painter = icon,
-                contentDescription = "selected photo icon",
-            )
-            Spacer(modifier = Modifier.width(15f.dep()))
-            Text(
-                text = text,
-                color = CloudBurst,
-                fontSize = 14.sp,
-                fontWeight = FontWeight(700)
-            )
-        }
-
-        if (isSelected) {
-            Box(
-                modifier = Modifier
-                    .height(49.dep())
-                    .width(16.dep())
-                    .offset(x = 8.dep())
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 6.dep(),
-                            bottomStart = 6.dep()
-                        )
-                    )
-                    .background(CuriousBlue)
-            ){
-
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.DataBank
 import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.YoreDatePickerData
 import co.yore.splitnpay.libs.*
@@ -138,7 +139,6 @@ class SplitPageViewModel @Inject constructor(
                 }
             }
         }
-
     override val sheeting = Sheeting(
         sheetMap = mapOf(
             Sheets.BillTotalAndCategories to BillTotalAndCategoryBottomSheetModel(
@@ -173,6 +173,9 @@ class SplitPageViewModel @Inject constructor(
                         billDescription: String,
                         category: Category
                     ) {
+                        DataBank.once[DataBank.Key.BillTotal] = billTotal
+                        DataBank.once[DataBank.Key.SplitDescription] = billDescription
+                        DataBank.once[DataBank.Key.SplitCategory] = category
                         mySheeting.sheets.value = Sheets.DatePicker
                     }
 
@@ -248,6 +251,7 @@ class SplitPageViewModel @Inject constructor(
                         selectedMonth: Int,
                         selectedYear: Int
                     ) {
+                        DataBank.once[DataBank.Key.ExpenseData] = Date(selectedYear, selectedMonth, selectedDay)
                         mySheeting.hide()
                         selectMembersForSplit()
                     }

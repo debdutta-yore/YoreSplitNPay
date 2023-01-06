@@ -1,12 +1,8 @@
 package co.yore.splitnpay.viewModels
 
 import android.Manifest
-import android.R
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,15 +19,12 @@ import co.yore.splitnpay.models.DataIds
 import co.yore.splitnpay.models.StatusBarColor
 import co.yore.splitnpay.pages.subpages.PhotoSelectionBottomSheetModel
 import co.yore.splitnpay.repo.MasterRepo
-import co.yore.splitnpay.repo.MasterRepoImpl
 import co.yore.splitnpay.ui.theme.BlackSqueeze
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -140,6 +133,9 @@ class GroupCreationPageViewModel @Inject constructor(
                     navigation.scope { navHostController, lifecycleOwner, toaster ->
                         //navHostController.popBackStack(Routes.splitPage.full, false)
                         if (this.getBoolean("split")) {
+                            DataBank.once[DataBank.Key.SplitMembers] = contacts.toList()
+                            DataBank.once[DataBank.Key.GroupName] = _groupName.value
+                            DataBank.once[DataBank.Key.GroupImage] = profileImage.value
                             navHostController.navigate("${Routes.splitReviewPage.name}?asGroup=true")
                         } else {
                             createGroup()
@@ -202,7 +198,7 @@ class GroupCreationPageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             //val c = repo.contacts()
             //contacts.clear()
-            val list = DataBank.once[DataBank.Key.members] as? List<ContactData>?: emptyList()
+            val list = DataBank.once[DataBank.Key.Members] as? List<ContactData>?: emptyList()
             contacts.addAll(/*repo.deviceContacts(c)*/list.map { it.copy(deletable = true) })
             contacts.add(repo.mySelfContact())
             adjustDeletable()

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yore.splitnpay.AccountService
 import co.yore.splitnpay.app.Routes
 import co.yore.splitnpay.components.components.*
 import co.yore.splitnpay.libs.*
@@ -25,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupChatViewModel @Inject constructor(
-    private val repo: MasterRepo
+    private val repo: MasterRepo,
+    private val accountService: AccountService
 ) : ViewModel(), WirelessViewModelInterface {
     override val softInputMode = mutableStateOf(SoftInputMode.adjustNothing)
     override val resolver = Resolver()
@@ -117,7 +119,23 @@ class GroupChatViewModel @Inject constructor(
                     }
 
                     override suspend fun getMembers(): List<SingleItem> {
-                        return repo.members()
+                        val myNumber = accountService.getAccountId()
+                        //return repo.members()
+                        return groupData
+                            ?.members
+                            ?.mapIndexed { index, contactData ->
+                            SingleItem(
+                                id = index,
+                                profilePic = contactData.image,
+                                userName = contactData.name,
+                                mobileNo = contactData.mobile,
+                                isSelected = false
+                            )
+                        }
+                            ?.filter {
+                                it.mobileNo !=  myNumber
+                            }
+                            ?: emptyList()
                     }
 
                     override fun onContinue(index: Int) {
@@ -189,11 +207,13 @@ class GroupChatViewModel @Inject constructor(
                     }
 
                     override suspend fun getGetStat(): List<Transaction> {
-                        return repo.getWillGet()
+                        //return repo.getWillGet()
+                        return emptyList()
                     }
 
                     override suspend fun getPayStat(): List<Transaction> {
-                        return repo.getWillPay()
+                        //return repo.getWillPay()
+                        return emptyList()
                     }
 
                     override fun onGetContinue(transaction: Transaction) {
@@ -463,7 +483,7 @@ class GroupChatViewModel @Inject constructor(
         // ////////////////////////////////////
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _conversations.addAll(repo.conversations())
+                //_conversations.addAll(repo.conversations())
             }
         }
 
@@ -485,9 +505,10 @@ class GroupChatViewModel @Inject constructor(
         }*/
     }
 
+    private var groupData: GroupData? = null
     private fun fetchGroup(groupId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.groupDetails(groupId)
+            groupData = repo.groupDetails(groupId)
         }
     }
 }

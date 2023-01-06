@@ -6,6 +6,8 @@ import android.util.Log
 import co.yore.splitnpay.libs.root
 import co.yore.splitnpay.models.Category
 import co.yore.splitnpay.models.ContactData
+import co.yore.splitnpay.models.GroupData
+import co.yore.splitnpay.models.MemberPayment
 import io.grpc.StatusRuntimeException
 import splitpay.Splitpay
 import javax.inject.Inject
@@ -105,5 +107,91 @@ class ApiService @Inject constructor(
             ).id
         }
         return null
+    }
+
+    suspend fun createExpense(
+        categoryId: String,
+        shareType: String,
+        amount: Double,
+        description: String,
+        receipt: Any?,
+        calculationMethod: String,
+        members: List<MemberPayment>,
+        groupId: String,
+        groupName: String,
+        groupImage: Any?
+    ): Pair<String,String> {
+        val groupImageUrl = when (groupImage) {
+            is Bitmap -> GrpcServer.FileService.upload(groupImage).fileUrl
+            is String -> groupImage
+            else -> ""
+        }
+
+        val receiptUrl = when (receipt) {
+            is Bitmap -> GrpcServer.FileService.upload(receipt).fileUrl
+            is String -> receipt
+            else -> ""
+        }
+
+        val response = GrpcServer
+            .ExpenseService
+            .createExpense(
+                accountId = accountService.getAccountId(),
+                categoryId = categoryId,
+                shareType = GrpcServer.ShareType.fromString(shareType),
+                amount = amount,
+                description = description,
+                receiptUrl = receiptUrl,
+                calculationMethod = GrpcServer.CalculationMethod.fromString(calculationMethod),
+                expenseMembers = members.map {
+                    GrpcServer.ExpenseMember(
+                        phone = it.mobile,
+                        name = it.name,
+                        image = when (it.image) {
+                            is Bitmap -> GrpcServer.FileService.upload(it.image).fileUrl
+                            is String -> it.image
+                            else -> ""
+                        },
+                        initialPaidAmount = it.paid,
+                        shareAmount = it.toPay
+                    )
+                },
+                groupId = groupId,
+                groupName = groupName,
+                groupImageUrl = groupImageUrl
+            )
+        val eid = response.eid
+        val gid = response.gid
+        return Pair(eid, gid)
+    }
+
+    suspend fun groupDetails(groupId: String): GroupData {
+        var group = GrpcServer.GroupService.groupDetails(
+            accountId = accountService.getAccountId(),
+            uid = "",
+            gid = groupId,
+            needGetPay = true
+        ).result
+        return GroupData(
+            id = group.id,
+            image = group.imageUrl,
+            name = group.name,
+            members = group.membersList.map {
+                ContactData(
+                    id = it.id,
+                    image = if(it.imageUrl == null || it.imageUrl.isEmpty()) "name://${it.fullName}" else it.imageUrl,
+                    name = it.fullName,
+                    mobile = it.phoneNumber,
+                    willPay = it.willPay,
+                    willGet = it.willGet,
+                    createdAt = it.createdAt.seconds*1000,
+                    updatedAt = it.updatedAt.seconds*1000
+                )
+            },
+            willGet = group.willGet,
+            willPay = group.willPay,
+            createdAt = group.createdAt.seconds*1000,
+            updatedAt = group.updatedAt.seconds*1000
+        )
     }
 }

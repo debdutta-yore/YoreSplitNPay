@@ -91,6 +91,18 @@ interface MasterRepo{
     suspend fun renameCategory(category: Category, name: String)
     suspend fun createGroup(members: List<ContactData>, groupName: String, image: Bitmap?): String?
     suspend fun groupDetails(groupId: String): GroupData
+    suspend fun createExpense(
+        categoryId: String,
+        shareType: String,
+        amount: Double,
+        description: String,
+        receiptUrl: Any?,
+        calculationMethod: String,
+        members: List<MemberPayment>,
+        groupId: String,
+        groupName: String,
+        groupImage: Any?
+    ): Pair<String, String>
 }
 
 class MasterRepoImpl @Inject constructor(
@@ -394,7 +406,7 @@ class MasterRepoImpl @Inject constructor(
         val accountId = accountService.getAccountId()
         return apiService.categories().resultList.map {
             if(it.accoundId=="system"){
-                return@map Category[it.name.lowercase()]
+                return@map Category[it.name.lowercase()].copy(uid = it.id)
             }
             else{
                 if(accountId == it.accoundId){
@@ -1606,32 +1618,32 @@ class MasterRepoImpl @Inject constructor(
     }
 
     override suspend fun groupDetails(groupId: String): GroupData {
-        var group = GrpcServer.GroupService.groupDetails(
-            accountId = accountService.getAccountId(),
-            uid = "",
-            gid = groupId,
-            needGetPay = true
-        ).result
-        return GroupData(
-            id = group.id,
-            image = group.imageUrl,
-            name = group.name,
-            members = group.membersList.map {
-                ContactData(
-                    id = it.id,
-                    image = it.imageUrl,
-                    name = it.fullName,
-                    mobile = it.phoneNumber,
-                    willPay = it.willPay,
-                    willGet = it.willGet,
-                    createdAt = it.createdAt.seconds*1000,
-                    updatedAt = it.updatedAt.seconds*1000
-                )
-            },
-            willGet = group.willGet,
-            willPay = group.willPay,
-            createdAt = group.createdAt.seconds*1000,
-            updatedAt = group.updatedAt.seconds*1000
+        return apiService.groupDetails(groupId)
+    }
+
+    override suspend fun createExpense(
+        categoryId: String,
+        shareType: String,
+        amount: Double,
+        description: String,
+        receipt: Any?,
+        calculationMethod: String,
+        members: List<MemberPayment>,
+        groupId: String,
+        groupName: String,
+        groupImage: Any?
+    ): Pair<String, String> {
+        return apiService.createExpense(
+            categoryId,
+            shareType,
+            amount,
+            description,
+            receipt,
+            calculationMethod,
+            members,
+            groupId,
+            groupName,
+            groupImage
         )
     }
 }
